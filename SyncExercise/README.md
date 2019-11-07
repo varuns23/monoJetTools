@@ -1,7 +1,7 @@
-# Mono-Z' Jet + MET analysis
+# MonoJet  analysis
 
 This repository contains pacakges to analyze ntuples for the signal region and the control region 
-for the Mono-Z' Jet + MET analysis.
+for the MonoJet  analysis.
 Jobs are submitted to condor through the SubmitCondor.py script.
 
 SubmitCondor.py creates 2 hidden directories: .output/ and .status/
@@ -18,9 +18,6 @@ cmsrel CMSSW_10_2_10
 cd CMSSW_10_2_10/src
 cmsenv
 voms-proxy-init --voms=cms --valid=192:00
-git clone -b 2018 https://github.com/ekoenig4/ZprimeTools.git ZprimeTools2018
-cd ZprimeTools2018
-make
 ```
 To run locally
 
@@ -35,16 +32,16 @@ make
 
 The postAnalyzer is broken into 4 different purposes
 
-    ZprimeJetsClass.h:
+    monoJetClass.h:
 	Holds information about the variables, methods, and histograms that are used and filled in the analysis
 
-    ZprimeJetsInit.C:
+    monoJetInit.C:
 	Holds the methods for initiating all the variables and files that are being used
 
-    ZprimeJetsCommon.C:
+    monoJetCommon.C:
 	Holds the methods that are shared across all the different regions (Signal and Control Regions)
 
-    ZprimeJetsClass.C:
+    monoJetClass.C:
 	Holds the methods that are unique to that particular region
 
 Signal Region:
