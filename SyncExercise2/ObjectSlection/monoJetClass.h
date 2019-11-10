@@ -51,7 +51,7 @@ public :
   virtual vector<int> muon_tightID(float muPtCut);
   virtual vector<int> pho_looseID(float phoPtCut);
   virtual vector<int> pho_tightID(float phoPtCut);
-  virtual vector<int> bjetveto();
+  virtual float bjetveto();
   // virtual bool getMinDphiJR(int lep_index, double lepMET_phi);
   virtual void initTree(TTree* tree);
   
