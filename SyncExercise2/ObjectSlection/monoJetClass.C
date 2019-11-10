@@ -76,7 +76,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     nLooseMu = looseMus.size();
     nTightMu = tightMus.size();
     if ( nTightMu > 0 ){
-      int index = tightMus[0];
+      int index = 0;
       mupt0 = muPt->at(index);
       mueta0 = muEta->at(index);
       float muphi0 = muPhi->at(index);
@@ -89,7 +89,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     nLooseEl = looseEls.size();
     nTightEl = tightEls.size();
     if ( nTightEl >0 ){
-      int index = tightEls[0];
+      int index = 0;
       elpt0 = elePt->at(index);
       eleta0 = eleEta->at(index);
       float elphi0 = elePhi->at(index);
@@ -98,11 +98,11 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
       lep_vec += ele_vec;
     }
     auto looseGams = pho_looseID(10);
-    auto tightGams = pho_tightID(40);
+    auto tightGams = pho_tightID(215);
     nLooseGam = looseGams.size();
     nTightGam = tightGams.size();
     if ( nTightGam > 0 ){
-      int index = tightGams[0];
+      int index = 0;
       gpt0 = phoE->at(index);
       geta0 = phoEta->at(index);
       float gphi0 = phoPhi->at(index);
