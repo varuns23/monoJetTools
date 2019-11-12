@@ -6,7 +6,7 @@ using namespace std;
 int main(int argc, const char* argv[]) { 
   if (argc == 1) {
     printf("Running Test\n");
-    argv[1] = "/hdfs/store/user/ekoenig/MonoZprimeJet/NTuples/2018/MC2018_Autumn18_June2019/WJets/WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/0000/";
+    argv[1] = "/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_102X_JECv19/ZJets/ZJetsToNuNu_HT400-600/0000/";
     argv[2] = "test.root";
     argv[3] = "5000";
     argv[4] = "100";
