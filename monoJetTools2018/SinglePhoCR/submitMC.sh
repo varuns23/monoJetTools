@@ -6,11 +6,11 @@ make || exit -1
 
 echo "Do the MC samples"
 
-ST "$RUN"
+# ST "$RUN"
 #WJETS "$RUN"
 #GJETS "$RUN"
 #DIBOSON "$RUN"
 #TTJETS "$RUN"
 #DYJETS "$RUN"
-#ZJETS "$RUN"
+ZJETS "$RUN"
 #QCD "$RUN"

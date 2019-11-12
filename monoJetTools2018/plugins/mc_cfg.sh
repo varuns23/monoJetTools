@@ -5,6 +5,10 @@ ST(){
   ${1} $MC_JECv19/ST/ST_tW_top_5f/ post_ST_0.root -1 10000 ST100_0 split_-1
 }
 
+ZJETS() {
+    ${1} $MC_JECv19/ZJets/ZJetsToNuNu_HT400-600/0000/ post_Z400to600.root -1 10000 Z400_0 split_-1
+}
+
 QCD() {
     ${1} $MC/QCD/QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8/0000/ postQCD100to200_0.root -1 10000 QCD100_0 split_-1
     ${1} $MC/QCD/QCD_HT100to200_TuneCP5_13TeV-madgraphMLM-pythia8/0001/ postQCD100to200_1.root -1 10000 QCD100_1 split_-1
@@ -152,22 +156,22 @@ DYJETS() {
 }
 
 #ZJets
-ZJETS() {
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/0000/ postZ100to200_0.root -1 10000 Z100_0 split_-1
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/0001/ postZ100to200_1.root -1 10000 Z100_1 split_-1
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/0002/ postZ100to200_2.root -1 10000 Z100_2 split_-1
+# ZJETS() {
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/0000/ postZ100to200_0.root -1 10000 Z100_0 split_-1
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/0001/ postZ100to200_1.root -1 10000 Z100_1 split_-1
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/0002/ postZ100to200_2.root -1 10000 Z100_2 split_-1
 
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/0000/ postZ200to400_0.root -1 10000 Z200_0 split_-1
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/0001/ postZ200to400_1.root -1 10000 Z200_1 split_-1
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/0002/ postZ200to400_2.root -1 10000 Z200_2 split_-1
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/0000/ postZ200to400_0.root -1 10000 Z200_0 split_-1
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/0001/ postZ200to400_1.root -1 10000 Z200_1 split_-1
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/0002/ postZ200to400_2.root -1 10000 Z200_2 split_-1
 
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-400To600_13TeV-madgraph/0000/ postZ400to600_0.root -1 10000 Z400_0 split_-1
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-400To600_13TeV-madgraph/0000/ postZ400to600_0.root -1 10000 Z400_0 split_-1
 
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-600To800_13TeV-madgraph/0000/ postZ600to800_0.root -1 10000 Z600_0 split_-1
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-600To800_13TeV-madgraph/0000/ postZ600to800_0.root -1 10000 Z600_0 split_-1
 
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/0000/ postZ800to1200_0.root -1 10000 Z800_0 split_-1
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/0000/ postZ800to1200_0.root -1 10000 Z800_0 split_-1
 
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-1200To2500_13TeV-madgraph/0000/ postZ1200to2500_0.root -1 10000 Z1200_0 split_-1
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-1200To2500_13TeV-madgraph/0000/ postZ1200to2500_0.root -1 10000 Z1200_0 split_-1
 
-    ${1} $MC/ZJets/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/0000/ postZ2500toInf_0.root -1 10000 Z2500_0 split_-1
-}
+#     ${1} $MC/ZJets/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/0000/ postZ2500toInf_0.root -1 10000 Z2500_0 split_-1
+# }
