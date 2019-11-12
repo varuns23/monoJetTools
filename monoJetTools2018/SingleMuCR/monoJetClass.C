@@ -62,8 +62,6 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-    printEvent();
-
     jetCand     .clear();
     lepindex = -1;
 
