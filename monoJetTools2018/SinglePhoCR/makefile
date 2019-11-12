@@ -2,7 +2,7 @@ plugin=${PWD}/../plugins/
 
 rflags = -I$ROOTSYS/include -L$ROOTSYS/lib `root-config --cflags` `root-config --libs` -lFoam -lMathMore
 
-analyze: monoJet* $(plugin)monoJet* RootFiles PlotTool
+analyze: monoJet* $(plugin)monoJet* PlotTool
 	g++ -I $(plugin) -Wno-deprecated monoJet*.C $(plugin)*.C -o analyze $(rflags)
 
 RootFiles:
