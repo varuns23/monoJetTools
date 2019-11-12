@@ -1,9 +1,9 @@
-plugin=${CMSSW_BASE}/src/ZprimeTools2018/plugins/
+plugin=${PWD}/../plugins/
 
 rflags = -I$ROOTSYS/include -L$ROOTSYS/lib `root-config --cflags` `root-config --libs` -lFoam -lMathMore
 
-analyze: ZprimeJets* $(plugin)/ZprimeJets* RootFiles PlotTool
-	g++ -I $(plugin) -Wno-deprecated ZprimeJets*.C $(plugin)/*.C -o analyze $(rflags)
+analyze: monoJet* $(plugin)monoJet* RootFiles PlotTool
+	g++ -I $(plugin) -Wno-deprecated monoJet*.C $(plugin)*.C -o analyze $(rflags)
 
 RootFiles:
 	if [ ! -d RootFiles ]; then ln -s ../RootFiles/; fi
@@ -23,7 +23,6 @@ condor_clean:
 	rm -r .status
 
 condor_submit: analyze
-	./signalsubmit.sh
 	./submitDATA.sh
 	./submitMC.sh
 

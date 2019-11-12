@@ -1,15 +1,16 @@
-RUN="python ${CMSSW_BASE}/src/ZprimeTools2018/SubmitCondor.py analyze"
+RUN="python ${PWD}/../SubmitCondor.py analyze"
 
-. "${CMSSW_BASE}/src/ZprimeTools2018/plugins/mc_cfg.sh"
+. "${PWD}/../plugins/mc_cfg.sh"
 
 make || exit -1
 
 echo "Do the MC samples"
 
-WJETS "$RUN"
-GJETS "$RUN"
-DIBOSON "$RUN"
-TTJETS "$RUN"
-DYJETS "$RUN"
-ZJETS "$RUN"
-QCD "$RUN"
+ST "$RUN"
+#WJETS "$RUN"
+#GJETS "$RUN"
+#DIBOSON "$RUN"
+#TTJETS "$RUN"
+#DYJETS "$RUN"
+#ZJETS "$RUN"
+#QCD "$RUN"

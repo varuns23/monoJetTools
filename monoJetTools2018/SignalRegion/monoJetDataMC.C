@@ -1,7 +1,7 @@
-#define ZprimeJetsClass_cxx
-#include "ZprimeJetsClass.h"
+#define monoJetClass_cxx
+#include "monoJetClass.h"
 
-ZprimeJetsCommon::DataMC::DataMC(string filename) : ZprimeJetsCommon::DataMC::DataMC() {
+monoJetCommon::DataMC::DataMC(string filename) : monoJetCommon::DataMC::DataMC() {
   string sampleID[] = {"Run2018","monoZprime","WJets","ZJets","DYJets","QCD","TTJets","GJets","WW","WZ","ZZ"};
   string inclusiveID[] = {"WJetsToLNu_Incl","DYJetsToLL_Incl"};
   for (int i = 0; i < Total; i++)
@@ -19,4 +19,4 @@ ZprimeJetsCommon::DataMC::DataMC(string filename) : ZprimeJetsCommon::DataMC::Da
   if (type == ZJets) PID = 23;
 }
 
-bool ZprimeJetsCommon::DataMC::isW_or_ZJet() { return type == WJets || type == ZJets; }
+bool monoJetCommon::DataMC::isW_or_ZJet() { return type == WJets || type == ZJets || type == DYJets; }
