@@ -1,0 +1,2 @@
+g++ -I ${CMSSW_BASE}/src/SyncExercise/monoJetTools2018/plugins/ -Wno-deprecated monoJet*.C ${CMSSW_BASE}/src/SyncExercise/ZprimeTools2018/plugins/*.C  -o analyze -I$ROOTSYS/include -L$ROOTSYS/lib `root-config --cflags` `root-config --libs` -lFoam -lMathMore
+rm -f ${1}.o

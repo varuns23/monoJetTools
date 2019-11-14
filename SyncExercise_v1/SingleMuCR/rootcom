@@ -1,0 +1,2 @@
+g++ -I ${PWD}/../plugins/ -Wno-deprecated monoJet*.C ${PWD}/../plugins/*.C  -o analyze -I$ROOTSYS/include -L$ROOTSYS/lib `root-config --cflags` `root-config --libs` -lFoam -lMathMore
+rm -f ${1}.o
