@@ -11,183 +11,171 @@
 using namespace std;
 
 int main(int argc, const char* argv[]) { 
-   if (argc == 1) {
-      printf("Running Test\n");
-      argv[1] = "/hdfs/store/user/ekoenig/MonoZprimeJet/NTuples/2018/MC2018_Autumn18_June2019/DYJets/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/0000/";
-      argv[2] = "test.root";
-      argv[3] = "5000";
-      argv[4] = "100";
-      argv[5] = "1-1";
-   }
-   Long64_t maxEvents = atof(argv[3]);
-   if (maxEvents < -1LL)
-   {
+  if (argc == 1) {
+    printf("Running Test\n");
+    argv[1] = "/hdfs/store/user/ekoenig/MonoZprimeJet/NTuples/2018/MC2018_Autumn18_June2019/DYJets/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/0000/";
+    argv[2] = "test.root";
+    argv[3] = "5000";
+    argv[4] = "100";
+    argv[5] = "1-1";
+  }
+  Long64_t maxEvents = atof(argv[3]);
+  if (maxEvents < -1LL)
+    {
       cout<<"Please enter a valid value for maxEvents (parameter 3)."<<endl;
       return 1;
-   }
-   int reportEvery = atof(argv[4]);
-   if (reportEvery < 1)
-   {
+    }
+  int reportEvery = atof(argv[4]);
+  if (reportEvery < 1)
+    {
       cout<<"Please enter a valid value for reportEvery (parameter 4)."<<endl;
       return 1;
-   }
-   monoJetClass t(argv[1],argv[2],argv[5]);
-   t.Loop(maxEvents,reportEvery);
-   return 0;
+    }
+  monoJetClass t(argv[1],argv[2],argv[5]);
+  t.Loop(maxEvents,reportEvery);
+  return 0;
 }
 
 void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
-   if (fChain == 0) return;
+  if (fChain == 0) return;
 
-   Long64_t nentries = fChain->GetEntries();
-   cout<<"Coming in:"<<endl;
-   cout<<"nentries:"<<nentries<<endl;
-   Long64_t nentriesToCheck = nentries;
+  Long64_t nentries = fChain->GetEntries();
+  cout<<"Coming in:"<<endl;
+  cout<<"nentries:"<<nentries<<endl;
+  Long64_t nentriesToCheck = nentries;
 
-   int nTotal = 0;
-   int nTotalEvents = 0;
-   int nTwoMu = 0;
-   int nOneTightMu = 0;
-   int nDiMuCharge = 0;
-   int nDiMuMass = 0;
-   int nEleVeto = 0;
-   int nPhoVeto = 0;
-   int nTauVeto = 0;
-   int nBtagVeto = 0;
-   int nMinDphiJR = 0;
-   int nMetCut = 0;
-   int nRecoil = 0;
-   int nJetCand = 0;
-   int nJetVeto = 0;
+  int nTotal = 0;
+  int nTotalEvents = 0;
+  int nTwoMu = 0;
+  int nOneTightMu = 0;
+  int nDiMuMass = 0;
+  int nJetCand = 0;
+  int nMinDphiJR = 0;
+  int nMetCut = 0;
+  int nEleVeto = 0;
+  int nPhoVeto = 0;
+  int nTauVeto = 0;
+  int nBtagVeto = 0;
+  int nRecoil = 0;
 
 
-   if (maxEvents != -1LL && nentries > maxEvents)
-     nentriesToCheck = maxEvents;
-   nTotal = nentriesToCheck;
-   cout<<"Running over "<<nTotal<<" events."<<endl;
-   Long64_t nbytes = 0, nb = 0;
+  if (maxEvents != -1LL && nentries > maxEvents)
+    nentriesToCheck = maxEvents;
+  nTotal = nentriesToCheck;
+  cout<<"Running over "<<nTotal<<" events."<<endl;
+  Long64_t nbytes = 0, nb = 0;
 
-   for (Long64_t jentry=0; jentry<nentriesToCheck;jentry++) {
-     Long64_t ientry = LoadTree(jentry);
-     if (ientry < 0) break;
-     nb = fChain->GetEntry(jentry);   nbytes += nb;
+  for (Long64_t jentry=0; jentry<nentriesToCheck;jentry++) {
+    Long64_t ientry = LoadTree(jentry);
+    if (ientry < 0) break;
+    nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-     jetCand     .clear();
+    jetCand     .clear();
 
-     vector<int> jetlist = getJetCand(30.0, 2.4, 0.8, 0.1);
+    lepindex_leading = -1;
+    lepindex_subleading = -1;
+    dilepton_pt = dilepton_mass = Recoil=-99;
 
-     lepindex_leading = -1;
-     lepindex_subleading = -1;
-     dilepton_pt = dilepton_mass = Recoil=-99;
+    nTotalEvents++;
 
-     nTotalEvents++;
+    vector<int> mulist = muon_veto_looseID(0, 0, 0, 10.0);
+    if(mulist.size() == 2){
+      nTwoMu++;
+      vector<int> mulist_leading = muon_veto_tightID(0, 20.0);
 
-     vector<int> mulist = muon_veto_looseID(0, 0, 0, 10.0);
-     if(mulist.size() == 2){
-       nTwoMu++;
-       vector<int> mulist_leading = muon_veto_tightID(0, 20.0);
+      if(mulist_leading.size() > 0){
+	nOneTightMu++;
 
-       if(mulist_leading.size() > 0){
-	 nOneTightMu++;
+	bool muPairSet = false;
+	TLorentzVector e1, e2, ll;
+	for(int j=0; j<mulist.size(); ++j){
 
-	 bool muPairSet = false;
-	 TLorentzVector e1, e2;
-	 for(int j=0; j<mulist.size(); ++j){
+	  //Event must have exactly two muons with opposite charge
+	  if(muCharge->at(mulist_leading[0])*muCharge->at(mulist[j]) == -1){
 
-	   //Event must have exactly two muons with opposite charge
-	   if(muCharge->at(mulist_leading[0])*muCharge->at(mulist[j]) == -1){
+	    e1.SetPtEtaPhiE(muPt->at(mulist_leading[0]), muEta->at(mulist_leading[0]), muPhi->at(mulist_leading[0]), muE->at(mulist_leading[0]));
+	    e2.SetPtEtaPhiE(muPt->at(mulist[j]), muEta->at(mulist[j]), muPhi->at(mulist[j]), muE->at(mulist[j]));
+	    lepindex_leading = mulist_leading[0];
+	    lepindex_subleading = mulist[j];
+	     
+	    ll = e1+e2;
+	    dilepton_mass = ll.M();
+	    dilepton_pt = ll.Pt();
+	    muPairSet = dilepton_mass > 60. && dilepton_mass < 120.;
+	  }
+	}
 
-	     e1.SetPtEtaPhiE(muPt->at(mulist_leading[0]), muEta->at(mulist_leading[0]), muPhi->at(mulist_leading[0]), muE->at(mulist_leading[0]));
-	     e2.SetPtEtaPhiE(muPt->at(mulist[j]), muEta->at(mulist[j]), muPhi->at(mulist[j]), muE->at(mulist[j]));
-	     lepindex_leading = mulist_leading[0];
-	     lepindex_subleading = mulist[j];
-	     muPairSet = true;
-	   }
-	 }
+	if(muPairSet){
+	  nDiMuMass++;
 
-	 if(muPairSet){
-	   nDiMuCharge++;
+	  jetCand = getJetCand(100,2.4,0.8,0.1);
+	  bool IsoJet = JetVetoDecision(jetCand, lepindex_leading,lepindex_subleading);
+	  if( IsoJet ){
+	    nJetCand++;
+	    vector<int> elelist = electron_veto_looseID(0, lepindex_leading, lepindex_subleading, 10.0);
+	    if(elelist.size() == 0){
+	      nEleVeto++;
 
-	   TLorentzVector ll = e1+e2;
-	   dilepton_mass = ll.M();
-	   dilepton_pt = ll.Pt();
+	      vector<int> pholist = pho_veto_looseID(lepindex_leading,lepindex_subleading,15.0);
+	      if(pholist.size() == 0){ 
+		nPhoVeto++;
 
-	   if(dilepton_mass > 60. && dilepton_mass < 120.){
-	     nDiMuMass++;
+		vector<int> taulist = tau_veto(lepindex_leading,lepindex_subleading);
+		if(taulist.size() == 0){
+		  nTauVeto++;
 
-	     vector<int> elelist = electron_veto_looseID(0, lepindex_leading, lepindex_subleading, 10.0);
-	     if(elelist.size() == 0){
-	       nEleVeto++;
+		  vector<int> bjetlist = bjet_veto(lepindex_leading,lepindex_subleading);
+		  if(bjetlist.size() == 0){
+		    nBtagVeto++;
 
-	       vector<int> pholist = pho_veto_looseID(lepindex_leading,lepindex_subleading,15.0);
-	       if(pholist.size() == 0){ 
-		 nPhoVeto++;
+		    TLorentzVector met_4vec;
+		    met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
+		    TLorentzVector leptoMET_4vec = ll+met_4vec;
+		    Double_t leptoMET = fabs(leptoMET_4vec.Pt());
+		    Double_t leptoMET_phi = leptoMET_4vec.Phi();
+		    Recoil = leptoMET;
 
-		 vector<int> taulist = tau_veto(lepindex_leading,lepindex_subleading);
-		 if(taulist.size() == 0){
-		   nTauVeto++;
+		    double minDPhiJetMET_first4 = TMath::Pi();
+		    bool mindphijr = getMinDphiJR(lepindex_leading, lepindex_subleading, leptoMET_phi);
+		    if(mindphijr){
+		      nMinDphiJR++;
 
-		   vector<int> bjetlist = bjet_veto(lepindex_leading,lepindex_subleading);
-		   if(bjetlist.size() == 0){
-		     nBtagVeto++;
+		      double metcut = (fabs(pfMET-caloMET))/Recoil;
+		      if(metcut < 0.5){
+			nMetCut++;
 
-		     TLorentzVector met_4vec;
-		     met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
-		     TLorentzVector leptoMET_4vec = ll+met_4vec;
-		     Double_t leptoMET = fabs(leptoMET_4vec.Pt());
-		     Double_t leptoMET_phi = leptoMET_4vec.Phi();
-		     Recoil = leptoMET;
+			if(Recoil > 250.){
+			  nRecoil++;
 
-		     double minDPhiJetMET_first4 = TMath::Pi();
-		     bool mindphijr = getMinDphiJR(lepindex_leading, lepindex_subleading, leptoMET_phi);
-		     if(mindphijr){
-		       nMinDphiJR++;
+			} // recoil
+		      } //b-veto
+		    } //tau veto
+		  } //pho veto
+		} //Ele veto
+	      } //metcut
+	    } //mindphijr
+	  } //jet cand
+	} //dilepton mass
+      }
+    }
 
-		       double metcut = (fabs(pfMET-caloMET))/Recoil;
-		       if(metcut < 0.5){
-			 nMetCut++;
+    if (jentry%reportEvery == 0){
+      cout<<"Finished entry "<<jentry<<"/"<<(nentriesToCheck-1)<<endl;
+    }
+  }
 
-			 if(Recoil > 250.){
-			   nRecoil++;
-
-			   jetCand = getJetCand(100,2.4,0.8,0.1);
-			   if(jetCand.size()>0){
-			     nJetCand++;
-			     if(JetVetoDecision(jetCand[0], lepindex_leading,lepindex_subleading)){
-			       nJetVeto++;
-			     }
-			   } //jet cand
-			 } // recoil
-		       } //metcut
-		     } //mindphijr
-		   } //b-veto
-		 } //tau veto
-	       } //pho veto
-	     } //Ele veto
-	   } //dilepton mass
-	 } // dileptons with opposite charge
-       }
-     }
-
-     if (jentry%reportEvery == 0){
-       cout<<"Finished entry "<<jentry<<"/"<<(nentriesToCheck-1)<<endl;
-     }
-   }
-
-   h_cutflow->SetBinContent(1,nTotalEvents); 
-   h_cutflow->SetBinContent(2,nTwoMu);
-   h_cutflow->SetBinContent(3,nOneTightMu);
-   h_cutflow->SetBinContent(4,nDiMuCharge);
-   h_cutflow->SetBinContent(5,nDiMuMass);
-   h_cutflow->SetBinContent(6,nEleVeto);
-   h_cutflow->SetBinContent(7,nPhoVeto);
-   h_cutflow->SetBinContent(8,nTauVeto);
-   h_cutflow->SetBinContent(9,nBtagVeto);
-   h_cutflow->SetBinContent(10,nMinDphiJR);
-   h_cutflow->SetBinContent(11,nMetCut);
-   h_cutflow->SetBinContent(12,nRecoil);
-   h_cutflow->SetBinContent(13,nJetCand);
-   h_cutflow->SetBinContent(14,nJetVeto);
+  h_cutflow->SetBinContent(1,nTotalEvents); 
+  h_cutflow->SetBinContent(2,nTwoMu);
+  h_cutflow->SetBinContent(3,nOneTightMu);
+  h_cutflow->SetBinContent(4,nDiMuMass);
+  h_cutflow->SetBinContent(5,nJetCand);
+  h_cutflow->SetBinContent(6,nMinDphiJR);
+  h_cutflow->SetBinContent(7,nMetCut);
+  h_cutflow->SetBinContent(8,nEleVeto);
+  h_cutflow->SetBinContent(9,nPhoVeto);
+  h_cutflow->SetBinContent(10,nTauVeto);
+  h_cutflow->SetBinContent(11,nBtagVeto);
+  h_cutflow->SetBinContent(12,nRecoil);
 
 }//Closing the Loop function
 
@@ -204,21 +192,19 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
 
-  h_cutflow = new TH1D("h_cutflow","h_cutflow",14,0,14);h_cutflow->Sumw2();
+  h_cutflow = new TH1D("h_cutflow","h_cutflow",12,0,12);h_cutflow->Sumw2();
   h_cutflow->GetXaxis()->SetBinLabel(1,"Total Events");
   h_cutflow->GetXaxis()->SetBinLabel(2,"Two Mu");
   h_cutflow->GetXaxis()->SetBinLabel(3,"One Tight Mu");
-  h_cutflow->GetXaxis()->SetBinLabel(4,"DiLep Charge");
-  h_cutflow->GetXaxis()->SetBinLabel(5,"DiLep Mass"); 
-  h_cutflow->GetXaxis()->SetBinLabel(6,"Ele Veto");
-  h_cutflow->GetXaxis()->SetBinLabel(7,"Pho Veto");
-  h_cutflow->GetXaxis()->SetBinLabel(8,"Tau Veto");
-  h_cutflow->GetXaxis()->SetBinLabel(9,"B Veto");
-  h_cutflow->GetXaxis()->SetBinLabel(10,"MinDphiJR");
-  h_cutflow->GetXaxis()->SetBinLabel(11,"DpFCalo");
+  h_cutflow->GetXaxis()->SetBinLabel(4,"DiLep Mass");
+  h_cutflow->GetXaxis()->SetBinLabel(5,"Jet Selection"); 
+  h_cutflow->GetXaxis()->SetBinLabel(6,"MinDphiJR");
+  h_cutflow->GetXaxis()->SetBinLabel(7,"DpFCalo");
+  h_cutflow->GetXaxis()->SetBinLabel(8,"Ele Veto");
+  h_cutflow->GetXaxis()->SetBinLabel(9,"Pho Veto");
+  h_cutflow->GetXaxis()->SetBinLabel(10,"Tau Veto");
+  h_cutflow->GetXaxis()->SetBinLabel(11,"B Veto");
   h_cutflow->GetXaxis()->SetBinLabel(12,"Recoil");
-  h_cutflow->GetXaxis()->SetBinLabel(13,"Jet Selection");
-  h_cutflow->GetXaxis()->SetBinLabel(14,"Jet veto");
 
   BookCommon(-1,"");
 }
@@ -228,7 +214,9 @@ void monoJetClass::fillHistos(int histoNumber,double event_weight){
   //CR Histograms
   if (histoNumber == bHisto) tree->Fill();
 }
-bool monoJetClass::JetVetoDecision(int jetindex, int leading_lep_index, int subleading_lep_index) {
+bool monoJetClass::JetVetoDecision(vector<int> jetCand, int leading_lep_index, int subleading_lep_index) {
+  if ( jetCand.size() == 0 ) return false;
+  int jetindex = jetCand[0];
 
   bool jetVeto=false;
 
