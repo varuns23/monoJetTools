@@ -90,51 +90,46 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 	if (lepMET_MT < 160){
 	  nMT++;
 
-	  bool vetoElectrons = ele_veto(0, lepindex, 10.);
-	  if(vetoElectrons){
-	    nEleVeto++;
-
-	    bool vetoPhotons = pho_veto(0, lepindex, 15.);
-	    if(vetoPhotons){
-	      nPhoVeto++;
-
-	      bool vetoTaus = tau_veto(0, lepindex);
-	      if(vetoTaus){
-		nTauVeto++;
-
-		bool vetoBjets = bjet_veto(lepindex);
-		if(vetoBjets){
-		  nBtagVeto++;
-
-		  bool mindphijr = getMinDphiJR(lepindex, leptoMET_phi);
-
-		  if(mindphijr){
-		    nMinDphiJR++;
-
-		    double metcut = (fabs(pfMET-caloMET))/Recoil;
-		    if(metcut < 0.5){
-		      npfCaloCut++;
-
-		      if(Recoil > 250.){
-			nRecoil++;
-
-			jetCand = getJetCand(100,2.4,0.8,0.1);
-			if(jetCand.size()>0){
-			  nJetCand++;
-
-			  bool isoJet = JetVetoDecision(jetCand[0], lepindex);
-			  if(isoJet){
-			    nJetVeto++;
-
-			  }//nJetVeto 
-			} //nJetCand
-		      } //Recoil
-		    }// npfCaloCut
-		  }// mindphijr
-		} //bjet veto
-	      }// tau veto
-	    }// veto photons
-	  }//veto ele
+	  jetCand = getJetCand(100,2.4,0.8,0.1);
+	  bool isoJet = JetVetoDecision(jetCand, lepindex);
+	  if( isoJet ){
+	    nJetCand++;
+	    
+	    bool mindphijr = getMinDphiJR(lepindex, leptoMET_phi);
+	    
+	    if(mindphijr){
+	      nMinDphiJR++;
+	      
+	      double metcut = (fabs(pfMET-caloMET))/Recoil;
+	      if(metcut < 0.5){
+		npfCaloCut++;
+		bool vetoElectrons = ele_veto(0, lepindex, 10.);
+		if(vetoElectrons){
+		  nEleVeto++;
+		  
+		  bool vetoPhotons = pho_veto(0, lepindex, 15.);
+		  if(vetoPhotons){
+		    nPhoVeto++;
+		    
+		    bool vetoTaus = tau_veto(0, lepindex);
+		    if(vetoTaus){
+		      nTauVeto++;
+		      
+		      bool vetoBjets = bjet_veto(lepindex);
+		      if(vetoBjets){
+			nBtagVeto++;
+			
+			if(Recoil > 250.){
+			  nRecoil++;
+			  
+			} //Recoil
+		      } //bjet veto
+		    }// tau veto
+		  }// veto photons
+		}//veto ele
+	      }// npfCaloCut
+	    }// mindphijr
+	  } //nJetCand
 	}//MT cut
       }// one tight mu
     }//one loose mu
@@ -148,15 +143,14 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
   h_cutflow->SetBinContent(2,nOneLooseMu);
   h_cutflow->SetBinContent(3,nOneMu);
   h_cutflow->SetBinContent(4,nMT);
-  h_cutflow->SetBinContent(5,nEleVeto);
-  h_cutflow->SetBinContent(6,nPhoVeto);
-  h_cutflow->SetBinContent(7,nTauVeto);
-  h_cutflow->SetBinContent(8,nBtagVeto);
-  h_cutflow->SetBinContent(9,nMinDphiJR);
-  h_cutflow->SetBinContent(10,npfCaloCut);
-  h_cutflow->SetBinContent(11,nRecoil);
-  h_cutflow->SetBinContent(12,nJetCand);
-  h_cutflow->SetBinContent(13,nJetVeto);
+  h_cutflow->SetBinContent(5,nJetCand);
+  h_cutflow->SetBinContent(6,nMinDphiJR);
+  h_cutflow->SetBinContent(7,npfCaloCut);
+  h_cutflow->SetBinContent(8,nEleVeto);
+  h_cutflow->SetBinContent(9,nPhoVeto);
+  h_cutflow->SetBinContent(10,nTauVeto);
+  h_cutflow->SetBinContent(11,nBtagVeto);
+  h_cutflow->SetBinContent(12,nRecoil);
 }
 
 void monoJetClass::initTree(TTree* tree) {
@@ -178,38 +172,38 @@ void monoJetClass::BookHistos(const char* outputFilename) {
 
   float LeptonPtBins[25] = {20.,40.,60.,80.,100.,120.,140.,160.,180.,200.,250.,300.,350.,400.,500.,600.,700.,800.,900.,1000.,1100.,1200.,1300.,1400.,1500.};
 
-  h_cutflow = new TH1D("h_cutflow","h_cutflow",14,0,14);h_cutflow->Sumw2();
+  h_cutflow = new TH1D("h_cutflow","h_cutflow",12,0,12);h_cutflow->Sumw2();
   h_cutflow->GetXaxis()->SetBinLabel(1,"Total Events");
   h_cutflow->GetXaxis()->SetBinLabel(2,"1-lmu");
   h_cutflow->GetXaxis()->SetBinLabel(3,"1-tmu");
   h_cutflow->GetXaxis()->SetBinLabel(4,"MTcut");
-  h_cutflow->GetXaxis()->SetBinLabel(5,"eleVeto"); 
-  h_cutflow->GetXaxis()->SetBinLabel(6,"phoVeto");
-  h_cutflow->GetXaxis()->SetBinLabel(7,"tauVeto");
-  h_cutflow->GetXaxis()->SetBinLabel(8,"btagVeto");
-  h_cutflow->GetXaxis()->SetBinLabel(9,"minDPhiJR");
-  h_cutflow->GetXaxis()->SetBinLabel(10,"pfcaloCut");
-  h_cutflow->GetXaxis()->SetBinLabel(11,"Recoil");
-  h_cutflow->GetXaxis()->SetBinLabel(12,"JetCand");
-  h_cutflow->GetXaxis()->SetBinLabel(13,"JetVeto");
+  h_cutflow->GetXaxis()->SetBinLabel(5,"JetCand");
+  h_cutflow->GetXaxis()->SetBinLabel(6,"minDPhiJR");
+  h_cutflow->GetXaxis()->SetBinLabel(7,"pfcaloCut");
+  h_cutflow->GetXaxis()->SetBinLabel(8,"eleVeto"); 
+  h_cutflow->GetXaxis()->SetBinLabel(9,"phoVeto");
+  h_cutflow->GetXaxis()->SetBinLabel(10,"tauVeto");
+  h_cutflow->GetXaxis()->SetBinLabel(11,"btagVeto");
+  h_cutflow->GetXaxis()->SetBinLabel(12,"Recoil");
 }
 
 void monoJetClass::fillHistos(int histoNumber,double event_weight) {
 }
 
-bool monoJetClass::JetVetoDecision(int jetindex, int lep_index) {
+bool monoJetClass::JetVetoDecision(vector<int> jetCand, int lep_index) {
+  if ( jetCand.size() == 0 ) return false;
+  int jetindex = jetCand[0];
+  bool jetVeto=false;
 
-   bool jetVeto=false;
+  float dR_lep = deltaR(jetEta->at(jetindex), jetPhi->at(jetindex), muEta->at(lep_index), muPhi->at(lep_index));
 
-   float dR_lep = deltaR(jetEta->at(jetindex), jetPhi->at(jetindex), muEta->at(lep_index), muPhi->at(lep_index));
+  //   float dR_muon   = 0.;
+  //   float dR_photon = 0.;
 
-   //   float dR_muon   = 0.;
-   //   float dR_photon = 0.;
+  if(dR_lep > 0.4)
+    jetVeto = true;
 
-   if(dR_lep > 0.4)
-      jetVeto = true;
-
-   return jetVeto;
+  return jetVeto;
 }
 
 int monoJetClass::mu_tightID(int loose_mu,  float muPtCut){
@@ -270,89 +264,89 @@ bool monoJetClass::ele_veto(int jet_index,int mu_index,float elePtCut) {
 
 
 bool monoJetClass::pho_veto(int jet_index, int lep_index, float phoPtCut){
-   bool decision = true;
-   int countPho  = 0;
+  bool decision = true;
+  int countPho  = 0;
 
-   for(int i = 0; i < nPho; i++){
-      bool kinematics = (phoEt->at(i) > phoPtCut && (fabs(phoEta->at(i)) < 2.5));
-      bool IdandIso   = (phoIDbit->at(i)>>0&1==1); 
+  for(int i = 0; i < nPho; i++){
+    bool kinematics = (phoEt->at(i) > phoPtCut && (fabs(phoEta->at(i)) < 2.5));
+    bool IdandIso   = (phoIDbit->at(i)>>0&1==1); 
 
-      double dR_Mu    = deltaR(phoEta->at(i),phoPhi->at(i),muEta->at(lep_index),muPhi->at(lep_index));  
+    double dR_Mu    = deltaR(phoEta->at(i),phoPhi->at(i),muEta->at(lep_index),muPhi->at(lep_index));  
 
-      if(kinematics && IdandIso && dR_Mu > 0.5)
-	 countPho++;
-   }
+    if(kinematics && IdandIso && dR_Mu > 0.5)
+      countPho++;
+  }
 
-   if(countPho > 0)
-      decision = false;
+  if(countPho > 0)
+    decision = false;
 
-   return decision;
+  return decision;
 }
 
 bool monoJetClass::tau_veto(int jet_index, int lep_index){
-   bool decision = true;
-   int countTaus = 0;
+  bool decision = true;
+  int countTaus = 0;
 
-   for(int i = 0; i < nTau; i++){
-      bool kinematics = (tau_Pt->at(i) > 18.0 && fabs(tau_Eta->at(i)) < 2.3);
-      bool IdandIso   = ((tau_IDbits->at(i)>>0&1) == 1 && (tau_IDbits->at(i)>>13&1) == 1);
+  for(int i = 0; i < nTau; i++){
+    bool kinematics = (tau_Pt->at(i) > 18.0 && fabs(tau_Eta->at(i)) < 2.3);
+    bool IdandIso   = ((tau_IDbits->at(i)>>0&1) == 1 && (tau_IDbits->at(i)>>13&1) == 1);
 
-      double dR_Mu   = deltaR(tau_Eta->at(i), tau_Phi->at(i), muEta->at(lep_index), muPhi->at(lep_index));  
+    double dR_Mu   = deltaR(tau_Eta->at(i), tau_Phi->at(i), muEta->at(lep_index), muPhi->at(lep_index));  
 
-      if( kinematics && IdandIso && dR_Mu > 0.4)
-	 countTaus++;
-   }
-   if(countTaus>0)
-      decision = false;
+    if( kinematics && IdandIso && dR_Mu > 0.4)
+      countTaus++;
+  }
+  if(countTaus>0)
+    decision = false;
 
-   return decision;
+  return decision;
 }
 
 bool monoJetClass::bjet_veto(int lep_index){
-   bool decision = true;
-   int countBjet = 0;
+  bool decision = true;
+  int countBjet = 0;
 
-   for(int i = 0; i < nJet; i++){
-      bool kinematics = (jetPt->at(i) > 20.0) && (fabs(jetEta->at(i)) < 2.4);
-      bool Id   = jetID->at(i)>>0&1 == 1;
-      bool btag = (jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i)) > 0.4184;
+  for(int i = 0; i < nJet; i++){
+    bool kinematics = (jetPt->at(i) > 20.0) && (fabs(jetEta->at(i)) < 2.4);
+    bool Id   = jetID->at(i)>>0&1 == 1;
+    bool btag = (jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i)) > 0.4184;
 
-      double dR_Mu    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lep_index), muPhi->at(lep_index));  
+    double dR_Mu    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lep_index), muPhi->at(lep_index));  
 
-      if(kinematics && Id && btag && dR_Mu > 0.4)
-	 countBjet++;
-   }
-   if(countBjet > 0)
-      decision = false;
+    if(kinematics && Id && btag && dR_Mu > 0.4)
+      countBjet++;
+  }
+  if(countBjet > 0)
+    decision = false;
 
-   return decision;
+  return decision;
 }
 
 bool monoJetClass::getMinDphiJR(int lep_index, double lepMET_phi){
-   bool decision = false;
+  bool decision = false;
 
-   vector<int> tmpJetlist;
-   tmpJetlist.clear();
+  vector<int> tmpJetlist;
+  tmpJetlist.clear();
 
-   for(int i=0; i<nJet; i++){ 
-      bool kinematic = (jetPt->at(i) > 30. && fabs(jetEta->at(i)) < 2.4);
-      bool tightJetID = (jetID->at(i)>>0&1 == 1);
+  for(int i=0; i<nJet; i++){ 
+    bool kinematic = (jetPt->at(i) > 30. && fabs(jetEta->at(i)) < 2.4);
+    bool tightJetID = (jetID->at(i)>>0&1 == 1);
 
-      double dR_Lep    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lep_index), muPhi->at(lep_index));  
+    double dR_Lep    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lep_index), muPhi->at(lep_index));  
 
-      if(kinematic && tightJetID && dR_Lep > 0.4 )
-	 tmpJetlist.push_back(i);
-   }
+    if(kinematic && tightJetID && dR_Lep > 0.4 )
+      tmpJetlist.push_back(i);
+  }
 
-   int count=0;
-   for(int k=0; k < tmpJetlist.size(); k++){
-      int jc = tmpJetlist.at(k);
-      if(DeltaPhi(jetPhi->at(jc), lepMET_phi) > 0.5) 
-	 count++;
-   }
+  int count=0;
+  for(int k=0; k < tmpJetlist.size(); k++){
+    int jc = tmpJetlist.at(k);
+    if(DeltaPhi(jetPhi->at(jc), lepMET_phi) > 0.5) 
+      count++;
+  }
 
-   if(count >= 4 || count == tmpJetlist.size()) 
-      decision = true;
+  if(count >= 4 || count == tmpJetlist.size()) 
+    decision = true;
 
-   return decision;
+  return decision;
 }

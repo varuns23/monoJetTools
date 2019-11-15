@@ -45,7 +45,7 @@ public :
   virtual void fillHistos(int histoNumber,double event_weight);
   virtual int  mu_looseID(float muPtCut);
   virtual int  mu_tightID(int loose_mu, float muPtCut);
-  virtual bool JetVetoDecision(int jetindex, int lep_index);
+  virtual bool JetVetoDecision(vector<int> jetCand, int lep_index);
   virtual bool ele_veto(int jet_index, int mu_index, float elePtCut);
   virtual bool pho_veto(int jet_index, int lep_index, float phoPtCut);
   virtual bool tau_veto(int jet_index, int lep_index);
