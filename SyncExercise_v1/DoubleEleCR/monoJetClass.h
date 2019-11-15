@@ -47,7 +47,7 @@ public :
   virtual void BookHistos(const char* outputFilename);
   virtual void fillHistos(int histoNumber,double event_weight);
   
-  virtual bool JetVetoDecision(int jetindex, int leading_ele_index, int subleading_ele_index);
+  virtual bool JetVetoDecision(vector<int> jetCand, int leading_ele_index, int subleading_ele_index);
   virtual vector<int> electron_veto_tightID(int jet_index, float elePtCut);
   virtual vector<int> electron_veto_looseID(int jet_index, int leading_mu_index, int subleading_mu_index, float elePtCut);
 //  virtual vector<int> muon_veto_tightID(int jet_index, float muPtCut);

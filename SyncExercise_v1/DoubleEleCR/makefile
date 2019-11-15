@@ -1,9 +1,9 @@
-plugin=${CMSSW_BASE}/src/SyncExercise/monoJetTools2018/plugins/
+plugin=${PWD}/../plugins/
 
 rflags = -I$ROOTSYS/include -L$ROOTSYS/lib `root-config --cflags` `root-config --libs` -lFoam -lMathMore
 
-analyze: monoJet* $(plugin)/monoJet* RootFiles PlotTool
-	g++ -I $(plugin) -Wno-deprecated monoJet*.C $(plugin)/*.C -o analyze $(rflags)
+analyze: monoJet* $(plugin)monoJet* RootFiles PlotTool
+	g++ -I $(plugin) -Wno-deprecated monoJet*.C $(plugin)*.C -o analyze $(rflags)
 
 RootFiles:
 	if [ ! -d RootFiles ]; then ln -s ../RootFiles/; fi
