@@ -1,4 +1,4 @@
-RUN="python ${CMSSW_BASE}/src/ZprimeTools2018/SubmitCondor.py analyze"
+RUN="python ${CMSSW_BASE}/src/monojet/CondorTools.py analyze"
 
 . "${CMSSW_BASE}/src/ZprimeTools2018/plugins/data_cfg.sh"
 

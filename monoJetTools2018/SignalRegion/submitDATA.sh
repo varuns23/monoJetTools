@@ -1,4 +1,4 @@
-RUN="python ${PWD}/../SubmitCondor.py analyze"
+RUN="python ${CMSSW_BASE}/src/monojet/CondorTools/SubmitCondor.py analyze"
 
 . "${PWD}/../plugins/data_cfg.sh"
 
