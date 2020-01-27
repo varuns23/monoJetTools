@@ -1,0 +1,14 @@
+>>1j50to150
+/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_102X_JECv19/DY1Jets/DY1JetsToLL_ZpT50-150/0000/
+/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_102X_JECv19/DY1Jets/DY1JetsToLL_ZpT50-150/0001/
+
+>>1j150to250
+/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_102X_JECv19/DY1Jets/DY1JetsToLL_ZpT150-250/0000/
+/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_102X_JECv19/DY1Jets/DY1JetsToLL_ZpT150-250/0001/
+
+>>1j250to400
+/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_102X_JECv19/DY1Jets/DY1JetsToLL_ZpT250-400/0000/
+
+>>1j400toInf
+/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_102X_JECv19/DY1Jets/DY1JetsToLL_ZpT400-Inf/0000/
+

@@ -23,8 +23,7 @@ condor_clean:
 	rm -r .status
 
 condor_submit: analyze
-	./submitDATA.sh
-	./submitMC.sh
+	./submit.py
 
 hadd: PlotTool
 	./PlotTool/plotter.py

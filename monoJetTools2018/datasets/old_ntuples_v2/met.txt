@@ -1,0 +1,12 @@
+>>A
+/hdfs/store/user/varuns/NTuples/Data/Run2018_102X_JECv19/MET/MET2018A_17Sep2018/
+
+>>B
+/hdfs/store/user/varuns/NTuples/Data/Run2018_102X_JECv19/MET/MET2018B_17Sep2018/
+
+>>C
+/hdfs/store/user/varuns/NTuples/Data/Run2018_102X_JECv19/MET/MET2018C_17Sep2018/
+
+>>D
+/hdfs/store/user/varuns/NTuples/Data/Run2018_102X_JECv19/MET/MET2018D-PromptReco/
+

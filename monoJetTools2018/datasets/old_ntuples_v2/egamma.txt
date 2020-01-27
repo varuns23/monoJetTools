@@ -1,0 +1,12 @@
+>>A
+/hdfs/store/user/varuns/NTuples/Data/Run2018_102X_JECv19/EGamma/EGammaA_17Sep2018/
+
+>>B
+/hdfs/store/user/varuns/NTuples/Data/Run2018_102X_JECv19/EGamma/EGammaB_17Sep2018/
+
+>>C
+/hdfs/store/user/varuns/NTuples/Data/Run2018_102X_JECv19/EGamma/EGammaC_17Sep2018/
+
+>>D
+/hdfs/store/user/varuns/NTuples/Data/Run2018_102X_JECv19/EGamma/EGammaD_22Jan2019/
+
