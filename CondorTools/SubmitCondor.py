@@ -16,7 +16,8 @@ NFILE_PER_BATCH = 30
 DoSubmit = True
 
 def ignore(path,fn):
-    toignore = ["/hdfs/store/user/varuns/NTuples/Data/Run2018_17Sep2018_May2019/MET/MET2018D_prompt/Data_MET2018D_578.root"]
+    toignore = ["/hdfs/store/user/varuns/NTuples/Data/Run2018_17Sep2018_May2019/MET/MET2018D_prompt/Data_MET2018D_578.root",
+                "/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/WJets_NLO/W1JetsToLNu_LHEWpT250-400/0002/MC_W1JetsToLNu_LHEWpT250-400_2075.root"]
     return (path+fn) in toignore
 def output(string,redirect=False):
     if redirect is False: print string
@@ -24,15 +25,18 @@ def output(string,redirect=False):
 def findInputDirectories():
     # search current directory and parent directories for input directories
     directories = []
-    find_these = ['RootFiles','datasets/ntuples']
+    find_these = [['RootFiles'],['ntuples','datasets/ntuples']]
     def helper(path,check):
         realpath = os.path.realpath(path)
         check_path = os.path.join(realpath,check)
         if os.path.isdir(check_path) and not os.path.islink(check_path): return os.path.realpath(check_path)
         elif realpath != repo_path: return helper( updirectory(realpath),check )
     for check in find_these:
-        path = helper('.',check)
-        if path != None: directories.append(path)
+        for priority in check:
+            path = helper('.',priority)
+            if path != None:
+                directories.append(path)
+                break
     return directories
     
 def init():
@@ -176,7 +180,7 @@ def submit(argv=sys.argv,redirect=False):
     config['on_exit_remove'] = '(ExitBySignal == FALSE && (ExitCode == 0 || ExitCode == 42 || NumJobStarts>3))'
     config['+IsFastQueueJob'] = 'True'
     config['getenv'] = 'true'
-    config['request_memory'] = 1992
+    config['request_memory'] = 5000
     config['request_disk'] = 2048000
     config['script'] = args.script
     config['inputdir'] = args.inputdir

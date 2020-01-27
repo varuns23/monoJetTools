@@ -45,7 +45,7 @@ def getAllDatasets():
     return dataset
 
 if __name__ == '__main__':
-    datalist = ['egamma','met','signal','zjets','wjets','dyjets','gjets','ttjets','ewk','qcd']
+    datalist = ['egamma','singleele','singlepho','met','signal','zjets_nlo','zjets','wjets_nlo','wjets','dyjets_nlo','dyjets','gjets','st','ttjets','ewk','qcd']
     from sys import argv
     if len(argv) == 1: datasets = getAllDatasets()
     else:

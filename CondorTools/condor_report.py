@@ -39,8 +39,16 @@ def section(string): return string.center(100,'-')
 
 class Stats(cul.CondorUserLogStats):
     pending_jobs = 0
-    def printOut(self):
+    def printOut(self,label,verbose=0):
         self.total_jobs = self.pending_jobs + self.good_jobs + self.bad_jobs
+        verbose_map = {
+            "-2":self.total_jobs > 0 and self.pending_jobs == 0,
+            "-1":self.total_jobs > 0 and self.pending_jobs < self.total_jobs,
+            "0" :self.total_jobs > 0 and self.pending_jobs <= self.total_jobs,
+            "1" :True
+        }
+        if not verbose_map[str(verbose)]: return
+        if label is not None: print section(label)
         print self
         print
         print "          Pending Jobs: %s" % self.pending_jobs
@@ -61,33 +69,39 @@ def GetStats(logmap):
     helper(logmap)
     return stats
 
-def GetAll(logmap):
-    print section("All")
-    GetStats(logmap).printOut()
+def GetAll(logmap,verbose):
+    GetStats(logmap).printOut("All",verbose)
 
-def GetByRegion(logmap):
+def GetByRegion(logmap,verbose):
     def helper(logmap,year=''):
-        for dir,path in logmap.iteritems():
-            if type(path) == list: GetStats(logmap).printOut(); return
+        keylist = logmap.keys()
+        if any(key in years for key in keylist):
+            keylist.sort(key=lambda v: years.index(v))
+        if any(key in regions for key in keylist):
+            keylist.sort(key=lambda v: regions.index(v))
+        for dir in keylist:
+            path = logmap[dir]
+            if type(path) == list: GetStats(logmap).printOut(None,verbose); return
             if dir in years: helper(path,year=dir); continue
             label = dir if year == '' else ' '.join( [year,dir] )
-            print section( label )
-            GetStats(path).printOut()
-            print
+            GetStats(path).printOut(label,verbose)
     helper(logmap)
 
-def GetByYear(logmap):
-    for dir,path in logmap.iteritems():
-        if dir not in years: GetStats(logmap).printOut(); return
-        print section(dir)
-        GetStats(path).printOut()
-        print
+def GetByYear(logmap,verbose):
+    keylist = logmap.keys()
+    keylist.sort(key=lambda v: years.index(v))
+    for dir in keylist:
+        path = logmap[dir]
+        if dir not in years: GetStats(logmap).printOut(None,verbose); return
+        GetStats(path).printOut(dir)
 
 def getargs():
     parser = ArgumentParser()
     parser.add_argument("-r","--region",help="Group results by region",action="store_true",default=False)
     parser.add_argument("-y","--year",help="Group results by year",action="store_true",default=False)
     parser.add_argument("-a","--all",help="Group all results together",action="store_true",default=False)
+    parser.add_argument("-v","--verbose",help="Verbosity level (-2 = finished jobs; -1 = finished, and running jobs;" +
+                        " 0 = finished, running, and pending jobs; 1 = finished, running, pending, and empty jobs)",action='store',choices=range(-2,2),type=int,default=0)
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -95,9 +109,9 @@ if __name__ == "__main__":
     statusdirs = getStatusDirs(cwd)
     logmap = getLogfiles(statusdirs)
 
-    if args.region: GetByRegion(logmap)
-    if args.year:   GetByYear(logmap)
-    if args.all:    GetAll(logmap)
+    if args.region: GetByRegion(logmap,verbose=args.verbose)
+    if args.year:   GetByYear(logmap,verbose=args.verbose)
+    if args.all:    GetAll(logmap,verbose=args.verbose)
     if not args.region and not args.year and not args.all:
-        GetByRegion(logmap)
+        GetByRegion(logmap,verbose=args.verbose)
     
