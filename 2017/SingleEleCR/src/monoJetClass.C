@@ -41,10 +41,10 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     float event_weight = 1.;
     if (!sample.isData) {
       ApplyPileup(event_weight);
-      // if (isW_or_ZJet()) {
-      // 	SetBoson(sample.PID);
-      // 	ApplyKFactor(event_weight);
-      // }
+      if (isW_or_ZJet()) {
+      	SetBoson(sample.PID);
+      	ApplyKFactor(event_weight);
+      }
     }
 
     fillEvent(0,genWeight);
@@ -60,6 +60,10 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
 	  vector<int> tightlist = getTightEle(looselist,215);
 	  if (CRSelection(tightlist,looselist)) {
+	    if (!sample.isData) {
+	      SetSF( getSF(lepindex) );
+	      ApplySF(event_weight);
+	    }
 	    fillEvent(4,event_weight);
 
 	    h_lepMET_MT->Fill(lepMET_mt,event_weight);

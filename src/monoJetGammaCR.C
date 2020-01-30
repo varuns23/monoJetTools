@@ -66,10 +66,8 @@ float monoJetGammaCR::getSF(int phoindex) {
   float phoRecoSF_corr= th2fmap.getBin("phoRecoSF_highpt",eta,pt);
   // std::cout<<"phoRecoSF_corr =  "<< phoRecoSF_corr<<std::endl;
   float phoEffSF_corr= th2fmap.getBin("phoIDSF_tight",eta,pt);
-  // std::cout<<"phoEffSF_corr =  "<< phoEffSF_corr<<std::endl;
-  float phoTriggSF = th2fmap.getBin("phoTriggSF",fabs(eta),pt);
 
-  return phoRecoSF_corr * phoEffSF_corr * phoTriggSF;
+  return phoRecoSF_corr * phoEffSF_corr;
 }
 
 vector<int> monoJetGammaCR::getJetCand(vector<int> jetlist,int phoindex) {

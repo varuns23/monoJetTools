@@ -17,7 +17,6 @@ void monoJetAnalysis::SetScalingHistos() {
   TFile *weights = TFile::Open("RootFiles/PU_Central.root");
   TH1F* PU = (TH1F*)weights->Get("pileup");
   th1fmap["PU"] = PU;
-  return;
   if (isW_or_ZJet()) {
     //This is the root file with EWK Corrections
     TFile* f_nlo_qcd = TFile::Open("RootFiles/2017_gen_v_pt_stat1_qcd_sf.root");
