@@ -135,19 +135,9 @@ vector<int> monoJetDoubleEleCR::jet_veto(int leading, int subleading) {
 }
 
 //Veto failed if a muon is found that passes Loose Muon ID, Loose Muon Isolation, and muPtcut, and does not overlap the candidate electrons and jet within dR of 0.5
-bool monoJetDoubleEleCR::muon_veto(int leading, int subleading) {
-  vector<int> mu_cands;
-  mu_cands.clear();
-  
+bool monoJetDoubleEleCR::muon_veto() {
   vector<int> tmpcands = getLooseMu();
-  for(int imu : tmpcands) {
-    float dR_leading = deltaR(muEta->at(imu),muPhi->at(imu),eleSCEta->at(leading),eleSCPhi->at(leading));
-    float dR_subleading = deltaR(muEta->at(imu),muPhi->at(imu),eleSCEta->at(subleading),eleSCPhi->at(subleading));
-    if ( dR_leading > Iso4Cut && dR_subleading > Iso4Cut)
-      mu_cands.push_back(imu);
-  }
-  
-  return mu_cands.size() == 0;
+  return tmpcands.size() == 0;
 }
 
 bool monoJetDoubleEleCR::photon_veto(int leading,int subleading) {

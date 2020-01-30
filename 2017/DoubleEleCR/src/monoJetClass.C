@@ -69,7 +69,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 	    if (dilepton_mass > diLeptonMassCutLow && dilepton_mass < diLeptonMassCutHigh) {
 	      fillEvent(5,event_weight);
 
-	      if (muon_veto(leadLepIndx,subleadLepIndx)) {
+	      if (muon_veto()) {
 		fillEvent(6,event_weight);
 
 		if (photon_veto(leadLepIndx,subleadLepIndx)) {

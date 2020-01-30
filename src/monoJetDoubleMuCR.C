@@ -149,7 +149,7 @@ vector<int> monoJetDoubleMuCR::jet_veto(int leading, int subleading) {
   return jetindex;
 }
 
-bool monoJetDoubleMuCR::electron_veto(int leading,int subleading) {
+bool monoJetDoubleMuCR::electron_veto() {
   vector<int> tmpcands = getLooseEle();
   return tmpcands.size() == 0;
 }

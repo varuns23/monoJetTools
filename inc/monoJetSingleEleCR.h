@@ -22,7 +22,7 @@ public:
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
   virtual vector<int> getJetCand(vector<int> jetlist, int lepindex);
   virtual vector<int> jet_veto(int lepindex);
-  virtual bool muon_veto(int lepindex);
+  virtual bool muon_veto();
   virtual bool photon_veto(int lepindex);
   virtual bool tau_veto(int lepindex);
   virtual bool bjet_veto(int lepindex);

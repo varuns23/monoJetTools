@@ -58,7 +58,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 	if (looselist.size() > 0) {
 	  fillEvent(3,event_weight);
 
-	  vector<int> tightlist = getTightEle(looselist,215);
+	  vector<int> tightlist = getTightEle(looselist);
 	  if (CRSelection(tightlist,looselist)) {
 	    if (!sample.isData) {
 	      SetSF( getSF(lepindex) );
@@ -73,7 +73,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 	      if (lepMET_mt < lepMETMtCut) {
 		fillEvent(6,event_weight);
 	      
-		if (muon_veto(lepindex)) {
+		if (muon_veto()) {
 		  fillEvent(7,event_weight);
 
 		  if (photon_veto(lepindex)) {
