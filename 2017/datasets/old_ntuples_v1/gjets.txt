@@ -1,0 +1,17 @@
+>>40to100
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_102X_JECv32/GJets/GJets_HT40-100/0000/
+
+>>100to200
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_102X_JECv32/GJets/GJets_HT100-200/0000/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_102X_JECv32/GJets/GJets_HT100-200/0001/
+
+>>200to400
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_102X_JECv32/GJets/GJets_HT200-400/0000/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_102X_JECv32/GJets/GJets_HT200-400/0001/
+
+>>400to600
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_102X_JECv32/GJets/GJets_HT400-600/0000/
+
+>>600toInf
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_102X_JECv32/GJets/GJets_HT600-Inf/0000/
+

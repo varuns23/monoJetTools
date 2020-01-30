@@ -1,0 +1,5 @@
+>>DiLept
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_102X_JECv32/TTJets/TTJets_DiLept/0000/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_102X_JECv32/TTJets/TTJets_DiLept/0001/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_102X_JECv32/TTJets/TTJets_DiLept/0002/
+

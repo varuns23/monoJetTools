@@ -4,3 +4,4 @@ analyze
 *~
 post*.root
 *.pyc
+*.o
