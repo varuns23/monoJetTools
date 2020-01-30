@@ -51,52 +51,56 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (getEGammaTrigger() && inclusiveCut()) {
       fillEvent(1,event_weight);
 
-      vector<int> looselist = getLooseEle();
-      if (looselist.size() == 2) {
+      if (getMetFilter()) {
 	fillEvent(2,event_weight);
 
-	vector<int> tightlist = getTightEle(looselist);
-	if (CRSelection(tightlist,looselist)) {
-	  if (!sample.isData) {
-	    SetSF( getSF(leadLepIndx,subleadLepIndx) );
-	    ApplySF(event_weight);
-	  }
+	vector<int> looselist = getLooseEle();
+	if (looselist.size() == 2) {
 	  fillEvent(3,event_weight);
 
-	  if (dilepton_mass > diLeptonMassCutLow && dilepton_mass < diLeptonMassCutHigh) {
+	  vector<int> tightlist = getTightEle(looselist);
+	  if (CRSelection(tightlist,looselist)) {
+	    if (!sample.isData) {
+	      SetSF( getSF(leadLepIndx,subleadLepIndx) );
+	      ApplySF(event_weight);
+	    }
 	    fillEvent(4,event_weight);
 
-	    if (muon_veto(leadLepIndx,subleadLepIndx)) {
+	    if (dilepton_mass > diLeptonMassCutLow && dilepton_mass < diLeptonMassCutHigh) {
 	      fillEvent(5,event_weight);
 
-	      if (photon_veto(leadLepIndx,subleadLepIndx)) {
+	      if (muon_veto(leadLepIndx,subleadLepIndx)) {
 		fillEvent(6,event_weight);
 
-		if (tau_veto(leadLepIndx,subleadLepIndx)) {
+		if (photon_veto(leadLepIndx,subleadLepIndx)) {
 		  fillEvent(7,event_weight);
 
-		  if (bjet_veto(leadLepIndx,subleadLepIndx)) {
+		  if (tau_veto(leadLepIndx,subleadLepIndx)) {
 		    fillEvent(8,event_weight);
 
-		    vector<int> jetlist = jet_veto(leadLepIndx,subleadLepIndx);
-		    jetCand = getJetCand(jetlist,leadLepIndx,subleadLepIndx);
-		    setJetCand(jetCand);
-		    if (jetCand.size() > 0) {
+		    if (bjet_veto(leadLepIndx,subleadLepIndx)) {
 		      fillEvent(9,event_weight);
 
-		      float dpfcalo = fabs(pfMET-caloMET)/recoil;
-		      h_metcut->Fill(dpfcalo,event_weight);
-		      if (dpfcalo < metRatioCut) {
+		      vector<int> jetlist = jet_veto(leadLepIndx,subleadLepIndx);
+		      jetCand = getJetCand(jetlist,leadLepIndx,subleadLepIndx);
+		      setJetCand(jetCand);
+		      if (jetCand.size() > 0) {
 			fillEvent(10,event_weight);
 
-			float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
-			h_dphimin->Fill(mindPhiJetMET,event_weight);
-			if (mindPhiJetMET > dPhiJetMETCut) {
+			float dpfcalo = fabs(pfMET-caloMET)/recoil;
+			h_metcut->Fill(dpfcalo,event_weight);
+			if (dpfcalo < metRatioCut) {
 			  fillEvent(11,event_weight);
 
-			  if (recoil > recoilCut) {
+			  float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+			  h_dphimin->Fill(mindPhiJetMET,event_weight);
+			  if (mindPhiJetMET > dPhiJetMETCut) {
 			    fillEvent(12,event_weight);
+
+			    if (recoil > recoilCut) {
+			      fillEvent(13,event_weight);
 			    
+			    }
 			  }
 			}
 		      }
