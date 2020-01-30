@@ -39,6 +39,7 @@
 #include "Dataset.h"
 #include "ScaleUncCollection.h"
 #include "ShapeUncCollection.h"
+#include "monoJetCutConfig.h"
 
 using namespace std;
 
@@ -52,7 +53,7 @@ public:
   static const int maxHisto = 100;
   TTree *tree;
 
-  static const bool debug = true;
+  static const bool debug = false;
 
   Dataset sample;
   
@@ -813,15 +814,18 @@ public:
   virtual ~monoJetAnalysis();
   virtual Int_t    GetEntry(Long64_t entry);
   virtual Long64_t LoadTree(Long64_t entry);
-  virtual void Init(TTree* tree);
 
+  /* Initializing Methods */
+  virtual void Init(TTree* tree);
   virtual void SetScalingHistos();
   virtual void initTree(TTree* tree);
   virtual void initVars();
+
+  /* Histograms Methods */
   virtual void BookHistos(int nhist,string histname);
   virtual void fillHistos(int nhisto,float event_weight);
 
-  virtual float dPhiJetMETmin(vector<int>,float);
+  /* Event Weight Methods */
   virtual void SetBoson(int PID);
   virtual float getKFactor(float bosonPt);
   virtual void SetKFactors(float bosonPt);
@@ -831,21 +835,46 @@ public:
   virtual void ApplySF(float &event_weight);
 
   virtual inline bool isW_or_ZJet() { return sample.type == WJets || sample.type == ZJets; };
+
+  /* Event Selction Methods */
   virtual bool inclusiveCut();
   virtual bool getMetFilter();
   virtual bool getMetTrigger();
-  // virtual bool getEGammaTrigger();
-  virtual vector<int> getJetCand();
-  virtual vector<int> getLooseEle();
-  virtual vector<int> getTightEle();
-  virtual vector<int> getLoosePho();
-  virtual vector<int> getTightPho();
-  virtual vector<int> getLooseMu();
-  virtual vector<int> getTightMu();
+  virtual bool getEGammaTrigger();
+  virtual float dPhiJetMETmin(vector<int> jetlist,float metPhi);
+  bool getJetHEMVeto(float jetPtCut);
+  bool getEleHEMVeto(float elePtCut);
   
-  bool getJetHEMVeto(double);
-  bool getEleHEMVeto(double);
+  /* Object Selction Methods */
+  virtual vector<int> getJetCand
+  (float jetPtCut=jetCandPtCut,float jetEtaCut=jetCandEtaCut,float jetNHFCut=jetCandNHFCut,float jetCHFCut=jetCandCHFCut);
+  virtual vector<int> getJetCand
+  (vector<int> jetlist,float jetPtCut=jetCandPtCut,float jetEtaCut=jetCandEtaCut,float jetNHFCut=jetCandNHFCut,float jetCHFCut=jetCandCHFCut);
+  virtual vector<int> getLooseJet(float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
+  virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   
+  virtual vector<int> getLooseBJet(float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
+  virtual vector<int> bjet_veto_looseID(int jetindex,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
+  
+  virtual vector<int> getLooseEle(float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
+  virtual vector<int> electron_veto_looseID(int jetindex,float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
+  virtual vector<int> getTightEle(float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
+  virtual vector<int> getTightEle(vector<int> looselist,float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
+  
+  virtual vector<int> getLoosePho(float phoPtCut=phoLoosePtCut,float phoEtaCut=phoLooseEtaCut);
+  virtual vector<int> photon_veto_looseID(int jetindex,float phoPtCut=phoLoosePtCut,float phoEtaCut=phoLooseEtaCut);
+  virtual vector<int> getTightPho(float phoPtCut=phoTightPtCut,float phoEtaCut=phoTightEtaCut);
+  virtual vector<int> getTightPho(vector<int> looselist,float phoPtCut=phoTightPtCut,float phoEtaCut=phoTightEtaCut);
+  
+  virtual vector<int> getLooseMu(float muPtCut=muLoosePtCut,float muEtaCut=muLooseEtaCut);
+  virtual vector<int> muon_veto_looseID(int jetindex,float muPtCut=muLoosePtCut,float muEtaCut=muLooseEtaCut);
+  virtual vector<int> getTightMu(float muPtCut=muTightPtCut,float muEtaCut=muTightEtaCut);
+  virtual vector<int> getTightMu(vector<int> looselist,float muPtCut=muTightPtCut,float muEtaCut=muTightEtaCut);
+  
+  virtual vector<int> getLooseTau(float tauPtCut=tauLoosePtCut,float tauEtaCut=tauLooseEtaCut);
+  virtual vector<int> tau_veto_looseID(int jetindex,float tauPtCut=tauLoosePtCut,float tauEtaCut=tauLooseEtaCut);
+  
+  /* Systematic Uncertainty Methods */
   virtual void QCDVariations(float event_weight);
 };
 

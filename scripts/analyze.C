@@ -87,6 +87,7 @@ int setup_test(int argc, const char* argv[]) {
     datadir = dataset.getDirlist("met",monoJetClass::SRDATA)[0];
     if ( dataset.getSubset("signal").size() != 0 )
       signaldir = dataset.getDirlist("signal","Mx1_Mv1000")[0];
+    
   } else if ( monoJetClass::REGION == "SingleEleCR" || monoJetClass::REGION == "SingleMuCR" ) {
     mcdir = dataset.getDirlist("wjets","400to600")[0];
     if ( monoJetClass::REGION == "SingleEleCR" ) {
@@ -96,6 +97,7 @@ int setup_test(int argc, const char* argv[]) {
 	datadir = dataset.getSubset("egamma").begin()->second[0];
     }
     if ( monoJetClass::REGION == "SingleMuCR"  ) datadir = dataset.getSubset("met").begin()->second[0];
+    
   } else if ( monoJetClass::REGION == "DoubleEleCR" || monoJetClass::REGION == "DoubleMuCR" ) {
     mcdir = dataset.getDirlist("dyjets","400to600")[0];
     if ( monoJetClass::REGION == "DoubleEleCR" ) {
@@ -105,6 +107,12 @@ int setup_test(int argc, const char* argv[]) {
 	datadir = dataset.getSubset("egamma").begin()->second[0];
     }
     if ( monoJetClass::REGION == "DoubleMuCR"  ) datadir = dataset.getSubset("met").begin()->second[0];
+  } else if (monoJetClass::REGION == "GammaCR") {
+    mcdir = dataset.getDirlist("gjets","400to600")[0];
+    if (dataset.contains("singlepho"))
+      datadir = dataset.getSubset("singlepho").begin()->second[0];
+    else
+      datadir = dataset.getSubset("egamma").begin()->second[0];
   }
   int mc = run_mc_test(mcdir,argv);
   int data = run_data_test(datadir,argv);

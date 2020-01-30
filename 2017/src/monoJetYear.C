@@ -1,7 +1,6 @@
 #ifndef monoJetYear_C
 #define monoJetYear_C
 #include "monoJetYear.h"
-#include "monoJetCutConfig.h"
 #include "Utilities.h"
 
 using namespace std;
@@ -22,6 +21,7 @@ void monoJetYear::fillHistos(int nhist,float event_weight) {
 
 void monoJetYear::SetScalingHistos() {
   monoJetAnalysis::SetScalingHistos();
+  return;
   // Electron Scale Factors
   TFile *f_eleReconstrucSF_highpt=new TFile("RootFiles/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root");
   TFile *f_eleIDeffSF_loose=new TFile("RootFiles/2017_ElectronLoose.root");

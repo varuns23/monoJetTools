@@ -3,7 +3,6 @@
 
 #include "monoJetSingleMuCR.h"
 #include "VariableBins.h"
-#include "monoJetCutConfig.h"
 #include "Utilities.h"
 
 using namespace std;

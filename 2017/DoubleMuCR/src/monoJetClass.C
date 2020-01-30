@@ -12,7 +12,6 @@
 //
 #define monoJetClass_cxx
 #include "monoJetClass.h"
-#include "monoJetCutConfig.h"
 #include "Utilities.h"
 
 using namespace std;

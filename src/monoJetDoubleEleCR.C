@@ -3,7 +3,6 @@
 
 #include "monoJetDoubleEleCR.h"
 #include "VariableBins.h"
-#include "monoJetCutConfig.h"
 #include "Utilities.h"
 
 using namespace std;
@@ -160,8 +159,8 @@ bool monoJetDoubleEleCR::tau_veto(int jet_index,int leading,int subleading,float
 
   vector<int> tmpcands = tau_looseID(jet_index,tauPtCut);
   for (int itau : tmpcands ) {
-    float dR_leading = deltaR(tauEta->at(itau),tauPhi->at(itau),eleSCEta->at(leading),eleSCPhi->at(leading));
-    float dR_subleading = deltaR(tauEta->at(itau),tauPhi->at(itau),eleSCEta->at(subleading),eleSCPhi->at(subleading));
+    float dR_leading = deltaR(tau_Eta->at(itau),tau_Phi->at(itau),eleSCEta->at(leading),eleSCPhi->at(leading));
+    float dR_subleading = deltaR(tau_Eta->at(itau),tau_Phi->at(itau),eleSCEta->at(subleading),eleSCPhi->at(subleading));
     if ( dR_leading > Iso4Cut && dR_subleading > Iso4Cut )
       tau_cands.push_back(itau);
   }

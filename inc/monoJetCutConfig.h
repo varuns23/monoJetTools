@@ -1,3 +1,6 @@
+#ifndef monoJetCutConfig_h
+#define monoJetCutConfig_h
+
 /* Jet Selection Floating Cuts */
 const float jetCandPtCut = 100;
 const float jetCandEtaCut = 2.4;
@@ -44,8 +47,11 @@ const float muTightEtaCut = 2.4;
 const float muLoosePtCut = 10;
 const float muLooseEtaCut = 2.4;
 
+const float phoTightPtCut = 25;
+const float phoTightEtaCut = 2.5;
+
 const float phoLoosePtCut = 15;
-const float phoLooseEtaCut = 2.4;
+const float phoLooseEtaCut = 2.5;
 
 const float tauLoosePtCut = 18;
 const float tauLooseEtaCut = 2.3;
@@ -64,3 +70,5 @@ const float lepMETMtCut = 160;
 /* Double Lepton CR Floating Cuts */
 const float diLeptonMassCutLow = 60;
 const float diLeptonMassCutHigh = 120;
+
+#endif

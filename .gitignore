@@ -5,3 +5,4 @@ analyze
 post*.root
 *.pyc
 *.o
+test*
