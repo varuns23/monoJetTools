@@ -64,7 +64,7 @@ const float dPhiJetMETCut = 0.5;
 /* Single Electron CR Floating Cuts */
 const float pfMET50Cut = 50;
 
-/* Single Muon CR Floating Cuts */
+/* Single Lepton CR Floating Cuts */
 const float lepMETMtCut = 160;
 
 /* Double Lepton CR Floating Cuts */

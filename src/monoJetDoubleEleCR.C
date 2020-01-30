@@ -10,7 +10,7 @@ using namespace std;
 const string monoJetDoubleEleCR::REGION = "DoubleEleCR";
 
 void monoJetDoubleEleCR::initVars() {
-  lepindex_leading = lepindex_subleading = -1;
+  leadLepIndx = subleadLepIndx = -1;
   dilepton_mass = dilepton_pt = -1;
   leadingLepton_pt = leadingLepton_eta = leadingLepton_phi = -99;
   subleadingLepton_pt = subleadingLepton_eta = subleadingLepton_phi = -99;
@@ -46,7 +46,7 @@ void monoJetDoubleEleCR::BookHistos(int i,string histname) {
 }
 
 void monoJetDoubleEleCR::fillHistos(int nhist,float event_weight) {
-  if(lepindex_leading >= 0 && lepindex_subleading >= 0){ 
+  if(leadLepIndx >= 0 && subleadLepIndx >= 0){ 
     h_leadingLeptonPt[nhist]    ->Fill(leadingLepton_pt,event_weight);
     h_leadingLeptonEta[nhist]   ->Fill(leadingLepton_eta,event_weight);
     h_leadingLeptonPhi[nhist]   ->Fill(leadingLepton_phi,event_weight);
@@ -67,8 +67,8 @@ bool monoJetDoubleEleCR::CRSelection(vector<int> tightlist,vector<int> looselist
       if (eleCharge->at(leading)*eleCharge->at(subleading) == -1) {
 	lep1.SetPtEtaPhiE(elePt->at(leading),eleEta->at(leading),elePhi->at(leading),eleE->at(leading));
 	lep2.SetPtEtaPhiE(elePt->at(subleading),eleEta->at(subleading),elePhi->at(subleading),eleE->at(subleading));
-	lepindex_leading = leading;
-	lepindex_subleading = subleading;
+	leadLepIndx = leading;
+	subleadLepIndx = subleading;
 	TLorentzVector ll = lep1 + lep2;
 	dilepton_mass = ll.M();
 	dilepton_pt = ll.Pt();
@@ -108,10 +108,23 @@ float monoJetDoubleEleCR::getSF(int leading, int subleading) {
   return leadingEleRecoSF_corr*leadingEleEffSF_corr*leadingEleTriggSF*subleadingEleRecoSF_corr*subleadingEleEffSF_corr*subleadingEleTriggSF;
 }
 
+vector<int> monoJetDoubleEleCR::getJetCand(vector<int> jetlist,int leading,int subleading) {
+  vector<int> jet_cand; jet_cand.clear();
+
+  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);
+  for (int ijet : tmpcands) {
+    float dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(leading),eleSCEta->at(subleading));
+    float dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(subleading),eleSCEta->at(subleading));
+    if (dR_leading > Iso4Cut && dR_subleading > Iso4Cut)
+      jet_cand.push_back(ijet);
+  }
+  return jet_cand;
+}
+
 vector<int> monoJetDoubleEleCR::jet_veto(int leading, int subleading) {
   vector<int> jetindex; jetindex.clear();
 			  
-  vector<int> tmpcands = jet_looseID();
+  vector<int> tmpcands = getLooseJet();
   for (int ijet : tmpcands) {
     float dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(leading),eleSCPhi->at(leading));
     float dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(subleading),eleSCPhi->at(subleading));
@@ -121,16 +134,12 @@ vector<int> monoJetDoubleEleCR::jet_veto(int leading, int subleading) {
   return jetindex;
 }
 
-bool monoJetDoubleEleCR::electron_veto(int jet_index,int leading,int subleading,float elePtCut) {
-  return monoJetAnalysis::electron_veto(jet_index,elePtCut);
-}
-
 //Veto failed if a muon is found that passes Loose Muon ID, Loose Muon Isolation, and muPtcut, and does not overlap the candidate electrons and jet within dR of 0.5
-bool monoJetDoubleEleCR::muon_veto(int jet_index, int leading, int subleading, float muPtCut) {
+bool monoJetDoubleEleCR::muon_veto(int leading, int subleading) {
   vector<int> mu_cands;
   mu_cands.clear();
   
-  vector<int> tmpcands = muon_looseID(jet_index,muPtCut);
+  vector<int> tmpcands = getLooseMu();
   for(int imu : tmpcands) {
     float dR_leading = deltaR(muEta->at(imu),muPhi->at(imu),eleSCEta->at(leading),eleSCPhi->at(leading));
     float dR_subleading = deltaR(muEta->at(imu),muPhi->at(imu),eleSCEta->at(subleading),eleSCPhi->at(subleading));
@@ -141,10 +150,10 @@ bool monoJetDoubleEleCR::muon_veto(int jet_index, int leading, int subleading, f
   return mu_cands.size() == 0;
 }
 
-bool monoJetDoubleEleCR::photon_veto(int jet_index,int leading,int subleading,float phoPtCut) {
+bool monoJetDoubleEleCR::photon_veto(int leading,int subleading) {
   vector<int> pho_cands; pho_cands.clear();
 
-  vector<int> tmpcands = photon_looseID(jet_index,phoPtCut);
+  vector<int> tmpcands = getLoosePho();
   for (int ipho : tmpcands ) {
     float dR_leading = deltaR(phoSCEta->at(ipho),phoSCPhi->at(ipho),eleSCEta->at(leading),eleSCPhi->at(leading));
     float dR_subleading = deltaR(phoSCEta->at(ipho),phoSCPhi->at(ipho),eleSCEta->at(subleading),eleSCPhi->at(subleading));
@@ -154,10 +163,10 @@ bool monoJetDoubleEleCR::photon_veto(int jet_index,int leading,int subleading,fl
   return pho_cands.size() == 0;
 }
 
-bool monoJetDoubleEleCR::tau_veto(int jet_index,int leading,int subleading,float tauPtCut) {
+bool monoJetDoubleEleCR::tau_veto(int leading,int subleading) {
   vector<int> tau_cands; tau_cands.clear();
 
-  vector<int> tmpcands = tau_looseID(jet_index,tauPtCut);
+  vector<int> tmpcands = getLooseTau();
   for (int itau : tmpcands ) {
     float dR_leading = deltaR(tau_Eta->at(itau),tau_Phi->at(itau),eleSCEta->at(leading),eleSCPhi->at(leading));
     float dR_subleading = deltaR(tau_Eta->at(itau),tau_Phi->at(itau),eleSCEta->at(subleading),eleSCPhi->at(subleading));
@@ -170,7 +179,7 @@ bool monoJetDoubleEleCR::tau_veto(int jet_index,int leading,int subleading,float
 bool monoJetDoubleEleCR::bjet_veto(int leading,int subleading) {
   vector<int> bjet_cands; bjet_cands.clear();
 
-  vector<int> tmpcands = bjet_looseID();
+  vector<int> tmpcands = getLooseBJet();
   for (int ijet : tmpcands) {
     float dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(leading),eleSCPhi->at(leading));
     float dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(subleading),eleSCPhi->at(subleading));

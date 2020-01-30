@@ -19,14 +19,14 @@ public:
   virtual void initVars();
   virtual void initTree(TTree* tree);
   inline bool isW_or_ZJet() { return monoJetAnalysis::isW_or_ZJet() || sample.type == DYJets || sample.type == DYJets_NLO; }
-  bool getMinDphiJR(vector<int> jetlist, int lead_lepIndex, int sublead_lepIndex, double lepMET_phi);
-  virtual vector<int> getJetCand(vector<int> jetlist,int leading,int subleading);
-  vector<int> getTightMu(vector<int> looselist);
-  vector<int> pho_veto_looseID(int leading,int subleading);
-  vector<int> tau_veto(int leading,int subleading);
-  vector<int> bjet_veto(vector<int> jetlist,int leading,int subleading);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
   float getSF(int leading,int subleading);
+  virtual vector<int> getJetCand(vector<int> jetlist,int leading,int subleading);
+  virtual vector<int> jet_veto(int leading,int subleading);
+  virtual bool muon_veto(int leading,int subleading);
+  virtual bool photon_veto(int leading,int subleading);
+  virtual bool tau_veto(int leading,int subleading);
+  virtual bool bjet_veto(int leading,int subleading);
 };
 
 #endif
