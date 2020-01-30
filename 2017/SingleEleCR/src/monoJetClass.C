@@ -66,41 +66,45 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 	    }
 	    fillEvent(4,event_weight);
 
-	    h_lepMET_MT->Fill(lepMET_mt,event_weight);
-	    if (lepMET_mt < lepMETMtCut) {
+	    if (pfMET > 50) {
 	      fillEvent(5,event_weight);
-	      
-	      if (muon_veto(lepindex)) {
-		fillEvent(6,event_weight);
 
-		if (photon_veto(lepindex)) {
+	      h_lepMET_MT->Fill(lepMET_mt,event_weight);
+	      if (lepMET_mt < lepMETMtCut) {
+		fillEvent(6,event_weight);
+	      
+		if (muon_veto(lepindex)) {
 		  fillEvent(7,event_weight);
 
-		  if (tau_veto(lepindex)) {
+		  if (photon_veto(lepindex)) {
 		    fillEvent(8,event_weight);
 
-		    if (bjet_veto(lepindex)) {
+		    if (tau_veto(lepindex)) {
 		      fillEvent(9,event_weight);
 
-		      vector<int> jetlist = jet_veto(lepindex);
-		      jetCand = getJetCand(jetlist,lepindex);
-		      setJetCand(jetCand);
-		      if (jetCand.size() > 0) {
+		      if (bjet_veto(lepindex)) {
 			fillEvent(10,event_weight);
 
-			float dpfcalo = fabs(pfMET-caloMET)/recoil;
-			h_metcut->Fill(dpfcalo,event_weight);
-			if (dpfcalo < metRatioCut) {
+			vector<int> jetlist = jet_veto(lepindex);
+			jetCand = getJetCand(jetlist,lepindex);
+			setJetCand(jetCand);
+			if (jetCand.size() > 0) {
 			  fillEvent(11,event_weight);
 
-			  float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
-			  h_dphimin->Fill(mindPhiJetMET,event_weight);
-			  if (mindPhiJetMET > dPhiJetMETCut) {
+			  float dpfcalo = fabs(pfMET-caloMET)/recoil;
+			  h_metcut->Fill(dpfcalo,event_weight);
+			  if (dpfcalo < metRatioCut) {
 			    fillEvent(12,event_weight);
 
-			    if (recoil > recoilCut) {
+			    float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+			    h_dphimin->Fill(mindPhiJetMET,event_weight);
+			    if (mindPhiJetMET > dPhiJetMETCut) {
 			      fillEvent(13,event_weight);
+
+			      if (recoil > recoilCut) {
+				fillEvent(14,event_weight);
 			    
+			      }
 			    }
 			  }
 			}
@@ -127,7 +131,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
 
-  cutflow = new Cutflow({"Total Events","Triggers","MET Filters","One Loose Electron","One Tight Electron","Electron MET M_{T}",
+  cutflow = new Cutflow({"Total Events","Triggers","MET Filters","One Loose Electron","One Tight Electron","Electron MET M_{T}","pfMET50",
 	"Muon Veto","Photon Veto","Tau Veto","BJet Veto","Jet Selection","dPFCaloMET","minDPhiJetMET","Recoil250"});
 
   BookHistos(-1,"");
