@@ -21,8 +21,7 @@ void monoJetYear::fillHistos(int nhist,float event_weight) {
 
 void monoJetYear::SetScalingHistos() {
   monoJetAnalysis::SetScalingHistos();
-
-  if (REGION == "SingleEleCR" || REGION == "DoubleEleCR") {
+  
   // Electron Scale Factors
   TFile *f_eleReconstrucSF_highpt=new TFile("RootFiles/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root");
   TFile *f_eleIDeffSF_loose=new TFile("RootFiles/2017_ElectronLoose.root");
@@ -32,7 +31,7 @@ void monoJetYear::SetScalingHistos() {
   th2fmap["eleIDSF_loose"]=(TH2F*) f_eleIDeffSF_loose->Get("EGamma_SF2D");
   th2fmap["eleIDSF_tight"]=(TH2F*) f_eleIDeffSF_tight->Get("EGamma_SF2D");
   th2fmap["eleTriggSF"] = (TH2F*) f_eleTriggSF->Get("EleTriggSF_abseta_pt");
-  } else if (REGION == "SingleMuCR" || REGION == "DoubleMuCR") {
+  
   // Muon Scale Factors
   TFile *f_muSF_ISO = new TFile("RootFiles/RunBCDEF_SF_ISO.root");
   TFile *f_muSF_ID = new TFile("RootFiles/RunBCDEF_SF_ID.root");
@@ -40,12 +39,11 @@ void monoJetYear::SetScalingHistos() {
   th2fmap["looseMuSF_ISO_abseta"] = (TH2F*)f_muSF_ISO->Get("NUM_LooseRelIso_DEN_LooseID_pt_abseta");
   th2fmap["tightMuSF_ID_abseta"] = (TH2F*)f_muSF_ID->Get("NUM_TightID_DEN_genTracks_pt_abseta");
   th2fmap["looseMuSF_ID_abseta"] = (TH2F*)f_muSF_ID->Get("NUM_LooseID_DEN_genTracks_pt_abseta");
-  } else if (REGION == "GammaCR") {
-    // Photon Scale Factors
-    TFile *f_phoIDeffSF_loose=new TFile("RootFiles/2017_PhotonLoose.root");
-    TFile *f_phoIDeffSF_tight=new TFile("RootFiles/2017_PhotonTight.root");
-    th2fmap["phoIDSF_loose"]=(TH2F*) f_phoIDeffSF_loose->Get("EGamma_SF2D");
-    th2fmap["phoIDSF_tight"]=(TH2F*) f_phoIDeffSF_tight->Get("EGamma_SF2D");
-  }
+  
+  // Photon Scale Factors
+  TFile *f_phoIDeffSF_loose=new TFile("RootFiles/2017_PhotonsLoose.root");
+  TFile *f_phoIDeffSF_tight=new TFile("RootFiles/2017_PhotonsTight.root");
+  th2fmap["phoIDSF_loose"]=(TH2F*) f_phoIDeffSF_loose->Get("EGamma_SF2D");
+  th2fmap["phoIDSF_tight"]=(TH2F*) f_phoIDeffSF_tight->Get("EGamma_SF2D");
 }
 #endif
