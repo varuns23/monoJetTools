@@ -60,23 +60,9 @@ void monoJetDoubleMuCR::fillHistos(int nhist,float event_weight) {
   }
 }
 
-vector<int> monoJetDoubleMuCR::getTightMu(vector<int> looseMu){
-  vector<int> mu_cands;
-  mu_cands.clear();
-
-  for(int i = 0; i < looseMu.size(); i++){
-    int muCand = looseMu.at(i);
-    bool kinematics = (muPt->at(muCand) > 20.0 && (fabs(muEta->at(muCand)) < 2.4)); // muon pt & eta
-    bool IdIso = (muIDbit->at(muCand)>>3&1 == 1 && muIDbit->at(muCand)>>9&1 == 1);   // muon tight ID and Iso
-
-    if(kinematics && IdIso)
-      mu_cands.push_back(muCand);
-  }  
-  return mu_cands;
-}    
-
 bool monoJetDoubleMuCR::CRSelection(vector<int> tightlist,vector<int> looselist) {
   bool muPairSet = false;
+  if (tightlist.size() == 0) return false;
   for(int j=0; j<looselist.size(); ++j){
     //Event must have exactly two muons with opposite charge
     if(muCharge->at(tightlist[0]) * muCharge->at(looselist[j]) == -1){
@@ -85,6 +71,24 @@ bool monoJetDoubleMuCR::CRSelection(vector<int> tightlist,vector<int> looselist)
       lep2.SetPtEtaPhiE(muPt->at(looselist[j]), muEta->at(looselist[j]), muPhi->at(looselist[j]), muE->at(looselist[j]));
       leadLepIndx    = tightlist[0];
       subleadLepIndx = looselist[j];
+      
+      TLorentzVector ll = lep1 + lep2;
+      dilepton_mass = ll.M();
+      dilepton_pt = ll.Pt();
+      
+      leadingLepton_pt = lep1.Pt();
+      leadingLepton_eta = lep1.Eta();
+      leadingLepton_phi = lep1.Phi();
+      
+      subleadingLepton_pt = lep2.Pt();
+      subleadingLepton_eta = lep2.Eta();
+      subleadingLepton_phi = lep2.Phi();
+      
+      TLorentzVector met_4vec;
+      met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
+      TLorentzVector leptoMET_4vec = ll+met_4vec;
+      recoil = fabs(leptoMET_4vec.Pt());
+      recoilPhi = leptoMET_4vec.Phi();
       muPairSet = true;
     }
   }
@@ -119,104 +123,78 @@ float monoJetDoubleMuCR::getSF(int leading,int subleading) {
 vector<int> monoJetDoubleMuCR::getJetCand(vector<int> jetlist, int lead_lepIndex, int sublead_lepIndex){
   vector<int> jet_cands;
   jet_cands.clear();
-
-  for(int j; j<jetlist.size(); j++){
-    int i = jetlist.at(j);
-
-    bool kinematics = (jetPt->at(i) > 100.0 && fabs(jetEta->at(i)) < 2.4);
-    bool Id = (jetNHF->at(i) < 0.8 && jetCHF->at(i) > 0.1); 
-
+  
+  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);
+  for(int i : tmpcands){
     float dR_lead_mu = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lead_lepIndex),  muPhi->at(lead_lepIndex));
     float dR_sublead_mu = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(sublead_lepIndex), muPhi->at(sublead_lepIndex));
 
-    if(kinematics && Id && dR_lead_mu > 0.4 && dR_sublead_mu > 0.4)
+    if(dR_lead_mu > 0.4 && dR_sublead_mu > 0.4)
       jet_cands.push_back(i);
   }
 
   return jet_cands;
 }
 
-vector<int> monoJetDoubleMuCR::pho_veto_looseID(int leadLep_index, int subleadLep_index){
-  vector<int> pho_cands;
-  pho_cands.clear();
-
-  for(int i = 0; i < nPho; i++){
-    // passes pt cut
-    bool kinematics = ((phoEt->at(i) > 15.0) && (fabs(phoSCEta->at(i)) < 2.5));
-    bool IdIso = (phoIDbit->at(i)>>0&1==1);
-
-    double dR_leadLep    = deltaR(phoSCEta->at(i),phoSCPhi->at(i), muEta->at(leadLep_index), muPhi->at(leadLep_index));  
-    double dR_subleadLep = deltaR(phoSCEta->at(i),phoSCPhi->at(i), muEta->at(subleadLep_index), muPhi->at(subleadLep_index)); 
-    if( kinematics && IdIso && dR_leadLep > 0.5 && dR_subleadLep > 0.5)
-      pho_cands.push_back(i);
+vector<int> monoJetDoubleMuCR::jet_veto(int leading, int subleading) {
+  vector<int> jetindex; jetindex.clear();
+			  
+  vector<int> tmpcands = getLooseJet();
+  for (int ijet : tmpcands) {
+    float dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),muEta->at(leading),muPhi->at(leading));
+    float dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),muEta->at(subleading),muPhi->at(subleading));
+    if ( dR_leading > Iso4Cut && dR_subleading > Iso4Cut )
+      jetindex.push_back(ijet);
   }
-  return pho_cands;
+  return jetindex;
 }
 
-vector<int> monoJetDoubleMuCR::tau_veto(int leadLep_index, int subleadLep_index){
+bool monoJetDoubleMuCR::electron_veto(int leading,int subleading) {
+  vector<int> tmpcands = getLooseEle();
+  return tmpcands.size() == 0;
+}
+
+bool monoJetDoubleMuCR::photon_veto(int leadLep_index, int subleadLep_index){
+  vector<int> pho_cands;
+  pho_cands.clear();
+  
+  vector<int> tmpcands = getLoosePho();
+  for(int i : tmpcands){
+    double dR_leadLep    = deltaR(phoSCEta->at(i),phoSCPhi->at(i), muEta->at(leadLep_index), muPhi->at(leadLep_index));  
+    double dR_subleadLep = deltaR(phoSCEta->at(i),phoSCPhi->at(i), muEta->at(subleadLep_index), muPhi->at(subleadLep_index)); 
+    if( dR_leadLep > 0.5 && dR_subleadLep > 0.5)
+      pho_cands.push_back(i);
+  }
+  return pho_cands.size() == 0;
+}
+
+bool monoJetDoubleMuCR::tau_veto(int leadLep_index, int subleadLep_index){
   vector<int> tau_cands;
   tau_cands.clear();
 
-  for(int i = 0; i < nTau; i++){
-    bool kinematics = ((tau_Pt->at(i) > 18.0) && (fabs(tau_Eta->at(i)) < 2.3));
-    bool IdIso = (((tau_IDbits->at(i)>>0&1) == 1) && ((tau_IDbits->at(i)>>13&1) == 1));
-
+  vector<int> tmpcands = getLooseTau();
+  for(int i : tmpcands){
     double dR_leadLep    = deltaR(tau_Eta->at(i), tau_Phi->at(i), muEta->at(leadLep_index), muPhi->at(leadLep_index));  
     double dR_subleadLep = deltaR(tau_Eta->at(i), tau_Phi->at(i), muEta->at(subleadLep_index), muPhi->at(subleadLep_index)); 
-    if( kinematics && IdIso && dR_leadLep > 0.4 && dR_subleadLep > 0.4)
+    if( dR_leadLep > 0.4 && dR_subleadLep > 0.4)
       tau_cands.push_back(i);
   }
-  return tau_cands;
+  return tau_cands.size() == 0;
 }
 
-vector<int> monoJetDoubleMuCR::bjet_veto(vector<int> jetlist, int leadLep_index, int subleadLep_index){
+bool monoJetDoubleMuCR::bjet_veto(int leadLep_index, int subleadLep_index){
   vector<int> bjet_cands;
   bjet_cands.clear();
 
-  for(int j = 0; j < jetlist.size(); j++){
-    int i = jetlist.at(j);
-    bool kinematic = (jetPt->at(i) > 20.0 && fabs(jetEta->at(i)) < 2.4);
-    bool btagged = ((jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i)) > 0.4941);
-
+  vector<int> tmpcands = getLooseBJet();
+  for(int i : tmpcands){
     double dR_leadLep    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(leadLep_index), muPhi->at(leadLep_index));  
     double dR_subleadLep = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(subleadLep_index), muPhi->at(subleadLep_index)); 
 
-    if(kinematic && btagged &&  dR_leadLep > 0.4 && dR_subleadLep > 0.4)
+    if(dR_leadLep > 0.4 && dR_subleadLep > 0.4)
       bjet_cands.push_back(i);
   }
-  return bjet_cands;
-}
-
-
-bool monoJetDoubleMuCR::getMinDphiJR(vector<int> jetlist, int lead_lepIndex, int sublead_lepIndex, double lepMET_phi){
-  bool decision = false;
-
-  vector<int> tmpJetlist;
-  tmpJetlist.clear();
-
-  for(int j=0; j<jetlist.size(); j++){ 
-
-    int i = jetlist.at(j);
-
-    bool kinematic = (jetPt->at(i) > 30. && fabs(jetEta->at(i)) < 2.4);
-
-    double dR_leadLep    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lead_lepIndex), muPhi->at(lead_lepIndex));  
-    double dR_subLeadLep = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(sublead_lepIndex), muPhi->at(sublead_lepIndex)); 
-
-    if(kinematic && dR_leadLep > 0.4 && dR_subLeadLep > 0.4)
-      tmpJetlist.push_back(i);
-  }
-
-  int count=0;
-  for(int k=0; k < tmpJetlist.size(); k++){
-    if(deltaPhi(jetPhi->at(tmpJetlist.at(k)), lepMET_phi) > 0.5) 
-      count++;
-  }
-
-  if(count >= 4 || count == tmpJetlist.size()) 
-    decision = true;
-
-  return decision;
+  return bjet_cands.size() == 0;
 }
 
 #endif

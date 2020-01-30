@@ -24,7 +24,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
   cout<<"nentries:"<<nentries<<endl;
   Long64_t nentriesToCheck = nentries;
   
-  // if (!sample.isData) SetScalingHistos();
+  if (!sample.isData) SetScalingHistos();
 
   if (maxEvents != -1LL && nentries > maxEvents)
     nentriesToCheck = maxEvents;
@@ -38,93 +38,80 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
     initVars();
 
-    // float event_weight = 1.;
-    // if (!sample.isData) {
-    //   ApplyPileup(event_weight);
-    //   if (isW_or_ZJet()) {
-    // 	SetBoson(sample.PID);
-    // 	ApplyKFactor(event_weight);
-    //   }
-    // }
+    float event_weight = 1.;
+    if (!sample.isData) {
+      ApplyPileup(event_weight);
+      if (isW_or_ZJet()) {
+    	SetBoson(sample.PID);
+    	ApplyKFactor(event_weight);
+      }
+    }
+    
+    fillEvent(0,genWeight);
+    if (getMetTrigger() && inclusiveCut()) {
+      fillEvent(1,event_weight);
 
-    // float weightNorm = event_weight;
-    vector<int> jetlist = monoJetAnalysis::getJetCand();
-    cutflow->Fill(0);
-    if(getMetTrigger()){
-      cutflow->Fill(1);
+      if (getMetFilter()) {
+	fillEvent(2,event_weight);
+	vector<int> looselist = getLooseMu();
+	if (looselist.size() == 2) {
+	  fillEvent(3,event_weight);
 
-      vector<int> mulistLoose = getLooseMu();
-      if(mulistLoose.size() == 2){
-	cutflow->Fill(2);
-	vector<int> mulistTight = getTightMu(mulistLoose);
+	  vector<int> tightlist = getTightMu(looselist);
+	  if (CRSelection(tightlist,looselist)) {
+	    if (!sample.isData) {
+	      SetSF( getSF(leadLepIndx,subleadLepIndx) );
+	      ApplySF(event_weight);
+	    }
+	    fillEvent(4,event_weight);
 
-	if(mulistTight.size() > 0){
-	  cutflow->Fill(3);
+	    if (dilepton_mass > diLeptonMassCutLow && dilepton_mass < diLeptonMassCutHigh) {
+	      fillEvent(5,event_weight);
 
-	  if(CRSelection(mulistTight,mulistLoose)){
-	    cutflow->Fill(4);
+	      if (electron_veto(leadLepIndx,subleadLepIndx)) {
+		fillEvent(6,event_weight);
 
-	    TLorentzVector ll = lep1 + lep2;
-	    dilepton_mass = ll.M();
-	    dilepton_pt = ll.Pt();
+		if (photon_veto(leadLepIndx,subleadLepIndx)) {
+		  fillEvent(7,event_weight);
 
-	    if(dilepton_mass > 60. && dilepton_mass < 120.){
-	      cutflow->Fill(5);
+		  if (tau_veto(leadLepIndx,subleadLepIndx)) {
+		    fillEvent(8,event_weight);
 
-	      if(getMetFilter()){
-		cutflow->Fill(6);
+		    if (bjet_veto(leadLepIndx,subleadLepIndx)) {
+		      fillEvent(9,event_weight);
 
-		vector<int> elelist = getLooseEle();
-		if(elelist.size() == 0){
-		  cutflow->Fill(7);
+		      vector<int> jetlist = jet_veto(leadLepIndx,subleadLepIndx);
+		      jetCand = getJetCand(jetlist,leadLepIndx,subleadLepIndx);
+		      setJetCand(jetCand);
+		      if (jetCand.size() > 0) {
+			fillEvent(10,event_weight);
 
-		  vector<int> pholist = pho_veto_looseID(leadLepIndx, subleadLepIndx);
-		  if(pholist.size() == 0){ 
-		    cutflow->Fill(8);
+			float dpfcalo = fabs(pfMET-caloMET)/recoil;
+			h_metcut->Fill(dpfcalo,event_weight);
+			if (dpfcalo < metRatioCut) {
+			  fillEvent(11,event_weight);
 
-		    vector<int> taulist = tau_veto(leadLepIndx, subleadLepIndx);
-		    if(taulist.size() == 0){
-		      cutflow->Fill(9);
+			  float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+			  h_dphimin->Fill(mindPhiJetMET,event_weight);
+			  if (mindPhiJetMET > dPhiJetMETCut) {
+			    fillEvent(12,event_weight);
 
-		      vector<int> bjetlist = bjet_veto(jetlist, leadLepIndx, subleadLepIndx);
-		      if(bjetlist.size() == 0){
-			cutflow->Fill(10);
-
-			TLorentzVector met_4vec;
-			met_4vec.SetPtEtaPhiE(pfMET, 0., pfMETPhi, pfMET);
-			TLorentzVector leptoMET_4vec = ll+met_4vec;
-			recoil     = fabs(leptoMET_4vec.Pt());
-		        recoilPhi = leptoMET_4vec.Phi();
-
-			bool mindphijr = getMinDphiJR(jetlist, leadLepIndx, subleadLepIndx, recoilPhi);
-			if(mindphijr){
-			  cutflow->Fill(11);
-
-			  double metcut = (fabs(pfMET-caloMET))/recoil;
-			  if(metcut < 0.5){
-			    cutflow->Fill(12);
-
-			    if(recoil > 250.){
-			      cutflow->Fill(13);
-
-			      jetCand = getJetCand(jetlist, leadLepIndx, subleadLepIndx);
-			      if(jetCand.size()>0){
-				cutflow->Fill(14);
-
-			      } //jet cand
-			    } // recoil
-			  } //metcut
-			} //mindphijr
-		      } //b-veto
-		    } //tau veto
-		  } //pho veto
-		} //Ele veto
-	      } //Met Filter
-	    } //dilepton mass
-	  } // dileptons with opposite charge
-	} // one tight muon
-      } // two muons
-    } //trigger
+			    if (recoil > recoilCut) {
+			      fillEvent(13,event_weight);
+			    
+			    }
+			  }
+			}
+		      }
+		    }
+		  }
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
 
     if (jentry%reportEvery == 0){
       cout<<"Finished entry "<<jentry<<"/"<<(nentriesToCheck-1)<<endl;
@@ -138,27 +125,27 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
   
-  cutflow = new Cutflow({"Total Events","Trigger","Two Mu","One Tight Mu","DiLep Charge","DiLep Mass","Met Filter",
-	"Ele Veto","Pho Veto","Tau Veto","B Veto","MinDPhiJR","dPfCalo","Recoil","Jet Selection"});
+  cutflow = new Cutflow({"Total Events","Trigger","MET Filters","Two Loose Muons","One Tight Muons","ZMass",
+	"Electron Veto","Photon Veto","Tau Veto","BJet Veto","Jet Selection","dPFCaloMET","mindPhiJetMET","Recoil250"});
 
-  // BookHistos(-1,"");
-  // for(int i = 0; i<nHisto; i++) {
-  //   char ptbins[100];
-  //   sprintf(ptbins, "_%d", i);
-  //   string histname(ptbins);
-  //   auto dir = output->mkdir( ("monoJet"+histname).c_str() );
-  //   dir->cd();
-  //   if (i == bHisto) {
-  //     auto treedir = dir->mkdir("trees");
-  //     treedir->cd();
-  //     tree = new TTree("norm","norm");
-  //     initTree(tree);
-  //     scaleUncs.setTree(tree);
-  //     shapeUncs.setDir(treedir);
-  //     dir->cd();
-  //   }
-  //   BookHistos(i,histname);
-  // }
+  BookHistos(-1,"");
+  for(int i = 0; i<nHisto; i++) {
+    char ptbins[100];
+    sprintf(ptbins, "_%d", i);
+    string histname(ptbins);
+    auto dir = output->mkdir( ("monoJet"+histname).c_str() );
+    dir->cd();
+    if (i == bHisto) {
+      auto treedir = dir->mkdir("trees");
+      treedir->cd();
+      tree = new TTree("norm","norm");
+      initTree(tree);
+      scaleUncs.setTree(tree);
+      shapeUncs.setDir(treedir);
+      dir->cd();
+    }
+    BookHistos(i,histname);
+  }
 }
 
 void monoJetClass::fillHistos(int nhist,float event_weight) {
