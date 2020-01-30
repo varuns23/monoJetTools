@@ -7,11 +7,11 @@ sys.path.append(repo)
 
 from CondorTools.SubmitDataset import submit,options,mclist
 options['year'] = '2017'
-options['region'] = 'WE'
+options['region'] = 'SR'
 options['parallel'] = True
 options['batchsize'] = 10
 # options['submit'] = False
 #----Submit---#
-submit('singleele',label='SingleEle_',filelist=True)
+submit('met',sub='B',filelist=True)
 for mc in mclist: submit(mc)
 

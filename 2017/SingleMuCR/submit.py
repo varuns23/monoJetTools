@@ -12,7 +12,7 @@ options['parallel'] = True
 options['batchsize'] = 10
 # options['submit'] = False
 #----Submit---#
-submit('met',sub='B',label='SingleMu_',filelist=True)
-# submit('met',label='DoubleMu_',filelist=True)
-# for mc in mclist: submit(mc)
+# submit('met',sub='B',label='SingleMu_',filelist=True)
+submit('met',label='SingleMu_',filelist=True)
+for mc in mclist: submit(mc)
 
