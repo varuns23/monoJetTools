@@ -24,7 +24,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
   cout<<"nentries:"<<nentries<<endl;
   Long64_t nentriesToCheck = nentries;
   
-  // if (!sample.isData) SetScalingHistos();
+  if (!sample.isData) SetScalingHistos();
 
   if (maxEvents != -1LL && nentries > maxEvents)
     nentriesToCheck = maxEvents;
@@ -38,121 +38,83 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
     initVars();
 
-    // float event_weight = 1.;
-    // if (!sample.isData) {
-    //   ApplyPileup(event_weight);
-    //   if (isW_or_ZJet()) {
-    // 	SetBoson(sample.PID);
-    // 	ApplyKFactor(event_weight);
-    //   }
-    // }
+    float event_weight = 1.;
+    if (!sample.isData) {
+      ApplyPileup(event_weight);
+      if (isW_or_ZJet()) {
+    	SetBoson(sample.PID);
+    	ApplyKFactor(event_weight);
+      }
+    }
 
-    // float weightNorm = event_weight;
-    vector<int> jetlist = monoJetAnalysis::getJetCand();
-    cutflow->Fill(0);
-    if(getMetTrigger()){
-      cutflow->Fill(1);
+    
+    fillEvent(0,genWeight);
+    if (getMetTrigger() && inclusiveCut()) {
+      fillEvent(1,event_weight);
 
-      vector<int> mulistLoose = getLooseMu();
-      if(mulistLoose.size() == 1){
-	cutflow->Fill(2);
-	vector<int> mulistTight = getTightMu(mulistLoose);
+      if (getMetFilter()) {
+	fillEvent(2,event_weight);
 
-	if(mulistTight.size() > 0){
-	  cutflow->Fill(3);
+	vector<int> looselist = getLooseMu();
+	if (looselist.size() > 0) {
+	  fillEvent(3,event_weight);
 
-	  if(CRSelection(mulistTight,mulistLoose)){
-	    cutflow->Fill(4);
-	    
-	    float dPhiLepMet = deltaPhi(muPhi->at(lepindex),pfMETPhi);
-	    float lepMET_MT = sqrt(2*muPt->at(lepindex)*pfMET*(1-TMath::Cos(dPhiLepMet)));
+	  vector<int> tightlist = getTightMu(looselist);
+	  if (CRSelection(tightlist,looselist)) {
+	    if (!sample.isData) {
+	      SetSF( getSF(lepindex) );
+	      ApplySF(event_weight);
+	    }
+	    fillEvent(4,event_weight);
 
-	    if( lepMET_MT < 160.){
-	      cutflow->Fill(5);
+	    h_lepMET_MT->Fill(lepMET_mt,event_weight);
+	    if (lepMET_mt < lepMETMtCut) {
+	      fillEvent(5,event_weight);
+	      
+	      if (electron_veto()) {
+		fillEvent(6,event_weight);
 
-	      if(getMetFilter()){
-		cutflow->Fill(6);
+		if (photon_veto(lepindex)) {
+		  fillEvent(7,event_weight);
 
-		vector<int> elelist = getLooseEle();
-		if(elelist.size() == 0){
-		  cutflow->Fill(7);
+		  if (tau_veto(lepindex)) {
+		    fillEvent(8,event_weight);
 
-		  vector<int> pholist = pho_veto_looseID(lepindex);
-		  if(pholist.size() == 0){ 
-		    cutflow->Fill(8);
+		    if (bjet_veto(lepindex)) {
+		      fillEvent(9,event_weight);
 
-		    vector<int> taulist = tau_veto(lepindex);
-		    if(taulist.size() == 0){
-		      cutflow->Fill(9);
+		      vector<int> jetlist = jet_veto(lepindex);
+		      jetCand = getJetCand(jetlist,lepindex);
+		      setJetCand(jetCand);
+		      if (jetCand.size() > 0) {
+			fillEvent(10,event_weight);
 
-		      vector<int> bjetlist = bjet_veto(jetlist, lepindex);
-		      if(bjetlist.size() == 0){
-			cutflow->Fill(10);
+			float dpfcalo = fabs(pfMET-caloMET)/recoil;
+			h_metcut->Fill(dpfcalo,event_weight);
+			if (dpfcalo < metRatioCut) {
+			  fillEvent(11,event_weight);
 
-			bool mindphijr = getMinDphiJR(jetlist, lepindex, recoilPhi);
+			  float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+			  h_dphimin->Fill(mindPhiJetMET,event_weight);
+			  if (mindPhiJetMET > dPhiJetMETCut) {
+			    fillEvent(12,event_weight);
 
-			if(mindphijr){
-			  cutflow->Fill(11);
-
-			  double metcut = (fabs(pfMET-caloMET))/recoil;
-			  if(metcut < 0.5){
-			    cutflow->Fill(12);
-
-			    if(recoil > 250.){
-			      cutflow->Fill(13);
-
-			      jetCand = getJetCand(jetlist, lepindex);
-			      if(jetCand.size()>0){
-				cutflow->Fill(14);
-
-				if(event==5900676 || event==6937036 || event==7115752 || event==9057662 || event==8793023 || event==8106598 || event==417685299){
-        
-                                int bJC = jetlist.at(0);
-                                for(size_t i =1; i < jetlist.size(); i++){
-                                  float btag1 = (jetDeepCSVTags_b->at(bJC) + jetDeepCSVTags_bb->at(bJC));
-                                  float btag2 = (jetDeepCSVTags_b->at(jetlist.at(i)) + jetDeepCSVTags_bb->at(jetlist.at(i)));
-                                  if(btag1 < btag2  )
-                                    bJC = jetlist.at(i);
-                                }
-				float leadbtag = jetDeepCSVTags_b->at(bJC) + jetDeepCSVTags_bb->at(bJC);
-        
-        
-				cout<<"--------------------------------"<<endl;
-				cout<<"event = "    <<event<<endl;
-				cout<<"--------------------------------"<<endl;
-				cout<<"met = "      <<pfMET <<endl;
-				cout<<"met_phi = "  <<pfMETPhi <<endl;
-				cout<<"recoil = "   <<recoil <<endl;
-				cout<<"reoil_phi = "<<recoilPhi <<endl;
-				cout<<"ak4pt0 = "   <<jetPt->at(0) <<" -- "<<jetPt->at(jetCand.at(0))<<endl; 
-				cout<<"ak4eta0 = "   <<jetEta->at(0) <<" -- "<<jetEta->at(jetCand.at(0))<<endl;
-				cout<<"leadbtag = " << leadbtag <<endl;
-				for(size_t i =0; i < jetlist.size(); i++)
-				  cout<<" -- btag ("<<i<<") = "<<to_string(jetDeepCSVTags_b->at(jetlist.at(i)) + jetDeepCSVTags_bb->at(jetlist.at(i)))<<endl;
-				cout<<"nLooseMu = " << mulistLoose.size()<<endl;
-				cout<<"nTightMu = " << mulistTight.size()<<endl;
-				cout<<"muPt0 = "    << muPt->at(0) <<" -- "<<muPt->at(lepindex) <<endl;      
-				cout<<"muEta0 = "    << muEta->at(0) <<" -- "<<muEta->at(lepindex) <<endl;   
-				cout<<"muPhi0 = "    << muPhi->at(0) <<" -- "<<muPhi->at(lepindex) <<endl;   
-				cout<<"nLooseEle = "<< elelist.size() <<endl;
-				cout<<"nLoosePho = "<< pholist.size() <<endl;
-				cout<<"................................"<<endl;
-
-				}
-			      } //jet cand
-			    } // recoil
-			  } //metcut
-			} //mindphijr
-		      } //b-veto
-		    } //tau veto
-		  } //pho veto
-		} //Ele veto
-	      } //Met Filter
-	    } //dilepton mass
-	  } // dileptons with opposite charge
-	} // one tight muon
-      } // two muons
-    } //trigger
+			    if (recoil > recoilCut) {
+			      fillEvent(13,event_weight);
+			    
+			    }
+			  }
+			}
+		      }
+		    }
+		  }
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
 
     if (jentry%reportEvery == 0){
       cout<<"Finished entry "<<jentry<<"/"<<(nentriesToCheck-1)<<endl;
@@ -166,27 +128,27 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
 
-  cutflow = new Cutflow({"Total Events","Trigger","Two Mu","One Tight Mu","DiLep Charge","DiLep Mass","Met Filter",
-      "Ele Veto","Pho Veto","Tau Veto","B Veto","MinDPhiJR","dPfCalo","Recoil","Jet Selection"});
+  cutflow = new Cutflow({"Total Events","Triggers","MET Filters","One Loose Muon","One Tight Muon","Electron MET M_{T}",
+	"Electron Veto","Photon Veto","Tau Veto","BJet Veto","Jet Selection","dPFCaloMET","minDPhiJetMET","Recoil250"});
 
-  // BookHistos(-1,"");
-  // for(int i = 0; i<nHisto; i++) {
-  //   char ptbins[100];
-  //   sprintf(ptbins, "_%d", i);
-  //   string histname(ptbins);
-  //   auto dir = output->mkdir( ("monoJet"+histname).c_str() );
-  //   dir->cd();
-  //   if (i == bHisto) {
-  //     auto treedir = dir->mkdir("trees");
-  //     treedir->cd();
-  //     tree = new TTree("norm","norm");
-  //     initTree(tree);
-  //     scaleUncs.setTree(tree);
-  //     shapeUncs.setDir(treedir);
-  //     dir->cd();
-  //   }
-  //   BookHistos(i,histname);
-  // }
+  BookHistos(-1,"");
+  for(int i = 0; i<nHisto; i++) {
+    char ptbins[100];
+    sprintf(ptbins, "_%d", i);
+    string histname(ptbins);
+    auto dir = output->mkdir( ("monoJet"+histname).c_str() );
+    dir->cd();
+    if (i == bHisto) {
+      auto treedir = dir->mkdir("trees");
+      treedir->cd();
+      tree = new TTree("norm","norm");
+      initTree(tree);
+      scaleUncs.setTree(tree);
+      shapeUncs.setDir(treedir);
+      dir->cd();
+    }
+    BookHistos(i,histname);
+  }
 }
 
 void monoJetClass::fillHistos(int nhist,float event_weight) {
