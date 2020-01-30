@@ -14,10 +14,10 @@ void monoJetGammaCR::initVars() {
 }
 
 void monoJetGammaCR::initTree(TTree* tree) {
-  tree->Branch("PhotonPt",&photon_pt,"Photon P_{T} (GeV)");
-  tree->Branch("PhotonEta",&photon_eta,"Photon Eta");
-  tree->Branch("PhotonPhi",&photon_phi,"PhotonPhi");
-  tree->Branch("PhotonSigmaIEtaIEta",&photon_sieie,"Photon #sigma_{#i#eta#i#eta}");
+  tree->Branch("photonPt",&photon_pt,"Photon P_{T} (GeV)");
+  tree->Branch("photonEta",&photon_eta,"Photon Eta");
+  tree->Branch("photonPhi",&photon_phi,"PhotonPhi");
+  tree->Branch("photonSigmaIEtaIEta",&photon_sieie,"Photon #sigma_{i#eta i#eta}");
 }
 
 void monoJetGammaCR::BookHistos(int i,string histname) {
@@ -25,10 +25,10 @@ void monoJetGammaCR::BookHistos(int i,string histname) {
     
   } else {
     auto Name = [histname](string name) { return (name+histname); };
-    h_PhotonPt[i]  = MakeTH1F(new TH1F(Name("PhotonPt").c_str() ,"PhotonPt;Photon P_{T}" ,nLeadingLeptonPtBins,LeadingLeptonPtBins));
-    h_PhotonEta[i]   = MakeTH1F(new TH1F(Name("PhotonEta").c_str(),"PhotonEta;Photon #eta" ,nEtaBins,lEta,uEta));
-    h_PhotonPhi[i]   = MakeTH1F(new TH1F(Name("PhotonPhi").c_str(),"PhotonPhi;Photon #phi" ,nPhiBins,lPhi,uPhi));
-    h_PhotonSIeIe[i] = MakeTH1F(new TH1F(Name("PhotonSigmaIEtaIEta").c_str(),"PhotonSigmaIEtaIEta;Photon #sigma_{#i#eta#i#eta}",20,0,0.05));
+    h_PhotonPt[i]  = MakeTH1F(new TH1F(Name("photonPt").c_str() ,"PhotonPt;Photon P_{T}" ,nLeadingLeptonPtBins,LeadingLeptonPtBins));
+    h_PhotonEta[i]   = MakeTH1F(new TH1F(Name("photonEta").c_str(),"PhotonEta;Photon #eta" ,nEtaBins,lEta,uEta));
+    h_PhotonPhi[i]   = MakeTH1F(new TH1F(Name("photonPhi").c_str(),"PhotonPhi;Photon #phi" ,nPhiBins,lPhi,uPhi));
+    h_PhotonSIeIe[i] = MakeTH1F(new TH1F(Name("photonSigmaIEtaIEta").c_str(),"PhotonSigmaIEtaIEta;Photon #sigma_{i#eta i#eta}",20,0,0.05));
   }
 }
 
@@ -97,13 +97,13 @@ vector<int> monoJetGammaCR::jet_veto(int phoindex) {
 }
 
 //Veto failed if a muon is found that passes Loose Muon ID, Loose Muon Isolation, and muPtcut, and does not overlap the candidate electron and jet within dR of 0.5
-bool monoJetGammaCR::muon_veto(int jet_index, int phoindex, float muPtCut)
+bool monoJetGammaCR::muon_veto(int phoindex)
 {
   // cout << "Inside Muon Loose Veto" << endl;
   vector<int> mu_cands;
   mu_cands.clear();
 
-  vector<int> tmpcands = getLooseMu(jet_index,muPtCut);
+  vector<int> tmpcands = getLooseMu();
   for(int imu : tmpcands) {
     float dR_mu = deltaR(muEta->at(imu),muPhi->at(imu),phoSCEta->at(phoindex),phoSCPhi->at(phoindex));
     if ( dR_mu > Iso4Cut )
@@ -113,10 +113,10 @@ bool monoJetGammaCR::muon_veto(int jet_index, int phoindex, float muPtCut)
   return mu_cands.size() == 0;
 }
 
-bool monoJetGammaCR::electron_veto(int jet_index,int phoindex,float elePtCut) {
+bool monoJetGammaCR::electron_veto(int phoindex) {
   vector<int> ele_cands; ele_cands.clear();
 
-  vector<int> tmpcands = getLooseEle(jet_index,elePtCut);
+  vector<int> tmpcands = getLooseEle();
   for (int iele : tmpcands ) {
     float dR_ele = deltaR(eleSCEta->at(iele),eleSCPhi->at(iele),phoSCEta->at(phoindex),phoSCPhi->at(phoindex));
     if ( dR_ele > Iso5Cut )
@@ -125,10 +125,10 @@ bool monoJetGammaCR::electron_veto(int jet_index,int phoindex,float elePtCut) {
   return ele_cands.size() == 0;
 }
 
-bool monoJetGammaCR::tau_veto(int jet_index,int phoindex,float tauPtCut) {
+bool monoJetGammaCR::tau_veto(int phoindex) {
   vector<int> tau_cands; tau_cands.clear();
 
-  vector<int> tmpcands = getLooseTau(jet_index,tauPtCut);
+  vector<int> tmpcands = getLooseTau();
   for (int itau : tmpcands ) {
     float dR_pho = deltaR(tau_Eta->at(itau),tau_Phi->at(itau),phoSCEta->at(phoindex),phoSCPhi->at(phoindex));
     if ( dR_pho > Iso4Cut )

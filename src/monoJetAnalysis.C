@@ -106,28 +106,30 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_bosonPt[nhist]    ->Fill(bosonPt,genWeight);
     h_bosonPtwK[nhist]  ->Fill(bosonPt,genWeight * kfactor);
   }
+  
+  // Event Info       
+  h_nVtx[nhist]         ->Fill(nVtx,event_weight);   
+  h_eventWeight[nhist]  ->Fill(event_weight,event_weight);
+  h_kfactor[nhist]      ->Fill(kfactor,event_weight);
+  h_pileup[nhist]       ->Fill(pileup,event_weight);
+  h_genWeight[nhist]    ->Fill(genWeight,event_weight);
+  h_sf[nhist]           ->Fill(sf,event_weight);
+  
+  // MET Info         ;
+  h_pfMETall[nhist]     ->Fill(pfMET,event_weight);
+  h_pfMET[nhist]        ->Fill(pfMET,event_weight);
+  h_pfMETPhi[nhist]     ->Fill(pfMETPhi,event_weight);
+  h_recoil[nhist]       ->Fill(recoil,event_weight);
+  h_recoilall[nhist]    ->Fill(recoil,event_weight);
+  h_recoilPhi[nhist]    ->Fill(recoilPhi,event_weight);
 
+  // Jet Info         ;
+  h_nJets[nhist]        ->Fill(nJet,event_weight);
   if ( jetindex != -1 ) {
-    // Event Info       
-    h_nVtx[nhist]         ->Fill(nVtx,event_weight);   
-    h_eventWeight[nhist]  ->Fill(event_weight,event_weight);
-    h_kfactor[nhist]      ->Fill(kfactor,event_weight);
-    h_pileup[nhist]       ->Fill(pileup,event_weight);
-    h_genWeight[nhist]    ->Fill(genWeight,event_weight);
-    h_sf[nhist]           ->Fill(sf,event_weight);
-    // MET Info         ;
-    h_pfMETall[nhist]     ->Fill(pfMET,event_weight);
-    h_pfMET[nhist]        ->Fill(pfMET,event_weight);
-    h_pfMETPhi[nhist]     ->Fill(pfMETPhi,event_weight);
-    h_recoil[nhist]       ->Fill(recoil,event_weight);
-    h_recoilall[nhist]    ->Fill(recoil,event_weight);
-    h_recoilPhi[nhist]    ->Fill(recoilPhi,event_weight);
-    // Jet Info         ;
-    h_nJets[nhist]        ->Fill(nJet,event_weight);
     h_j1pT[nhist]         ->Fill(j1pT,event_weight);
     h_j1pTall[nhist]      ->Fill(j1pT,event_weight);
-    h_j1Eta[nhist]        ->Fill(jetEta->at(jetindex),event_weight);
-    h_j1Phi[nhist]        ->Fill(jetPhi->at(jetindex),event_weight);
+    h_j1Eta[nhist]        ->Fill(j1Eta,event_weight);
+    h_j1Phi[nhist]        ->Fill(j1Phi,event_weight);
     h_j1etaWidth[nhist]   ->Fill(jetetaWidth->at(jetindex),event_weight);
     h_j1phiWidth[nhist]   ->Fill(jetphiWidth->at(jetindex),event_weight);
     h_j1CHF[nhist]        ->Fill(jetCHF->at(jetindex),event_weight);
@@ -136,6 +138,11 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_j1NhMult[nhist]     ->Fill(jetNNeutralHad->at(jetindex),event_weight);
     h_j1Mt[nhist]         ->Fill(jetMt->at(jetindex),event_weight);
   }
+}
+
+void monoJetAnalysis::fillEvent(int nhist,float event_weight) {
+  cutflow->Fill(nhist,event_weight);
+  fillHistos(nhist,event_weight);
 }
 
 bool monoJetAnalysis::getMetFilter(){                                                                                                    
@@ -195,6 +202,14 @@ vector<int> monoJetAnalysis::getJetCand(vector<int> jetlist,float jetPtCut,float
   return tmpCand;
 }
 
+int monoJetAnalysis::setJetCand(vector<int> jetlist) {
+  if (jetlist.size() == 0) return -1;
+  jetindex = jetlist[0];
+  j1pT = jetPt->at(jetindex);
+  j1Eta = jetEta->at(jetindex);
+  j1Phi = jetPhi->at(jetindex);
+}
+
 vector<int> monoJetAnalysis::getLooseJet(float jetPtCut,float jetEtaCut) {
   vector<int> jetindex; jetindex.clear();
   for(int i = 0; i < nJet; i++) {
@@ -221,8 +236,8 @@ vector<int> monoJetAnalysis::getLooseBJet(float jetPtCut,float jetEtaCut) {
   vector<int> bjet_cand; bjet_cand.clear();
   for (int i = 0; i < nJet; i++) {
     bool jetTightID = (jetID->at(i)>>0&1) == 1;
-    float bjetID = jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i);
-    if (jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut && jetTightID && bjetID < bjetDeepCSVCut) {
+    float bjetTag = jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i);
+    if (jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut && jetTightID && bjetTag < bjetDeepCSVCut) {
       bjet_cand.push_back(i);
     }
   }

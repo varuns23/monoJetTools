@@ -21,9 +21,9 @@ public:
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
   virtual vector<int> getJetCand(vector<int> jetlist, int phoindex);
   virtual vector<int> jet_veto(int phoindex);
-  virtual bool muon_veto(int jet_index,int phoindex,float muPtCut);
-  virtual bool electron_veto(int jet_index,int phoindex,float elePtCut);
-  virtual bool tau_veto(int jet_index,int phoindex,float tauPtCut);
+  virtual bool muon_veto(int phoindex);
+  virtual bool electron_veto(int phoindex);
+  virtual bool tau_veto(int phoindex);
   virtual bool bjet_veto(int phoindex);
 };
 

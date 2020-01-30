@@ -824,6 +824,7 @@ public:
   /* Histograms Methods */
   virtual void BookHistos(int nhist,string histname);
   virtual void fillHistos(int nhisto,float event_weight);
+  virtual void fillEvent(int nhisto,float event_weight);
 
   /* Event Weight Methods */
   virtual void SetBoson(int PID);
@@ -850,6 +851,7 @@ public:
   (float jetPtCut=jetCandPtCut,float jetEtaCut=jetCandEtaCut,float jetNHFCut=jetCandNHFCut,float jetCHFCut=jetCandCHFCut);
   virtual vector<int> getJetCand
   (vector<int> jetlist,float jetPtCut=jetCandPtCut,float jetEtaCut=jetCandEtaCut,float jetNHFCut=jetCandNHFCut,float jetCHFCut=jetCandCHFCut);
+  virtual int setJetCand(vector<int> jetlist);
   virtual vector<int> getLooseJet(float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   
