@@ -10,7 +10,7 @@ using namespace std;
 const string monoJetSingleEleCR::REGION = "SingleEleCR";
 
 void monoJetSingleEleCR::initVars() {
-  lepindex = lepton_pt = lepton_eta = lepton_phi = -99;
+  lepindex = lepton_pt = lepton_eta = lepton_phi = lepMET_mt = -99;
 }
 
 void monoJetSingleEleCR::initTree(TTree* tree) {
@@ -47,6 +47,7 @@ bool monoJetSingleEleCR::CRSelection(vector<int> tight,vector<int> loose) {
     lepton_pt = lep.Pt();
     lepton_eta = eleEta->at(lepindex);
     lepton_phi = elePhi->at(lepindex);
+    lepMET_mt = getMt(elePt->at(lepindex),elePhi->at(lepindex),pfMET,pfMETPhi);
     TLorentzVector met_4vec;
     met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
     TLorentzVector leptoMET_4vec = lep+met_4vec;
@@ -68,10 +69,22 @@ float monoJetSingleEleCR::getSF(int lepindex) {
   return eleRecoSF_corr * eleEffSF_corr * eleTriggSF;
 }
 
+vector<int> monoJetSingleEleCR::getJetCand(vector<int> jetlist,int lepindex) {
+  vector<int> jet_cand; jet_cand.clear();
+
+  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);
+  for (int ijet : tmpcands) {
+    float dR_jet = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
+    if (dR_jet > Iso4Cut)
+      jet_cand.push_back(ijet);
+  }
+  return jet_cand;
+}
+
 vector<int> monoJetSingleEleCR::jet_veto(int lepindex) {
   vector<int> jetindex; jetindex.clear();
 
-  vector<int> tmpcands = jet_looseID();
+  vector<int> tmpcands = getLooseJet();
   for(int ijet : tmpcands ) {
     float dR_ele = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
     if( dR_ele > Iso4Cut )
@@ -80,18 +93,14 @@ vector<int> monoJetSingleEleCR::jet_veto(int lepindex) {
   return jetindex;
 }
 
-bool monoJetSingleEleCR::electron_veto(int jet_index,int lepindex,float elePtCut) {
-  return monoJetAnalysis::electron_veto(jet_index,elePtCut);
-}
-
 //Veto failed if a muon is found that passes Loose Muon ID, Loose Muon Isolation, and muPtcut, and does not overlap the candidate electron and jet within dR of 0.5
-bool monoJetSingleEleCR::muon_veto(int jet_index, int lepindex, float muPtCut)
+bool monoJetSingleEleCR::muon_veto(int lepindex)
 {
   // cout << "Inside Muon Loose Veto" << endl;
   vector<int> mu_cands;
   mu_cands.clear();
 
-  vector<int> tmpcands = muon_looseID(jet_index,muPtCut);
+  vector<int> tmpcands = getLooseMu();
   for(int imu : tmpcands) {
     float dR_ele = deltaR(muEta->at(imu),muPhi->at(imu),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
     if ( dR_ele > Iso4Cut )
@@ -101,10 +110,10 @@ bool monoJetSingleEleCR::muon_veto(int jet_index, int lepindex, float muPtCut)
   return mu_cands.size() == 0;
 }
 
-bool monoJetSingleEleCR::photon_veto(int jet_index,int lepindex,float phoPtCut) {
+bool monoJetSingleEleCR::photon_veto(int lepindex) {
   vector<int> pho_cands; pho_cands.clear();
 
-  vector<int> tmpcands = photon_looseID(jet_index,phoPtCut);
+  vector<int> tmpcands = getLoosePho();
   for (int ipho : tmpcands ) {
     float dR_ele = deltaR(phoSCEta->at(ipho),phoSCPhi->at(ipho),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
     if ( dR_ele > Iso5Cut )
@@ -113,10 +122,10 @@ bool monoJetSingleEleCR::photon_veto(int jet_index,int lepindex,float phoPtCut) 
   return pho_cands.size() == 0;
 }
 
-bool monoJetSingleEleCR::tau_veto(int jet_index,int lepindex,float tauPtCut) {
+bool monoJetSingleEleCR::tau_veto(int lepindex) {
   vector<int> tau_cands; tau_cands.clear();
 
-  vector<int> tmpcands = tau_looseID(jet_index,tauPtCut);
+  vector<int> tmpcands = getLooseTau();
   for (int itau : tmpcands ) {
     float dR_ele = deltaR(tau_Eta->at(itau),tau_Phi->at(itau),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
     if ( dR_ele > Iso4Cut )
@@ -128,7 +137,7 @@ bool monoJetSingleEleCR::tau_veto(int jet_index,int lepindex,float tauPtCut) {
 bool monoJetSingleEleCR::bjet_veto(int lepindex) {
   vector<int> bjet_cands; bjet_cands.clear();
 
-  vector<int> tmpcands = bjet_looseID();
+  vector<int> tmpcands = getLooseBJet();
   for (int ijet : tmpcands) {
     float dR_ele = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
     if ( dR_ele > Iso4Cut )

@@ -8,7 +8,7 @@ public:
   static const std::string REGION;
   int lepindex;
   TLorentzVector lep;
-  float lepton_pt,lepton_eta,lepton_phi;
+  float lepton_pt,lepton_eta,lepton_phi,lepMET_mt;
 
   TH1F *h_lepMET_MT;
   TH1F *h_LeptonPt[maxHisto], *h_LeptonEta[maxHisto],*h_LeptonPhi[maxHisto];
@@ -20,12 +20,12 @@ public:
   inline bool isW_or_ZJet() { return monoJetAnalysis::isW_or_ZJet() || sample.type == DYJets || sample.type == DYJets_NLO; }
   virtual float getSF(int lepindex);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
-  virtual vector<int> getJetCand(vector<int> jetlist, int leading_lep_index);
-  virtual vector<int> getTightMu(vector<int> looseMu);
-  virtual vector<int> pho_veto_looseID(int leading_mu_index);
-  virtual vector<int> tau_veto(int leading_mu_index);
-  virtual vector<int> bjet_veto(vector<int> jetlist, int leading_mu_index);
-  virtual bool getMinDphiJR(vector<int> jetlist, int lead_lep_index, double lepMET_phi);
+  virtual vector<int> getJetCand(vector<int> jetlist, int lepindex);
+  virtual vector<int> jet_veto(int lepindex);
+  virtual bool muon_veto(int lepindex);
+  virtual bool photon_veto(int lepindex);
+  virtual bool tau_veto(int lepindex);
+  virtual bool bjet_veto(int lepindex);
 };
 
 #endif
