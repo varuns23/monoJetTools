@@ -843,8 +843,8 @@ public:
   virtual bool getMetTrigger();
   virtual bool getEGammaTrigger();
   virtual float dPhiJetMETmin(vector<int> jetlist,float metPhi);
-  bool getJetHEMVeto(float jetPtCut);
-  bool getEleHEMVeto(float elePtCut);
+  bool getJetHEMVeto(float jetPtCut=jetHEMVetoPtCut);
+  bool getEleHEMVeto(float elePtCut=eleHEMVetoPtCut);
   
   /* Object Selction Methods */
   virtual vector<int> getJetCand
