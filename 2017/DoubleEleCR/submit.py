@@ -9,8 +9,9 @@ from CondorTools.SubmitDataset import submit,options,mclist
 options['year'] = '2017'
 options['region'] = 'ZE'
 options['parallel'] = True
-options['batchsize'] = 100
+options['batchsize'] = 10
 # options['submit'] = False
 #----Submit---#
-submit('singleele',label='DoubleEle_',filelist=True)
+submit('singleele_crab',label='DoubleEle_',filelist=True)
+submit('singleele',sub='F',label='DoubleEle_',filelist=True)
 for mc in mclist: submit(mc)
