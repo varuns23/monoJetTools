@@ -1,7 +1,7 @@
-# Mono-Z' Jet Post Analyzer
+# Mono-Jet Jet Post Analyzer
 
 This repository contains pacakges to analyze ntuples for the signal region and the control region 
-for the Mono-Z' Jet + MET analysis.
+for the Mono-Jet + MET analysis.
 Jobs are submitted to condor through the SubmitCondor.py script.
 
 SubmitCondor.py creates 2 hidden directories: .output/ and .status/
@@ -17,8 +17,8 @@ cmsrel CMSSW_10_2_10
 cd CMSSW_10_2_10/src
 cmsenv
 voms-proxy-init --voms=cms --valid=192:00
-git clone https://github.com/ekoenig4/ZprimeTools.git
-cd ZprimeTools/PostAnalyzer/
+git clone https://github.com/ekoenig4/monoJetTools.git
+cd monoJetTools/PostAnalyzer/
 
 make bin && make
 ```
@@ -30,7 +30,7 @@ cd year/region # any 3 years: 2016, 2017, or 2018, then any of the 5 regions: Si
 make
 ./analyze /path/to/Ntuple/Directory/ outputFilename.root numOfEvents reportEvery filerange
 #example
-./analyze /hdfs/store/user/varuns/NTuples/monoZprime_2018_80X/MonoZprime_Mx10_Mv1000/ postMx10_Mv1000.root -1 1000 1-9
+./analyze /hdfs/store/user/varuns/NTuples/monoZprimeJet_2018_80X/MonoZprimeJet_Mx10_Mv1000/ postMx10_Mv1000.root -1 1000 1-9
 #use -1 to run over all events and for running over the entire directory
 #run analyze without options to run a default run
 ./analyze
@@ -39,16 +39,16 @@ make
 The PostAnalyzer uses the inc folder to hold header files, the src folder to hold source files, and the bin folder to hold object files.
 Starting from the top and moving down into the each year and region, the PostAnalzyer is broken into 4 sections
 
-    ZprimeAnalysis:
+    monoJetAnalysis:
 	Holds information about variables, methods, and histograms that are used and filled in the analysis
 
-    Zprime*CR:
+    monoJet*CR:
 	Holds information specific to the control region of its name
 
-    ZprimeYear:
+    monoJetYear:
 	Holds information specific to the year that it is in, namely tree initiation, construction, and object ID's
 
-    ZprimeClass:
+    monoJetClass:
 	Holds information specific to event selection
 
 ## Submitting to Condor
@@ -62,9 +62,9 @@ Some extra options are -y year and -r region, these are taken into the BATCH_NAM
 
 ```bash
 #To submit a file directory to condor
-python $CMSSW_BASE/src/ZprimeTools/CondorTools/SubmitCondor.py -y year -r region analyze /path/to/Ntuple/Directory/ outputFilename.root numOfEvents reportEvery condor_label split_N
+python $CMSSW_BASE/src/monoJetTools/CondorTools/SubmitCondor.py -y year -r region analyze /path/to/Ntuple/Directory/ outputFilename.root numOfEvents reportEvery condor_label split_N
 #example
-python $CMSSW_BASE/src/ZprimeTools/CondorTools/SubmitCondor.py -y 2016 -r SR analyze /hdfs/store/user/varuns/NTuples/monoZprime_2018_80X/MonoZprime_Mx10_Mv1000/ postMx10_Mv1000.root -1 1000 Mx10_Mv1000 split_-1
+python $CMSSW_BASE/src/monoJetTools/CondorTools/SubmitCondor.py -y 2016 -r SR analyze /hdfs/store/user/varuns/NTuples/monoZprimeJet_2018_80X/MonoZprimeJet_Mx10_Mv1000/ postMx10_Mv1000.root -1 1000 Mx10_Mv1000 split_-1
 ```
 
 If the directories to be submitted are defined in the datasets/ntuples/ directory a python script can be used to submit everything automatically.
