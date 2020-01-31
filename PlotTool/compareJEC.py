@@ -6,10 +6,10 @@ import sys
 
 gROOT.SetBatch(1)
 
-hdfs_store = '/hdfs/store/user/ekoenig/MonomonoJetJet/PostFiles/%s/%s/20200114_postFiles/'
+hdfs_store = '/hdfs/store/user/ekoenig/MonoJet/PostFiles/%s/%s/20200114_postFiles/'
 
 def AutoSave(c,samples,process):
-    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonomonoJetJet/Plots"+samples.year+"/"+samples.region+"Plots_EWK/JEC_Comparison/"
+    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/"+samples.region+"Plots_EWK/JEC_Comparison/"
     #print file_path
     directory=os.path.dirname(file_path)
     if not os.path.exists(directory):

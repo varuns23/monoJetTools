@@ -198,7 +198,7 @@ def XaxisCutflowStyle(xaxis,hs):
     xaxis.SetLabelOffset(-999)
     xaxis.SetTitle("");
     for i in range(1,hs.GetXaxis().GetNbins()+1):
-        label = TLatex(i-0.5,xaxis.GetY1()-0.2,hs.GetXaxis().GetBinLabel(i));
+        label = TLatex(i-0.5,xaxis.GetY1()-0.05,hs.GetXaxis().GetBinLabel(i));
 	label.SetTextSize(0.065);
 	label.SetTextAngle(-30.);
 	label.Draw("SAME");

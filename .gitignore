@@ -6,3 +6,4 @@ post*.root
 *.pyc
 *.o
 test*
+nohup.out

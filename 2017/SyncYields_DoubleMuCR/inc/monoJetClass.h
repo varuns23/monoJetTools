@@ -40,6 +40,13 @@ public :
     monoJetYear::initTree(tree);
     monoJetDoubleMuCR::initTree(tree);
   }
+
+  bool getMinDphiJR(vector<int> jetlist, int lead_lepIndex, int sublead_lepIndex, double lepMET_phi);
+  virtual vector<int> getJetCand(vector<int> jetlist,int leading,int subleading);
+  vector<int> getTightMu(vector<int> looselist);
+  vector<int> pho_veto_looseID(int leading,int subleading);
+  vector<int> tau_veto_looseID(int leading,int subleading);
+  vector<int> bjet_veto(vector<int> jetlist,int leading,int subleading);
   
   void JetEnergyScale(float start_weight);
 };

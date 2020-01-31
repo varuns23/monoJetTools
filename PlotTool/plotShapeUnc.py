@@ -6,7 +6,7 @@ import config
 
 gROOT.SetBatch(1)
 
-out_dir = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonomonoJetJet/Plots%s/"
+out_dir = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots%s/"
 def SaveCanvas(c,sample,uncname):
     nhist = config.regions[sample.region]
     variable = b_info.template.GetName()

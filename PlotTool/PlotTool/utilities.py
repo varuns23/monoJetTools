@@ -47,8 +47,8 @@ def valid_directory(directory):
     return directory
 
 def GetRegion():
-    region_pattern = ["postMETdata","postSingleEle","postSingleMu","postDoubleEle","postDoubleMu"]
-    RegionName = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR"]
+    region_pattern = ["postMETdata","postSingleEle","postSingleMu","postDoubleEle","postDoubleMu","postGamma"]
+    RegionName = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR","GammaCR"]
 
     found = False
     for region,pattern in zip(RegionName,region_pattern):
@@ -86,6 +86,6 @@ def FindConfig():
 def GetDirname(variable,sub=None):
     ndir = variable.split('_')[-1]
     if not ndir.isdigit(): return None,None
-    dirname = 'monoJetJet_%s' % ndir
+    dirname = 'monoJet_%s' % ndir
     if sub != None: dirname += '/%s' % sub
     return dirname,ndir

@@ -1,11 +1,6 @@
 year=2017
-regions={'SignalRegion':'8','DoubleEleCR':'10','DoubleMuCR':'10','SingleEleCR':'11','SingleMuCR':'10'}
+regions={'SignalRegion':'11','DoubleEleCR':'13','DoubleMuCR':'13','SingleEleCR':'14','SingleMuCR':'13','GammaCR':'12'}
 Uncertainty={
-    'PFU': [ # ID is relative to the regions basic histogram number
-        # 'PFU_tracker',
-        'PFU_ecal',
-        # 'PFU_hcal'
-    ],
     'JES': [
         'JES'
     ],
@@ -18,28 +13,4 @@ Uncertainty={
         "NNLO_Sud",
         "QCD_EWK_Mix"
     ],
-    'PSW': [
-        # "PSW_isrRed",   
-	    # "PSW_fsrRed",      
-	# "PSW_isrDef",    
-	# "PSW_fsrDef",  
-	"PSW_isrCon",
-	"PSW_fsrCon",      
-	# "PSW_fsr_G2GG_muR",
-	# "PSW_fsr_G2QQ_muR",
-	# "PSW_fsr_Q2QG_muR",
-	# "PSW_fsr_X2XG_muR",
-	# "PSW_fsr_G2GG_cNS",
-	# "PSW_fsr_G2QQ_cNS",
-	# "PSW_fsr_Q2QG_cNS",
-	# "PSW_fsr_X2XG_cNS",
-	# "PSW_isr_G2GG_muR",
-	# "PSW_isr_G2QQ_muR",
-	# "PSW_isr_Q2QG_muR",
-	# "PSW_isr_X2XG_muR",
-	# "PSW_isr_G2GG_cNS",
-	# "PSW_isr_G2QQ_cNS",
-	# "PSW_isr_Q2QG_cNS",
-	# "PSW_isr_X2XG_cNS"
-    ]
 }

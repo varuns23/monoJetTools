@@ -62,7 +62,7 @@ def compareEra(variable,samples,eraLumi):
     ###############################################
     
     dir = os.getcwd().split("/")[-1]
-    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonomonoJetJet/Plots"+samples.year+"/"+dir+"Plots_EWK/DataEra/"
+    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/"+dir+"Plots_EWK/DataEra/"
     #print file_path
     directory=os.path.join(os.path.dirname(file_path),"")
     if not os.path.exists(directory):
@@ -271,7 +271,7 @@ for variable in argv[1:]:
         yaxis.Draw("SAME");
         
         dir = os.getcwd().split("/")[-1]
-        file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonomonoJetJet/Plots"+samples.year+"/"+dir+"Plots_EWK/DataEra/"
+        file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/"+dir+"Plots_EWK/DataEra/"
         #print file_path
         directory=os.path.join(os.path.dirname(file_path),era)
         if not os.path.exists(directory):

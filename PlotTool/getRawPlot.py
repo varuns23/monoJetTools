@@ -79,7 +79,7 @@ for f in options.files:
         texS1.Draw();
         
         dir = os.getcwd().split("/")[-1]
-        file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonomonoJetJet/Plots"+samples.year+"/"+dir+"Plots_EWK/RawPlots/"
+        file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/"+dir+"Plots_EWK/RawPlots/"
         #print file_path
         sub = f.replace(".root","")
         directory=os.path.join(os.path.dirname(file_path),sub)

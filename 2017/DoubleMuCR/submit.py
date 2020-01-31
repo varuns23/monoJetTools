@@ -10,8 +10,7 @@ options['year'] = '2017'
 options['region'] = 'ZM'
 options['parallel'] = True
 options['batchsize'] = 100
-options['submit'] = False
-
+# options['submit'] = False
 #----Submit---#
 #submit('met',sub='B',label='DoubleMu_',filelist=True)
 # submit('met_crab',sub='B',label='DoubleMu_',filelist=True)

@@ -8,7 +8,7 @@ import os
 
 """
 Generates pileup comparison plots 
-example https://www.hep.wisc.edu/~ekoenig4/MonomonoJetJet/Plots2017/SingleEleCRPlots_EWK/pileupComparison.png
+example https://www.hep.wisc.edu/~ekoenig4/MonoJet/Plots2017/SingleEleCRPlots_EWK/pileupComparison.png
 Directions: In region directory with all proper files present, and the correct year dataPileup.root file contained in the PlotTool Directory
 Usage: python ../PlotTool/makePileup.py
 """
@@ -155,7 +155,7 @@ yaxis.SetTitleOffset(0.35);
 yaxis.Draw("SAME");
 
 dir = os.getcwd().split("/")[-1]
-file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonomonoJetJet/Plots"+sample.year+"/"+dir+"Plots_EWK/"
+file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+sample.year+"/"+dir+"Plots_EWK/"
 #print file_path
 directory=os.path.join(os.path.dirname(file_path),"")
 if not os.path.exists(directory):

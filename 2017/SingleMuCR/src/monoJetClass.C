@@ -5,7 +5,7 @@
 ////$ ./rootcom monoJetClass analyze
 ////
 ////To run, assuming this is compiled to an executable named 'analyze':
-////$ ./analyze /hdfs/store/user/uhussain/monoJet_Ntuples/ /cms/uhussain/MonomonoJetJet/CMSSW_8_0_8/src/LightZPrimeAnalysis/JetAnalyzer/test/output.root -1 10000
+////$ ./analyze /hdfs/store/user/uhussain/monoJet_Ntuples/ /cms/uhussain/MonoJet/CMSSW_8_0_8/src/LightZPrimeAnalysis/JetAnalyzer/test/output.root -1 10000
 ////Runs over every event in the folder monoJet_Ntuples, reporting progress every 10000 events
 ////and storing the resulting histograms in the file output.root.
 ////

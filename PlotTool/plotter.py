@@ -29,7 +29,7 @@ def HigherDimension(samples,variable):
 ###################################################################
 
 def AutoSave(samples,c):
-    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonomonoJetJet/Plots"+samples.year+"/"+samples.region+"Plots_EWK/"
+    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/"+samples.region+"Plots_EWK/"
     #print file_path
     sub = ""
     if (samples.args.sub != None): sub = samples.args.sub

@@ -5,7 +5,7 @@
 ////$ ./rootcom monoJetClass analyze
 ////
 ////To run, assuming this is compiled to an executable named 'analyze':
-////$ ./analyze /hdfs/store/user/uhussain/monoJet_Ntuples/ /cms/uhussain/MonomonoJetJet/CMSSW_8_0_8/src/LightZPrimeAnalysis/JetAnalyzer/test/output.root -1 10000
+////$ ./analyze /hdfs/store/user/uhussain/monoJet_Ntuples/ /cms/uhussain/MonoJet/CMSSW_8_0_8/src/LightZPrimeAnalysis/JetAnalyzer/test/output.root -1 10000
 ////Runs over every event in the folder monoJet_Ntuples, reporting progress every 10000 events
 ////and storing the resulting histograms in the file output.root.
 ////
@@ -82,7 +82,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 		  if(pholist.size() == 0){ 
 		    cutflow->Fill(8);
 
-		    vector<int> taulist = tau_veto(leadLepIndx, subleadLepIndx);
+		    vector<int> taulist = tau_veto_looseID(leadLepIndx, subleadLepIndx);
 		    if(taulist.size() == 0){
 		      cutflow->Fill(9);
 
@@ -166,4 +166,122 @@ void monoJetClass::fillHistos(int nhist,float event_weight) {
   monoJetDoubleMuCR::fillHistos(nhist,event_weight);
   weight = event_weight;
   if (nhist == bHisto) tree->Fill();
+}
+
+vector<int> monoJetClass::getTightMu(vector<int> looseMu){
+  vector<int> mu_cands;
+  mu_cands.clear();
+
+  for(int i = 0; i < looseMu.size(); i++){
+    int muCand = looseMu.at(i);
+    bool kinematics = (muPt->at(muCand) > 20.0 && (fabs(muEta->at(muCand)) < 2.4)); // muon pt & eta
+    bool IdIso = (muIDbit->at(muCand)>>3&1 == 1 && muIDbit->at(muCand)>>9&1 == 1);   // muon tight ID and Iso
+
+    if(kinematics && IdIso)
+      mu_cands.push_back(muCand);
+  }  
+  return mu_cands;
+} 
+
+vector<int> monoJetClass::getJetCand(vector<int> jetlist, int lead_lepIndex, int sublead_lepIndex){
+  vector<int> jet_cands;
+  jet_cands.clear();
+
+  for(int j; j<jetlist.size(); j++){
+    int i = jetlist.at(j);
+
+    bool kinematics = (jetPt->at(i) > 100.0 && fabs(jetEta->at(i)) < 2.4);
+    bool Id = (jetNHF->at(i) < 0.8 && jetCHF->at(i) > 0.1); 
+
+    float dR_lead_mu = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lead_lepIndex),  muPhi->at(lead_lepIndex));
+    float dR_sublead_mu = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(sublead_lepIndex), muPhi->at(sublead_lepIndex));
+
+    if(kinematics && Id && dR_lead_mu > 0.4 && dR_sublead_mu > 0.4)
+      jet_cands.push_back(i);
+  }
+
+  return jet_cands;
+}
+
+vector<int> monoJetClass::pho_veto_looseID(int leadLep_index, int subleadLep_index){
+  vector<int> pho_cands;
+  pho_cands.clear();
+
+  for(int i = 0; i < nPho; i++){
+    // passes pt cut
+    bool kinematics = ((phoEt->at(i) > 15.0) && (fabs(phoSCEta->at(i)) < 2.5));
+    bool IdIso = (phoIDbit->at(i)>>0&1==1);
+
+    double dR_leadLep    = deltaR(phoSCEta->at(i),phoSCPhi->at(i), muEta->at(leadLep_index), muPhi->at(leadLep_index));  
+    double dR_subleadLep = deltaR(phoSCEta->at(i),phoSCPhi->at(i), muEta->at(subleadLep_index), muPhi->at(subleadLep_index)); 
+    if( kinematics && IdIso && dR_leadLep > 0.5 && dR_subleadLep > 0.5)
+      pho_cands.push_back(i);
+  }
+  return pho_cands;
+}
+
+vector<int> monoJetClass::tau_veto_looseID(int leadLep_index, int subleadLep_index){
+  vector<int> tau_cands;
+  tau_cands.clear();
+
+  for(int i = 0; i < nTau; i++){
+    bool kinematics = ((tau_Pt->at(i) > 18.0) && (fabs(tau_Eta->at(i)) < 2.3));
+    bool IdIso = (((tau_IDbits->at(i)>>0&1) == 1) && ((tau_IDbits->at(i)>>13&1) == 1));
+
+    double dR_leadLep    = deltaR(tau_Eta->at(i), tau_Phi->at(i), muEta->at(leadLep_index), muPhi->at(leadLep_index));  
+    double dR_subleadLep = deltaR(tau_Eta->at(i), tau_Phi->at(i), muEta->at(subleadLep_index), muPhi->at(subleadLep_index)); 
+    if( kinematics && IdIso && dR_leadLep > 0.4 && dR_subleadLep > 0.4)
+      tau_cands.push_back(i);
+  }
+  return tau_cands;
+}
+
+vector<int> monoJetClass::bjet_veto(vector<int> jetlist, int leadLep_index, int subleadLep_index){
+  vector<int> bjet_cands;
+  bjet_cands.clear();
+
+  for(int j = 0; j < jetlist.size(); j++){
+    int i = jetlist.at(j);
+    bool kinematic = (jetPt->at(i) > 20.0 && fabs(jetEta->at(i)) < 2.4);
+    bool btagged = ((jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i)) > 0.4941);
+
+    double dR_leadLep    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(leadLep_index), muPhi->at(leadLep_index));  
+    double dR_subleadLep = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(subleadLep_index), muPhi->at(subleadLep_index)); 
+
+    if(kinematic && btagged &&  dR_leadLep > 0.4 && dR_subleadLep > 0.4)
+      bjet_cands.push_back(i);
+  }
+  return bjet_cands;
+}
+
+
+bool monoJetClass::getMinDphiJR(vector<int> jetlist, int lead_lepIndex, int sublead_lepIndex, double lepMET_phi){
+  bool decision = false;
+
+  vector<int> tmpJetlist;
+  tmpJetlist.clear();
+
+  for(int j=0; j<jetlist.size(); j++){ 
+
+    int i = jetlist.at(j);
+
+    bool kinematic = (jetPt->at(i) > 30. && fabs(jetEta->at(i)) < 2.4);
+
+    double dR_leadLep    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lead_lepIndex), muPhi->at(lead_lepIndex));  
+    double dR_subLeadLep = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(sublead_lepIndex), muPhi->at(sublead_lepIndex)); 
+
+    if(kinematic && dR_leadLep > 0.4 && dR_subLeadLep > 0.4)
+      tmpJetlist.push_back(i);
+  }
+
+  int count=0;
+  for(int k=0; k < tmpJetlist.size(); k++){
+    if(deltaPhi(jetPhi->at(tmpJetlist.at(k)), lepMET_phi) > 0.5) 
+      count++;
+  }
+
+  if(count >= 4 || count == tmpJetlist.size()) 
+    decision = true;
+
+  return decision;
 }

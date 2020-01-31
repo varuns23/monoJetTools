@@ -6,12 +6,14 @@ lumi = {"SingleEleCR":41486, #23192,
         "DoubleEleCR":41486, #23192,
         "SingleMuCR":41486,
         "DoubleMuCR":41486,
+        "GammaCR":41486,
         "SignalRegion":1198}
 
 lumi_by_era = {"SingleEleCR":{"B":4793,"C":9631,"D":4248,"E":9314,"F":13498},
                "DoubleEleCR":{"B":4793,"C":9631,"D":4248,"E":9314,"F":13498},
                "SingleMuCR":{"B":4793,"C":9633,"D":4248,"E":9314,"F":13498},
                "DoubleMuCR":{"B":4793,"C":9633,"D":4248,"E":9314,"F":13498},
+               "GammaCR":{"B":4793,"C":9633,"D":4248,"E":9314,"F":13498},
                "SignalRegion":{"B":1198}}
 
 region_masks = {}
@@ -48,16 +50,16 @@ legmap = {
     "QCD"       :"QCD"
 }
 colmap = {
-    "ZJets"     :kAzure+10,
-    "ZJets-NLO" :kAzure+10,
-    "WJets"     :kRed-10,
-    "WJets-NLO" :kRed-10,
-    "DYJets"    :kTeal-9,
-    "DYJets-NLO":kTeal-9,
-    "GJets"     :kGray+2,  
-    "TTJets"    :kOrange-2,
-    "DiBoson"   :kCyan-10, 
-    "QCD"       :kGray
+    "ZJets"     :9,
+    "ZJets-NLO" :9,
+    "WJets"     :kOrange-2,
+    "WJets-NLO" :kOrange-2,
+    "DYJets"    :7,
+    "DYJets-NLO":7,
+    "GJets"     :46,  
+    "TTJets"    :kSpring-9,
+    "DiBoson"   :kMagenta-7, 
+    "QCD"       :41
 }
 
 xsec = {

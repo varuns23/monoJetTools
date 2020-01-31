@@ -15,7 +15,8 @@ DataFileMap = {
     "SingleEleCR":"postSingleEle",
     "SingleMuCR":"postSingleMu",
     "DoubleEleCR":"postDoubleEle",
-    "DoubleMuCR":"postDoubleMu"
+    "DoubleMuCR":"postDoubleMu",
+    "GammaCR":"postGamma"
 }
 
 parser.add_argument("-r","--reset",help="removes all post files from currently directory and rehadds them from the .output directory",action="store_true", default=False)

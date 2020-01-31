@@ -8,7 +8,7 @@ import os
 
 """
 Creates phase plots for 2D histograms
-example https://www.hep.wisc.edu/~ekoenig4/MonomonoJetJet/Plots2018/SingleEleCRPlots_EWK/phase/data_h_LeptonEtaPhi_10.png
+example https://www.hep.wisc.edu/~ekoenig4/MonoJet/Plots2018/SingleEleCRPlots_EWK/phase/data_h_LeptonEtaPhi_10.png
 Directions: In region directior with valid root files
 Usage: python ../PlotTool/makePhasePlots.py variable_1 variable_2 variable_3 ...
 """
@@ -40,7 +40,7 @@ for variable in samples.args:
         canvas.Write()
         
         dir = os.getcwd().split("/")[-1]
-        file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonomonoJetJet/Plots2018/"+dir+"Plots_EWK/"
+        file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots2018/"+dir+"Plots_EWK/"
         #print file_path
         sub = "phase"
         directory=os.path.join(os.path.dirname(file_path),sub)

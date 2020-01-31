@@ -43,7 +43,7 @@ def genBkgInfo():
         prompt = 'Processing %s' % "{0:<20}".format(mcfile)
         mcfile += '.root'
         rfile = TFile.Open(mcfile)
-        tree = rfile.Get('monoJetJet_8/tree')
+        tree = rfile.Get('monoJet_8/tree')
         cutflow = rfile.Get('h_cutflow')
         total = cutflow[1]
         tree_total = tree.GetEntriesFast()
