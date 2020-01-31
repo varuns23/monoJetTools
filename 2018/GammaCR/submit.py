@@ -7,11 +7,10 @@ sys.path.append(repo)
 
 from CondorTools.SubmitDataset import submit,options,mclist
 options['year'] = '2017'
-options['region'] = 'SR'
+options['region'] = 'GA'
 options['parallel'] = True
 options['batchsize'] = 100
 # options['submit'] = False
 #----Submit---#
-submit('met_crab',sub='B',label='METdata_',filelist=True)
+submit('singlepho',label='Gamma_',filelist=True)
 for mc in mclist: submit(mc)
-

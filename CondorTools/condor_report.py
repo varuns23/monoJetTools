@@ -7,8 +7,8 @@ from argparse import ArgumentParser
 
 cmssw = os.getenv("CMSSW_BASE")
 cwd = os.getcwd()
-years = ["2016","2017","2018"]
-regions = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR"]
+years = ["2017","2018"]
+regions = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR","GammaCR"]
 
 def getStatusDirs(cwd):
     def helper(cwd,statusmap):
