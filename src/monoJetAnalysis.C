@@ -187,8 +187,11 @@ float monoJetAnalysis::dPhiJetMETmin(vector<int> jets,float metPhi) {
 vector<int> monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
   vector<int> tmpCand; tmpCand.clear();
   for(int i = 0; i < nJet; i++){
-    if( (jetID->at(i)>>0&1) == 1)
-      tmpCand.push_back(i);
+    bool tightJetID = (jetID->at(i)>>0&1) == 1;
+    bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
+    bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
+    if (tightJetID && kinematics && cleaning)
+      tmpCand.push_back(i)
   }
   return tmpCand;
 }
@@ -196,8 +199,11 @@ vector<int> monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jet
 vector<int> monoJetAnalysis::getJetCand(vector<int> jetlist,float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
   vector<int> tmpCand; tmpCand.clear();
   for(int i : jetlist){
-    if( (jetID->at(i)>>0&1) == 1)
-      tmpCand.push_back(i);
+    bool tightJetID = (jetID->at(i)>>0&1) == 1;
+    bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
+    bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
+    if (tightJetID && kinematics && cleaning)
+      tmpCand.push_back(i)
   }
   return tmpCand;
 }
@@ -213,8 +219,7 @@ int monoJetAnalysis::setJetCand(vector<int> jetlist) {
 vector<int> monoJetAnalysis::getLooseJet(float jetPtCut,float jetEtaCut) {
   vector<int> jetindex; jetindex.clear();
   for(int i = 0; i < nJet; i++) {
-    bool jetTightID = (jetID->at(i)>>0&1) == 1;
-    if (jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut && jetTightID)
+    if (jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut && (jetID->at(i)>>0&1) == 1)
       jetindex.push_back(i);
   }
   return jetindex;
@@ -235,9 +240,8 @@ vector<int> monoJetAnalysis::jet_veto_looseID(int jetindex,float jetPtCut,float 
 vector<int> monoJetAnalysis::getLooseBJet(float jetPtCut,float jetEtaCut) {
   vector<int> bjet_cand; bjet_cand.clear();
   for (int i = 0; i < nJet; i++) {
-    bool jetTightID = (jetID->at(i)>>0&1) == 1;
     float bjetTag = jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i);
-    if (jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut && jetTightID && bjetTag < bjetDeepCSVCut) {
+    if (jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut && bjetTag > bjetDeepCSVCut) {
       bjet_cand.push_back(i);
     }
   }
@@ -409,9 +413,9 @@ vector<int> monoJetAnalysis::getLoosePho(float phoPtCut,float phoEtaCut){
     // passes pt cut
     bool kinematics = ((phoEt->at(i) > phoPtCut) && (fabs(phoSCEta->at(i)) < phoEtaCut));
     bool IdIso = (phoIDbit->at(i)>>0&1==1);
-    bool eleVeto = phoEleVeto->at(i);
+    // bool eleVeto = phoEleVeto->at(i);
     
-    if (kinematics && IdIso && eleVeto)
+    if (kinematics && IdIso)
       pho_cands.push_back(i);
   }  
 
