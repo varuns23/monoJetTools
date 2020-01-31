@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const string monoJetYear::SRDATA = "B";
+const string monoJetYear::SRDATA = "A";
 
 void monoJetYear::initVars() {
   monoJetAnalysis::initVars();
