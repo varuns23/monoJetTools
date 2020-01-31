@@ -21,10 +21,15 @@ bool contains_substr(string str,string delim) {
   return strstr(str.c_str(),delim.c_str()) != NULL;
 }
 
-const vector<std::string> Dataset::datalist = {"egamma","singleele","singlepho","met","met_crab","signal","zjets","zjets_nlo","wjets","wjets_nlo","dyjets","dyjets_nlo","gjets","ttjets","st","ewk","qcd"};
+const vector<std::string> Dataset::datalist = {
+  "egamma","singleele","singlepho","met","met_crab","signal",
+  "zjets","zjets_nlo","wjets","wjets_nlo","dyjets","dyjets_nlo",
+  "gjets","ttjets","st","ewk","qcd"
+};
 const std::map<std::string,Type> Dataset::typemap = {
-  {"egamma",Data},{"singleele",Data},{"singlepho",Data},{"met",Data},{"met_crab",Data},{"signal",Signal},{"zjets",ZJets},{"zjets_nlo",ZJets_NLO},{"wjets",WJets},{"wjets_nlo",WJets_NLO},
-  {"dyjets",DYJets},{"dyjets_nlo",DYJets_NLO},{"qcd",QCD},{"ttjets",TTJets},{"st",ST},{"gjets",GJets},{"ewk",EWK}
+  {"egamma",Data},{"singleele",Data},{"singleele_crab",Data},{"singlepho",Data},{"met",Data},{"met_crab",Data},{"signal",Signal},
+  {"zjets",ZJets},{"zjets_nlo",ZJets_NLO},{"wjets",WJets},{"wjets_nlo",WJets_NLO},{"dyjets",DYJets},{"dyjets_nlo",DYJets_NLO},
+  {"qcd",QCD},{"ttjets",TTJets},{"st",ST},{"gjets",GJets},{"ewk",EWK}
 };
 Dataset::SubsetList Dataset::dataset;
 

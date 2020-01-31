@@ -3,9 +3,9 @@ import sys
 from multiprocessing import Process
 import SubmitCondor
 from dataset import getDataset
-labelmap = { 'dyjets_nlo':'DYNLO','dyjets':'DY','ewk':'','gjets':'GJets','qcd':'QCD','st':'ST_','ttjets':'TTJets','wjets_nlo':'WNLO','wjets':'W','zjets_nlo':'ZNLO','zjets':'Z','met_crab':'METCrabData_','met':'METdata_','egamma':'EGdata_','singleele':'SEdata_','singlepho':'SPdata_','signal':'' }
+labelmap = { 'dyjets_nlo':'DYNLO','dyjets':'DY','ewk':'','gjets':'GJets','qcd':'QCD','st':'ST_','ttjets':'TTJets','wjets_nlo':'WNLO','wjets':'W','zjets_nlo':'ZNLO','zjets':'Z','met_crab':'METCrabData_','met':'METdata_','egamma':'EGdata_','singleele':'SEdata_','singleele_crab':'SECrabData_','singlepho':'SPdata_','signal':'' }
 mclist = ['dyjets_nlo','dyjets','ewk','gjets','qcd','st','ttjets','wjets_nlo','wjets','zjets_nlo','zjets']
-datalist = ['met','egamma','singleele','singlepho']
+datalist = ['met','met_crab','egamma','singleele','singleele_crab','singlepho']
 
 options = {
     'year':None,

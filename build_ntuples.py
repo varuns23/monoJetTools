@@ -56,5 +56,5 @@ def build_dataset(data,path):
     print
 
 for data in os.listdir(directory):
-    if 'TTJets' not in data: continue
+    if 'CRAB' not in data: continue
     build_dataset(data,os.path.join(directory,data))
