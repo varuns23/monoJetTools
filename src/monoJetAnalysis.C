@@ -191,7 +191,7 @@ vector<int> monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jet
     bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
     bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
     if (tightJetID && kinematics && cleaning)
-      tmpCand.push_back(i)
+      tmpCand.push_back(i);
   }
   return tmpCand;
 }
@@ -203,7 +203,7 @@ vector<int> monoJetAnalysis::getJetCand(vector<int> jetlist,float jetPtCut,float
     bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
     bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
     if (tightJetID && kinematics && cleaning)
-      tmpCand.push_back(i)
+      tmpCand.push_back(i);
   }
   return tmpCand;
 }
