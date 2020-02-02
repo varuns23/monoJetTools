@@ -24,6 +24,9 @@
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017D/0004/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017D/0005/
 
+>>E
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho/SinglePho2017E/
+
 >>F
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017F/0000/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017F/0001/
