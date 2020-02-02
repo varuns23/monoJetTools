@@ -12,6 +12,5 @@ options['parallel'] = True
 options['batchsize'] = 100
 # options['submit'] = False
 #----Submit---#
-submit('singleele_crab',label='DoubleEle_',filelist=True)
-submit('singleele',sub='F',label='DoubleEle_',filelist=True)
+submit('egamma',label='DoubleEle_',filelist=True)
 for mc in mclist: submit(mc)

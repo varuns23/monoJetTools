@@ -14,6 +14,6 @@ options['batchsize'] = 100
 
 #----Submit---#
 #submit('met',sub='B',label='DoubleMu_',filelist=True)
-submit('met_crab',sub='B',label='DoubleMu_',filelist=True)
+submit('met_farmout',sub='B',label='DoubleMu_',filelist=True)
 # submit('met',label='DoubleMu_',filelist=True)
 # for mc in mclist: submit(mc)

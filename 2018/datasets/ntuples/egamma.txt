@@ -1,12 +1,38 @@
->>A
-/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma/EGamma2018A_17Sep2018/
+>A
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018A_17Sep2018/0000/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018A_17Sep2018/0001/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018A_17Sep2018/0002/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018A_17Sep2018/0003/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018A_17Sep2018/0004/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018A_17Sep2018/0005/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018A_17Sep2018/0006/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018A_17Sep2018/0007/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018A_17Sep2018/0008/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018A_17Sep2018/0009/
 
->>B
-/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma/EGamma2018B_17Sep2018/
+>B
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018B_17Sep2018/0000/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018B_17Sep2018/0001/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018B_17Sep2018/0002/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018B_17Sep2018/0003/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018B_17Sep2018/0004/
 
->>C
-/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma/EGamma2018C_17Sep2018/
+>C
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018C_17Sep2018/0000/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018C_17Sep2018/0001/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018C_17Sep2018/0002/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018C_17Sep2018/0003/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018C_17Sep2018/0004/
 
->>D
-/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma/EGammaD_22Jan2019/
+>D
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018D_22Jan2019/0000/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018D_22Jan2019/0001/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018D_22Jan2019/0002/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018D_22Jan2019/0003/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018D_22Jan2019/0004/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018D_22Jan2019/0005/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018D_22Jan2019/0006/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018D_22Jan2019/0007/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018D_22Jan2019/0008/
+/hdfs/store/user/varuns/NTuples/Data/Run2018_JECv19/EGamma_CRAB/EGamma2018Dv1_22Jan2019/0000/
 

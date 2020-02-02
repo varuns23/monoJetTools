@@ -1,15 +1,45 @@
->>B
-/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017B/
+>B
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017B/0000/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017B/0001/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017B/0002/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017B/0003/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017B/0004/
 
->>C
-/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017C/
+>C
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017C/0000/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017C/0001/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017C/0002/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017C/0003/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017C/0004/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017C/0005/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017C/0006/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017C/0007/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017C/0008/
 
->>D
-/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017D/
+>D
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017D/0000/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017D/0001/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017D/0002/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017D/0003/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017D/0004/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017D/0005/
 
->>E
-/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017E/
+>E
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017E/0000/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017E/0001/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017E/0002/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017E/0003/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017E/0004/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017E/0005/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017E/0006/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017E/0007/
 
->>F
-/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017F/
+>F
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017F/0000/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017F/0001/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017F/0002/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017F/0003/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017F/0004/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017F/0005/
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET_CRAB/MET2017Fv1/0000/
 

@@ -1,0 +1,15 @@
+>>B
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017B/
+
+>>C
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017C/
+
+>>D
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017D/
+
+>>E
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017E/
+
+>>F
+/hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017F/
+

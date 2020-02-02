@@ -12,7 +12,6 @@ options['parallel'] = True
 options['batchsize'] = 100
 # options['submit'] = False
 #----Submit---#
-submit('met_crab',label='SingleMu_',filelist=True)
-submit('met',sub='F',label='SingleMu_',filelist=True)
+submit('met',label='SingleMu_',filelist=True)
 for mc in mclist: submit(mc)
 
