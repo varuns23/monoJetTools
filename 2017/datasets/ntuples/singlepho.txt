@@ -1,11 +1,11 @@
->B
+>>B
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017B/0000/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017B/0001/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017B/0002/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017B/0003/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017B/0004/
 
->C
+>>C
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017C/0000/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017C/0001/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017C/0002/
@@ -16,7 +16,7 @@
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017C/0007/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017C/0008/
 
->D
+>>D
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017D/0000/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017D/0001/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017D/0002/
@@ -24,7 +24,7 @@
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017D/0004/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017D/0005/
 
->F
+>>F
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017F/0000/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017F/0001/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho_CRAB/SinglePho2017F/0002/

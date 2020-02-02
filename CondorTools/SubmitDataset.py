@@ -15,9 +15,9 @@ options = {
     'region':None,
     'parallel':False,
     'batchsize':20,
-    'submit':True,
+    'submit':False,
     'doData':True,
-    'doMC':True
+    'doMC':False
 }
     
 def submit(data,sub=None,label=None,split=-1,filelist=True,script='analyze'):

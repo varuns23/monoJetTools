@@ -27,7 +27,8 @@ const vector<std::string> Dataset::datalist = {
   "gjets","ttjets","st","ewk","qcd"
 };
 const std::map<std::string,Type> Dataset::typemap = {
-  {"egamma",Data},{"egamma_farmout"},{"singleele",Data},{"singleele_farmout",Data},{"singlepho",Data},{"singlepho_farmout",Data},{"met",Data},{"met_farmout",Data},{"signal",Signal},
+  {"egamma",Data},{"egamma_farmout",Data},{"singleele",Data},{"singleele_farmout",Data}
+  ,{"singlepho",Data},{"singlepho_farmout",Data},{"met",Data},{"met_farmout",Data},{"signal",Signal},
   {"zjets",ZJets},{"zjets_nlo",ZJets_NLO},{"wjets",WJets},{"wjets_nlo",WJets_NLO},{"dyjets",DYJets},{"dyjets_nlo",DYJets_NLO},
   {"qcd",QCD},{"ttjets",TTJets},{"st",ST},{"gjets",GJets},{"ewk",EWK}
 };
