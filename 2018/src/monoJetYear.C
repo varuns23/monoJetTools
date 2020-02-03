@@ -41,9 +41,7 @@ void monoJetYear::SetScalingHistos() {
   th2fmap["looseMuSF_ID_abseta"] =  (TH2F*)f_muSF_ID->Get("NUM_LooseID_DEN_TrackerMuons_pt_abseta");
   
   // Photon Scale Factors
-  TFile *f_phoIDeffSF_loose=new TFile("RootFiles/2018_PhotonsLoose.root");
-  TFile *f_phoIDeffSF_tight=new TFile("RootFiles/2018_PhotonsTight.root");
-  th2fmap["phoIDSF_loose"]=(TH2F*) f_phoIDeffSF_loose->Get("EGamma_SF2D");
-  th2fmap["phoIDSF_tight"]=(TH2F*) f_phoIDeffSF_tight->Get("EGamma_SF2D");
+  TFile *f_phoIDeffSF_medium=new TFile("RootFiles/2018_PhotonsMedium.root");
+  th2fmap["phoIDSF_medium"]=(TH2F*) f_phoIDeffSF_medium->Get("EGamma_SF2D");
 }
 #endif

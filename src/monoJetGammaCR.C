@@ -63,7 +63,7 @@ bool monoJetGammaCR::CRSelection(vector<int> tight,vector<int> loose) {
 
 float monoJetGammaCR::getSF(int phoindex) {
   float eta = phoSCEta->at(phoindex); float pt = phoEt->at(phoindex);
-  float phoEffSF_corr= th2fmap.getBin("phoIDSF_tight",eta,pt);
+  float phoEffSF_corr= th2fmap.getBin("phoIDSF_medium",eta,pt);
 
   return phoEffSF_corr;
 }
