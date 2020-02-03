@@ -32,27 +32,12 @@ processMap = {
     "DoubleLepCR": {
         "Z":{"proc":"SumOfBkg","label":"Z(ll)",'text':'ll'},
     },
+    "GammaCR": {
+        "G":{"proc":"GJets","label":"#gamma","text":""}
+    }
 }
 
 rangemap = {
-    "ChNemPtFrac" : { 
-        "SignalRegion" : {
-            "SignalRegion" : (0,5),
-            "SingleEleCR" :  (0,6),
-            "SingleMuCR" : (0,6),
-            "DoubleEleCR" : (0,25),
-            "DoubleMuCR" : (0,15),
-        },
-        "DoubleMuCR" : {
-            "SingleMuCR" : (0,0.25)
-        },
-        "DoubleEleCR" : {
-            "SingleEleCR" : (0,0.45)
-        },
-        "DoubleLepCR" : {
-            "SingleLepCR" : (0,0.25)
-        }
-    },
     "recoil" : {
         "SignalRegion" : {
             "SignalRegion" : (0,13),
@@ -82,33 +67,10 @@ def SetBounds(tf,num_sample,den_sample):
     maxdiff = max( abs(ibin - avg) for ibin in bins )
     tf.histo.SetMinimum( max(0,avg - maxdiff*5) )
     tf.histo.SetMaximum( (avg + maxdiff*5) )
-
+    return
     if not any(varmap): return
     yrange = varmap[num_sample.region][den_sample.region]
     tf.histo.SetMinimum(yrange[0]); tf.histo.SetMaximum(yrange[1])
-
-def getTFUncertainty(norm,num_proc,den_proc):
-    unclist = [
-            "QCD_Scale",
-            "QCD_Shape",
-            "QCD_Proc",
-            "NNLO_EWK",
-            "NNLO_Miss",
-            "NNLO_Sud",
-            "QCD_EWK_Mix"]
-    for proc in (num_proc,den_proc):
-        proc.fullUnc(unclist,show=False)
-        print proc.nuisances['Total']
-    nbins = norm.GetNbinsX()
-    up,dn = norm.Clone(),norm.Clone(); up.Reset(); dn.Reset()
-    for ibin in range(1,nbins+1):
-        if norm[ibin] == 0: continue
-        up[ibin] = norm[ibin] * TMath.Sqrt( sum( (proc.nuisances['Total'].up[ibin]/proc.histo[ibin])**2 for proc in (num_proc,den_proc) ) )
-        dn[ibin] = norm[ibin] * TMath.Sqrt( sum( (proc.nuisances['Total'].dn[ibin]/proc.histo[ibin])**2 for proc in (num_proc,den_proc) ) )
-    nuisance = Nuisance('tf','Total',up,dn,norm)
-    print nuisance
-    up,dn = nuisance.GetHistos()
-    return GetUncBand(up,dn)
 def plotTF(num_sample,den_sample):
     lumi_label = '%s' % float('%.3g' % (num_sample.lumi/1000.)) + " fb^{-1}"
     year = num_sample.year
@@ -295,6 +257,11 @@ def plotTransfer(variable,samplemap):
     samplemap["SignalRegion"].num_boson = "Z"
     samplemap["SignalRegion"].den_boson = "W"
     plotTF(samplemap["SignalRegion"],samplemap["SignalRegion"])
+
+    print "Z/G Linking"
+    samplemap["SignalRegion"].num_boson = "Z"
+    samplemap["GammaCR"].den_boson = "G"
+    plotTF(samplemap["SignalRegion"],samplemap["GammaCR"])
     
     print "DoubleEleCR Transfer"
     samplemap["SignalRegion"].num_boson = "Z"
@@ -314,24 +281,36 @@ def plotTransfer(variable,samplemap):
     samplemap["SingleMuCR"].den_boson = "W"
     plotTF(samplemap["SignalRegion"],samplemap["SingleMuCR"])
 
-    print "Electron CR Z/W Linking"
+    print "Electron CR W/G Linking"
+    samplemap["SingleEleCR"].num_boson = "W"
+    plotTF_datamc(samplemap['SingleEleCR'],samplemap['GammaCR'])
+    print "Electron CR Z/G Linking"
     samplemap["DoubleEleCR"].num_boson = "Z"
-    samplemap["SingleEleCR"].den_boson = "W"
+    plotTF_datamc(samplemap['DoubleEleCR'],samplemap['GammaCR'])
+    print "Electron CR Z/W Linking"
     plotTF_datamc(samplemap["DoubleEleCR"],samplemap["SingleEleCR"])
     
-    print "Muon CR Z/W Linking"
+    print "Muon CR W/G Linking"
+    samplemap["SingleMuCR"].num_boson = "W"
+    plotTF_datamc(samplemap['SingleMuCR'],samplemap['GammaCR'])
+    print "Muon CR Z/G Linking"
     samplemap["DoubleMuCR"].num_boson = "Z"
-    samplemap["SingleMuCR"].den_boson = "W"
+    plotTF_datamc(samplemap['DoubleMuCR'],samplemap['GammaCR'])
+    print "Muon CR Z/W Linking"
     plotTF_datamc(samplemap["DoubleMuCR"],samplemap["SingleMuCR"])
 
-    print "CR Z/W Linking"
     for region in samplemap:
         if 'CR' not in region: continue
         samplemap[region].setSumOfBkg()
     doublelep = Region(copy=samplemap["DoubleEleCR"]); doublelep.add(samplemap["DoubleMuCR"])
     doublelep.region = "DoubleLepCR"; doublelep.num_boson = "Z"
     singlelep = Region(copy=samplemap["SingleEleCR"]); singlelep.add(samplemap["SingleMuCR"])
-    singlelep.region = "SingleLepCR"; singlelep.den_boson = "W"
+    singlelep.region = "SingleLepCR"; singlelep.num_boson = "W"; singlelep.den_boson = "W"
+    print "CR Z/G Linking"
+    plotTF_datamc(doublelep,samplemap["GammaCR"])
+    print "CR W/G Linking"
+    plotTF_datamc(singlelep,samplemap["GammaCR"])
+    print "CR Z/W Linking"
     plotTF_datamc(doublelep,singlelep)
 
 def runAll(args):
@@ -341,5 +320,5 @@ def runAll(args):
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    if not any(args.argv): args.argv.append('ChNemPtFrac')
+    if not any(args.argv): args.argv.append('recoil')
     runAll(args)

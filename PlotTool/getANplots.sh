@@ -3,7 +3,7 @@
 nvariables='recoil nJets j1pT j1Eta j1Phi nVtx'
 singleleps='LeptonPt LeptonEta'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta subleadingLeptonEta subleadingLeptonPt'
-gamma='PhotonPt PhotonEta'
+gamma='photonPt photonEta'
 cutvars='h_metcut h_dphimin'
 uncertainty=''
 

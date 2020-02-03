@@ -47,12 +47,12 @@ void monoJetDoubleMuCR::BookHistos(int i,string histname) {
 
 void monoJetDoubleMuCR::fillHistos(int nhist,float event_weight) {
   if(leadLepIndx >= 0 && subleadLepIndx >= 0){ 
-    h_leadingLeptonPt[nhist]    ->Fill(muPt->at(leadLepIndx),event_weight);
-    h_leadingLeptonEta[nhist]   ->Fill(muEta->at(leadLepIndx),event_weight);
-    h_leadingLeptonPhi[nhist]   ->Fill(muPhi->at(leadLepIndx),event_weight);
-    h_subleadingLeptonPt[nhist] ->Fill(muPt->at(subleadLepIndx),event_weight);
-    h_subleadingLeptonEta[nhist]->Fill(muEta->at(subleadLepIndx),event_weight);
-    h_subleadingLeptonPhi[nhist]->Fill(muPhi->at(subleadLepIndx),event_weight);
+    h_leadingLeptonPt[nhist]    ->Fill(leadingLepton_pt,event_weight);
+    h_leadingLeptonEta[nhist]   ->Fill(leadingLepton_eta,event_weight);
+    h_leadingLeptonPhi[nhist]   ->Fill(leadingLepton_phi,event_weight);
+    h_subleadingLeptonPt[nhist] ->Fill(subleadingLepton_pt,event_weight);
+    h_subleadingLeptonEta[nhist]->Fill(subleadingLepton_eta,event_weight);
+    h_subleadingLeptonPhi[nhist]->Fill(subleadingLepton_phi,event_weight);
     
     h_dileptonPt[nhist]         ->Fill(dilepton_pt,event_weight);
     h_dileptonM[nhist]          ->Fill(dilepton_mass,event_weight);
