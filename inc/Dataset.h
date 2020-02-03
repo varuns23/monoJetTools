@@ -14,7 +14,7 @@ class Dataset {
     SubsetList();
     void addDataset(std::string path,std::string filename);
   };
-  static SubsetList dataset;
+  static SubsetList dataset_;
 public:
   static const std::vector<std::string> datalist;
   static const std::map<std::string,Type> typemap;
@@ -26,6 +26,8 @@ public:
   bool isData;
   bool isSignal;
   bool isNLO;
+  std::string dataset;
+  std::string subset;
   int PID;
 
   Dataset();
@@ -33,12 +35,12 @@ public:
 
   void setInfo(std::string path);
   void setTypeInfo(std::string path);
-  static inline Subset getSubset(std::string data) { return dataset[data]; }
-  static inline std::vector<std::string> getDirlist(std::string data,std::string subset) { return dataset[data][subset]; }
+  static inline Subset getSubset(std::string data) { return dataset_[data]; }
+  static inline std::vector<std::string> getDirlist(std::string data,std::string subset) { return dataset_[data][subset]; }
   static inline bool contains(std::string data,std::string subset="") {
-    if (dataset.find(data) != dataset.end()) {
+    if (dataset_.find(data) != dataset_.end()) {
       if (subset == "") return true;
-      return dataset[data].find(subset) != dataset[data].end();
+      return dataset_[data].find(subset) != dataset_[data].end();
     }
     return false;
   }

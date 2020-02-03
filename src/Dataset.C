@@ -32,7 +32,7 @@ const std::map<std::string,Type> Dataset::typemap = {
   {"zjets",ZJets},{"zjets_nlo",ZJets_NLO},{"wjets",WJets},{"wjets_nlo",WJets_NLO},{"dyjets",DYJets},{"dyjets_nlo",DYJets_NLO},
   {"qcd",QCD},{"ttjets",TTJets},{"st",ST},{"gjets",GJets},{"ewk",EWK}
 };
-Dataset::SubsetList Dataset::dataset;
+Dataset::SubsetList Dataset::dataset_;
 
 Dataset::SubsetList::SubsetList() {
   string ntuples;
@@ -88,15 +88,19 @@ Dataset::Dataset() {
   isData = false;
   isSignal = false;
   isNLO = false;
+  dataset = "";
+  subset = "";
   PID = 0;
 }
 
 void Dataset::setTypeInfo(string path) {
   for (string data : datalist) {
-    Subset subset = dataset[data];
+    Subset subset = dataset_[data];
     for (auto& sub : subset) {
       for (string directory : sub.second) {
 	if ( contains_substr(path,directory) ) {
+	  dataset = data;
+	  this->subset = sub.first;
 	  type = typemap.find(data)->second;
 	  isNLO = contains_substr(data,"NLO");
 	  if ( type == WJets || type == DYJets ) {
@@ -121,7 +125,7 @@ void Dataset::setInfo(string path) {
 void Dataset::printDataset() {
   for (string data : datalist) {
     if (!this->contains(data)) continue;
-    Subset subset = dataset[data];
+    Subset subset = dataset_[data];
     for (auto& sub : subset) {
       cout << data << "----" << sub.first << endl;
       for (string directory : sub.second) {
