@@ -12,5 +12,5 @@ options['parallel'] = True
 options['batchsize'] = 100
 # options['submit'] = False
 #----Submit---#
-submit('singlepho',label='Gamma_',filelist=True)
+submit('egamma',label='Gamma_',filelist=True)
 for mc in mclist: submit(mc)

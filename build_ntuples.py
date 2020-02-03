@@ -56,5 +56,5 @@ def build_dataset(data,path):
     print
 
 for data in os.listdir(directory):
-    if 'CRAB' not in data: continue
+    if 'SinglePho_CRAB' not in data: continue
     build_dataset(data,os.path.join(directory,data))
