@@ -48,7 +48,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     }
 
     fillEvent(0,genWeight);
-    if (getEGammaTrigger() && inclusiveCut()) {
+    if (getElectronTrigger() && inclusiveCut()) {
       fillEvent(1,event_weight);
 
       if (getMetFilter()) {

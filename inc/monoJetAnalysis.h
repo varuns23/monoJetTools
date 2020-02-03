@@ -841,7 +841,8 @@ public:
   virtual bool inclusiveCut();
   virtual bool getMetFilter();
   virtual bool getMetTrigger();
-  virtual bool getEGammaTrigger();
+  virtual bool getElectronTrigger();
+  virtual bool getPhotonTrigger();
   virtual float dPhiJetMETmin(vector<int> jetlist,float metPhi);
   bool getJetHEMVeto(float jetPtCut=jetHEMVetoPtCut);
   bool getEleHEMVeto(float elePtCut=eleHEMVetoPtCut);

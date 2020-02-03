@@ -165,9 +165,14 @@ bool monoJetAnalysis::getMetTrigger() {
   return ((HLTMet>>7&1) == 1 || (HLTMet>>8&1) == 1 || (HLTMet>>10&1) == 1);
 }
 
-bool monoJetAnalysis::getEGammaTrigger() {
+bool monoJetAnalysis::getElectronTrigger() {
   if (!sample.isData) return true;
   return (HLTEleMuX>>5&1) == 1 || (HLTEleMuX>>6&1) == 1 || (HLTPho>>11&1) == 1;
+}
+
+bool monoJetAnalysis::getPhotonTrigger() {
+  if (!sample.isData) return true;
+  return (HLTPho>>11&1) == 1;
 }
 
 float monoJetAnalysis::dPhiJetMETmin(vector<int> jets,float metPhi) {
