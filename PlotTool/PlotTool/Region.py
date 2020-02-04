@@ -160,14 +160,17 @@ class Region(object):
         if hasattr(self,'nhist'): variable = '%s_%s' % (variable,self.nhist)
         self.total_bkg = 0
         self.MCOrder = []
+        def mcsort(process):
+            if 'cutflow' in variable:
+                return self[process].histo.GetBinContent(self[process].histo.GetNbinsX())
+            else:
+                return self[process].scaled_total
         for process in self:
             process.setVariable(variable,b_info.template,b_info.weight,b_info.cut)
             self.scaleWidth = process.scaleWidth
             if process.proctype == 'bkg':
                 self.total_bkg += process.scaled_total
-                self.MCOrder.append(process.process); self.MCOrder.sort(key=lambda name:self[name].scaled_total
-                                                                        if variable is not 'h_cutflow'
-                                                                        else self[name].histo[self[name].histo.GetNbinsX()],reverse=True)
+                self.MCOrder.append(process.process); self.MCOrder.sort(key=mcsort,reverse=True)
         self.setXaxisTitle(variable)
         if self.show: self.output()
         if os.getcwd() != self.cwd: os.chdir(self.cwd)

@@ -87,6 +87,7 @@ def UncBandStyle(uncband,color=kGray+1):
 ###################################################################
 
 def fillStack(samples,hs_datamc,threshold=0.001):
+    if samples.name == 'Cutflow': threshold=0
     for process in reversed(samples.MCOrder):
         percent=samples[process].scaled_total/samples.total_bkg
         if percent > threshold:
@@ -143,7 +144,7 @@ def RatioStyle(ratio,rymin=0.65,rymax=1.35,xname=None,yname='Data/MC'):
     ratio.GetYaxis().CenterTitle()
     ratio.GetYaxis().SetRangeUser(rymin,rymax);
 
-    if xname is not None: ratio.GetXaxis().SetTitle(xname)
+    if xname is not None and xname is not 'Cutflow': ratio.GetXaxis().SetTitle(xname)
     ratio.GetXaxis().SetLabelFont(42);
     ratio.GetXaxis().SetLabelSize(0.10);
     ratio.GetXaxis().SetTitleFont(42);
