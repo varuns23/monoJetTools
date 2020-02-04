@@ -1,6 +1,7 @@
 #!/bin/sh
 
-nvariables='recoil nJets j1pT j1Eta j1Phi nVtx'
+fix='-b fix j1pT'
+nvariables='recoil nJets j1Eta j1Phi nVtx'
 singleleps='LeptonPt LeptonEta'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta subleadingLeptonEta subleadingLeptonPt'
 gamma='photonPt photonEta'
@@ -17,7 +18,8 @@ run() {
     pushd $1
     shift 1
     array="$@ $nvariables"
-    plot $options --sub AN --autovar $array $uncertainty || exit 1
+    plot $options --sub AN -a $array $uncertainty || exit 1
+    plot $options --sub AN -a $fix || exit 1
     plot $options --sub AN $cutvars || exit 1
     popd
 }
