@@ -41,7 +41,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     // float event_weight = 1.;
     // if (!sample.isData) {
     //   ApplyPileup(event_weight);
-    //   if (isW_or_ZJet()) {
+    //   if (isWZG()) {
     // 	SetBoson(sample.PID);
     // 	ApplyKFactor(event_weight);
     //   }

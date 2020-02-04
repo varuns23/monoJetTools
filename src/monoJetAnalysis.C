@@ -17,7 +17,7 @@ void monoJetAnalysis::SetScalingHistos() {
   TFile *weights = TFile::Open("RootFiles/PU_Central.root");
   TH1F* PU = (TH1F*)weights->Get("pileup");
   th1fmap["PU"] = PU;
-  if (isW_or_ZJet()) {
+  if (isWZG()) {
     //This is the root file with EWK Corrections
     TFile* f_nlo_qcd = TFile::Open("RootFiles/2017_gen_v_pt_stat1_qcd_sf.root");
     TFile* f_nnlo_qcd = TFile::Open("RootFiles/lindert_qcd_nnlo_sf.root");
@@ -27,10 +27,15 @@ void monoJetAnalysis::SetScalingHistos() {
       NLO_EWK = (TH1F*)TFile::Open("RootFiles/merged_kfactors_wjets.root")->Get("kfactor_monojet_ewk");
       NLO_QCD = (TH1F*)f_nlo_qcd->Get("wjet_dilep");
       NNLO_QCD = (TH1F*)f_nnlo_qcd->Get("evj");
-    } else {
+    } else if (sample.type == ZJets || sample.type == DYJets) {
       NLO_EWK = (TH1F*)TFile::Open("RootFiles/merged_kfactors_zjets.root")->Get("kfactor_monojet_ewk");
       NLO_QCD = (TH1F*)f_nlo_qcd->Get("dy_dilep");
+      
       NNLO_QCD = (TH1F*)f_nnlo_qcd->Get("eej");
+    } else {
+      NLO_EWK = (TH1F*)TFile::Open("RootFiles/merged_kfactors_gjets.root")->Get("kfactor_monojet_ewk");
+      NLO_QCD = (TH1F*)TFile::Open("RootFiles/merged_kfactors_gjets.root")->Get("kfactor_monojet_qcd");
+      NNLO_QCD = (TH1F*)f_nnlo_qcd->Get("aj");
     }
     th1fmap["NNLO_QCD"] = NNLO_QCD;
     th1fmap["NLO_QCD"] = NLO_QCD;
@@ -1386,14 +1391,14 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
     string hnames[7] = {"d1K_NLO","d2K_NLO","d3K_NLO","d1kappa_EW","d2kappa_EW","d3kappa_EW","dK_NLO_mix"};
     TFile* file = NULL;
     string prefix = "";
-    if (isW_or_ZJet()) {
-      if (sample.type == WJets || sample.type == WJets_NLO) {
+    if (isWZG()) {
+      if (sample.type == WJets) {
 	file = TFile::Open("RootFiles/WJets_NLO_EWK.root");
 	prefix = "evj_pTV_";
-      } else if (sample.type == ZJets || sample.type == ZJets_NLO) {
+      } else if (sample.type == ZJets) {
 	file = TFile::Open("RootFiles/ZJets_NLO_EWK.root");
 	prefix = "vvj_pTV_";
-      } else if (sample.type == DYJets || sample.type == DYJets_NLO) {
+      } else if (sample.type == DYJets) {
 	file = TFile::Open("RootFiles/DYJets_NLO_EWK.root");
 	prefix = "eej_pTV_";
       }
@@ -1404,7 +1409,7 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
     for (int i = 0; i < 7; i++) {
       string name = uncnames[i];
       TH1F* histo = NULL;
-      if (isW_or_ZJet()) histo = (TH1F*)file->Get( (prefix+hnames[i]).c_str() );
+      if (isWZG()) histo = (TH1F*)file->Get( (prefix+hnames[i]).c_str() );
       scaleUncs.addUnc(name,histo);
     }
   }
@@ -1414,7 +1419,7 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
     float weightUp = event_weight;
     float weightDn = event_weight;
 
-    if (isW_or_ZJet()) {
+    if (isWZG()) {
       float unc = scaleUncs.getBin(name,bosonPt);
       float k_qcd = th1fmap.getBin("K_NLO_QCD",bosonPt);
       float k_ewk = th1fmap.getBin("K_EW",bosonPt);

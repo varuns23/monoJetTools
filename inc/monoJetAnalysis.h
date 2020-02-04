@@ -835,7 +835,7 @@ public:
   virtual void SetSF(float sf);
   virtual void ApplySF(float &event_weight);
 
-  virtual inline bool isW_or_ZJet() { return sample.type == WJets || sample.type == ZJets; };
+  virtual inline bool isWZG() { return sample.type == WJets || sample.type == ZJets || sample.type == GJets || sample.type == DYJets; };
 
   /* Event Selction Methods */
   virtual bool inclusiveCut();

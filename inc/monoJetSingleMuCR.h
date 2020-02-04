@@ -17,7 +17,6 @@ public:
   virtual void fillHistos(int nhist,float event_weight);
   virtual void initVars();
   virtual void initTree(TTree* tree);
-  inline bool isW_or_ZJet() { return monoJetAnalysis::isW_or_ZJet() || sample.type == DYJets || sample.type == DYJets_NLO; }
   virtual float getSF(int lepindex);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
   virtual vector<int> getJetCand(vector<int> jetlist, int lepindex);

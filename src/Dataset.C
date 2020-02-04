@@ -29,7 +29,7 @@ const vector<std::string> Dataset::datalist = {
 const std::map<std::string,Type> Dataset::typemap = {
   {"egamma",Data},{"egamma_farmout",Data},{"singleele",Data},{"singleele_farmout",Data}
   ,{"singlepho",Data},{"singlepho_farmout",Data},{"met",Data},{"met_farmout",Data},{"signal",Signal},
-  {"zjets",ZJets},{"zjets_nlo",ZJets_NLO},{"wjets",WJets},{"wjets_nlo",WJets_NLO},{"dyjets",DYJets},{"dyjets_nlo",DYJets_NLO},
+  {"zjets",ZJets},{"zjets_nlo",ZJets},{"wjets",WJets},{"wjets_nlo",WJets},{"dyjets",DYJets},{"dyjets_nlo",DYJets},
   {"qcd",QCD},{"ttjets",TTJets},{"st",ST},{"gjets",GJets},{"ewk",EWK}
 };
 Dataset::SubsetList Dataset::dataset_;
@@ -102,7 +102,7 @@ void Dataset::setTypeInfo(string path) {
 	  dataset = data;
 	  this->subset = sub.first;
 	  type = typemap.find(data)->second;
-	  isNLO = contains_substr(data,"NLO");
+	  isNLO = contains_substr(data,"nlo");
 	  if ( type == WJets || type == DYJets ) {
 	    isInclusive = contains_substr(sub.first,"MLM");
 	  } else {
@@ -118,8 +118,10 @@ void Dataset::setInfo(string path) {
   setTypeInfo(path);
   isData = (type == Data);
   isSignal = (type == Signal);
-  if (type == WJets || type == WJets_NLO) PID = 24;
-  else if (type == ZJets || type == ZJets_NLO || type == DYJets || DYJets_NLO) PID = 23;
+  if (type == WJets) PID = 24;
+  else if (type == ZJets || type == DYJets) PID = 23;
+  else if (type == GJets) PID = 22;
+  
 }
 
 void Dataset::printDataset() {
