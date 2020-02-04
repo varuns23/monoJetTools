@@ -158,9 +158,16 @@ class Region(object):
         self.initVariable(variable,weight)
         self.open()
         if hasattr(self,'nhist'): variable = '%s_%s' % (variable,self.nhist)
+        self.total_bkg = 0
+        self.MCOrder = []
         for process in self:
             process.setVariable(variable,b_info.template,b_info.weight,b_info.cut)
             self.scaleWidth = process.scaleWidth
+            if process.proctype == 'bkg':
+                self.total_bkg += process.scaled_total
+                self.MCOrder.append(process.process); self.MCOrder.sort(key=lambda name:self[name].scaled_total
+                                                                        if variable is not 'h_cutflow'
+                                                                        else self[name].histo[self[name].histo.GetNbinsX()],reverse=True)
         self.setXaxisTitle(variable)
         if self.show: self.output()
         if os.getcwd() != self.cwd: os.chdir(self.cwd)
@@ -173,13 +180,12 @@ class Region(object):
             for signal in self.SignalList:
                 signal = self[signal]
                 print prompt % ( ntemp.format(signal.process),itemp.format( '%.6g' % signal.scaled_total ) )
-        BkgIntegral = sum( process.scaled_total for name,process in self.processes.iteritems() if process.proctype == 'bkg' )
-        print prompt % ( ntemp.format('SumOfBkg'),itemp.format( '%.6g' % BkgIntegral ) )
-        for sample in sorted(self.MCList,key=lambda sample: self.processes[sample].scaled_total,reverse=True):
+        print prompt % ( ntemp.format('SumOfBkg'),itemp.format( '%.6g' % self.total_bkg ) )
+        for sample in self.MCOrder:
             process = self.processes[sample]
-            percent = ("%.4g%%" % (100*process.scaled_total/BkgIntegral)) if BkgIntegral != 0 else 'Nan'
+            percent = ("%.4g%%" % (100*process.scaled_total/self.total_bkg)) if self.total_bkg != 0 else 'Nan'
             print prompt % ( ntemp.format(sample),itemp.format( '%.6g' % process.scaled_total ) ),'| %s' % (percent)
-        ratio = ('%.6g' % (self.processes['Data'].scaled_total/BkgIntegral)) if BkgIntegral != 0 else 'Nan'
+        ratio = ('%.6g' % (self.processes['Data'].scaled_total/self.total_bkg)) if self.total_bkg != 0 else 'Nan'
         print '            %s: %s' % (ntemp.format('data/mc'),itemp.format(ratio))
     def setSumOfBkg(self):
         sumofbkg = Process('SumOfBkg',[],{},'sumofbkg',year=self.year,region=self.region)
@@ -188,7 +194,7 @@ class Region(object):
                 sumofbkg.add(process)
         self.processes['SumOfBkg'] = sumofbkg
     def setXaxisTitle(self,variable):
-        self.name = 'Xaxis Title'
+        self.name = None
         for title in samplenames:
             if title in variable:
                 self.name = samplenames[title];
@@ -196,7 +202,7 @@ class Region(object):
             if key == title:
                 self.name = samplenames[title];
                 break
-        if self.name == 'Xaxis Title':
+        if self.name == None:
             for process in self:
                 for subprocess in process:
                     self.name = subprocess.histo.GetXaxis().GetTitle()
@@ -217,7 +223,7 @@ class Region(object):
         if self.args.binning == None: return
         for label,binning in b_info.binninglist.iteritems():
             if label in self.args.binning:
-                self.varname += '_'+self.args.binning
+                if label is not 'fix': self.varname += '_'+self.args.binning
                 binning(self.args.binning,self,b_variable) 
     def addUnc(self,nuisance,show=True):
         for process in self: process.addUnc(nuisance,show=show)

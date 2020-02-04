@@ -138,10 +138,8 @@ def plotVariable(samples,variable,initiate=True,saveas=AutoSave,blinded=False):
         
         Ratio = GetRatio(data.histo,hs_bkg)
         
-        rymin = 0.65; rymax = 1.35
-        # rymin = 0.35; rymax = 1.75
-        RatioStyle(Ratio,rymin,rymax)
-        Ratio.Draw("A");
+        RatioStyle(Ratio,xname=samples.name)
+        Ratio.Draw("Axis");
         
         if samples.hasUncertainty:
             uncband.Draw('2same')
@@ -150,22 +148,6 @@ def plotVariable(samples,variable,initiate=True,saveas=AutoSave,blinded=False):
         line.Draw("same");
         
         c.Update();
-        
-
-        nbins = hs_datamc.GetXaxis().GetNbins();
-        xmin = hs_datamc.GetXaxis().GetXmin();
-        xmax = hs_datamc.GetXaxis().GetXmax();
-        xwmin = xmin;
-        xwmax = xmax;
-        
-        xname = samples.name if type(samples.name) == str else None
-        xaxis = makeXaxis(xmin,xmax,rymin,510,name=xname);
-        xaxis.Draw("SAME");
-
-        if (samples.name == "Cutflow"): XaxisCutflowStyle(xaxis,hs_bkg)
-        
-        yaxis = makeYaxis(rymin,rymax,xmin,6,name="Data/MC");
-        yaxis.Draw("SAME");
     ######################################
     
     saveas(samples,c)

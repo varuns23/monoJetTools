@@ -57,22 +57,22 @@ def DataStyle(hs_data):
     hs_data.SetLineWidth(2)
     hs_data.SetLineColor(kWhite);
     hs_data.SetTitle("");
-    hs_data.GetXaxis().SetTitle("");
-    hs_data.GetXaxis().SetTickLength(0);
-    hs_data.GetXaxis().SetLabelOffset(999);
-    hs_data.GetYaxis().SetTitle("");
-    hs_data.GetYaxis().SetTickLength(0);
-    hs_data.GetYaxis().SetLabelOffset(999);
+    # hs_data.GetXaxis().SetTitle("");
+    # hs_data.GetXaxis().SetTickLength(0);
+    # hs_data.GetXaxis().SetLabelOffset(999);
+    # hs_data.GetYaxis().SetTitle("");
+    # hs_data.GetYaxis().SetTickLength(0);
+    # hs_data.GetYaxis().SetLabelOffset(999);
     hs_data.SetLineColor(kBlack);
     hs_data.SetMarkerStyle(20);
     hs_data.SetMarkerSize(1);
 ###################################################################
     
 def MCStyle(hs_mc,color):
-    hs_mc.SetTitle("");
-    hs_mc.GetXaxis().SetTitle("");
-    hs_mc.GetXaxis().SetTickLength(0);
-    hs_mc.GetXaxis().SetLabelOffset(999);
+    # hs_mc.SetTitle("");
+    # hs_mc.GetXaxis().SetTitle("");
+    # hs_mc.GetXaxis().SetTickLength(0);
+    # hs_mc.GetXaxis().SetLabelOffset(999);
     # hs_mc.GetYaxis().SetTitle("");
     # hs_mc.GetYaxis().SetTickLength(0);
     # hs_mc.GetYaxis().SetLabelOffset(999);
@@ -86,14 +86,13 @@ def UncBandStyle(uncband,color=kGray+1):
     uncband.SetFillColor(color)
 ###################################################################
 
-def fillStack(samples,hs_datamc):
-    order = [ process for name,process in samples.processes.iteritems() if process.proctype == 'bkg' ]
-    if (samples.name == "Cutflow"):
-        nbin = samples.processes['Data'].histo.GetNbinsX()
-        order.sort(key=lambda process: process.histo.GetBinContent(nbin))
-    else: order.sort(key=lambda process: process.scaled_total)
-    samples.MCOrder = [ _.process for _ in reversed(order) ]
-    for process in order: hs_datamc.Add(process.histo)
+def fillStack(samples,hs_datamc,threshold=0.001):
+    for process in reversed(samples.MCOrder):
+        percent=samples[process].scaled_total/samples.total_bkg
+        if percent > threshold:
+            hs_datamc.Add(samples[process].histo)
+        else:
+            samples.MCOrder.remove(process)
 ###################################################################
 
 def getLegend(xmin=0.75,ymin=0.5,xmax=0.95,ymax=0.887173):
@@ -129,27 +128,27 @@ def getCMSText(lumi,year,scale=1):
     return texS,texS1
 ###################################################################
 
-def RatioStyle(ratio,rymin=0.65,rymax=1.35):
-    gPad.SetGridy();
-    ratio.GetYaxis().SetRangeUser(rymin,rymax);
+def RatioStyle(ratio,rymin=0.65,rymax=1.35,xname=None,yname='Data/MC'):
     ratio.SetStats(0);
-    ratio.GetYaxis().CenterTitle();
     ratio.SetMarkerStyle(20);
     ratio.SetMarkerSize(1);
-    ratio.GetYaxis().SetLabelSize(0.14);
-    ratio.GetYaxis().SetTitleSize(0.12);
+
+    ratio.GetYaxis().SetTitle(yname);
     ratio.GetYaxis().SetLabelFont(42);
+    ratio.GetYaxis().SetLabelSize(0.10);
     ratio.GetYaxis().SetTitleFont(42);
-    ratio.GetYaxis().SetTitleOffset(0.25);
-    ratio.GetYaxis().SetNdivisions(4);
-    ratio.GetYaxis().SetTickLength(0.05);
-    
-    ratio.GetXaxis().SetLabelSize(0.15);
-    ratio.GetXaxis().SetTitleSize(0.12);
+    ratio.GetYaxis().SetTitleSize(0.12);
+    ratio.GetYaxis().SetTitleOffset(0.35);
+    ratio.GetYaxis().SetNdivisions(6)
+    ratio.GetYaxis().CenterTitle()
+    ratio.GetYaxis().SetRangeUser(rymin,rymax);
+
+    if xname is not None: ratio.GetXaxis().SetTitle(xname)
     ratio.GetXaxis().SetLabelFont(42);
+    ratio.GetXaxis().SetLabelSize(0.10);
     ratio.GetXaxis().SetTitleFont(42);
-    ratio.GetXaxis().SetTitleOffset(0.9);
-    ratio.GetXaxis().SetTickLength(0.05);
+    ratio.GetXaxis().SetTitleSize(0.12);
+    ratio.GetXaxis().SetTitleOffset(1.2);
 ###################################################################
 
 def getRatioLine(xmin,xmax):
