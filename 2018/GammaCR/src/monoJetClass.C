@@ -97,7 +97,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 			  if (recoil > recoilCut) {
 			    fillEvent(12,event_weight);
 			    
-			    if (getEleHEMVeto()) {
+			    if (getJetHEMVeto()) {
 			      fillEvent(13,event_weight);
 			    }
 			  }
@@ -126,7 +126,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output->cd();
   
   cutflow = new Cutflow({"Total Events","Triggers","MET Filters","One Loose Photon","One Tight Photon",
-	"Electron Veto","Muon Veto","Tau Veto","BJet Veto","Jet Selection","dPFCaloMET","minDPhiJetMET","Recoil250","EleHEMVeto"});
+	"Electron Veto","Muon Veto","Tau Veto","BJet Veto","Jet Selection","dPFCaloMET","minDPhiJetMET","Recoil250","JetHEMVeto"});
 
   BookHistos(-1,"");
   for(int i = 0; i<nHisto; i++) {
