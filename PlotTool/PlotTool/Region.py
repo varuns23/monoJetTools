@@ -23,7 +23,7 @@ parser.add_argument("-r","--reset",help="removes all post files from currently d
 parser.add_argument("-l","--lumi",help="set the luminosity for scaling",action="store",type=float,dest="lumi")
 parser.add_argument("-s","--signal",help="specify the signal file to use",action="store",type=str,default=None,dest="signal")
 parser.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
-parser.add_argument("--nhists",help="Plot all 1D plots at nhists level",type=int)
+parser.add_argument("--nhists",help="Plot all 1D plots at nhists level",type=int,nargs='?',const=-1)
 parser.add_argument("--mc-solid",help="Make MC solid color",action="store_true",default=False)
 parser.add_argument("-d","--directory",help="Specify directory to get post files from",type=valid_directory)
 parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
@@ -63,6 +63,7 @@ class Region(object):
 
         if autovar: self.nhist = config.regions[self.region]
         if self.args.autovar: self.nhist = config.regions[self.region]
+        if self.args.nhists == -1: self.args.nhists = int(config.regions[self.region])
 
         self.MCList = []
         for mc in config.mclist:
@@ -270,3 +271,9 @@ class Region(object):
                 self.processes[sample].add(other.processes[sample])
             if sample not in self.processes and sample in other.processes:
                 self.processes[sample] = Process(copy=other.processes[sample])
+    def getNHists(self,nhist):
+        self.open()
+        dirname,ndir = GetDirname(str(nhist))
+        tfile = iter( iter(self).next() ).next().tfile
+        self.args.argv += [ key.GetName() for key in tfile.Get(dirname).GetListOfKeys() if ndir in key.GetName() ]
+        

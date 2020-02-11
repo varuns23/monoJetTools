@@ -12,6 +12,7 @@ parser.add_argument("--sub",help="specify a sub directory to place output",actio
 parser.add_argument("--run2",help="Specify the region to run an entire run2 plot",action="store",type=str,default=None)
 parser.add_argument("--no-plot",help="Dont plot variables",action="store_true",default=False)
 parser.add_argument("-u","--uncertainty",help="Specify the uncertainty to apply on variable if available",default=[],nargs="*",type=str)
+parser.add_argument("--ignore-mc",help="Ignore MC with less than a threshold percent of total MC (default = 0.001, use 0 to keep all MC)",default=0.001,type=float)
 
 def HigherDimension(samples,variable):
     axis = variable[-1]
@@ -81,7 +82,7 @@ def plotVariable(samples,variable,initiate=True,saveas=AutoSave,blinded=False):
         
 
     hs_datamc = THStack("hs_datamc","Data/MC comparison"); samples.stack = hs_datamc
-    fillStack(samples,hs_datamc)
+    fillStack(samples,hs_datamc,threshold=samples.args.ignore_mc)
     hs_bkg = hs_datamc.GetStack().Last()
     if samples.args.mc_solid:hs_bkg.Draw("hist")
     else:                    hs_datamc.Draw("hist")
@@ -155,6 +156,7 @@ def plotVariable(samples,variable,initiate=True,saveas=AutoSave,blinded=False):
     
 def plotter(args=[]):
     samples = Region()
+    if samples.args.nhists > 0: samples.getNHists(samples.args.nhists)
     if not any(args): args = samples.args.argv
     for variable in args:
         plotVariable(samples,variable)
