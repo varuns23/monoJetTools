@@ -65,8 +65,8 @@ def SetBounds(tf,num_sample,den_sample):
     bins = list(tf.histo)[1:-1]
     avg = sum( ibin for ibin in bins ) / len(bins)
     maxdiff = max( abs(ibin - avg) for ibin in bins )
-    tf.histo.SetMinimum( max(0,avg - maxdiff*5) )
-    tf.histo.SetMaximum( (avg + maxdiff*5) )
+    tf.histo.SetMinimum( 0 )
+    tf.histo.SetMaximum( 2*avg )
     return
     if not any(varmap): return
     yrange = varmap[num_sample.region][den_sample.region]
@@ -206,8 +206,8 @@ def plotTF_datamc(num_sample,den_sample):
     pad2.SetBottomMargin(0.35);
         
     datamc = GetRatio(tf_data.histo,tf_proc.histo)
-    rymin = 0.65; rymax = 1.35
-    # rymin = 0.35; rymax = 1.75
+    # rymin = 0.65; rymax = 1.35
+    rymin = 0.35; rymax = 1.75
     RatioStyle(datamc,rymin,rymax)
     datamc.Draw("A");
 

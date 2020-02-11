@@ -3,6 +3,7 @@
 from ROOT import *
 from sys import argv, path
 from PlotTool import *
+import config
 import os
 
 optionmap = {
@@ -142,10 +143,10 @@ parser.add_argument('--yields',help='print yield table of current region',action
 parser.add_argument('--percent',help='print percentage of background table of current region',action='store_true',default=False)
 parser.add_argument('--efficiency',help='print cut efficiecies table of current region',action='store_true',default=False)
 parser.add_argument('--raw-output',help='print tables without fancy separators (perhaps better for importing to excel)',action='store_true',default=False)
+parser.add_argument('--all',help='get yields for all cuts',action='store_true',default=False)
 if __name__ == "__main__":
     args = parser.parse_args()
     if args.raw_output: optionmap['raw-output'] = True
-    binlist = [ int(ibin) for ibin in args.argv ]
     
     samples = Region(show=False)
     samples.initiate('h_cutflow')
@@ -157,6 +158,8 @@ if __name__ == "__main__":
     samples.setSumOfBkg()
     hslist.insert(1, ('SumOfBkg',samples.processes['SumOfBkg'].histo) )
 
+    if args.all: args.argv = range(int(config.regions[samples.region])+1)
+    binlist = [ int(ibin) for ibin in args.argv ]
     tableSet = TableSet()
     if args.yields: tableSet.add(getYields(hslist,binlist))
     if args.percent: tableSet.add(getPercBkg(hslist,binlist))

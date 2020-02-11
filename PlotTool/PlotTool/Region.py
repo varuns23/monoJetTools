@@ -260,10 +260,10 @@ class Region(object):
         self.name = other.name
         self.varname = other.varname
         self.cut = other.cut
-    def add(self,other):
+    def add(self,other,addlumi=False):
         # if self.variable != other.variable: raise ValueError("%s is not %s" % (self.variable,other.variable))
         samplelist = self.processes.keys()
-        self.lumi += other.lumi
+        if addlumi: self.lumi += other.lumi
         for sample in other.processes.keys():
             if sample not in samplelist: samplelist.append(sample)
         for sample in samplelist:

@@ -1,9 +1,9 @@
 #!/bin/sh
 
 nvariables='recoil nJets j1pT j1Eta j1Phi nVtx'
-singleleps='LeptonPt LeptonEta'
-doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta subleadingLeptonEta subleadingLeptonPt'
-gamma='photonPt photonEta'
+singleleps='LeptonPt LeptonEta LeptonPhi'
+doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta leadingLeptonPhi subleadingLeptonEta subleadingLeptonPt subleadingLeptonPhi'
+gamma='photonPt photonEta photonPhi'
 cutvars='h_metcut h_dphimin'
 uncertainty=''
 
@@ -14,11 +14,12 @@ plot() {
 }
 
 run() {
+    subdir="AN"
     pushd $1
     shift 1
     array="$@ $nvariables"
-    plot $options --sub AN -a $array $uncertainty || exit 1
-    plot $options --sub AN $cutvars || exit 1
+    plot $options --sub $subdir -a $array $uncertainty || exit 1
+    plot $options --sub $subdir $cutvars || exit 1
     popd
 }
 
@@ -31,11 +32,11 @@ run2() {
 }
 
 region() {
-    # run SignalRegion || exit 1
-    # run SingleEleCR $singleleps  || exit 1
-    # run SingleMuCR $singleleps || exit 1
-    # run DoubleEleCR $doubleleps || exit 1
-    # run DoubleMuCR $doubleleps || exit 1
+    run SignalRegion || exit 1
+    run SingleEleCR $singleleps  || exit 1
+    run SingleMuCR $singleleps || exit 1
+    run DoubleEleCR $doubleleps || exit 1
+    run DoubleMuCR $doubleleps || exit 1
     run GammaCR $gamma || exit 1
 }
 

@@ -13,6 +13,7 @@ parser.add_argument("--run2",help="Specify the region to run an entire run2 plot
 parser.add_argument("--no-plot",help="Dont plot variables",action="store_true",default=False)
 parser.add_argument("-u","--uncertainty",help="Specify the uncertainty to apply on variable if available",default=[],nargs="*",type=str)
 parser.add_argument("--ignore-mc",help="Ignore MC with less than a threshold percent of total MC (default = 0.001, use 0 to keep all MC)",default=0.001,type=float)
+parser.add_argument("--dimension",help="Specify the pixel dimensions to draw the canvas",default=[800,800],type=int,nargs=2)
 
 def HigherDimension(samples,variable):
     axis = variable[-1]
@@ -54,7 +55,8 @@ def plotVariable(samples,variable,initiate=True,saveas=AutoSave,blinded=False):
     if samples.args.no_plot: return
     samples.hasUncertainty = any(samples.args.uncertainty) and any(Nuisance.unclist)
     if samples['Data'].histo.Integral() == 0: blinded = True
-    c = TCanvas("c", "canvas",800,800);
+    xwidth,ywidth = samples.args.dimension # default is 800,800
+    c = TCanvas("c", "canvas",xwidth,ywidth);
     gStyle.SetOptStat(0);
     gStyle.SetLegendBorderSize(0);
     #c.SetLeftMargin(0.15);
@@ -132,6 +134,7 @@ def plotVariable(samples,variable,initiate=True,saveas=AutoSave,blinded=False):
     if not blinded:
         c.cd();
         pad2 = TPad("pad2","pad2",0.01,0.01,0.99,0.25);
+        pad2.SetGridy()
         pad2.Draw(); pad2.cd();
         pad2.SetFillColor(0); pad2.SetFrameBorderMode(0); pad2.SetBorderMode(0);
         pad2.SetTopMargin(0);
@@ -140,11 +143,11 @@ def plotVariable(samples,variable,initiate=True,saveas=AutoSave,blinded=False):
         Ratio = GetRatio(data.histo,hs_bkg)
         
         RatioStyle(Ratio,xname=samples.name)
-        Ratio.Draw("Axis");
+        Ratio.Draw("pex0");
         
         if samples.hasUncertainty:
             uncband.Draw('2same')
-        Ratio.Draw('pex0same')
+        # Ratio.Draw('pex0same')
         line = getRatioLine(data.histo.GetXaxis().GetXmin(),data.histo.GetXaxis().GetXmax())
         line.Draw("same");
         
