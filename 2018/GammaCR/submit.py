@@ -13,4 +13,5 @@ options['batchsize'] = 100
 # options['submit'] = False
 #----Submit---#
 submit('egamma',label='Gamma_',filelist=True)
-for mc in mclist: submit(mc)
+# for mc in mclist: submit(mc)
+for mc in ('gjets','qcd','wjets'): submit(mc)

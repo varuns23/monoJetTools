@@ -47,8 +47,8 @@ const float muTightEtaCut = 2.4;
 const float muLoosePtCut = 10;
 const float muLooseEtaCut = 2.4;
 
-const float phoTightPtCut = 25;
-const float phoTightEtaCut = 2.5;
+const float phoTightPtCut = 215;
+const float phoTightEtaCut = 1.4442;
 
 const float phoLoosePtCut = 15;
 const float phoLooseEtaCut = 2.5;
