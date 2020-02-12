@@ -5,8 +5,8 @@ from argparse import ArgumentParser
 
 hdfs_base = '/hdfs/store/user/ekoenig/MonoJet/PostFiles/'
 
-valid_years = ['2016','2017','2018']
-valid_regions = ['SignalRegion','SingleEleCR','SingleMuCR','DoubleEleCR','DoubleMuCR']
+valid_years = ['2017','2018']
+valid_regions = ['SignalRegion','SingleEleCR','SingleMuCR','DoubleEleCR','DoubleMuCR','GammaCR']
 
 options = {
   "confirm":True

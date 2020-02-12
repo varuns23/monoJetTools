@@ -32,11 +32,11 @@ run2() {
 }
 
 region() {
-    run SignalRegion || exit 1
-    run SingleEleCR $singleleps  || exit 1
-    run SingleMuCR $singleleps || exit 1
-    run DoubleEleCR $doubleleps || exit 1
-    run DoubleMuCR $doubleleps || exit 1
+    # run SignalRegion || exit 1
+    # run SingleEleCR $singleleps  || exit 1
+    # run SingleMuCR $singleleps || exit 1
+    # run DoubleEleCR $doubleleps || exit 1
+    # run DoubleMuCR $doubleleps || exit 1
     run GammaCR $gamma || exit 1
 }
 

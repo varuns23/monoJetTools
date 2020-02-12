@@ -1,0 +1,12 @@
+>>FXFX
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0000/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0001/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0002/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0003/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0004/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0005/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0006/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0007/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0008/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0009/
+
