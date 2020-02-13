@@ -158,7 +158,7 @@ class Region(object):
         if os.getcwd() != self.path: os.chdir(self.path)
         self.initVariable(variable,weight)
         self.open()
-        if hasattr(self,'nhist'): variable = '%s_%s' % (variable,self.nhist)
+        if hasattr(self,'nhist') and 'h_' not in variable: variable = '%s_%s' % (variable,self.nhist)
         self.total_bkg = 0
         self.MCOrder = []
         def mcsort(process):

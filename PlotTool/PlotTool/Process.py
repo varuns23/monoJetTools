@@ -3,6 +3,7 @@ import os
 from utilities import GetDirname
 from changeBinning import b_info
 from Nuisance import Nuisance
+from Parser import parser
 
 def IsGlobal(variable,tfile):
     return tfile.GetListOfKeys().Contains(variable)
@@ -193,6 +194,7 @@ class Process(object):
         self.filenames = list(filenames);
         self.proctype = proctype
         self.leg = leg; self.lumi = lumi; self.color = color; self.args = args; self.config = config
+        if self.args is None: self.args = parser.parse_args()
         self.isOpen = False
         self.subprocesses = {}; self.nuisances = {}
         filelist = list(self.filenames)

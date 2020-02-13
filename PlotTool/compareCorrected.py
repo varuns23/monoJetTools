@@ -31,18 +31,18 @@ def compare(corr,uncorr):
         corr = samples['corr'].histo
         uncorr = samples['uncorr'].histo
 
-        DataStyle(uncorr)
-        
-        
-        corr.SetLineColor(kRed)
-        corr.SetLineWidth(2)
+        DataStyle(corr)
+        uncorr.SetLineColor(kRed)
+        uncorr.SetLineWidth(2)
 
-        uncorr.GetYaxis().SetTitle('Events / GeV')
-        corr.Draw('hist')
-        uncorr.Draw('pex0same')
+        corr.GetYaxis().SetTitle('Events / GeV')
+        ymax = max( max(hs[ibin] for hs in (corr,uncorr)) for ibin in range(1,corr.GetNbinsX()+1) )
+        uncorr.SetMaximum(ymax*pow(10,1.2))
+        uncorr.Draw('hist')
+        corr.Draw('pex0same')
         
         leg = getLegend(xmin=0.5,xmax=0.7,ymin=0.7,ymax=0.9)
-        leg.AddEntry(samples['corr'].histo,'Corrected %s' % procname,'p')
+        leg.AddEntry(samples['corr'].histo,'Corrected %s' % procname,'pl')
         leg.AddEntry(samples['uncorr'].histo,'Uncorrected %s' % procname,'l')
         leg.Draw()
         
@@ -74,6 +74,8 @@ def compare(corr,uncorr):
         c.SaveAs('%s/compare_%s.png' % (out_dir,variable))
     plot('h_cutflow')
     plot('recoil')
+    plot('recoilPhi')
     plot('j1pT')
     plot('pfMET')
+    plot('pfMETPhi')
 compare(argv[1],argv[2])
