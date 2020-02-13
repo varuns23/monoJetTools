@@ -45,7 +45,7 @@ void monoJetGammaCR::fillHistos(int nhist,float event_weight) {
 bool monoJetGammaCR::CRSelection(vector<int> tight,vector<int> loose) {
   if (tight.size() == 1 && loose.size() == 1) {
     phoindex = tight[0];
-    pho.SetPtEtaPhiE(phoEt->at(phoindex),phoEta->at(phoindex),phoPhi->at(phoindex),phoE->at(phoindex));
+    pho.SetPtEtaPhiE(phoCalibEt->at(phoindex),phoEta->at(phoindex),phoPhi->at(phoindex),phoE->at(phoindex));
     
     photon_pt = pho.Pt();
     photon_eta = phoEta->at(phoindex);
@@ -62,7 +62,7 @@ bool monoJetGammaCR::CRSelection(vector<int> tight,vector<int> loose) {
 }
 
 float monoJetGammaCR::getSF(int phoindex) {
-  float eta = phoSCEta->at(phoindex); float pt = phoEt->at(phoindex);
+  float eta = phoSCEta->at(phoindex); float pt = phoCalibEt->at(phoindex);
   float phoEffSF_corr= th2fmap.getBin("phoIDSF_medium",eta,pt);
 
   return phoEffSF_corr;

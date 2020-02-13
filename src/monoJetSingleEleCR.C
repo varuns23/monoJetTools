@@ -42,12 +42,12 @@ void monoJetSingleEleCR::fillHistos(int nhist,float event_weight) {
 bool monoJetSingleEleCR::CRSelection(vector<int> tight,vector<int> loose) {
   if (tight.size() == 1 && loose.size() == 1) {
     lepindex = tight[0];
-    lep.SetPtEtaPhiE(elePt->at(lepindex),eleEta->at(lepindex),elePhi->at(lepindex),eleE->at(lepindex));
+    lep.SetPtEtaPhiE(eleCalibEt->at(lepindex),eleEta->at(lepindex),elePhi->at(lepindex),eleE->at(lepindex));
     
     lepton_pt = lep.Pt();
     lepton_eta = eleEta->at(lepindex);
     lepton_phi = elePhi->at(lepindex);
-    lepMET_mt = getMt(elePt->at(lepindex),elePhi->at(lepindex),pfMET,pfMETPhi);
+    lepMET_mt = getMt(eleCalibEt->at(lepindex),elePhi->at(lepindex),pfMET,pfMETPhi);
     TLorentzVector met_4vec;
     met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
     TLorentzVector leptoMET_4vec = lep+met_4vec;
@@ -59,7 +59,7 @@ bool monoJetSingleEleCR::CRSelection(vector<int> tight,vector<int> loose) {
 }
 
 float monoJetSingleEleCR::getSF(int lepindex) {
-  float eta = eleSCEta->at(lepindex); float pt = elePt->at(lepindex);
+  float eta = eleSCEta->at(lepindex); float pt = eleCalibEt->at(lepindex);
   float eleRecoSF_corr= th2fmap.getBin("eleRecoSF_highpt",eta,pt);
   // std::cout<<"eleRecoSF_corr =  "<< eleRecoSF_corr<<std::endl;
   float eleEffSF_corr= th2fmap.getBin("eleIDSF_tight",eta,pt);

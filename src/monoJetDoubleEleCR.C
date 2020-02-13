@@ -65,8 +65,8 @@ bool monoJetDoubleEleCR::CRSelection(vector<int> tightlist,vector<int> looselist
     for (int subleading : looselist) {
       //Event must have exactly two loose electrons with opposite charge
       if (eleCharge->at(leading)*eleCharge->at(subleading) == -1) {
-	lep1.SetPtEtaPhiE(elePt->at(leading),eleEta->at(leading),elePhi->at(leading),eleE->at(leading));
-	lep2.SetPtEtaPhiE(elePt->at(subleading),eleEta->at(subleading),elePhi->at(subleading),eleE->at(subleading));
+	lep1.SetPtEtaPhiE(eleCalibEt->at(leading),eleEta->at(leading),elePhi->at(leading),eleE->at(leading));
+	lep2.SetPtEtaPhiE(eleCalibEt->at(subleading),eleEta->at(subleading),elePhi->at(subleading),eleE->at(subleading));
 	leadLepIndx = leading;
 	subleadLepIndx = subleading;
 	TLorentzVector ll = lep1 + lep2;
@@ -94,8 +94,8 @@ bool monoJetDoubleEleCR::CRSelection(vector<int> tightlist,vector<int> looselist
 }
 
 float monoJetDoubleEleCR::getSF(int leading, int subleading) {
-  float leading_eta = eleSCEta->at(leading); float leading_pt = elePt->at(leading);
-  float subleading_eta = eleSCEta->at(subleading); float subleading_pt = elePt->at(subleading);
+  float leading_eta = eleSCEta->at(leading); float leading_pt = eleCalibEt->at(leading);
+  float subleading_eta = eleSCEta->at(subleading); float subleading_pt = eleCalibEt->at(subleading);
   
   float leadingEleRecoSF_corr= th2fmap.getBin("eleRecoSF_highpt",leading_eta,leading_pt);
   float leadingEleEffSF_corr= th2fmap.getBin("eleIDSF_tight",leading_eta,leading_pt);

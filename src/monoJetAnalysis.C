@@ -275,7 +275,7 @@ vector<int> monoJetAnalysis::getLooseEle(float elePtCut,float eleEtaCut){
   ele_cands.clear();
 
   for(int i = 0; i < nEle; i++){
-    if(elePt->at(i) > elePtCut && fabs(eleSCEta->at(i)) < eleEtaCut){
+    if(eleCalibEt->at(i) > elePtCut && fabs(eleSCEta->at(i)) < eleEtaCut){
       //Electron passes veto Electron ID cuts
       if( (eleIDbit->at(i)>>3&1) == 1){
 
@@ -311,7 +311,7 @@ vector<int> monoJetAnalysis::getTightEle(float elePtCut,float eleEtaCut){
 
   for(int i = 0; i < nEle; i++){
     //Electron passes pt and eta cut
-    if((elePt->at(i) > elePtCut) && (fabs(eleSCEta->at(i)) < eleEtaCut)) {
+    if((eleCalibEt->at(i) > elePtCut) && (fabs(eleSCEta->at(i)) < eleEtaCut)) {
       //Electron passes Tight Electron ID cuts
       if(eleIDbit->at(i)>>2&1 == 1){
 
@@ -335,7 +335,7 @@ vector<int> monoJetAnalysis::getTightEle(vector<int> looselist,float elePtCut,fl
 
   for(int i : looselist){
     //Electron passes pt and eta cut
-    if((elePt->at(i) > elePtCut) && (fabs(eleSCEta->at(i)) < eleEtaCut)) {
+    if((eleCalibEt->at(i) > elePtCut) && (fabs(eleSCEta->at(i)) < eleEtaCut)) {
       //Electron passes Tight Electron ID cuts
       if(eleIDbit->at(i)>>2&1 == 1){
 
@@ -421,7 +421,7 @@ vector<int> monoJetAnalysis::getLoosePho(float phoPtCut,float phoEtaCut){
 
   for(int i = 0; i < nPho; i++){
     // passes pt cut
-    bool kinematics = ((phoEt->at(i) > phoPtCut) && (fabs(phoSCEta->at(i)) < phoEtaCut));
+    bool kinematics = ((phoCalibEt->at(i) > phoPtCut) && (fabs(phoSCEta->at(i)) < phoEtaCut));
     bool IdIso = (phoIDbit->at(i)>>0&1==1);
     bool eleVeto = phoEleVeto->at(i);
     
@@ -450,7 +450,7 @@ vector<int> monoJetAnalysis::getTightPho(float phoPtCut,float phoEtaCut){
   
   for(int i = 0; i < nPho; i++){
     // passes pt cut
-    bool kinematics = ((phoEt->at(i) > phoPtCut) && (fabs(phoSCEta->at(i)) < phoEtaCut));
+    bool kinematics = ((phoCalibEt->at(i) > phoPtCut) && (fabs(phoSCEta->at(i)) < phoEtaCut));
     bool IdIso = (phoIDbit->at(i)>>1&1==1);
     bool eleVeto = phoEleVeto->at(i);
     
@@ -467,7 +467,7 @@ vector<int> monoJetAnalysis::getTightPho(vector<int> looselist,float phoPtCut,fl
   
   for(int i : looselist){
     // passes pt cut
-    bool kinematics = ((phoEt->at(i) > phoPtCut) && (fabs(phoSCEta->at(i)) < phoEtaCut));
+    bool kinematics = ((phoCalibEt->at(i) > phoPtCut) && (fabs(phoSCEta->at(i)) < phoEtaCut));
     bool IdIso = (phoIDbit->at(i)>>1&1==1);
     bool eleVeto = phoEleVeto->at(i);
     
