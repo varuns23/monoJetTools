@@ -592,10 +592,19 @@ bool monoJetAnalysis::getEleHEMVeto(float elePtCut){
 void monoJetAnalysis::initVars() {
   jetindex = -1;
 
+  pfMETUnCorr = pfMET;
+  pfMETPhiUnCorr = pfMETPhi;
+  jetUnCorrPt->clear();
+  for (float pt : (*jetPt)) jetUnCorrPt->push_back(pt);
+
   if(sample.isData) {
     // genWeight is used for the total events rather than event_weight since it has pileup and kfactors applied at the beginning
     // data doesn't have genWeight so set it to 1
     genWeight = 1;
+  } else {
+    pfMET = pfMETCorr;
+    pfMETPhi = pfMETPhiCorr;
+    for (int i = 0; i < nJet; i++) jetPt->at(i) *= jetP4Smear->at(i);
   }
 
   weight = weight_nogen = weight_nopileup = kfactor = pileup = sf = 1;
@@ -858,6 +867,9 @@ void monoJetAnalysis::Init(TTree *tree)
   jetConstEta = 0;
   jetConstPhi = 0;
   jetConstPdgId = 0;
+  jetP4Smear = 0;
+  jetP4SmearUp = 0;
+  jetP4SmearDo = 0;
   ak8JetPt = 0;
   ak8JetE = 0;
   ak8JetEta = 0;
@@ -1179,6 +1191,11 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("jetConstEta", &jetConstEta, &b_jetConstEta);
   fChain->SetBranchAddress("jetConstPhi", &jetConstPhi, &b_jetConstPhi);
   fChain->SetBranchAddress("jetConstPdgId", &jetConstPdgId, &b_jetConstPdgId);
+  if (!sample.isData) {
+    fChain->SetBranchAddress("jetP4Smear", &jetP4Smear, &b_jetP4Smear);
+    fChain->SetBranchAddress("jetP4SmearUp", &jetP4SmearUp, &b_jetP4SmearUp);
+    fChain->SetBranchAddress("jetP4SmearDo", &jetP4SmearDo, &b_jetP4SmearDo);
+  }
   fChain->SetBranchAddress("nEle", &nEle, &b_nEle);
   fChain->SetBranchAddress("elePt", &elePt, &b_elePt);
   fChain->SetBranchAddress("eleEta", &eleEta, &b_eleEta);
@@ -1310,6 +1327,10 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("caloMETsumEt", &caloMETsumEt, &b_caloMETsumEt);
   fChain->SetBranchAddress("pfMET", &pfMET, &b_pfMET);
   fChain->SetBranchAddress("pfMETPhi", &pfMETPhi, &b_pfMETPhi);
+  if (!sample.isData) {
+    fChain->SetBranchAddress("pfMETCorr", &pfMETCorr, &b_pfMETCorr);
+    fChain->SetBranchAddress("pfMETPhiCorr", &pfMETPhiCorr, &b_pfMETPhiCorr);
+  }
   fChain->SetBranchAddress("pfMETsumEt", &pfMETsumEt, &b_pfMETsumEt);
   fChain->SetBranchAddress("pfMETmEtSig", &pfMETmEtSig, &b_pfMETmEtSig);
   fChain->SetBranchAddress("pfMETSig", &pfMETSig, &b_pfMETSig);

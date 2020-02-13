@@ -117,6 +117,10 @@ public:
   /* Selected Boson Variables */
   float bosonPt;
 
+  /* Uncorrect Variables */
+  float pfMETUnCorr,pfMETPhiUnCorr;
+  vector<float>* jetUnCorrPt = new vector<float>();
+
   /* Selected Jet Variables */
   float n_Jet;
   int jetindex;
@@ -283,6 +287,9 @@ public:
   vector<vector<float> > *jetConstEta;
   vector<vector<float> > *jetConstPhi;
   vector<vector<int> > *jetConstPdgId;
+  vector<float>   *jetP4Smear;
+  vector<float>   *jetP4SmearUp;
+  vector<float>   *jetP4SmearDo;
   Int_t           nak8Jet;
   vector<float>   *ak8JetPt;
   vector<float>   *ak8JetE;
@@ -451,6 +458,8 @@ public:
   Float_t         caloMETsumEt;
   Float_t         pfMET;
   Float_t         pfMETPhi;
+  Float_t         pfMETCorr;
+  Float_t         pfMETPhiCorr;
   Float_t         pfMETsumEt;
   Float_t         pfMETmEtSig;
   Float_t         pfMETSig;
@@ -632,6 +641,9 @@ public:
   TBranch        *b_jetConstEta;   //!
   TBranch        *b_jetConstPhi;   //!
   TBranch        *b_jetConstPdgId;   //!
+  TBranch        *b_jetP4Smear;   //!
+  TBranch        *b_jetP4SmearUp;   //!
+  TBranch        *b_jetP4SmearDo;   //!
   TBranch        *b_nEle;   //!
   TBranch        *b_elePt;   //!
   TBranch        *b_eleEta;   //!
@@ -765,6 +777,8 @@ public:
   TBranch        *b_caloMETsumEt;   //!
   TBranch        *b_pfMET;   //!
   TBranch        *b_pfMETPhi;   //!
+  TBranch        *b_pfMETCorr;   //!
+  TBranch        *b_pfMETPhiCorr;   //!
   TBranch        *b_pfMETsumEt;   //!
   TBranch        *b_pfMETmEtSig;   //!
   TBranch        *b_pfMETSig;   //!
