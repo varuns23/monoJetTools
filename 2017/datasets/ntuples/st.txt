@@ -1,3 +1,18 @@
 >>tW_antitop_5f
-/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/ST/ST_tW_antitop_5f/0000/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ST/ST_tW_antitop_5f/0000/
+
+>>tW_top_5f
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ST/ST_tW_top_5f/0000/
+
+>>t_antitop_4f
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ST/ST_t_antitop_4f/0000/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ST/ST_t_antitop_4f/0001/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ST/ST_t_antitop_4f/0002/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ST/ST_t_antitop_4f/0003/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ST/ST_t_antitop_4f/0004/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ST/ST_t_antitop_4f/0005/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ST/ST_t_antitop_4f/0006/
+
+>>t_top_4f
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ST/ST_t_top_4f/0000/
 
