@@ -1,4 +1,9 @@
+from Parser import parser
+
+parser.add_argument('--raw-output',help='print tables without fancy separators (perhaps better for importing to excel)',action='store_true',default=False)
+
 class Table:
+    args = parser.parse_args()
     def __init__(self,header):
         # header = [SampleNames,Column1,Column2,...]
         self.header = header
@@ -31,7 +36,7 @@ class Table:
             return sep.join(rowstr)
         def RowSep(char): return char*( sum(self.nspaces)+3*len(self.nspaces) )
         lines = [ ]
-        if optionmap['raw-output']:
+        if self.args.raw_output:
             rowdivide = ' '
             coldivide = '|'
         else:
@@ -40,11 +45,11 @@ class Table:
             lines.append( RowSep('=') )
             
         rowsep = RowSep(rowdivide)
-        lines.append(RowStr(self.header,coldivide,raw=optionmap['raw-output']))
-        if not optionmap['raw-output']: lines.append( rowsep )
+        lines.append(RowStr(self.header,coldivide,raw=self.args.raw_output))
+        if not self.args.raw_output: lines.append( rowsep )
         for row in str_table:
-            lines.append( RowStr(row,coldivide,raw=optionmap['raw-output']) )
-            if not optionmap['raw-output']: lines.append( rowsep )
+            lines.append( RowStr(row,coldivide,raw=self.args.raw_output) )
+            if not self.args.raw_output: lines.append( rowsep )
         return '\n'.join(lines)
 
 class TableSet:

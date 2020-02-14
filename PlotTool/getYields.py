@@ -5,10 +5,6 @@ from sys import argv, path
 from PlotTool import *
 import config
 import os
-
-optionmap = {
-    'raw-output':False
-}
                 
 def getCutflowHeader(histo,binlist):
     return [ histo.GetXaxis().GetBinLabel(ibin+1) for ibin in binlist ]
@@ -77,11 +73,9 @@ def getCutEff(hslist,binlist):
 parser.add_argument('--yields',help='print yield table of current region',action='store_true',default=False)
 parser.add_argument('--percent',help='print percentage of background table of current region',action='store_true',default=False)
 parser.add_argument('--efficiency',help='print cut efficiecies table of current region',action='store_true',default=False)
-parser.add_argument('--raw-output',help='print tables without fancy separators (perhaps better for importing to excel)',action='store_true',default=False)
 parser.add_argument('--all',help='get yields for all cuts',action='store_true',default=False)
 if __name__ == "__main__":
     args = parser.parse_args()
-    if args.raw_output: optionmap['raw-output'] = True
     
     samples = Region(show=False)
     samples.initiate('h_cutflow')
