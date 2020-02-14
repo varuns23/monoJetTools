@@ -602,9 +602,11 @@ void monoJetAnalysis::initVars() {
     // data doesn't have genWeight so set it to 1
     genWeight = 1;
   } else {
-    pfMET = pfMETCorr;
-    pfMETPhi = pfMETPhiCorr;
-    for (int i = 0; i < nJet; i++) jetPt->at(i) *= jetP4Smear->at(i);
+    if (apply_correction) {
+      pfMET = pfMETCorr;
+      pfMETPhi = pfMETPhiCorr;
+      for (int i = 0; i < nJet; i++) jetPt->at(i) *= jetP4Smear->at(i);
+    }
   }
 
   weight = weight_nogen = weight_nopileup = kfactor = pileup = sf = 1;
@@ -1191,7 +1193,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("jetConstEta", &jetConstEta, &b_jetConstEta);
   fChain->SetBranchAddress("jetConstPhi", &jetConstPhi, &b_jetConstPhi);
   fChain->SetBranchAddress("jetConstPdgId", &jetConstPdgId, &b_jetConstPdgId);
-  if (!sample.isData) {
+  if (!sample.isData && apply_correction) {
     fChain->SetBranchAddress("jetP4Smear", &jetP4Smear, &b_jetP4Smear);
     fChain->SetBranchAddress("jetP4SmearUp", &jetP4SmearUp, &b_jetP4SmearUp);
     fChain->SetBranchAddress("jetP4SmearDo", &jetP4SmearDo, &b_jetP4SmearDo);
@@ -1327,7 +1329,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("caloMETsumEt", &caloMETsumEt, &b_caloMETsumEt);
   fChain->SetBranchAddress("pfMET", &pfMET, &b_pfMET);
   fChain->SetBranchAddress("pfMETPhi", &pfMETPhi, &b_pfMETPhi);
-  if (!sample.isData) {
+  if (!sample.isData && apply_correction) {
     fChain->SetBranchAddress("pfMETCorr", &pfMETCorr, &b_pfMETCorr);
     fChain->SetBranchAddress("pfMETPhiCorr", &pfMETPhiCorr, &b_pfMETPhiCorr);
   }

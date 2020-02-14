@@ -54,6 +54,7 @@ public:
   TTree *tree;
 
   static const bool debug = false;
+  static const bool apply_correction = true;
 
   Dataset sample;
   
