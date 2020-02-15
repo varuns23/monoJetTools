@@ -30,7 +30,6 @@ void monoJetAnalysis::SetScalingHistos() {
     } else if (sample.type == ZJets || sample.type == DYJets) {
       NLO_EWK = (TH1F*)TFile::Open("RootFiles/merged_kfactors_zjets.root")->Get("kfactor_monojet_ewk");
       NLO_QCD = (TH1F*)f_nlo_qcd->Get("dy_dilep");
-      
       NNLO_QCD = (TH1F*)f_nnlo_qcd->Get("eej");
     } else {
       NLO_EWK = (TH1F*)TFile::Open("RootFiles/merged_kfactors_gjets.root")->Get("kfactor_monojet_ewk");

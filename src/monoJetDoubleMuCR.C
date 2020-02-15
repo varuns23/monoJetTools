@@ -100,10 +100,10 @@ float monoJetDoubleMuCR::getSF(int leading,int subleading) {
   float leading_pt = muPt->at(leading); float leading_eta = muEta->at(leading); 
   float subleading_pt = muPt->at(subleading); float subleading_eta = muEta->at(subleading);
   
-  float tightMuISO_SF_corr;
-  float tightMuID_SF_corr; 
-  float looseMuISO_SF_corr;
-  float looseMuID_SF_corr;
+  float tightMuISO_SF_corr=1.0;
+  float tightMuID_SF_corr=1.0; 
+  float looseMuISO_SF_corr=1.0;
+  float looseMuID_SF_corr=1.0;
   
   if ( th2fmap.contains("tightMuSF_ISO_abseta") ) {
     tightMuISO_SF_corr = th2fmap.getBin("tightMuSF_ISO_abseta",leading_pt,fabs(leading_eta));
