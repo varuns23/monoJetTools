@@ -1,3 +1,7 @@
->>Z1JetsToNuNu_LHEZpT400-inf
+>>z1jet150-250
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ZJets_NLO/Z1JetsToNuNu_LHEZpT150-250/0000/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ZJets_NLO/Z1JetsToNuNu_LHEZpT150-250/0001/
+
+>>z1jet400-inf
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/ZJets_NLO/Z1JetsToNuNu_LHEZpT400-inf/0000/
 
