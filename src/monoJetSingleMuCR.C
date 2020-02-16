@@ -119,7 +119,7 @@ bool monoJetSingleMuCR::photon_veto(int leading_mu_index){
   pho_cands.clear();
 
   vector<int> tmpcands = getLoosePho();
-  for(int i = 0; i < nPho; i++){
+  for(int i : tmpcands ){
     double dR_leadingMu    = deltaR(phoSCEta->at(i),phoSCPhi->at(i), muEta->at(leading_mu_index), muPhi->at(leading_mu_index));
     if( dR_leadingMu > 0.5 )
       pho_cands.push_back(i);
