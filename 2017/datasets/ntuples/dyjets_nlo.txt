@@ -1,24 +1,24 @@
->>dy1Jet50-150
+>>1j50to150
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY1JetsToLL_LHEZpT50-150/0000/
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY1JetsToLL_LHEZpT50-150/0001/
 
->>dy1Jet150-250
+>>1j150to250
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY1JetsToLL_LHEZpT150-250/0000/
 
->>dy1Jet400-inf
+>>1j400toinf
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY1JetsToLL_LHEZpT400-inf/0000/
 
->>dy2Jet50-150
+>>2j50to150
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY2JetsToLL_LHEZpT50-150/0000/
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY2JetsToLL_LHEZpT50-150/0001/
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY2JetsToLL_LHEZpT50-150/0002/
 
->>dy2Jet250-400
+>>2j250to400
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY2JetsToLL_LHEZpT250-400/0000/
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY2JetsToLL_LHEZpT250-400/0001/
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY2JetsToLL_LHEZpT250-400/0002/
 
->>dy2Jet400-inf
+>>2j400toinf
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32_NEW/DYJets_NLO/DY2JetsToLL_LHEZpT400-inf/0000/
 
 
