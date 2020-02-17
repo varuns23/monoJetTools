@@ -2,6 +2,7 @@
 import sys
 import os
 import stat
+import math
 from subprocess import Popen,STDOUT,PIPE
 from CondorConfig import CondorConfig
 from argparse import ArgumentParser
@@ -143,11 +144,17 @@ def splitArgument(nbatches,rfiles,config,redirect):
 def inputFilelist(nbatches,rfiles,config,redirect):
     batch = len(rfiles)
     binsize = batch/nbatches
+    noverflow = batch%nbatches
+    overflow = int(math.ceil(float(noverflow)/nbatches))
     output('Total files:   %i' % batch,redirect)
     output('Files per job: %i' % binsize,redirect)
     for i in range(nbatches):
+        binsize = batch/nbatches
+        if noverflow > 0:
+            binsize += overflow
+            noverflow -= overflow
         if binsize > len(rfiles): binsize = len(rfiles)
-        fileRange = [ rfiles.pop(0)+'.root' for _ in range(binsize) ]
+        fileRange = [ rfiles.pop(0)+'.root' for _ in range(binsize) if any(rfiles) ]
 
         output("----Batch %i %i files" % (i+1,len(fileRange)),redirect)
 
