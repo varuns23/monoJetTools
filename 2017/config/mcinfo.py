@@ -26,7 +26,7 @@ filemap = {
     "ZJets":     ["postZ100to200","postZ200to400","postZ400to600","postZ600to800","postZ800to1200","postZ1200to2500","postZ2500toInf"],
     "ZJets-NLO": ["postZNLO1j50to150","postZNLO1j150to250","postZNLO1j250to400","postZNLO1j400toInf",
                   "postZNLO2j50to150","postZNLO2j150to250","postZNLO2j250to400","postZNLO2j400toInf"],
-    "WJets":     ["postW100to200","postW200to400","postW400to600","postW600to800","postW800to1200","postW1200to2500","postW2500toInf","postWMLM"],
+    "WJets":     ["postW100to200","postW200to400","postW400to600","postW600to800","postW800to1200","postW1200to2500","postW2500toInf","postWIncl"],
     "WJets-NLO": ["postWNLO1j0to50","postWNLO1j50to150","postWNLO1j100to150","postWNLO1j150to250","postWNLO1j250to400","postWNLO1j400toInf",
                   "postWNLO2j0to50","postWNLO2j50to150","postWNLO2j100to150","postWNLO2j150to250","postWNLO2j250to400","postWNLO2j400toInf"],
     "DYJets":    ["postDY70to100","postDY100to200","postDY200to400","postDY400to600","postDY600to800","postDY800to1200","postDY1200to2500","postDY2500toInf"],
@@ -81,7 +81,8 @@ xsec = {
 "postZNLO2j250to400":5.164e+00,
 "postZNLO2j400toInf":8.457e-01,
     
-"postWMLM":5.279e+04,
+"postWIncl":5.279e+04,
+"postW70to100":0, #TODO: Calculate XSEC
 "postW100to200":1.395e+03,
 "postW200to400":4.093e+02,
 "postW400to600":5.791e+01,
@@ -132,7 +133,11 @@ xsec = {
 "postTTJetsDiLept":5.424e+01,
 "postTTJetsFXFX":7.228e+02,
 
+"postST_s_4f":0, #TODO: Calculate XSEC
 "postST_tW_antitop_5f":3.806e+01,
+"postST_tW_top_5f":0,
+"postST_t_antitop_4f":0,
+"postST_t_top_4f":0,
     
 "postQCD100to200":2.369e+07,
 "postQCD200to300":1.556e+06,
