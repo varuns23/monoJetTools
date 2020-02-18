@@ -168,8 +168,7 @@ bool monoJetAnalysis::getMetFilter(){
 }
 
 bool monoJetAnalysis::getMetTrigger() {
-  if (!sample.isData)
-    return ((HLTMet>>7&1) == 1 || (HLTMet>>8&1) == 1 || (HLTMet>>10&1) == 1);
+  // if (!sample.isData) return true;
   return ((HLTMet>>7&1) == 1 || (HLTMet>>8&1) == 1 || (HLTMet>>10&1) == 1);
 }
 
@@ -187,7 +186,7 @@ bool monoJetAnalysis::getElectronTrigger() {
 }
 
 bool monoJetAnalysis::getPhotonTrigger() {
-  if (!sample.isData) return true;
+  // if (!sample.isData) return true;
   return (HLTPho>>11&1) == 1;
 }
 
