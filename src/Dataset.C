@@ -104,7 +104,7 @@ void Dataset::setTypeInfo(string path) {
 	  type = typemap.find(data)->second;
 	  isNLO = contains_substr(data,"nlo");
 	  if ( type == WJets || type == DYJets ) {
-	    isInclusive = contains_substr(sub.first,"MLM");
+	    isInclusive = contains_substr(sub.first,"MLM") || contains_substr(sub.first,"Incl");
 	  } else {
 	    isInclusive = false;
 	  }
