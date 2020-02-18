@@ -12,10 +12,11 @@ def updirectory(path): path += '/../'; return path
 script_path = os.path.dirname(os.path.realpath(__file__))
 repo_path = os.path.realpath( updirectory(script_path) )
 cmssw_base = os.getenv("CMSSW_BASE")
-USERPROXY = "x509up_u4549" #varuns
-#USERPROXY = "x509up_u23216" #evans
+# USERPROXY = "x509up_u4549" #varuns
+USERPROXY = "x509up_u23216" #evans
 NFILE_PER_BATCH = 30
 DoSubmit = True
+ResubmitError = False
 
 def ignore(path,fn):
     toignore = ["/hdfs/store/user/varuns/NTuples/Data/Run2018_17Sep2018_May2019/MET/MET2018D_prompt/Data_MET2018D_578.root",
@@ -119,6 +120,7 @@ def splitArgument(nbatches,rfiles,config,redirect):
     binsize = batch/nbatches
     output("Total files:   %i" % batch,redirect)
     output("Files per job: %i" % binsize,redirect)
+    arguments = []
     for i in range(nbatches):
         if nbatches == 1: fileRange = "-1"
         else:
@@ -138,9 +140,8 @@ def splitArgument(nbatches,rfiles,config,redirect):
         output("----Batch %i %s" % (i+1,fileRange),redirect)
 
         #Append argument lines to condor_submit file adding the file range for this batch
-        config['Arguments'] = "$(script) $(inputdir) $(outputfile)_$(Process).root $(maxevents) $(reportevery) " + fileRange
-        config.queue()
-
+        arguments.append("$(script) $(inputdir) $(outputfile)_$(Process).root $(maxevents) $(reportevery) " + fileRange)
+    config['Arguments'] = arguments
 def inputFilelist(nbatches,rfiles,config,redirect):
     batch = len(rfiles)
     binsize = batch/nbatches
@@ -148,6 +149,7 @@ def inputFilelist(nbatches,rfiles,config,redirect):
     overflow = int(math.ceil(float(noverflow)/nbatches))
     output('Total files:   %i' % batch,redirect)
     output('Files per job: %i' % binsize,redirect)
+    arguments = []
     for i in range(nbatches):
         binsize = batch/nbatches
         if noverflow > 0:
@@ -158,16 +160,23 @@ def inputFilelist(nbatches,rfiles,config,redirect):
 
         output("----Batch %i %i files" % (i+1,len(fileRange)),redirect)
 
-        config["Arguments"] = "$(script) $(inputdir) $(outputfile)_$(Process).root $(maxevents) $(reportevery) %s" %  ' '.join(fileRange)
-        config.queue()
-
-def condor_submit(command):
-    if DoSubmit: os.system(command)
+    arguments.append("$(script) $(inputdir) $(outputfile)_$(Process).root $(maxevents) $(reportevery) %s" %  ' '.join(fileRange))
+    config['Arguments'] = arguments
+def condor_submit(command,config):
+    def DetectedError(config):
+        nproc = len(config['Arguments'])
+        logdir = os.path.dirname(config['Log']).replace('$(label)',config['label'])
+        if not os.path.isdir(logdir): return True
+        return nproc != sum( fname.endswith('.log') for fname in os.listdir(logdir) )
+    if ResubmitError and DetectedError(config):
+        os.system(command)
+    elif DoSubmit and not ResubmitError:
+        removeOldFiles(config['outputfile'],config['label'])
+        os.system(command)
     else: print "Not Submitting"
 
 def submit(argv=sys.argv,redirect=False):
     args = getargs(argv)
-    removeOldFiles(args.outputfile,args.label)
     if redirect:
         redirect = open('.status/%s/submit.txt' % args.label,'w')
         print  "Processesing %s" % args.outputfile
@@ -212,9 +221,9 @@ def submit(argv=sys.argv,redirect=False):
     command = "condor_submit condor_%s" % args.label
     if redirect is not False:
         redirect.close()
-        condor_submit(command + ' >> ../.status/%s/submit.txt' % args.label)
+        condor_submit(command + ' >> ../.status/%s/submit.txt' % args.label,config)
     else:
-        condor_submit(command)
+        condor_submit(command,config)
     os.chdir("../")
     
 init()
