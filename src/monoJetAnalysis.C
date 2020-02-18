@@ -51,6 +51,9 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("pileup",&pileup);
   tree->Branch("sf",&sf);
   tree->Branch("kfactor",&kfactor);
+  tree->Branch("nlo_ewk",&nlo_ewk);
+  tree->Branch("nlo_qcd",&nlo_qcd);
+  tree->Branch("nnlo_qcd",&nnlo_qcd);
   tree->Branch("recoil",&recoil,"Recoil (GeV)");
   tree->Branch("j1pT",&j1pT,"Leading Jet P_{T} (GeV)");
   tree->Branch("j1Eta",&j1Eta,"Leading Jet Eta");
@@ -518,13 +521,17 @@ float monoJetAnalysis::getKFactor(float bosonPt) {
   float nlo_qcd = th1fmap.getBin("NLO_QCD",bosonPt);
   float nnlo_qcd = th1fmap.getBin("NNLO_QCD",bosonPt);
   float kfactor = 1;
-  if (sample.isNLO) kfactor = nlo_ewk * nnlo_qcd;
-  else kfactor = nlo_ewk * nlo_qcd * nnlo_qcd;
+  // if (sample.isNLO) kfactor = nlo_ewk * nnlo_qcd;
+  // else kfactor = nlo_ewk * nlo_qcd * nnlo_qcd;
+  kfactor = nlo_ewk * nlo_qcd;
   return kfactor;
 }
 
 void monoJetAnalysis::SetKFactors(float bosonPt) {
   kfactor = getKFactor(bosonPt);
+  nlo_ewk = th1fmap.getBin("NLO_EWK",bosonPt);
+  nlo_qcd = th1fmap.getBin("NLO_QCD",bosonPt);
+  nnlo_qcd = th1fmap.getBin("NNLO_QCD",bosonPt);
 }
 
 void monoJetAnalysis::ApplyKFactor(float &event_weight) {
@@ -607,7 +614,7 @@ void monoJetAnalysis::initVars() {
     }
   }
 
-  weight = weight_nogen = weight_nopileup = kfactor = pileup = sf = 1;
+  weight = weight_nogen = weight_nopileup = kfactor = pileup = sf = nlo_ewk = nlo_qcd = nnlo_qcd = 1;
 
   bosonPt = j1pT = j1Eta = j1Phi = -99;
   recoil = pfMET;

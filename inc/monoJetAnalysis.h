@@ -115,7 +115,7 @@ public:
 
   /* Event Weight Variables */
   float weight,weight_nogen,weight_nopileup;
-  float kfactor;
+  float kfactor,nlo_ewk,nlo_qcd,nnlo_qcd;
   float sf;
   float pileup;
 
