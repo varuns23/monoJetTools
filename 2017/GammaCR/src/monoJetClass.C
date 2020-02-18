@@ -53,15 +53,18 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
     fillEvent(0,genWeight);
 
+
+    if (!getPhotonTrigger()) continue;
     if (!inclusiveCut()) continue;
+    fillEvent(1,event_weight);
 
     vector<int> looselist = getLoosePho();
     if (looselist.size() != 1) continue;
-    fillEvent(1,event_weight);
+    fillEvent(2,event_weight);
 
     vector<int> tightlist = getTightPho(looselist,15.0);
     if (tightlist.size() != 1) continue;
-    fillEvent(2,event_weight);
+    fillEvent(3,event_weight);
 
     if (!CRSelection(tightlist,looselist)) continue;;
     if (!sample.isData) {
@@ -69,43 +72,40 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
       ApplySF(event_weight);
     }
     if(photon_pt <= phoTightPtCut) continue;
-    fillEvent(3,event_weight);
-
-    if (!getMetFilter()) continue;
     fillEvent(4,event_weight);
 
-    if (!electron_veto(phoindex)) continue;
+    if (!getMetFilter()) continue;
     fillEvent(5,event_weight);
 
-    if (!muon_veto(phoindex)) continue;
+    if (!electron_veto(phoindex)) continue;
     fillEvent(6,event_weight);
 
-    if (!tau_veto(phoindex)) continue;
+    if (!muon_veto(phoindex)) continue;
     fillEvent(7,event_weight);
 
-    if (!bjet_veto(phoindex, bjetDeepCSVCut_2017)) continue;
+    if (!tau_veto(phoindex)) continue;
     fillEvent(8,event_weight);
+
+    if (!bjet_veto(phoindex, bjetDeepCSVCut_2017)) continue;
+    fillEvent(9,event_weight);
 
     vector<int> jetlist = jet_veto(phoindex);
     float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
-    h_dphimin->Fill(mindPhiJetMET,event_weight);
+    if ( recoil > recoilCut) h_dphimin->Fill(mindPhiJetMET,event_weight);
     if (mindPhiJetMET <= dPhiJetMETCut) continue;
-    fillEvent(9,event_weight);
-
-    float dpfcalo = fabs(pfMET-caloMET)/recoil;
-    h_metcut->Fill(dpfcalo,event_weight);
-    if (dpfcalo >= metRatioCut) continue;
     fillEvent(10,event_weight);
 
-    if (recoil <= recoilCut) continue;
+    float dpfcalo = fabs(pfMET-caloMET)/recoil;
+    if ( recoil > recoilCut) h_metcut->Fill(dpfcalo,event_weight);
+    if (dpfcalo >= metRatioCut) continue;
     fillEvent(11,event_weight);
+
+    if (recoil <= recoilCut) continue;
+    fillEvent(12,event_weight);
 
     jetCand = getJetCand(jetlist,phoindex);
     if (jetCand.size() < 1) continue;
     setJetCand(jetCand);
-    fillEvent(12,event_weight);
-
-    if (!getPhotonTrigger()) continue;
     fillEvent(13,event_weight);
   }
    
@@ -116,8 +116,8 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
   
-  cutflow = new Cutflow({"Total Events","One Loose Photon","One Tight Photon","Pho pt>230.0", "MET Filters",
-	"Electron Veto","Muon Veto","Tau Veto","BJet Veto","minDPhiJetMET","dPFCaloMET","Recoil","Jet Selection","Triggers"});
+  cutflow = new Cutflow({"Total Events","Triggers","One Loose Photon","One Tight Photon","Pho pt>230.0", "MET Filters",
+	"Electron Veto","Muon Veto","Tau Veto","BJet Veto","minDPhiJetMET","dPFCaloMET","Recoil","Jet Selection"});
 
   BookHistos(-1,"");
   for(int i = 0; i<nHisto; i++) {
