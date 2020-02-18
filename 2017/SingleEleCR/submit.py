@@ -12,6 +12,7 @@ options['parallel'] = True
 options['batchsize'] = 100
 # options['submit'] = False
 #----Submit---#
-submit('singleele',label='SingleEle_',filelist=True)
-for mc in mclist: submit(mc)
+#submit('singleele',label='SingleEle_',filelist=True)
+submit('singleele',sub='C',label='SingleEle_',filelist=True)
+#for mc in mclist: submit(mc)
 

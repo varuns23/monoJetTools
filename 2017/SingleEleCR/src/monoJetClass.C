@@ -47,77 +47,68 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
       }
     }
 
+
     fillEvent(0,genWeight);
-    if (getElectronTrigger() && inclusiveCut()) {
-      fillEvent(1,event_weight);
 
-      if (getMetFilter()) {
-	fillEvent(2,event_weight);
+    if (!getElectronTrigger()) continue;
+    if (!inclusiveCut()) continue;
+    fillEvent(1,event_weight);
 
-	vector<int> looselist = getLooseEle();
-	if (looselist.size() > 0) {
-	  fillEvent(3,event_weight);
+    vector<int> looselist = getLooseEle();
+    if (looselist.size() != 1) continue;
+    fillEvent(2,event_weight);
 
-	  vector<int> tightlist = getTightEle(looselist);
-	  if (CRSelection(tightlist,looselist)) {
-	    if (!sample.isData) {
-	      SetSF( getSF(lepindex) );
-	      ApplySF(event_weight);
-	    }
-	    fillEvent(4,event_weight);
+    vector<int> tightlist = getTightEle(looselist);
+    if(tightlist.size() != 1) continue;
+    fillEvent(3,event_weight);
 
-	    if (pfMET > 50) {
-	      fillEvent(5,event_weight);
-
-	      h_lepMET_MT->Fill(lepMET_mt,event_weight);
-	      if (lepMET_mt < lepMETMtCut) {
-		fillEvent(6,event_weight);
-	      
-		if (muon_veto()) {
-		  fillEvent(7,event_weight);
-
-		  if (photon_veto(lepindex)) {
-		    fillEvent(8,event_weight);
-
-		    if (tau_veto(lepindex)) {
-		      fillEvent(9,event_weight);
-
-		      if (bjet_veto(lepindex)) {
-			fillEvent(10,event_weight);
-
-			vector<int> jetlist = jet_veto(lepindex);
-			jetCand = getJetCand(jetlist,lepindex);
-			setJetCand(jetCand);
-			if (jetCand.size() > 0) {
-			  fillEvent(11,event_weight);
-
-			  float dpfcalo = fabs(pfMET-caloMET)/recoil;
-			  h_metcut->Fill(dpfcalo,event_weight);
-			  if (dpfcalo < metRatioCut) {
-			    fillEvent(12,event_weight);
-
-			    float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
-			    h_dphimin->Fill(mindPhiJetMET,event_weight);
-			    if (mindPhiJetMET > dPhiJetMETCut) {
-			      fillEvent(13,event_weight);
-
-			      if (recoil > recoilCut) {
-				fillEvent(14,event_weight);
-			    
-			      }
-			    }
-			  }
-			}
-		      }
-		    }
-		  }
-		}
-	      }
-	    }
-	  }
-	}
-      }
+    if (!CRSelection(tightlist, looselist)) continue;
+    if (!sample.isData) {
+      SetSF( getSF(lepindex) );
+      ApplySF(event_weight);
     }
+
+    if (pfMET <= 50) continue;
+    fillEvent(4,event_weight);
+
+    h_lepMET_MT->Fill(lepMET_mt,event_weight);
+    if (lepMET_mt >= lepMETMtCut) continue;
+    fillEvent(5,event_weight);
+
+    if (!getMetFilter()) continue;
+    fillEvent(6,event_weight);
+	      
+    if (!muon_veto()) continue;
+    fillEvent(7,event_weight);
+
+    if (!photon_veto(lepindex)) continue;
+    fillEvent(8,event_weight);
+
+    if (!tau_veto(lepindex)) continue;
+    fillEvent(9,event_weight);
+
+    if (!bjet_veto(lepindex, bjetDeepCSVCut_2017)) continue;
+    fillEvent(10,event_weight);
+
+    vector<int> jetlist = jet_veto(lepindex);
+    float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+    h_dphimin->Fill(mindPhiJetMET,event_weight);
+    if (mindPhiJetMET <= dPhiJetMETCut) continue;
+    fillEvent(11,event_weight);
+      
+    float dpfcalo = fabs(pfMET-caloMET)/recoil;
+    h_metcut->Fill(dpfcalo,event_weight);
+    if (dpfcalo >= metRatioCut) continue;
+    fillEvent(12,event_weight);
+
+    if (recoil <= recoilCut) continue;
+    fillEvent(13,event_weight);
+
+    jetCand = getJetCand(jetlist,lepindex);
+    if (jetCand.size() < 1) continue;
+    setJetCand(jetCand);
+    fillEvent(14,event_weight);
+			    
 
     if (jentry%reportEvery == 0){
       cout<<"Finished entry "<<jentry<<"/"<<(nentriesToCheck-1)<<endl;
@@ -131,8 +122,8 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
 
-  cutflow = new Cutflow({"Total Events","Triggers","MET Filters","One Loose Electron","One Tight Electron","Electron MET M_{T}","pfMET50",
-	"Muon Veto","Photon Veto","Tau Veto","BJet Veto","Jet Selection","dPFCaloMET","minDPhiJetMET","Recoil250"});
+  cutflow = new Cutflow({"Total Events","Triggers","One Loose Electron","One Tight Electron","pfMET50","Electron MET M_{T}","MET Filters",
+	"Muon Veto","Photon Veto","Tau Veto","BJet Veto","minDPhiJetMET","dPFCaloMET","Recoil","Jet Selection"});
 
   BookHistos(-1,"");
   for(int i = 0; i<nHisto; i++) {

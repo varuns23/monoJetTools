@@ -5,7 +5,7 @@
 ////$ ./rootcom monoJetClass analyze
 ////
 ////To run, assuming this is compiled to an executable named 'analyze':
-////$ ./analyze /hdfs/store/user/uhussain/monoJet_Ntuples/ /cms/uhussain/MonoJet/CMSSW_8_0_8/src/LightZPrimeAnalysis/JetAnalyzer/test/output.root -1 10000
+////$ ./analyze <Output Path> <Input Path> -1 10000
 ////Runs over every event in the folder monoJet_Ntuples, reporting progress every 10000 events
 ////and storing the resulting histograms in the file output.root.
 ////
@@ -48,73 +48,62 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     }
 
     fillEvent(0,genWeight);
-    if (getElectronTrigger() && inclusiveCut()) {
-      fillEvent(1,event_weight);
 
-      if (getMetFilter()) {
-	fillEvent(2,event_weight);
+    if (!getElectronTrigger()) continue;
+    if (!inclusiveCut()) continue;
+    fillEvent(1,event_weight);
 
-	vector<int> looselist = getLooseEle();
-	if (looselist.size() == 2) {
-	  fillEvent(3,event_weight);
+    vector<int> looselist = getLooseEle();
+    if (looselist.size() != 2) continue;
+    fillEvent(2,event_weight);
 
-	  vector<int> tightlist = getTightEle(looselist);
-	  if (CRSelection(tightlist,looselist)) {
-	    if (!sample.isData) {
-	      SetSF( getSF(leadLepIndx,subleadLepIndx) );
-	      ApplySF(event_weight);
-	    }
-	    fillEvent(4,event_weight);
+    vector<int> tightlist = getTightEle(looselist);
+    if(tightlist.size() < 1) continue;
+    fillEvent(3,event_weight);
 
-	    if (dilepton_mass > diLeptonMassCutLow && dilepton_mass < diLeptonMassCutHigh) {
-	      fillEvent(5,event_weight);
-
-	      if (muon_veto()) {
-		fillEvent(6,event_weight);
-
-		if (photon_veto(leadLepIndx,subleadLepIndx)) {
-		  fillEvent(7,event_weight);
-
-		  if (tau_veto(leadLepIndx,subleadLepIndx)) {
-		    fillEvent(8,event_weight);
-
-		    if (bjet_veto(leadLepIndx,subleadLepIndx)) {
-		      fillEvent(9,event_weight);
-
-		      vector<int> jetlist = jet_veto(leadLepIndx,subleadLepIndx);
-		      jetCand = getJetCand(jetlist,leadLepIndx,subleadLepIndx);
-		      setJetCand(jetCand);
-		      if (jetCand.size() > 0) {
-			fillEvent(10,event_weight);
-
-			float dpfcalo = fabs(pfMET-caloMET)/recoil;
-			h_metcut->Fill(dpfcalo,event_weight);
-			if (dpfcalo < metRatioCut) {
-			  fillEvent(11,event_weight);
-
-			  float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
-			  h_dphimin->Fill(mindPhiJetMET,event_weight);
-			  if (mindPhiJetMET > dPhiJetMETCut) {
-			    fillEvent(12,event_weight);
-
-			    if (recoil > recoilCut) {
-			      fillEvent(13,event_weight);
-			    
-			    }
-			  }
-			}
-		      }
-		    }
-		  }
-		}
-	      }
-	    }
-	  }
-	}
-      }
+    if (!CRSelection(tightlist, looselist)) continue; 
+    if (!sample.isData) {
+      SetSF( getSF(leadLepIndx,subleadLepIndx) );
+      ApplySF(event_weight);
     }
+    fillEvent(4,event_weight);
 
+    if (dilepton_mass <= diLeptonMassCutLow || dilepton_mass >= diLeptonMassCutHigh) continue;
+    fillEvent(5,event_weight);
+
+    if (!getMetFilter()) continue;
+    fillEvent(6,event_weight);
+
+    if (!muon_veto()) continue;
+    fillEvent(7,event_weight);
     
+    if (!photon_veto(leadLepIndx,subleadLepIndx)) continue;
+    fillEvent(8,event_weight);
+
+    if (!tau_veto(leadLepIndx,subleadLepIndx)) continue;
+    fillEvent(9,event_weight);
+
+    if (!bjet_veto(leadLepIndx,subleadLepIndx, bjetDeepCSVCut_2017)) continue;
+    fillEvent(10,event_weight);
+
+    vector<int> jetlist = jet_veto(leadLepIndx,subleadLepIndx);
+    float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+    h_dphimin->Fill(mindPhiJetMET,event_weight);
+    if (mindPhiJetMET <= dPhiJetMETCut) continue;
+    fillEvent(11,event_weight);
+
+    float dpfcalo = fabs(pfMET-caloMET)/recoil;
+    h_metcut->Fill(dpfcalo,event_weight);
+    if (dpfcalo >= metRatioCut) continue;
+    fillEvent(12,event_weight);
+    
+    if (recoil <= recoilCut) continue;
+    fillEvent(13,event_weight);
+	
+    jetCand = getJetCand(jetlist,leadLepIndx,subleadLepIndx);
+    if (jetCand.size() < 1) continue;
+    setJetCand(jetCand);
+    fillEvent(14,event_weight);
 
     if (jentry%reportEvery == 0){
       cout<<"Finished entry "<<jentry<<"/"<<(nentriesToCheck-1)<<endl;
@@ -128,8 +117,8 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
   
-  cutflow = new Cutflow({"Total Events","Trigger","MET Filters","Two Loose Electrons","One Tight Electron","ZMass",
-	"Muon Veto","Photon Veto","Tau Veto","BJet Veto","Jet Selection","dPFCaloMET","mindPhiJetMET","Recoil250"});
+  cutflow = new Cutflow({"Total Events","Trigger", "Two Loose Ele", "One Tight Ele", "Opp Charge", "ZMass",
+          "MET Filters", "Muon Veto","Photon Veto","Tau Veto","BJet Veto","mindPhiJetMET","dPFCaloMET","Recoil","Jet Selection"});
 
   BookHistos(-1,"");
   for(int i = 0; i<nHisto; i++) {

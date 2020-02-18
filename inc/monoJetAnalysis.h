@@ -89,21 +89,26 @@ public:
 
   struct Cutflow {
     TH1F *h_cutflow;
+    TH1F *h_cutflowNoWt;
     std::map<std::string,int> labels;
     Cutflow(std::vector<std::string> labels) {
       h_cutflow = new TH1F("h_cutflow","h_cutflow",labels.size(),0,labels.size());
+      h_cutflowNoWt = new TH1F("h_cutflowNoWt","h_cutflowNoWt",labels.size(),0,labels.size());
     
       for (int i = 0; i < labels.size(); i++) {
 	h_cutflow->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
+	h_cutflowNoWt->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
 	this->labels[labels[i]] = i;
       }
       h_cutflow->Sumw2();
+      h_cutflowNoWt->Sumw2();
     }
     void Fill(std::string label,float weight=1) {
       this->Fill( labels[label],weight );
     }
     void Fill(std::size_t idx,float weight=1) {
       h_cutflow->Fill(idx,weight);
+      h_cutflowNoWt->Fill(idx,1.0);
     }
   };
   Cutflow *cutflow;
@@ -871,8 +876,7 @@ public:
   virtual vector<int> getLooseJet(float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   
-  virtual vector<int> getLooseBJet(float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
-  virtual vector<int> bjet_veto_looseID(int jetindex,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
+//--|  virtual vector<int> bjet_veto_looseID(int jetindex,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
   
   virtual vector<int> getLooseEle(float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
   virtual vector<int> electron_veto_looseID(int jetindex,float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);

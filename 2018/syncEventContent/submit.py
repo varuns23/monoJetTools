@@ -6,13 +6,13 @@ repo = '%s/src/monoJetTools/' % cmssw
 sys.path.append(repo)
 
 from CondorTools.SubmitDataset import submit,options,mclist
-options['year'] = '2017'
-options['region'] = 'WM'
+options['year'] = '2018'
+options['region'] = 'WE'
 options['parallel'] = True
-options['batchsize'] = 100
+options['batchsize'] = 10
 # options['submit'] = False
 #----Submit---#
-submit('met',sub='B',label='SingleMu_',filelist=True)
-# submit('met',label='DoubleMu_',filelist=True)
-# for mc in mclist: submit(mc)
+submit('egamma',sub='C',label='SingleEle_',filelist=True)
+#submit('zjets',sub='SyncEx', label='SingleEle_',filelist=True)
+#for mc in mclist: submit(mc)
 

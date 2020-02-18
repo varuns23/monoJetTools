@@ -14,8 +14,8 @@
 using namespace std;
 class monoJetClass : public monoJetYear, public monoJetGammaCR {
 public :
-  static const int nHisto = 13;
-  static const int bHisto = 12;
+  static const int nHisto = 14;
+  static const int bHisto = 13;
   
   monoJetClass(const char* file1,const char* file2,int nfiles) : monoJetAnalysis(file1,file2,nfiles) {
     BookHistos(file2); };

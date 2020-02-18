@@ -63,8 +63,8 @@ float monoJetSingleMuCR::getSF(int lepindex) {
   float eta = muEta->at(lepindex);
   float pt = muPt->at(lepindex);
 
-  float tightMuISO_SF_corr;
-  float tightMuID_SF_corr;
+  float tightMuISO_SF_corr=1.0;
+  float tightMuID_SF_corr=1.0;
     
   if ( th2fmap.contains("tightMuSF_ISO_abseta") ) {
     // Use abseta instead of eta
@@ -119,7 +119,7 @@ bool monoJetSingleMuCR::photon_veto(int leading_mu_index){
   pho_cands.clear();
 
   vector<int> tmpcands = getLoosePho();
-  for(int i : tmpcands ){
+  for(int i : tmpcands){
     double dR_leadingMu    = deltaR(phoSCEta->at(i),phoSCPhi->at(i), muEta->at(leading_mu_index), muPhi->at(leading_mu_index));
     if( dR_leadingMu > 0.5 )
       pho_cands.push_back(i);
@@ -140,14 +140,17 @@ bool monoJetSingleMuCR::tau_veto(int leading_mu_index){
   return tau_cands.size() == 0;
 }  
    
-bool monoJetSingleMuCR::bjet_veto(int leading_mu_index){
+bool monoJetSingleMuCR::bjet_veto(int leading_mu_index, float cutValue){
   vector<int> bjet_cands;
   bjet_cands.clear();
-   
-  vector<int> tmpcands = getLooseBJet();
-  for(int i : tmpcands){
+  
+  for(int i = 0; i < nJet; i++){
+    bool kinematic = (jetPt->at(i) > bjetVetoPtCut && fabs(jetEta->at(i)) < bjetVetoEtaCut);
+    float bjetTag = jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i);
+    bool btagged = bjetTag > cutValue;
+
     double dR_leadingMu    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(leading_mu_index), muPhi->at(leading_mu_index));  
-    if(dR_leadingMu > 0.4 )
+    if(kinematic && btagged && dR_leadingMu > 0.4 )
       bjet_cands.push_back(i);
   }
   return bjet_cands.size() == 0;

@@ -61,33 +61,33 @@ void monoJetDoubleEleCR::fillHistos(int nhist,float event_weight) {
 }
 
 bool monoJetDoubleEleCR::CRSelection(vector<int> tightlist,vector<int> looselist) {
-  for (int leading : tightlist) {
-    for (int subleading : looselist) {
-      //Event must have exactly two loose electrons with opposite charge
-      if (eleCharge->at(leading)*eleCharge->at(subleading) == -1) {
-	lep1.SetPtEtaPhiE(eleCalibEt->at(leading),eleEta->at(leading),elePhi->at(leading),eleE->at(leading));
-	lep2.SetPtEtaPhiE(eleCalibEt->at(subleading),eleEta->at(subleading),elePhi->at(subleading),eleE->at(subleading));
-	leadLepIndx = leading;
-	subleadLepIndx = subleading;
-	TLorentzVector ll = lep1 + lep2;
-	dilepton_mass = ll.M();
-	dilepton_pt = ll.Pt();
+  if (tightlist.size() == 0) return false;
+  int leading = tightlist[0];
+  for (int subleading : looselist) {
+    //Event must have exactly two loose electrons with opposite charge
+    if (eleCharge->at(leading)*eleCharge->at(subleading) == -1) {
+      lep1.SetPtEtaPhiE(eleCalibEt->at(leading),eleEta->at(leading),elePhi->at(leading),eleCalibE->at(leading));
+      lep2.SetPtEtaPhiE(eleCalibEt->at(subleading),eleEta->at(subleading),elePhi->at(subleading),eleCalibE->at(subleading));
+      leadLepIndx = leading;
+      subleadLepIndx = subleading;
+      TLorentzVector ll = lep1 + lep2;
+      dilepton_mass = ll.M();
+      dilepton_pt = ll.Pt();
 
-	leadingLepton_pt = lep1.Pt();
-	leadingLepton_eta = lep1.Eta();
-	leadingLepton_phi = lep1.Phi();
+      leadingLepton_pt = lep1.Pt();
+      leadingLepton_eta = lep1.Eta();
+      leadingLepton_phi = lep1.Phi();
 	
-	subleadingLepton_pt = lep2.Pt();
-	subleadingLepton_eta = lep2.Eta();
-	subleadingLepton_phi = lep2.Phi();
+      subleadingLepton_pt = lep2.Pt();
+      subleadingLepton_eta = lep2.Eta();
+      subleadingLepton_phi = lep2.Phi();
 	
-	TLorentzVector met_4vec;
-	met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
-	TLorentzVector leptoMET_4vec = ll+met_4vec;
-	recoil = fabs(leptoMET_4vec.Pt());
-	recoilPhi = leptoMET_4vec.Phi();
-	return true;
-      }
+      TLorentzVector met_4vec;
+      met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
+      TLorentzVector leptoMET_4vec = ll+met_4vec;
+      recoil = fabs(leptoMET_4vec.Pt());
+      recoilPhi = leptoMET_4vec.Phi();
+      return true;
     }
   }
   return false;
@@ -166,14 +166,17 @@ bool monoJetDoubleEleCR::tau_veto(int leading,int subleading) {
   return tau_cands.size() == 0;
 }
 
-bool monoJetDoubleEleCR::bjet_veto(int leading,int subleading) {
+bool monoJetDoubleEleCR::bjet_veto(int leading,int subleading, float cutValue) {
   vector<int> bjet_cands; bjet_cands.clear();
 
-  vector<int> tmpcands = getLooseBJet();
-  for (int ijet : tmpcands) {
-    float dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(leading),eleSCPhi->at(leading));
-    float dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(subleading),eleSCPhi->at(subleading));
-    if ( dR_leading > Iso4Cut && dR_subleading > Iso4Cut )
+  for(int ijet = 0; ijet < nJet; ijet++){
+    bool kinematic = (jetPt->at(ijet) > bjetVetoPtCut && fabs(jetEta->at(ijet)) < bjetVetoEtaCut);
+    float bjetTag = jetDeepCSVTags_b->at(ijet) + jetDeepCSVTags_bb->at(ijet);
+    bool btagged = bjetTag > cutValue;
+
+    double dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(leading),eleSCPhi->at(leading));
+    double dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(subleading),eleSCPhi->at(subleading));
+    if ( kinematic && btagged && dR_leading > Iso4Cut && dR_subleading > Iso4Cut )
       bjet_cands.push_back(ijet);
   }
   return bjet_cands.size() == 0;

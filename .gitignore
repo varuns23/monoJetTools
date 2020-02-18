@@ -8,3 +8,4 @@ post*.root
 test*
 nohup.out
 debug.out
+bin

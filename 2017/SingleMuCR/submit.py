@@ -13,5 +13,5 @@ options['batchsize'] = 100
 # options['submit'] = False
 #----Submit---#
 submit('met',label='SingleMu_',filelist=True)
-for mc in mclist: submit(mc)
+#for mc in mclist: submit(mc)
 

@@ -42,7 +42,7 @@ void monoJetSingleEleCR::fillHistos(int nhist,float event_weight) {
 bool monoJetSingleEleCR::CRSelection(vector<int> tight,vector<int> loose) {
   if (tight.size() == 1 && loose.size() == 1) {
     lepindex = tight[0];
-    lep.SetPtEtaPhiE(eleCalibEt->at(lepindex),eleEta->at(lepindex),elePhi->at(lepindex),eleE->at(lepindex));
+    lep.SetPtEtaPhiE(eleCalibEt->at(lepindex),eleEta->at(lepindex),elePhi->at(lepindex),eleCalibE->at(lepindex));
     
     lepton_pt = lep.Pt();
     lepton_eta = eleEta->at(lepindex);
@@ -123,13 +123,16 @@ bool monoJetSingleEleCR::tau_veto(int lepindex) {
   return tau_cands.size() == 0;
 }
 
-bool monoJetSingleEleCR::bjet_veto(int lepindex) {
+bool monoJetSingleEleCR::bjet_veto(int lepindex, float cutValue) {
   vector<int> bjet_cands; bjet_cands.clear();
 
-  vector<int> tmpcands = getLooseBJet();
-  for (int ijet : tmpcands) {
-    float dR_ele = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
-    if ( dR_ele > Iso4Cut )
+  for(int ijet = 0; ijet < nJet; ijet++){
+    bool kinematic = (jetPt->at(ijet) > bjetVetoPtCut && fabs(jetEta->at(ijet)) < bjetVetoEtaCut);
+    float bjetTag = jetDeepCSVTags_b->at(ijet) + jetDeepCSVTags_bb->at(ijet);
+    bool btagged = bjetTag > cutValue;
+
+    double dR_ele = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
+    if ( kinematic && btagged && dR_ele > Iso4Cut )
       bjet_cands.push_back(ijet);
   }
   return bjet_cands.size() == 0;
