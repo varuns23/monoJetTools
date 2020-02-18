@@ -43,6 +43,9 @@ void monoJetAnalysis::SetScalingHistos() {
 }
 
 void monoJetAnalysis::initTree(TTree* tree) {
+  tree->Branch("run",&run);
+  tree->Branch("lumis",&lumis);
+  tree->Branch("event",&event);
   tree->Branch("weight",&weight);
   tree->Branch("genWeight",&genWeight);
   tree->Branch("pileup",&pileup);
