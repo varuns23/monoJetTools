@@ -12,5 +12,6 @@ options['parallel'] = True
 options['batchsize'] = 100
 # options['submit'] = False
 #----Submit---#
-submit('egamma',label='DoubleEle_',filelist=True)
-for mc in mclist: submit(mc)
+#submit('egamma',label='DoubleEle_',filelist=True)
+submit('st',sub='SyncEx',label='DoubleEle_',filelist=True)
+#for mc in mclist: submit(mc)

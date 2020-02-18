@@ -25,7 +25,7 @@ public:
   virtual bool electron_veto();
   virtual bool photon_veto(int leading,int subleading);
   virtual bool tau_veto(int leading,int subleading);
-  virtual bool bjet_veto(int leading,int subleading);
+  virtual bool bjet_veto(int leading,int subleading, float cutValue);
 };
 
 #endif

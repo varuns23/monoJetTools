@@ -8,7 +8,7 @@ INC:=inc/
 BIN:=bin/
 SCRIPTS:=scripts/
 
-CR:=monoJetSingleMuCR
+CR:=monoJetSingleEleCR
 
 LIBRARY:=$(addprefix $(ROOT)$(BIN),ScaleUncCollection.o ShapeUncCollection.o Utilities.o Dataset.o)
 INCLUDE:=$(addprefix $(ROOT)$(INC),monoJetCutConfig.h Dataset.h VariableBins.h ScaleUncCollection.h ShapeUncCollection.h Utilities.h)

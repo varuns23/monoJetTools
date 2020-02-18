@@ -23,7 +23,7 @@ public:
   virtual bool muon_veto(int phoindex);
   virtual bool electron_veto(int phoindex);
   virtual bool tau_veto(int phoindex);
-  virtual bool bjet_veto(int phoindex);
+  virtual bool bjet_veto(int phoindex, float cutValue);
 };
 
 #endif

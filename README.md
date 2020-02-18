@@ -13,8 +13,8 @@ To run all data and MC, use the submit.py file.
 Instructions:
 
 ```bash
-cmsrel CMSSW_10_2_10
-cd CMSSW_10_2_10/src
+cmsrel CMSSW_10_2_18
+cd CMSSW_10_2_18/src
 cmsenv
 voms-proxy-init --voms=cms --valid=192:00
 git clone https://github.com/varuns23/monoJetTools.git

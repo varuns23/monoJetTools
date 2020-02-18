@@ -61,7 +61,6 @@ void monoJetDoubleMuCR::fillHistos(int nhist,float event_weight) {
 }
 
 bool monoJetDoubleMuCR::CRSelection(vector<int> tightlist,vector<int> looselist) {
-  bool muPairSet = false;
   if (tightlist.size() == 0) return false;
   for(int j=0; j<looselist.size(); ++j){
     //Event must have exactly two muons with opposite charge
@@ -89,10 +88,10 @@ bool monoJetDoubleMuCR::CRSelection(vector<int> tightlist,vector<int> looselist)
       TLorentzVector leptoMET_4vec = ll+met_4vec;
       recoil = fabs(leptoMET_4vec.Pt());
       recoilPhi = leptoMET_4vec.Phi();
-      muPairSet = true;
+      return true;
     }
   }
-  return muPairSet;
+  return false;
 }
 
 
@@ -182,16 +181,19 @@ bool monoJetDoubleMuCR::tau_veto(int leadLep_index, int subleadLep_index){
   return tau_cands.size() == 0;
 }
 
-bool monoJetDoubleMuCR::bjet_veto(int leadLep_index, int subleadLep_index){
+bool monoJetDoubleMuCR::bjet_veto(int leadLep_index, int subleadLep_index, float cutValue){
   vector<int> bjet_cands;
   bjet_cands.clear();
 
-  vector<int> tmpcands = getLooseBJet();
-  for(int i : tmpcands){
+  for(int i = 0; i < nJet; i++){
+    bool kinematic = (jetPt->at(i) > bjetVetoPtCut && fabs(jetEta->at(i)) < bjetVetoEtaCut);
+    float bjetTag = jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i);
+    bool btagged = bjetTag > cutValue;
+
     double dR_leadLep    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(leadLep_index), muPhi->at(leadLep_index));  
     double dR_subleadLep = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(subleadLep_index), muPhi->at(subleadLep_index)); 
 
-    if(dR_leadLep > 0.4 && dR_subleadLep > 0.4)
+    if(kinematic && btagged && dR_leadLep > 0.4 && dR_subleadLep > 0.4)
       bjet_cands.push_back(i);
   }
   return bjet_cands.size() == 0;

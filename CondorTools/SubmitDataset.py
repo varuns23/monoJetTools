@@ -4,11 +4,10 @@ from multiprocessing import Process
 import SubmitCondor
 from dataset import getDataset
 labelmap = { 'dyjets_nlo':'DYNLO','dyjets':'DY','ewk':'','gjets':'GJets','qcd':'QCD','st':'ST_','ttjets':'TTJets',
-             'wjets_nlo':'WNLO','wjets':'W','zjets_nlo':'ZNLO','zjets':'Z','met_farmout':'METFarmoutData_',
-             'met':'METdata_','egamma':'EGdata_','egamma_farmout':'EGFarmoutData_','singleele':'SEdata_','singleele_farmout':'SEFarmoutData_',
-             'singlepho':'SPdata_','singlepho_farmout':'SPFarmoutData_','signal':'' }
+             'wjets_nlo':'WNLO','wjets':'W','zjets_nlo':'ZNLO','zjets':'Z',
+             'met':'METdata_','egamma':'EGdata_','singleele':'SEdata_','singlepho':'SPdata_','signal':'' }
 mclist = ['dyjets_nlo','dyjets','ewk','gjets','qcd','st','ttjets','wjets_nlo','wjets','zjets_nlo','zjets']
-datalist = ['met','met_farmout','egamma','egamma_farmout','singleele','singleele_farmout','singlepho','singlepho_farmout']
+datalist = ['met','egamma','singleele','singlepho']
 
 options = {
     'year':None,
