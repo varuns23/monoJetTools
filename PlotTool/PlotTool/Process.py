@@ -83,7 +83,7 @@ class SubProcess(object):
                 if tmp_fname == None: print 'skipping'; return False
                 self.fname = tmp_fname
                 print 'using %s.root instead' % self.fname
-                self.xsec = self.config.xsec[self.fname]
+                if self.fname in self.config.xsec: self.xsec = self.config.xsec[self.fname]
             else: print 'skipping'; return False
         self.tfile = TFile.Open(self.fname+'.root')
         cutflow = GetTObject("h_cutflow",self.tfile)

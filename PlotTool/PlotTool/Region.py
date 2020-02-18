@@ -74,8 +74,14 @@ class Region(object):
 
         self.processes = {}
         datafile = DataFileMap[self.region]
-        datalist = [ '%s_%s' % (datafile,era) for era in sorted(self.lumimap.keys()) ]
-        self.processes["Data"] =    Process("Data",datalist,None,'data',year=self.year,region=self.region,args=self.args)
+        if 'Ele' in self.region and self.year == '2017':
+            datalist = []
+            for type in ("SE","SP"):
+                for era in sorted(self.lumimap.keys()):
+                    datalist.append( '%s_%s_%s' % (datafile,type,era))
+        else:
+            datalist = [ '%s_%s' % (datafile,era) for era in sorted(self.lumimap.keys()) ]
+        self.processes["Data"] =    Process("Data",datalist,None,'data',year=self.year,region=self.region,args=self.args,config=self.config)
         for mc in self.MCList: self.processes[mc] = Process(mc,config.filemap[mc],GetMCxsec(config.filemap[mc],config.xsec),'bkg',
                                                               lumi=self.lumi,leg=config.legmap[mc],color=config.colmap[mc],
                                                               year=self.year,region=self.region,args=self.args,config=self.config)
