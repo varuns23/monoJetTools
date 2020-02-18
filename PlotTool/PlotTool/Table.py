@@ -3,13 +3,13 @@ from Parser import parser
 parser.add_argument('--raw-output',help='print tables without fancy separators (perhaps better for importing to excel)',action='store_true',default=False)
 
 class Table:
-    args = parser.parse_args()
     def __init__(self,header):
         # header = [SampleNames,Column1,Column2,...]
         self.header = header
         self.table = []
         self.nspaces = [ len(h) for h in header ]
         self.num_temp = '%.6g'
+        self.args = parser.parse_args()
     def addRow(self,row):
         if len(row) != len(self.header):
             print 'Current header length %i' % len(self.header)
