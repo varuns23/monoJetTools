@@ -107,12 +107,12 @@ def stripDataset(rootFiles):
 def removeOldFiles(filekey,label):
     #Remove any old condor files
     filekey = filekey.replace(".root","_")
-    for fn in os.listdir(".output/"):
+    for fn in os.listdir("./"):
         if filekey in fn:
-            try: os.remove(".output/"+fn)
+            try: os.remove("./"+fn)
             except: pass # file removed in parallel
-    if not os.path.isdir(".status/"+label): os.mkdir(".status/"+label)
-    for fn in os.listdir(".status/"+label): os.remove(".status/"+label+"/"+fn)
+    if not os.path.isdir("../.status/"+label): os.mkdir("../.status/"+label)
+    for fn in os.listdir("../.status/"+label): os.remove("../.status/"+label+"/"+fn)
 
 def splitArgument(nbatches,rfiles,config,redirect):
     #Get how many files are in each batch
@@ -160,7 +160,7 @@ def inputFilelist(nbatches,rfiles,config,redirect):
 
         output("----Batch %i %i files" % (i+1,len(fileRange)),redirect)
 
-    arguments.append("$(script) $(inputdir) $(outputfile)_$(Process).root $(maxevents) $(reportevery) %s" %  ' '.join(fileRange))
+        arguments.append("$(script) $(inputdir) $(outputfile)_$(Process).root $(maxevents) $(reportevery) %s" %  ' '.join(fileRange))
     config['Arguments'] = arguments
 def condor_submit(command,config):
     def DetectedError(config):

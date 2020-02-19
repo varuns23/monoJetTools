@@ -6,11 +6,11 @@ class CondorConfig(OrderedDict):
         spacer = '{0:<%i}' % nspace
         lines = []
         for key,value in self.iteritems():
-            if key != 'Argument':
+            if 'Argument' not in key:
                 if type(value) == list: value = ','.join(value)
                 lines.append( '%s = %s' % (spacer.format(key),value) )
             else:
-                lines += [ '%s = %s\nQueue' % (key,arg) for arg in value ]
+                for arg in value: lines.append( '%s = %s\nQueue' % (key,arg) )
         return '\n'.join(lines)
     def write(self,fname):
         with open(fname,'w') as submit: submit.write( str(self) )
