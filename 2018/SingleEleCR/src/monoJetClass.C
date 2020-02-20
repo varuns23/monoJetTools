@@ -36,6 +36,10 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
+    if (jentry%reportEvery == 0) {
+      cout<<"Analyzing entry "<<jentry<<"/"<<(nentriesToCheck)<<endl;
+    }
+    
     initVars();
 
     float event_weight = 1.;
@@ -111,11 +115,6 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (jetCand.size() < 1) continue;
     setJetCand(jetCand);
     fillEvent(15,event_weight);
-
-
-    if (jentry%reportEvery == 0){
-      cout<<"Finished entry "<<jentry<<"/"<<(nentriesToCheck-1)<<endl;
-    }
   }
 
 }//Closing the Loop function
