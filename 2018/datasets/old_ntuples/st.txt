@@ -20,3 +20,5 @@
 /hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/ST/ST_t_antitop_4f/0006/
 /hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/ST/ST_t_antitop_4f/0007/
 
+>>SyncEx
+/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19_NEW/ST/ST_tW_top_5f/0000/

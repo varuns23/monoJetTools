@@ -23,3 +23,5 @@
 >>2500toInf
 /hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/ZJets/ZJetsToNuNu_HT2500-Inf/0000/
 
+>>SyncEx
+/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19_NEW/ZJets/ZJetsToNuNu_HT400-600/0000/
