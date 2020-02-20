@@ -9,10 +9,9 @@ from CondorTools.SubmitDataset import submit,options,mclist
 options['year'] = '2018'
 options['region'] = 'WE'
 options['parallel'] = True
-options['batchsize'] = 100
+options['batchsize'] = 150
 # options['submit'] = False
 #----Submit---#
-#submit('egamma',label='SingleEle_',filelist=True)
-submit('st',sub='SyncEx',label='SingleEle_',filelist=True)
-#for mc in mclist: submit(mc)
+submit('egamma',label='SingleEle_')
+for mc in mclist: submit(mc)
 

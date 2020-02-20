@@ -9,10 +9,9 @@ from CondorTools.SubmitDataset import submit,options,mclist
 options['year'] = '2018'
 options['region'] = 'WM'
 options['parallel'] = True
-options['batchsize'] = 100
+options['batchsize'] = 150
 # options['submit'] = False
 #----Submit---#
-#submit('met',label='SingleMu_',filelist=True)
-submit('st',sub='SyncEx',label='SingleMu_',filelist=True)
-#for mc in mclist: submit(mc)
+submit('met',label='SingleMu_')
+for mc in mclist: submit(mc)
 
