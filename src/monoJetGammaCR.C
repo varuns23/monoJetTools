@@ -1,5 +1,5 @@
-#ifndef monoJetGammaCR_C
-#define monoJetGammaCR_C
+#ifndef monoJetCR_C
+#define monoJetCR_C
 
 #include "monoJetGammaCR.h"
 #include "VariableBins.h"
@@ -7,10 +7,12 @@
 
 using namespace std;
 
-const string monoJetGammaCR::REGION = "GammaCR";
+Region monoJetAnalysis::REGION = GA;
+CRobject monoJetAnalysis::CROBJECT = Photon;
 
 void monoJetGammaCR::initVars() {
   phoindex = photon_pt = photon_eta = photon_phi = photon_sieie = -99;
+  tightID_sf = csev_sf = 1;
 }
 
 void monoJetGammaCR::initTree(TTree* tree) {
@@ -18,6 +20,8 @@ void monoJetGammaCR::initTree(TTree* tree) {
   tree->Branch("photonEta",&photon_eta,"Photon Eta");
   tree->Branch("photonPhi",&photon_phi,"PhotonPhi");
   tree->Branch("photonSigmaIEtaIEta",&photon_sieie,"Photon #sigma_{i#eta i#eta}");
+  tree->Branch("tightID_sf",&tightID_sf);
+  tree->Branch("csev_sf",&csev_sf);
 }
 
 void monoJetGammaCR::BookHistos(int i,string histname) {
@@ -63,9 +67,17 @@ bool monoJetGammaCR::CRSelection(vector<int> tight,vector<int> loose) {
 
 float monoJetGammaCR::getSF(int phoindex) {
   float eta = phoSCEta->at(phoindex); float pt = phoCalibEt->at(phoindex);
-  float phoEffSF_corr= th2fmap.getBin("phoIDSF_medium",eta,pt);
-
-  return phoEffSF_corr;
+  tightID_sf = th2fmap.getBin("photon_id_tight",eta,pt);
+  if ( YEAR == 2017 ) {
+    float r9 = phoR9Full5x5->at(phoindex);
+    // From bucoffea
+    // csev_index = 0.5 * photons.barrel + 3.5 * ~photons.barrel + 1 * (photons.r9 > 0.94) + 2 * (photons.r9 <= 0.94)
+    int csev_index = 0.5 + 1 * ( r9 > 0.94 ? 1 : 0 ) + 2 * ( r9 <= 0.94 ? 1 : 0 );
+    csev_sf = th1fmap.getBin("photon_csev",csev_index);
+  } else if (YEAR == 2018) {
+    csev_sf = th2fmap.getBin("photon_csev",pt,fabs(eta));
+  }
+  return tightID_sf * csev_sf;
 }
 
 vector<int> monoJetGammaCR::getJetCand(vector<int> jetlist,int phoindex) {

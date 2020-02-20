@@ -82,32 +82,32 @@ int setup_test(int argc, const char* argv[]) {
   Dataset dataset;
   string mcdir,datadir;
   string signaldir = "None";
-  if ( monoJetClass::REGION == "SignalRegion" ) {
+  if ( monoJetClass::REGION == SR ) {
     mcdir = dataset.getDirlist("zjets","400to600")[0];
     datadir = dataset.getDirlist("met",monoJetClass::SRDATA)[0];
     if ( dataset.getSubset("signal").size() != 0 )
       signaldir = dataset.getDirlist("signal","Mx1_Mv1000")[0];
     
-  } else if ( monoJetClass::REGION == "SingleEleCR" || monoJetClass::REGION == "SingleMuCR" ) {
+  } else if ( monoJetClass::REGION == WE || monoJetClass::REGION == WM ) {
     mcdir = dataset.getDirlist("wjets","400to600")[0];
-    if ( monoJetClass::REGION == "SingleEleCR" ) {
+    if ( monoJetClass::REGION == WE ) {
       if (dataset.contains("singleele"))
 	datadir = dataset.getSubset("singleele").begin()->second[0];
       else
 	datadir = dataset.getSubset("egamma").begin()->second[0];
     }
-    if ( monoJetClass::REGION == "SingleMuCR"  ) datadir = dataset.getSubset("met").begin()->second[0];
+    if ( monoJetClass::REGION == WM  ) datadir = dataset.getSubset("met").begin()->second[0];
     
-  } else if ( monoJetClass::REGION == "DoubleEleCR" || monoJetClass::REGION == "DoubleMuCR" ) {
+  } else if ( monoJetClass::REGION == ZE || monoJetClass::REGION == ZM ) {
     mcdir = dataset.getDirlist("dyjets","400to600")[0];
-    if ( monoJetClass::REGION == "DoubleEleCR" ) {
+    if ( monoJetClass::REGION == ZE ) {
       if (dataset.contains("singleele"))
 	datadir = dataset.getSubset("singleele").begin()->second[0];
       else
 	datadir = dataset.getSubset("egamma").begin()->second[0];
     }
-    if ( monoJetClass::REGION == "DoubleMuCR"  ) datadir = dataset.getSubset("met").begin()->second[0];
-  } else if (monoJetClass::REGION == "GammaCR") {
+    if ( monoJetClass::REGION == ZM  ) datadir = dataset.getSubset("met").begin()->second[0];
+  } else if (monoJetClass::REGION == GA) {
     mcdir = dataset.getDirlist("gjets","400to600")[0];
     if (dataset.contains("singlepho"))
       datadir = dataset.getSubset("singlepho").begin()->second[0];

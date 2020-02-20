@@ -1,14 +1,14 @@
-#ifndef monoJetSingleMuCR_h
-#define monoJetSingleMuCR_h
+#ifndef monoJetCR_H
+#define monoJetCR_H
 
 #include "monoJetAnalysis.h"
 
 class monoJetSingleMuCR : public virtual monoJetAnalysis {
 public:
-  static const std::string REGION;
   int lepindex;
   TLorentzVector lep;
   float lepton_pt,lepton_eta,lepton_phi,lepMET_mt;
+  float tightID_sf,tightISO_sf;
 
   TH1F *h_lepMET_MT;
   TH1F *h_LeptonPt[maxHisto], *h_LeptonEta[maxHisto],*h_LeptonPhi[maxHisto];

@@ -1,5 +1,5 @@
-#ifndef monoJetSingleMuCR_C
-#define monoJetSingleMuCR_C
+#ifndef monoJetCR_C
+#define monoJetCR_C
 
 #include "monoJetSingleMuCR.h"
 #include "VariableBins.h"
@@ -7,16 +7,20 @@
 
 using namespace std;
 
-const string monoJetSingleMuCR::REGION = "SingleMuCR";
+Region monoJetAnalysis::REGION = WM;
+CRobject monoJetAnalysis::CROBJECT = Muon;
 
 void monoJetSingleMuCR::initVars() {
   lepindex = lepton_pt = lepton_eta = lepton_phi = lepMET_mt = -99;
+  tightID_sf = tightISO_sf = 1;
 }
 
 void monoJetSingleMuCR::initTree(TTree* tree) {
   tree->Branch("LeptonPt",&lepton_pt,"Lepton P_{T} (GeV)");
   tree->Branch("LeptonEta",&lepton_eta,"Lepton Eta");
   tree->Branch("LeptonPhi",&lepton_phi,"LeptonPhi");
+  tree->Branch("tightID_sf",&tightID_sf);
+  tree->Branch("tightISO_sf",&tightISO_sf);
 }
 
 void monoJetSingleMuCR::BookHistos(int i,string histname) {
@@ -60,24 +64,13 @@ bool monoJetSingleMuCR::CRSelection(vector<int> tight,vector<int> loose) {
 }
 
 float monoJetSingleMuCR::getSF(int lepindex) {
-  float eta = muEta->at(lepindex);
+  float abseta = fabs(muEta->at(lepindex));
   float pt = muPt->at(lepindex);
 
-  float tightMuISO_SF_corr=1.0;
-  float tightMuID_SF_corr=1.0;
-    
-  if ( th2fmap.contains("tightMuSF_ISO_abseta") ) {
-    // Use abseta instead of eta
-    tightMuISO_SF_corr = th2fmap.getBin("tightMuSF_ISO_abseta",pt,fabs(eta));
-    tightMuID_SF_corr = th2fmap.getBin("tightMuSF_ID_abseta",pt,fabs(eta));
-  } else {
-    // Use eta
-    tightMuISO_SF_corr = th2fmap.getBin("tightMuSF_ISO",pt,eta);
-    tightMuID_SF_corr = th2fmap.getBin("tightMuSF_ID",pt,eta);
-  }
+  tightID_sf = th2fmap.getBin("muon_id_tight",pt,abseta);
+  tightISO_sf = th2fmap.getBin("muon_iso_tight",pt,abseta);
   
-  
-  return tightMuISO_SF_corr*tightMuID_SF_corr;
+  return tightID_sf * tightISO_sf;
 }
 
 

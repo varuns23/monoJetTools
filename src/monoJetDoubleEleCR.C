@@ -1,5 +1,5 @@
-#ifndef monoJetDoubleEleCR_C
-#define monoJetDoubleEleCR_C
+#ifndef monoJetCR_C
+#define monoJetCR_C
 
 #include "monoJetDoubleEleCR.h"
 #include "VariableBins.h"
@@ -7,13 +7,15 @@
 
 using namespace std;
 
-const string monoJetDoubleEleCR::REGION = "DoubleEleCR";
+Region monoJetAnalysis::REGION = ZE;
+CRobject monoJetAnalysis::CROBJECT = Electron;
 
 void monoJetDoubleEleCR::initVars() {
   leadLepIndx = subleadLepIndx = -1;
   dilepton_mass = dilepton_pt = -1;
   leadingLepton_pt = leadingLepton_eta = leadingLepton_phi = -99;
   subleadingLepton_pt = subleadingLepton_eta = subleadingLepton_phi = -99;
+  e1reco_sf = e2reco_sf = tightID_sf = looseID_sf = 1;
 }
 
 void monoJetDoubleEleCR::initTree(TTree* tree) {
@@ -25,6 +27,10 @@ void monoJetDoubleEleCR::initTree(TTree* tree) {
   tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
   tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
   tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
+  tree->Branch("e1reco_sf",&e1reco_sf);
+  tree->Branch("tightID_sf",&tightID_sf);
+  tree->Branch("e2reco_sf",&e2reco_sf);
+  tree->Branch("looseID_sf",&looseID_sf);
 }
 
 void monoJetDoubleEleCR::BookHistos(int i,string histname) {
@@ -96,16 +102,18 @@ bool monoJetDoubleEleCR::CRSelection(vector<int> tightlist,vector<int> looselist
 float monoJetDoubleEleCR::getSF(int leading, int subleading) {
   float leading_eta = eleSCEta->at(leading); float leading_pt = eleCalibEt->at(leading);
   float subleading_eta = eleSCEta->at(subleading); float subleading_pt = eleCalibEt->at(subleading);
+
+  e1reco_sf = th2fmap.getBin("ele_reco",leading_eta,leading_pt);
+  tightID_sf = th2fmap.getBin("ele_id_tight",leading_eta,leading_pt);
+  if ( YEAR == 2017 && leading_pt < 20 )
+    e1reco_sf = th2fmap.getBin("ele_reco_pt_lt_20",leading_eta,leading_pt);
+
+  e2reco_sf = th2fmap.getBin("ele_reco",subleading_eta,subleading_pt);
+  looseID_sf = th2fmap.getBin("ele_id_loose",subleading_eta,subleading_pt);
+  if ( YEAR == 2017 && subleading_pt < 20 )
+    e2reco_sf = th2fmap.getBin("ele_reco_pt_lt_20",subleading_eta,subleading_pt);
   
-  float leadingEleRecoSF_corr= th2fmap.getBin("eleRecoSF_highpt",leading_eta,leading_pt);
-  float leadingEleEffSF_corr= th2fmap.getBin("eleIDSF_tight",leading_eta,leading_pt);
-  float leadingEleTriggSF = th2fmap.getBin("eleTriggSF",fabs(leading_eta),leading_pt);
-  
-  float subleadingEleRecoSF_corr= th2fmap.getBin("eleRecoSF_highpt",subleading_eta,subleading_pt);
-  float subleadingEleEffSF_corr= th2fmap.getBin("eleIDSF_loose",subleading_eta,subleading_pt);
-  float subleadingEleTriggSF = th2fmap.getBin("eleTriggSF",fabs(subleading_eta),subleading_pt);
-  
-  return leadingEleRecoSF_corr*leadingEleEffSF_corr*leadingEleTriggSF*subleadingEleRecoSF_corr*subleadingEleEffSF_corr*subleadingEleTriggSF;
+  return e1reco_sf * tightID_sf * e2reco_sf * looseID_sf;
 }
 
 vector<int> monoJetDoubleEleCR::getJetCand(vector<int> jetlist,int leading,int subleading) {

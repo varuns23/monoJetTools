@@ -1,5 +1,5 @@
-#ifndef monoJetDoubleMuCR_C
-#define monoJetDoubleMuCR_C
+#ifndef monoJetCR_C
+#define monoJetCR_C
 
 #include "monoJetDoubleMuCR.h"
 #include "VariableBins.h"
@@ -7,13 +7,16 @@
 
 using namespace std;
 
-const string monoJetDoubleMuCR::REGION = "DoubleMuCR";
+Region monoJetAnalysis::REGION = ZM;
+CRobject monoJetAnalysis::CROBJECT = Muon;
 
 void monoJetDoubleMuCR::initVars() {
   leadLepIndx = subleadLepIndx = -1;
   dilepton_mass = dilepton_pt = -1;
   leadingLepton_pt = leadingLepton_eta = leadingLepton_phi = -99;
   subleadingLepton_pt = subleadingLepton_eta = subleadingLepton_phi = -99;
+  tightID_sf = tightISO_sf = looseID_sf = looseISO_sf = 1;
+  
 }
 
 void monoJetDoubleMuCR::initTree(TTree* tree) {
@@ -25,6 +28,10 @@ void monoJetDoubleMuCR::initTree(TTree* tree) {
   tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
   tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
   tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
+  tree->Branch("tightID_sf",&tightID_sf);
+  tree->Branch("tightISO_sf",&tightISO_sf);
+  tree->Branch("looseID_sf",&looseID_sf);
+  tree->Branch("looseISO_sf",&looseISO_sf);
 }
 
 void monoJetDoubleMuCR::BookHistos(int i,string histname) {
@@ -96,27 +103,15 @@ bool monoJetDoubleMuCR::CRSelection(vector<int> tightlist,vector<int> looselist)
 
 
 float monoJetDoubleMuCR::getSF(int leading,int subleading) {
-  float leading_pt = muPt->at(leading); float leading_eta = muEta->at(leading); 
-  float subleading_pt = muPt->at(subleading); float subleading_eta = muEta->at(subleading);
-  
-  float tightMuISO_SF_corr=1.0;
-  float tightMuID_SF_corr=1.0; 
-  float looseMuISO_SF_corr=1.0;
-  float looseMuID_SF_corr=1.0;
-  
-  if ( th2fmap.contains("tightMuSF_ISO_abseta") ) {
-    tightMuISO_SF_corr = th2fmap.getBin("tightMuSF_ISO_abseta",leading_pt,fabs(leading_eta));
-    tightMuID_SF_corr = th2fmap.getBin("tightMuSF_ID_abseta",leading_pt,fabs(leading_eta));
-    looseMuISO_SF_corr = th2fmap.getBin("looseMuSF_ISO_abseta",subleading_pt,fabs(subleading_eta));
-    looseMuID_SF_corr = th2fmap.getBin("looseMuSF_ID_abseta",subleading_pt,fabs(subleading_eta));
-  } else {
-    tightMuISO_SF_corr = th2fmap.getBin("tightMuSF_ISO",leading_pt,leading_eta);
-    tightMuID_SF_corr = th2fmap.getBin("tightMuSF_ID",leading_pt,leading_eta);
-    looseMuISO_SF_corr = th2fmap.getBin("looseMuSF_ISO",subleading_pt,subleading_eta);
-    looseMuID_SF_corr = th2fmap.getBin("looseMuSF_ID",subleading_pt,subleading_eta);
-  }
-  
-  return tightMuISO_SF_corr*tightMuID_SF_corr*looseMuISO_SF_corr*looseMuID_SF_corr;
+  float leading_pt = muPt->at(leading); float leading_abseta = fabs(muEta->at(leading)); 
+  float subleading_pt = muPt->at(subleading); float subleading_abseta = fabs(muEta->at(subleading));
+
+  tightID_sf = th2fmap.getBin("muon_id_tight",leading_pt,leading_abseta);
+  tightISO_sf = th2fmap.getBin("muon_iso_tight",leading_pt,leading_abseta);
+  looseID_sf = th2fmap.getBin("muon_id_loose",subleading_pt,subleading_abseta);
+  looseISO_sf = th2fmap.getBin("muon_iso_loose",subleading_pt,subleading_abseta);
+
+  return tightID_sf * tightISO_sf * looseID_sf * looseISO_sf;
 }
 
 vector<int> monoJetDoubleMuCR::getJetCand(vector<int> jetlist, int lead_lepIndex, int sublead_lepIndex){

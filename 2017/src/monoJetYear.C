@@ -5,6 +5,7 @@
 
 using namespace std;
 
+int monoJetAnalysis::YEAR = 2017;
 const string monoJetYear::SRDATA = "B";
 
 void monoJetYear::initVars() {
@@ -21,27 +22,31 @@ void monoJetYear::fillHistos(int nhist,float event_weight) {
 
 void monoJetYear::SetScalingHistos() {
   monoJetAnalysis::SetScalingHistos();
-  
-  // Electron Scale Factors
-  TFile *f_eleReconstrucSF_highpt=new TFile("RootFiles/egammaEffi.txt_EGM2D_runBCDEF_passingRECO.root");
-  TFile *f_eleIDeffSF_loose=new TFile("RootFiles/2017_ElectronLoose.root");
-  TFile *f_eleIDeffSF_tight=new TFile("RootFiles/2017_ElectronTight.root");
-  TFile *f_eleTriggSF = new TFile("RootFiles/EleTriggSF.root");
-  th2fmap["eleRecoSF_highpt"]=(TH2F*) f_eleReconstrucSF_highpt->Get("EGamma_SF2D");
-  th2fmap["eleIDSF_loose"]=(TH2F*) f_eleIDeffSF_loose->Get("EGamma_SF2D");
-  th2fmap["eleIDSF_tight"]=(TH2F*) f_eleIDeffSF_tight->Get("EGamma_SF2D");
-  th2fmap["eleTriggSF"] = (TH2F*) f_eleTriggSF->Get("EleTriggSF_abseta_pt");
-  
-  // Muon Scale Factors
-  TFile *f_muSF_ISO = new TFile("RootFiles/RunBCDEF_SF_ISO.root");
-  TFile *f_muSF_ID = new TFile("RootFiles/RunBCDEF_SF_ID.root");
-  th2fmap["tightMuSF_ISO_abseta"] = (TH2F*)f_muSF_ISO->Get("NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta");
-  th2fmap["looseMuSF_ISO_abseta"] = (TH2F*)f_muSF_ISO->Get("NUM_LooseRelIso_DEN_LooseID_pt_abseta");
-  th2fmap["tightMuSF_ID_abseta"] = (TH2F*)f_muSF_ID->Get("NUM_TightID_DEN_genTracks_pt_abseta");
-  th2fmap["looseMuSF_ID_abseta"] = (TH2F*)f_muSF_ID->Get("NUM_LooseID_DEN_genTracks_pt_abseta");
-  
-  // Photon Scale Factors
-  TFile *f_phoIDeffSF_medium=new TFile("RootFiles/2017_PhotonsMedium.root");
-  th2fmap["phoIDSF_medium"]=(TH2F*) f_phoIDeffSF_medium->Get("EGamma_SF2D");
+
+  if ( CROBJECT == Electron ) {
+    // Electron SF
+    TFile* f_ele_reco = TFile::Open("RootFiles/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root");
+    TFile* f_ele_reco_pt_lt_20 = TFile::Open("RootFiles/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO_lowEt.root");
+    TFile* f_ele_id_loose = TFile::Open("RootFiles/egamma/2017_ElectronWPVeto_Fall17V2.root");
+    TFile* f_ele_id_tight = TFile::Open("RootFiles/egamma/2017_ElectronTight.root");
+    th2fmap["ele_reco"] = (TH2F*)f_ele_reco->Get("EGamma_SF2D");
+    th2fmap["ele_reco_pt_lt_20"] = (TH2F*)f_ele_reco_pt_lt_20->Get("EGamma_SF2D");
+    th2fmap["ele_id_loose"] = (TH2F*)f_ele_id_loose->Get("EGamma_SF2D");
+    th2fmap["ele_id_tight"] = (TH2F*)f_ele_id_tight->Get("EGamma_SF2D");
+  } else if ( CROBJECT == Muon ){
+    // Muon SF
+    TFile* f_muon_id = TFile::Open("RootFiles/muon/2017_RunBCDEF_SF_ID.root");
+    TFile* f_muon_iso= TFile::Open("RootFiles/muon/2017_RunBCDEF_SF_ISO.root");
+    th2fmap["muon_id_loose"] = (TH2F*)f_muon_id->Get("NUM_LooseID_DEN_genTracks_pt_abseta");
+    th2fmap["muon_id_tight"] = (TH2F*)f_muon_id->Get("NUM_TightID_DEN_genTracks_pt_abseta");
+    th2fmap["muon_iso_loose"]= (TH2F*)f_muon_iso->Get("NUM_LooseRelIso_DEN_LooseID_pt_abseta");
+    th2fmap["muon_iso_tight"]= (TH2F*)f_muon_iso->Get("NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta");
+  } else if ( CROBJECT == Photon ){
+    // Photon SF
+    TFile* f_photon_id_tight = TFile::Open("RootFiles/egamma/2017_PhotonsMedium_capped.root");
+    TFile* f_photon_csev = TFile::Open("RootFiles/egamma/CSEV_ScaleFactors_2017.root");
+    th2fmap["photon_id_tight"] = (TH2F*)f_photon_id_tight->Get("EGamma_SF2D");
+    th1fmap["photon_csev"] = (TH1F*)f_photon_csev->Get("Medium_ID");
+  }
 }
 #endif

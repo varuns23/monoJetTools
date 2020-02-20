@@ -838,8 +838,7 @@ public:
   virtual ~monoJetAnalysis();
   virtual Int_t    GetEntry(Long64_t entry);
   virtual Long64_t LoadTree(Long64_t entry);
-  void print(monoJetAnalysis* ana);
-  virtual void print() { print(this); }
+  void print();
 
   /* Initializing Methods */
   virtual void Init(TTree* tree);

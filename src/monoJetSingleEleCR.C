@@ -1,5 +1,5 @@
-#ifndef monoJetSingleEleCR_C
-#define monoJetSingleEleCR_C
+#ifndef monoJetCR_C
+#define monoJetCR_C
 
 #include "monoJetSingleEleCR.h"
 #include "VariableBins.h"
@@ -7,16 +7,20 @@
 
 using namespace std;
 
-const string monoJetSingleEleCR::REGION = "SingleEleCR";
+Region monoJetAnalysis::REGION = WE;
+CRobject monoJetAnalysis::CROBJECT = Electron;
 
 void monoJetSingleEleCR::initVars() {
   lepindex = lepton_pt = lepton_eta = lepton_phi = lepMET_mt = -99;
+  reco_sf = tightID_sf = 1;
 }
 
 void monoJetSingleEleCR::initTree(TTree* tree) {
   tree->Branch("LeptonPt",&lepton_pt,"Lepton P_{T} (GeV)");
   tree->Branch("LeptonEta",&lepton_eta,"Lepton Eta");
   tree->Branch("LeptonPhi",&lepton_phi,"LeptonPhi");
+  tree->Branch("reco_sf",&reco_sf);
+  tree->Branch("tightID_sf",&tightID_sf);
 }
 
 void monoJetSingleEleCR::BookHistos(int i,string histname) {
@@ -60,13 +64,12 @@ bool monoJetSingleEleCR::CRSelection(vector<int> tight,vector<int> loose) {
 
 float monoJetSingleEleCR::getSF(int lepindex) {
   float eta = eleSCEta->at(lepindex); float pt = eleCalibEt->at(lepindex);
-  float eleRecoSF_corr= th2fmap.getBin("eleRecoSF_highpt",eta,pt);
-  // std::cout<<"eleRecoSF_corr =  "<< eleRecoSF_corr<<std::endl;
-  float eleEffSF_corr= th2fmap.getBin("eleIDSF_tight",eta,pt);
-  // std::cout<<"eleEffSF_corr =  "<< eleEffSF_corr<<std::endl;
-  float eleTriggSF = th2fmap.getBin("eleTriggSF",fabs(eta),pt);
 
-  return eleRecoSF_corr * eleEffSF_corr * eleTriggSF;
+  reco_sf = th2fmap.getBin("ele_reco",eta,pt);
+  tightID_sf = th2fmap.getBin("ele_id_tight",eta,pt);
+  if ( YEAR == 2017 && pt < 20 )
+    reco_sf = th2fmap.getBin("ele_reco_pt_lt_20",eta,pt);
+  return reco_sf * tightID_sf;
 }
 
 vector<int> monoJetSingleEleCR::getJetCand(vector<int> jetlist,int lepindex) {

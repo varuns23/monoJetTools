@@ -1465,26 +1465,26 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
   }
 }
 
-void monoJetAnalysis::print(monoJetAnalysis* ana) {
-  cout << "Year: " << ana->YEAR << endl;
-  if ( ana->REGION < nRegion) {
-    cout << "Region: " << RegionName[ana->REGION] << endl;
+void monoJetAnalysis::print() {
+  cout << "Year: " << YEAR << endl;
+  if ( REGION < nRegion) {
+    cout << "Region: " << RegionName[REGION] << endl;
   }
-  if ( ana->CROBJECT < nCRobject ) {
-    cout << "CRObject: " << CRobjectName[ana->CROBJECT] << endl;
+  if ( CROBJECT < nCRobject ) {
+    cout << "CRObject: " << CRobjectName[CROBJECT] << endl;
   }
-  if ( ana->type < nType ) {
-    cout << "Type: " << TypeName[ana->type] << endl;
-    cout << "isMC: " << (ana->isMC ? "True" : "False") << endl;
-    cout << "isSignal: " << (ana->isSignal ? "True" : "False") << endl;
-    cout << "isInclusive: " << (ana->isInclusive ? "True" : "False") << endl;
-    cout << "isNLO: " << (ana->isNLO ? "True" : "False") << endl;
-    if ( ana->PID > 0 ) {
-      cout << "PID: " << ana->PID << endl;
+  if ( type < nType ) {
+    cout << "Type: " << TypeName[type] << endl;
+    cout << "isMC: " << (isMC ? "True" : "False") << endl;
+    cout << "isSignal: " << (isSignal ? "True" : "False") << endl;
+    cout << "isInclusive: " << (isInclusive ? "True" : "False") << endl;
+    cout << "isNLO: " << (isNLO ? "True" : "False") << endl;
+    if ( PID > 0 ) {
+      cout << "PID: " << PID << endl;
     }
-    cout << "Dataset: " << ana->dataset << endl;
-    cout << "Subset: " << ana->subset << endl;
-    cout << "Path: " << ana->path << endl;
+    cout << "Dataset: " << dataset << endl;
+    cout << "Subset: " << subset << endl;
+    cout << "Path: " << path << endl;
   }
 }
 

@@ -1,17 +1,19 @@
-#ifndef monoJetDoubleMuCR_h
-#define monoJetDoubleMuCR_h
+#ifndef monoJetCR_H
+#define monoJetCR_H
 
 #include "monoJetAnalysis.h"
 
 class monoJetDoubleMuCR : public virtual monoJetAnalysis {
 public:
-  static const std::string REGION;
+  static const Region REGION = ZM;
+  static const CRobject CROBJECT = Muon;
   
   int leadLepIndx,subleadLepIndx;
   float dilepton_mass,dilepton_pt;
   TLorentzVector lep1,lep2;
   float leadingLepton_pt,leadingLepton_eta,leadingLepton_phi;
   float subleadingLepton_pt,subleadingLepton_eta,subleadingLepton_phi;
+  float tightID_sf,tightISO_sf,looseID_sf,looseISO_sf;
   TH1F *h_leadingLeptonPt[maxHisto], *h_leadingLeptonEta[maxHisto],*h_leadingLeptonPhi[maxHisto],*h_subleadingLeptonPt[maxHisto],*h_subleadingLeptonEta[maxHisto], *h_subleadingLeptonPhi[maxHisto],*h_dileptonPt[maxHisto],*h_dileptonM[maxHisto],*h_dileptonMall[maxHisto];
   
   virtual void BookHistos(int i,std::string histname);
