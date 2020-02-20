@@ -177,6 +177,7 @@ def condor_submit(command,config):
 
 def submit(argv=sys.argv,redirect=False):
     args = getargs(argv)
+    if not os.path.isdir(".status/"+args.label): os.mkdir(".status/"+args.label)
     if redirect:
         redirect = open('.status/%s/submit.txt' % args.label,'w')
         print  "Processesing %s" % args.outputfile
