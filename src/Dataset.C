@@ -82,12 +82,11 @@ void Dataset::SubsetList::addDataset(string path,string filename) {
 
 Dataset::Dataset() {
   type = nType;
-  region = nRegion;
-  year = 0;
   isInclusive = false;
-  isData = false;
+  isMC = true;
   isSignal = false;
   isNLO = false;
+  path = "";
   dataset = "";
   subset = "";
   PID = 0;
@@ -99,6 +98,7 @@ void Dataset::setTypeInfo(string path) {
     for (auto& sub : subset) {
       for (string directory : sub.second) {
 	if ( contains_substr(path,directory) ) {
+	  this->path = path;
 	  dataset = data;
 	  this->subset = sub.first;
 	  type = typemap.find(data)->second;
@@ -116,7 +116,7 @@ void Dataset::setTypeInfo(string path) {
 
 void Dataset::setInfo(string path) {
   setTypeInfo(path);
-  isData = (type == Data);
+  isMC = (type != Data);
   isSignal = (type == Signal);
   if (type == WJets) PID = 24;
   else if (type == ZJets || type == DYJets) PID = 23;

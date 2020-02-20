@@ -24,14 +24,14 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
   cout<<"nentries:"<<nentries<<endl;
   Long64_t nentriesToCheck = nentries;
   
-  if (!sample.isData) SetScalingHistos();
+  if (isMC) SetScalingHistos();
 
   if (maxEvents != -1LL && nentries > maxEvents)
     nentriesToCheck = maxEvents;
   int nTotal = nentriesToCheck;
   Long64_t nbytes = 0, nb = 0;
   cout<<"Running over "<<nTotal<<" events."<<endl;  
-  for (Long64_t jentry=0; jentry<nentriesToCheck; !sample.isData ? jentry++ : jentry += 4) {
+  for (Long64_t jentry=0; jentry<nentriesToCheck; isMC ? jentry++ : jentry += 4) {
     Long64_t ientry = LoadTree(jentry);
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -39,10 +39,10 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     initVars();
 
     float event_weight = 1.;
-    if (!sample.isData) {
+    if (isMC) {
       ApplyPileup(event_weight);
       if (isWZG()) {
-      	SetBoson(sample.PID);
+      	SetBoson(PID);
       	ApplyKFactor(event_weight);
       }
     }

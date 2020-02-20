@@ -24,7 +24,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
   cout<<"nentries:"<<nentries<<endl;
   Long64_t nentriesToCheck = nentries;
   
-  // if (!sample.isData) SetScalingHistos();
+  // if (isMC) SetScalingHistos();
 
   if (maxEvents != -1LL && nentries > maxEvents)
     nentriesToCheck = maxEvents;

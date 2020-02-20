@@ -10,35 +10,40 @@
 
 using namespace std;
 
-const string monoJetAnalysis::REGION = "SignalRegion";
-
 void monoJetAnalysis::SetScalingHistos() {
   //This is the PU histogram obtained from Nick's recipe
-  TFile *weights = TFile::Open("RootFiles/PU_Central.root");
+  TFile *weights = TFile::Open("RootFiles/pileup/PU_Central.root");
   TH1F* PU = (TH1F*)weights->Get("pileup");
   th1fmap["PU"] = PU;
   if (isWZG()) {
     //This is the root file with EWK Corrections
-    TFile* f_nlo_qcd = TFile::Open("RootFiles/2017_gen_v_pt_stat1_qcd_sf.root");
-    TFile* f_nnlo_qcd = TFile::Open("RootFiles/lindert_qcd_nnlo_sf.root");
-
-    TH1F *NNLO_QCD,*NLO_QCD,*NLO_EWK;
-    if ( sample.type == WJets ) {
-      NLO_EWK = (TH1F*)TFile::Open("RootFiles/merged_kfactors_wjets.root")->Get("kfactor_monojet_ewk");
-      NLO_QCD = (TH1F*)f_nlo_qcd->Get("wjet_dilep");
+    TH1F *NLO_QCD_EWK,*NLO_EWK,*NLO_QCD,*NNLO_QCD;
+    
+    TFile* f_nnlo_qcd = TFile::Open("RootFiles/theory/lindert_qcd_nnlo_sf.root");
+    TFile* f_nlo_qcd  = TFile::Open("RootFiles/theory/2017_gen_v_pt_qcd_sf.root");
+    TFile* f_qcd_ewk;
+    if ( type == WJets ) {
+      f_qcd_ewk = TFile::Open("RootFiles/theory/merged_kfactors_wjets.root");
+      NLO_QCD_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_qcd_ewk");
+      NLO_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_ewk");
+      NLO_QCD = (TH1F*)f_nlo_qcd->Get("wjet_dress_monojet");
       NNLO_QCD = (TH1F*)f_nnlo_qcd->Get("evj");
-    } else if (sample.type == ZJets || sample.type == DYJets) {
-      NLO_EWK = (TH1F*)TFile::Open("RootFiles/merged_kfactors_zjets.root")->Get("kfactor_monojet_ewk");
-      NLO_QCD = (TH1F*)f_nlo_qcd->Get("dy_dilep");
+    } else if ( type == ZJets || type == DYJets ) {
+      f_qcd_ewk = TFile::Open("RootFiles/theory/merged_kfactors_zjets.root");
+      NLO_QCD_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_qcd_ewk");
+      NLO_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_ewk");
+      NLO_QCD = (TH1F*)f_nlo_qcd->Get("dy_dress_monojet");
       NNLO_QCD = (TH1F*)f_nnlo_qcd->Get("eej");
-    } else {
-      NLO_EWK = (TH1F*)TFile::Open("RootFiles/merged_kfactors_gjets.root")->Get("kfactor_monojet_ewk");
-      NLO_QCD = (TH1F*)TFile::Open("RootFiles/merged_kfactors_gjets.root")->Get("kfactor_monojet_qcd");
+    } else if ( type == GJets ) {
+      f_qcd_ewk = TFile::Open("RootFiles/theory/merged_kfactors_gjets.root");
+      NLO_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_ewk");
+      NLO_QCD = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_qcd");
       NNLO_QCD = (TH1F*)f_nnlo_qcd->Get("aj");
     }
-    th1fmap["NNLO_QCD"] = NNLO_QCD;
-    th1fmap["NLO_QCD"] = NLO_QCD;
+    if (NLO_QCD_EWK != 0) th1fmap["NLO_QCD_EWK"] = NLO_QCD_EWK;
     th1fmap["NLO_EWK"] = NLO_EWK;
+    th1fmap["NLO_QCD"] = NLO_QCD;
+    th1fmap["NNLO_QCD"]= NNLO_QCD;
   }
 }
 
@@ -107,7 +112,7 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
 }
 
 void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
-  if (sample.isData) event_weight = 1;
+  if (isData) event_weight = 1;
   else {
     // MC Info          ;
     h_puTrueNoW[nhist]  ->Fill(puTrue->at(0),weight_nopileup);
@@ -171,25 +176,25 @@ bool monoJetAnalysis::getMetFilter(){
 }
 
 bool monoJetAnalysis::getMetTrigger() {
-  // if (!sample.isData) return true;
+  // if (isMC) return true;
   return ((HLTMet>>7&1) == 1 || (HLTMet>>8&1) == 1 || (HLTMet>>10&1) == 1);
 }
 
 bool monoJetAnalysis::getElectronTrigger() {
-  if ( sample.dataset == "singleele" ) {
+  if ( dataset == "singleele" ) {
     return (HLTEleMuX>>5&1) == 1 || (HLTEleMuX>>6&1) == 1;
   }
-  else if (sample.dataset == "singlepho"){
+  else if (dataset == "singlepho"){
     return (HLTPho>>11&1) == 1 && !((HLTEleMuX>>5&1) == 1 || (HLTEleMuX>>6&1) == 1);
   }
-  else if (!sample.isData || sample.dataset == "egamma"){ 
+  else if (isMC || dataset == "egamma"){ 
     return (HLTEleMuX>>5&1) == 1 || (HLTEleMuX>>6&1) == 1 || (HLTPho>>11&1) == 1;
   }
   return false; 
 }
 
 bool monoJetAnalysis::getPhotonTrigger() {
-  // if (!sample.isData) return true;
+  // if (isMC) return true;
   return (HLTPho>>11&1) == 1;
 }
 
@@ -521,7 +526,7 @@ float monoJetAnalysis::getKFactor(float bosonPt) {
   float nlo_qcd = th1fmap.getBin("NLO_QCD",bosonPt);
   float nnlo_qcd = th1fmap.getBin("NNLO_QCD",bosonPt);
   float kfactor = 1;
-  // if (sample.isNLO) kfactor = nlo_ewk * nnlo_qcd;
+  // if (isNLO) kfactor = nlo_ewk * nnlo_qcd;
   // else kfactor = nlo_ewk * nlo_qcd * nnlo_qcd;
   kfactor = nlo_ewk * nlo_qcd;
   return kfactor;
@@ -561,7 +566,7 @@ void monoJetAnalysis::ApplyPileup(float &event_weight) {
 }
 
 bool monoJetAnalysis::inclusiveCut() {
-  if (sample.isInclusive)
+  if (isInclusive)
     return genHT < 100;
   return true;
 }
@@ -602,7 +607,7 @@ void monoJetAnalysis::initVars() {
   jetUnCorrPt->clear();
   for (float pt : (*jetPt)) jetUnCorrPt->push_back(pt);
 
-  if(sample.isData) {
+  if(isData) {
     // genWeight is used for the total events rather than event_weight since it has pileup and kfactors applied at the beginning
     // data doesn't have genWeight so set it to 1
     genWeight = 1;
@@ -708,39 +713,39 @@ int monoJetAnalysis::getFilesByList(TChain *chain,TString path,vector<const char
 }
 
 
-monoJetAnalysis::monoJetAnalysis(const char* inputFilename,const char* outputFilename,int nfiles) {
+monoJetAnalysis::monoJetAnalysis(const char* inputFilename,const char* outputFilename,int nfiles) : monoJetAnalysis() {
   TChain *chain = new TChain("phoJetNtuplizer/eventTree");
   TString path = inputFilename;
-  sample.setInfo(string(inputFilename));
+  setInfo(string(inputFilename));
   int inFile = getNfiles(chain,path,nfiles);
-  cout<<"Sample type: "<< sample.GetTypeName() << (sample.isInclusive ? " Inclusive" : " not Inclusive") <<endl;
+  print();
   cout<<inFile<<" files added."<<endl;
   cout<<"Initializing chain."<<endl;
   Init(chain);
 }
 
-monoJetAnalysis::monoJetAnalysis(const char* inputFilename,const char* outputFilename,vector<const char*> filelist) {
+monoJetAnalysis::monoJetAnalysis(const char* inputFilename,const char* outputFilename,vector<const char*> filelist) : monoJetAnalysis() {
   TChain *chain = new TChain("phoJetNtuplizer/eventTree");
   TString path = inputFilename;
-  sample.setInfo(string(inputFilename));
+  setInfo(string(inputFilename));
   int inFile = 0;
   if ( filelist.size() == 0 )
     inFile = getFilesByNumber(chain,path,"-1");
   else
     inFile = getFilesByList(chain,path,filelist);
-  cout<<"Sample type: "<< sample.GetTypeName() << (sample.isInclusive ? " Inclusive" : " not Inclusive") <<endl;
+  print();
   cout<<inFile<<" files added."<<endl;
   cout<<"Initializing chain."<<endl;
   Init(chain);
 }
 
-monoJetAnalysis::monoJetAnalysis(const char* inputFilename,const char* outputFilename,const char* fileRange) 
+monoJetAnalysis::monoJetAnalysis(const char* inputFilename,const char* outputFilename,const char* fileRange) : monoJetAnalysis()
 {
   TChain *chain = new TChain("phoJetNtuplizer/eventTree");
   TString path = inputFilename;
-  sample.setInfo(string(inputFilename));
+  setInfo(string(inputFilename));
   int inFile = getFilesByNumber(chain,path,fileRange);
-  cout<<"Sample type: "<< sample.GetTypeName() << (sample.isInclusive ? " Inclusive" : " not Inclusive") <<endl;
+  print();
   cout<<inFile<<" files added."<<endl;
   cout<<"Initializing chain."<<endl;
   Init(chain);
@@ -1198,7 +1203,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("jetConstEta", &jetConstEta, &b_jetConstEta);
   fChain->SetBranchAddress("jetConstPhi", &jetConstPhi, &b_jetConstPhi);
   fChain->SetBranchAddress("jetConstPdgId", &jetConstPdgId, &b_jetConstPdgId);
-  if (!sample.isData && apply_correction) {
+  if (isMC && apply_correction) {
     fChain->SetBranchAddress("jetP4Smear", &jetP4Smear, &b_jetP4Smear);
     fChain->SetBranchAddress("jetP4SmearUp", &jetP4SmearUp, &b_jetP4SmearUp);
     fChain->SetBranchAddress("jetP4SmearDo", &jetP4SmearDo, &b_jetP4SmearDo);
@@ -1334,7 +1339,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("caloMETsumEt", &caloMETsumEt, &b_caloMETsumEt);
   fChain->SetBranchAddress("pfMET", &pfMET, &b_pfMET);
   fChain->SetBranchAddress("pfMETPhi", &pfMETPhi, &b_pfMETPhi);
-  if (!sample.isData && apply_correction) {
+  if (isMC && apply_correction) {
     fChain->SetBranchAddress("pfMETCorr", &pfMETCorr, &b_pfMETCorr);
     fChain->SetBranchAddress("pfMETPhiCorr", &pfMETPhiCorr, &b_pfMETPhiCorr);
   }
@@ -1351,7 +1356,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("pfMETPhi_T1JESDo", &pfMETPhi_T1JESDo, &b_pfMETPhi_T1JESDo);
   fChain->SetBranchAddress("pfMETPhi_T1UESUp", &pfMETPhi_T1UESUp, &b_pfMETPhi_T1UESUp);
   fChain->SetBranchAddress("pfMETPhi_T1UESDo", &pfMETPhi_T1UESDo, &b_pfMETPhi_T1UESDo);
-  if (!sample.isData) {
+  if (isMC) {
 
     fChain->SetBranchAddress("genMET", &genMET, &b_genMET);
     fChain->SetBranchAddress("genMETPhi", &genMETPhi, &b_genMETPhi);
@@ -1420,13 +1425,13 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
     TFile* file = NULL;
     string prefix = "";
     if (isWZG()) {
-      if (sample.type == WJets) {
+      if (type == WJets) {
 	file = TFile::Open("RootFiles/WJets_NLO_EWK.root");
 	prefix = "evj_pTV_";
-      } else if (sample.type == ZJets) {
+      } else if (type == ZJets) {
 	file = TFile::Open("RootFiles/ZJets_NLO_EWK.root");
 	prefix = "vvj_pTV_";
-      } else if (sample.type == DYJets) {
+      } else if (type == DYJets) {
 	file = TFile::Open("RootFiles/DYJets_NLO_EWK.root");
 	prefix = "eej_pTV_";
       }
@@ -1457,6 +1462,29 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
       weightDn -= unc;
     }
     scaleUncs.setUnc(name,weightUp,weightDn);
+  }
+}
+
+void monoJetAnalysis::print(monoJetAnalysis* ana) {
+  cout << "Year: " << ana->YEAR << endl;
+  if ( ana->REGION < nRegion) {
+    cout << "Region: " << RegionName[ana->REGION] << endl;
+  }
+  if ( ana->CROBJECT < nCRobject ) {
+    cout << "CRObject: " << CRobjectName[ana->CROBJECT] << endl;
+  }
+  if ( ana->type < nType ) {
+    cout << "Type: " << TypeName[ana->type] << endl;
+    cout << "isMC: " << (ana->isMC ? "True" : "False") << endl;
+    cout << "isSignal: " << (ana->isSignal ? "True" : "False") << endl;
+    cout << "isInclusive: " << (ana->isInclusive ? "True" : "False") << endl;
+    cout << "isNLO: " << (ana->isNLO ? "True" : "False") << endl;
+    if ( ana->PID > 0 ) {
+      cout << "PID: " << ana->PID << endl;
+    }
+    cout << "Dataset: " << ana->dataset << endl;
+    cout << "Subset: " << ana->subset << endl;
+    cout << "Path: " << ana->path << endl;
   }
 }
 

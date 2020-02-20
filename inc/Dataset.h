@@ -20,12 +20,11 @@ public:
   static const std::map<std::string,Type> typemap;
 
   Type type;
-  Region region;
-  int year;
   bool isInclusive;
-  bool isData;
+  bool isMC;
   bool isSignal;
   bool isNLO;
+  std::string path;
   std::string dataset;
   std::string subset;
   int PID;
@@ -44,9 +43,6 @@ public:
     }
     return false;
   }
-  inline const char* GetTypeName() { return TypeName[type]; }
-  inline const char* GetRegionName() { return RegionName[region]; }
-  inline int GetYear() { return year; }
 };
 
 #endif

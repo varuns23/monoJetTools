@@ -24,7 +24,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
   cout<<"nentries:"<<nentries<<endl;
   Long64_t nentriesToCheck = nentries;
   
-  if (!sample.isData) SetScalingHistos();
+  if (isMC) SetScalingHistos();
 
   if (maxEvents != -1LL && nentries > maxEvents)
     nentriesToCheck = maxEvents;
@@ -39,7 +39,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     initVars();
     
     float event_weight = 1.;
-    if (!sample.isData) {
+    if (isMC) {
       ApplyPileup(event_weight);
     }
     
@@ -132,8 +132,8 @@ int monoJetClass::getPhoIndex() {
 	bool PFPhoIso = phoPFPhoIso->at(ipho) < 2.952 + 0.0040*pt;
 	bool PFIso = PFChIso && PFNeuIso && PFPhoIso;
 	
-	if (sample.type == GJets && PFIso) return ipho;
-	else if (sample.type == Data && !PFIso) return ipho;
+	if (type == GJets && PFIso) return ipho;
+	else if (type == Data && !PFIso) return ipho;
       }
     }
   }

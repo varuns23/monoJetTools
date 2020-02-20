@@ -43,9 +43,12 @@
 
 using namespace std;
 
-class monoJetAnalysis {
+class monoJetAnalysis : public Dataset{
 public:
-  static const std::string REGION;
+  static int YEAR;
+  static Region REGION;
+  static CRobject CROBJECT;
+  
   TTree *fChain;
   Int_t  fCurrent;
 
@@ -56,11 +59,12 @@ public:
   static const bool debug = false;
   static const bool apply_correction = true;
 
-  Dataset sample;
+  // Dataset sample;
   
   struct TH1FCollection : public std::map<std::string,TH1F*> {
     float getBin(std::string name,float x) {
       TH1F* histo = (*this)[name];
+      if ( histo == NULL ) cout << name << " is null" << endl;
       return histo->GetBinContent( histo->GetXaxis()->FindBin(x) );
     }
   } th1fmap;
@@ -834,6 +838,8 @@ public:
   virtual ~monoJetAnalysis();
   virtual Int_t    GetEntry(Long64_t entry);
   virtual Long64_t LoadTree(Long64_t entry);
+  void print(monoJetAnalysis* ana);
+  virtual void print() { print(this); }
 
   /* Initializing Methods */
   virtual void Init(TTree* tree);
@@ -855,7 +861,7 @@ public:
   virtual void SetSF(float sf);
   virtual void ApplySF(float &event_weight);
 
-  virtual inline bool isWZG() { return sample.type == WJets || sample.type == ZJets || sample.type == GJets || sample.type == DYJets; };
+  virtual inline bool isWZG() { return type == WJets || type == ZJets || type == GJets || type == DYJets; };
 
   /* Event Selction Methods */
   virtual bool inclusiveCut();
