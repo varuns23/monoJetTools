@@ -18,6 +18,7 @@ options = {
     'submit':True,
     'data':True,
     'mc':True,
+    'onlyWZG':False,
     'error':False
 }
 def getargs():
@@ -30,13 +31,14 @@ def getargs():
     for key,value in options.iteritems():
         if type(value) == bool: parse_type = parse_bool
         else: parse_type = type(value)
-        parser.add_argument("-"+key[0],"--"+key,default=value,type=parse_type)
+        parser.add_argument("-"+key,default=value,type=parse_type)
     for key,value in vars(parser.parse_args()).iteritems():
         options[key] = value
 def submit(data,sub=None,label=None,split=-1,filelist=True,script='analyze'):
     getargs()
     if not options['data'] and data in datalist: print 'Warning submitting %s. Data is disabled' % data; return
     if not options['mc'] and data in mclist: print 'Warning submitting %s. MC is disabled' % data; return
+    if options['onlyWZG'] and not any( wzg in data for wzg in ('wjets','zjets','dyjets','gjets')): print 'Warning submitting %s. Only submitting WJets, ZJets, DYJets, or GJets enabled' % data; return
     SubmitCondor.NFILE_PER_BATCH = options['batchsize']
     SubmitCondor.DoSubmit = options['submit']
     SubmitCondor.ResubmitError = options['error']
