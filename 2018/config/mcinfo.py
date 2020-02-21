@@ -89,7 +89,8 @@ xsec = {
 "postST_t_antitop_4f":6.909e+01,
 "postST_tW_antitop_5f":3.497e+01,
 "postST_tW_top_5f":3.491e+01,
-    
+
+"postQCD50to100":0, #need to caluclate
 "postQCD100to200":2.366e+07,
 "postQCD200to300":1.549e+06,
 "postQCD300to500":3.230e+05,
