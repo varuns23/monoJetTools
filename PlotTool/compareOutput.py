@@ -46,7 +46,8 @@ def compareOutput(fname1,fname2):
 
         lo.SetMarkerStyle(20)
         lo.SetMarkerSize(1)
-        outpath = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots2017/BU_Comparison"
+        outpath = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots2017/BU_Comparison/NoTheoryCorr/"
+        if not os.path.isdir(outpath): os.mkdir(outpath)
         c.SaveAs("%s/%s.png" % (outpath,hsname))
         return 
     keylist1 =[ key.GetName() for key in  tfile1.GetListOfKeys()]
