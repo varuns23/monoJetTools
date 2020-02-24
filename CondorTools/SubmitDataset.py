@@ -9,6 +9,7 @@ labelmap = { 'dyjets_nlo':'DYNLO','dyjets':'DY','ewk':'','gjets':'GJets','qcd':'
              'met':'METdata_','egamma':'EGdata_','singleele':'SEdata_','singlepho':'SPdata_','signal':'' }
 mclist = ['dyjets_nlo','dyjets','ewk','gjets','qcd','st','ttjets','wjets_nlo','wjets','zjets_nlo','zjets']
 datalist = ['met','egamma','singleele','singlepho']
+full_list = mclist + datalist
 
 options = {
     'year':"",
@@ -21,6 +22,8 @@ options = {
     'onlyWZG':False,
     'error':False
 }
+
+for sample in full_list: options[sample] = False
 def getargs():
     parser = ArgumentParser()
     def parse_bool(v):
@@ -39,6 +42,7 @@ def submit(data,sub=None,label=None,split=-1,filelist=True,script='analyze'):
     if not options['data'] and data in datalist: print 'Warning submitting %s. Data is disabled' % data; return
     if not options['mc'] and data in mclist: print 'Warning submitting %s. MC is disabled' % data; return
     if options['onlyWZG'] and not any( wzg in data for wzg in ('wjets','zjets','dyjets','gjets')): print 'Warning submitting %s. Only submitting WJets, ZJets, DYJets, or GJets enabled' % data; return
+    if any( options[sample] for sample in full_list ) and not options[data]: print 'Warning submitting %s. Only submitting %s' % (data,', '.join([sample for sample in full_list if options[sample]])); return
     SubmitCondor.NFILE_PER_BATCH = options['batchsize']
     SubmitCondor.DoSubmit = options['submit']
     SubmitCondor.ResubmitError = options['error']
