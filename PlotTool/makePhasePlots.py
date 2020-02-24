@@ -39,13 +39,4 @@ for variable in samples.args:
         hs.GetYaxis().SetTitle(samples.name['y'])
         canvas.Write()
         
-        dir = os.getcwd().split("/")[-1]
-        file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots2018/"+dir+"Plots_EWK/"
-        #print file_path
-        sub = "phase"
-        directory=os.path.join(os.path.dirname(file_path),sub)
-        if not os.path.exists(directory):
-            os.mkdir(directory,0755)
-            print directory
-        canvas.SaveAs(directory+"/"+label[hs.GetName()]["pre"]+variable+".pdf")
-        canvas.SaveAs(directory+"/"+label[hs.GetName()]["pre"]+variable+".png")
+        SaveAs(canvas,label[hs.GetName()]["pre"]+variable,year=samples.year,region=samples.region,sub="phase")

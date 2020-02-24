@@ -49,14 +49,8 @@ def compareOutput(fname1,fname2):
 
         lo.SetMarkerStyle(20)
         lo.SetMarkerSize(1)
-        outpath = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots%s/BU_Comparison/" % (config.version)
-        sub = ""
-        if (args.sub != None): sub = args.sub
-        directory=os.path.join(os.path.dirname(outpath),sub)
-        if not os.path.exists(directory):
-            os.makedirs(directory,0755)
-            print directory
-        c.SaveAs("%s/%s.png" % (directory,hsname))
+        
+        SaveAs(c,hsname,year=config.version,sub="BU_Comparison",exts=".png")
         return 
     keylist1 =[ key.GetName() for key in  tfile1.GetListOfKeys()]
     keylist2 =[ key.GetName() for key in  tfile2.GetListOfKeys()]

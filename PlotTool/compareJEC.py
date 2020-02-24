@@ -8,16 +8,6 @@ gROOT.SetBatch(1)
 
 hdfs_store = '/hdfs/store/user/ekoenig/MonoJet/PostFiles/%s/%s/20200114_postFiles/'
 
-def AutoSave(c,samples,process):
-    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/"+samples.region+"Plots_EWK/JEC_Comparison/"
-    #print file_path
-    directory=os.path.dirname(file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory,0755)
-        print directory
-    c.SaveAs(directory+("/%s_" % process)+samples.varname+".pdf")
-    c.SaveAs(directory+("/%s_" % process)+samples.varname+".png")
-
 def makeComparison(num,den,process):
     c = TCanvas("c", "canvas",800,800);
     gStyle.SetOptStat(0);
@@ -91,8 +81,8 @@ def makeComparison(num,den,process):
     yaxis = makeYaxis(rymin,rymax,xmin,6,name="New/Old");
     yaxis.Draw("SAME");
     ######################################
+    SaveAs(c,"%s_%s"%(process,num.varname),year=num.year,region=num.region,sub="JEC_Comparison")
     
-    AutoSave(c,num,process)
 def compareVariable(num,den,variable):
     print "Comparing",variable
     num.initiate(variable); den.initiate(variable)

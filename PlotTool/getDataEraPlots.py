@@ -60,16 +60,7 @@ def compareEra(variable,samples,eraLumi):
     texS1.Draw();
 
     ###############################################
-    
-    dir = os.getcwd().split("/")[-1]
-    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/"+dir+"Plots_EWK/DataEra/"
-    #print file_path
-    directory=os.path.join(os.path.dirname(file_path),"")
-    if not os.path.exists(directory):
-        os.mkdir(directory,0755)
-        print directory
-    c.SaveAs(directory+"/"+variable+".pdf")
-    c.SaveAs(directory+"/"+variable+".png")
+    SaveAs(c,variable,year=samples.year,region=samples.region,sub="DataEra",exts=".png")
 #################################################
         
 samples = Region(argv)
@@ -270,12 +261,4 @@ for variable in argv[1:]:
         yaxis.SetTitleOffset(0.35);
         yaxis.Draw("SAME");
         
-        dir = os.getcwd().split("/")[-1]
-        file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/"+dir+"Plots_EWK/DataEra/"
-        #print file_path
-        directory=os.path.join(os.path.dirname(file_path),era)
-        if not os.path.exists(directory):
-            os.mkdir(directory,0755)
-            print directory
-        c.SaveAs(directory+"/"+variable+".pdf")
-        c.SaveAs(directory+"/"+variable+".png")
+        SaveAs(c,variable,year=samples.year,region=samples.region,sub='DataEra/%s' % era,exts=".png")

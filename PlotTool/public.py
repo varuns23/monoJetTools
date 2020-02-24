@@ -78,15 +78,5 @@ for variable in samples.args:
     texS1.SetTextFont(42);
     texS1.SetTextSize(0.040);
     texS1.Draw();
-
-    dir = os.getcwd().split("/")[-1]
-    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/APS/2018/"+dir+"Plots_EWK/"
-    #print file_path
-    sub = ""
-    if (samples.args.allHisto):sub = "all"
-    directory=os.path.join(os.path.dirname(file_path),sub)
-    if not os.path.exists(directory):
-        os.mkdir(directory,0755)
-        print directory
-    c.SaveAs(directory+"/mc_"+variable+".pdf")
-    c.SaveAs(directory+"/mc_"+variable+".png")
+    
+    SaveAs(c,"mc_"+variable,sub="APS/%s/%sPlots_EWK"%(samples.year,samples.region))

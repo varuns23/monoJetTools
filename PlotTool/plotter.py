@@ -8,7 +8,6 @@ gROOT.SetBatch(1)
 
 # Storage list to be used to keep references around for ROOT before TCanvas is saved
 parser.add_argument("--thn",help="specifies that all following plots are TH2 or TH3 plots",action="store_true", default=False)
-parser.add_argument("--sub",help="specify a sub directory to place output",action="store",type=str,default=None)
 parser.add_argument("--run2",help="Specify the region to run an entire run2 plot",action="store",type=str,default=None)
 parser.add_argument("--no-plot",help="Dont plot variables",action="store_true",default=False)
 parser.add_argument("-u","--uncertainty",help="Specify the uncertainty to apply on variable if available",default=[],nargs="*",type=str)
@@ -27,22 +26,8 @@ def HigherDimension(samples,variable):
             process.histo = process.histo.ProjectionY()
         if axis == "z":
             process.histo = process.histo.ProjectionZ()
-            
-###################################################################
-
-def AutoSave(samples,c):
-    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/"+samples.region+"Plots_EWK/"
-    #print file_path
-    sub = ""
-    if (samples.args.sub != None): sub = samples.args.sub
-    directory=os.path.join(os.path.dirname(file_path),sub)
-    if not os.path.exists(directory):
-        os.makedirs(directory,0755)
-        print directory
-    c.SaveAs(directory+"/datamc_"+samples.varname+".pdf")
-    c.SaveAs(directory+"/datamc_"+samples.varname+".png")
-###################################################################
-def plotVariable(samples,variable,initiate=True,saveas=AutoSave,blinded=False):
+################################################p###################
+def plotVariable(samples,variable,initiate=True,blinded=False):
     del store[:] # Clear storage list 
     print "Plotting",variable
     if initiate:
@@ -153,8 +138,7 @@ def plotVariable(samples,variable,initiate=True,saveas=AutoSave,blinded=False):
         
         c.Update();
     ######################################
-    
-    saveas(samples,c)
+    SaveAs(c,'datamc_%s'%samples.varname,year=samples.year,region=samples.region,exts=('.png','.pdf'))
 ###################################################################
     
 def plotter(args=[]):

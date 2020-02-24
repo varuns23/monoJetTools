@@ -76,9 +76,7 @@ def compare():
             line.Draw("same");
             
             c.Update()
-            out_dir = '/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots%s/%sPlots_EWK/Compare_Corrected/' % (samples.year,samples.region) 
-            if not os.path.isdir(out_dir): os.mkdir(out_dir)
-            c.SaveAs('%s/%s_%s.png' % (out_dir,name.lower(),variable))
+            SaveAs(c,"%s_%s"%(name.lower(),variable),year=samples.year,region=samples.region,sub="Compare_Corrected")
         plot_type(corrected['SumOfBkg'],uncorrected['SumOfBkg'],'MC')
         plot_type(corrected['Data'],uncorrected['Data'],'Data')
     for variable in corrected.args.argv:

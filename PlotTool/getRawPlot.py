@@ -77,14 +77,5 @@ for f in options.files:
         texS1.SetTextFont(42);
         texS1.SetTextSize(0.040);
         texS1.Draw();
-        
-        dir = os.getcwd().split("/")[-1]
-        file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/"+dir+"Plots_EWK/RawPlots/"
-        #print file_path
-        sub = f.replace(".root","")
-        directory=os.path.join(os.path.dirname(file_path),sub)
-        if not os.path.exists(directory):
-            os.mkdir(directory,0755)
-            print directory
-        c.SaveAs(directory+"/datamc_"+variable+".pdf")
-        c.SaveAs(directory+"/datamc_"+variable+".png")
+    
+        SaveAs(c,"datamc_"+variable,year=samples.year,region=samples.region,sub="RawPlots",exts=".png")
