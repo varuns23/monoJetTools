@@ -4,6 +4,9 @@ from ROOT import *
 from PlotTool import *
 import config
 
+parser.add_argument("--sub",type=str,default=None)
+args = parser.parse_args()
+
 gROOT.SetBatch(1)
 
 def compareOutput(fname1,fname2):
@@ -46,9 +49,14 @@ def compareOutput(fname1,fname2):
 
         lo.SetMarkerStyle(20)
         lo.SetMarkerSize(1)
-        outpath = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots2017/BU_Comparison/NoTheoryCorr/"
-        if not os.path.isdir(outpath): os.mkdir(outpath)
-        c.SaveAs("%s/%s.png" % (outpath,hsname))
+        outpath = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots%s/BU_Comparison/" % (config.version)
+        sub = ""
+        if (args.sub != None): sub = args.sub
+        directory=os.path.join(os.path.dirname(outpath),sub)
+        if not os.path.exists(directory):
+            os.makedirs(directory,0755)
+            print directory
+        c.SaveAs("%s/%s.png" % (directory,hsname))
         return 
     keylist1 =[ key.GetName() for key in  tfile1.GetListOfKeys()]
     keylist2 =[ key.GetName() for key in  tfile2.GetListOfKeys()]
@@ -57,5 +65,5 @@ def compareOutput(fname1,fname2):
             compare(key)
 
 
-compareOutput(sys.argv[1],sys.argv[2])
+compareOutput(args.argv[0],args.argv[1])
     

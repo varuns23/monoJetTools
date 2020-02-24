@@ -32,7 +32,9 @@ def store(variable):
             if mc not in mcmap:mclabel = mc.lower()
             else: mclabel = mcmap[mc]
             samples[mc].histo.Clone("%s_%s" % (label,mclabel.lower())).Write()
-    for region in regionmap: store_region(region)
+    for region in regionmap:
+        try: store_region(region)
+        except: pass
 
 args = parser.parse_args()
 for variable in args.argv: store(variable)
