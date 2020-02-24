@@ -19,21 +19,29 @@ def fullpath(path):
     helper(path,dirs)
     return dirs
 
+class Query:
+    def __init__(self,tag,map=('','')):
+        self.tag = re.compile(tag)
+        def mapping(string): return string.replace(map[0],map[1])
+        self.map = mapping
+    def parse(self,sub):
+        sub = self.tag.findall(sub)
+        if not any(sub): return False
+        self.sub = self.map(sub[0])
+        return self.sub
 def getSub(sub):
-    htbin = re.findall('\d+to\d+',sub)
-    if any(htbin): return htbin[0]
-    htbin = re.findall('\d+toInf',sub)
-    if any(htbin): return htbin[0]
-    htbin = re.findall('\d+To\d+',sub)
-    if any(htbin): return htbin[0].replace('To','to')
-    htbin = re.findall('\d+ToInf',sub)
-    if any(htbin): return htbin[0].replace('To','to')
-    htbin = re.findall('MLM',sub)
-    if any(htbin): return htbin[0]
-    htbin = re.findall('\d+-\d+',sub)
-    if any(htbin): return htbin[0].replace('-','to')
-    htbin = re.findall('\d+-Inf',sub)
-    if any(htbin): return htbin[0].replace('-','to')
+    
+    querylist = [
+        Query('\d+to\d+|\d+toInf|MLM|Incl|FXFX'),
+        Query('\d+To\d+|\d+ToInf',('To','to')),
+        Query('\d+-\d+|\d+-Inf',('-','to')),
+        Query('2017\w',('2017','')),
+        Query('2018\w',('2018','')),
+        Query('.*',('ST_',''))
+    ]
+    for query in querylist:
+        if query.parse(sub):
+            return query.sub
     return sub
     
 def build_dataset(data,path):
