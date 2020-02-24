@@ -44,7 +44,7 @@ void monoJetYear::SetScalingHistos() {
     TFile* f_photon_id_tight = TFile::Open("RootFiles/egamma/2018_PhotonsMedium_capped.root");
     TFile* f_photon_csev = TFile::Open("RootFiles/egamma/CSEV_2018.root");
     th2fmap["photon_id_tight"] = (TH2F*)f_photon_id_tight->Get("EGamma_SF2D");
-    th1fmap["photon_csev"] = (TH1F*)f_photon_csev->Get("eleVeto_SF");
+    th2fmap["photon_csev"] = (TH2F*)f_photon_csev->Get("eleVeto_SF");
   }
 }
 #endif
