@@ -55,8 +55,7 @@ def plotSignalXsec(signalxsec,label):
     multigraph.GetYaxis().SetTitle("cross-section ( pb^{-1} )")
     leg.Draw('same')
     
-    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/SignalPlots/"
-    c.SaveAs(file_path+"/%s_signal_xsec.png" % (label))
+    SaveAs(c,"%s_signal_xsec"%label,sub="SignalPlots")
 #######################################################
 if __name__ == "__main__":
     plotSignalXsec(sx.centralxsec,'central')

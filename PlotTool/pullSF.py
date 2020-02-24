@@ -28,11 +28,6 @@ sf2017 = {
 
 gROOT.SetBatch(1)
 
-def SaveAs(c,info):
-    outpath = '/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots%s/SF_Histograms/' % config.version
-    if not os.path.isdir(outpath): os.mkdir(outpath)
-    c.SaveAs('%s/%s.png' % (outpath,info[type]))
-
 def pullTH1F(info):
     print 'Pulling %s' % info[type]
     c = TCanvas(info[type],info[type],1000,1000)
@@ -44,7 +39,7 @@ def pullTH1F(info):
     if info[range] is not None: hs.GetXaxis().SetTitle(info[range])
     hs.GetYaxis().SetTitle("SF")
     hs.SetTitle(info[type])
-    SaveAs(c,info)
+    SaveAs(c,info[type],year=config.version,sub="SF_Histograms")
 
 def pullTH2F(info):
     print 'Pulling %s' % info[type]
@@ -60,7 +55,7 @@ def pullTH2F(info):
     hs.GetXaxis().SetTitle(info[range][0])
     hs.GetYaxis().SetTitle(info[range][1])
     hs.SetTitle(info[type])
-    SaveAs(c,info)
+    SaveAs(c,info[type],year=config.version,sub="SF_Histograms")
     
 for sf,info in sf2017.iteritems():
     info[type] = sf

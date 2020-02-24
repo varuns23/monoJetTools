@@ -154,12 +154,4 @@ yaxis.SetTitleSize(0.12);
 yaxis.SetTitleOffset(0.35);
 yaxis.Draw("SAME");
 
-dir = os.getcwd().split("/")[-1]
-file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+sample.year+"/"+dir+"Plots_EWK/"
-#print file_path
-directory=os.path.join(os.path.dirname(file_path),"")
-if not os.path.exists(directory):
-    os.mkdir(directory,0755)
-    print directory
-c.SaveAs(directory+"/kfactorComparison.pdf")
-c.SaveAs(directory+"/kfactorComparison.png")
+SaveAs(c,"kfactorComparison",year=sample.year,region=sample.region,exts=(".png",".pdf"))

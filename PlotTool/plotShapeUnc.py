@@ -6,17 +6,6 @@ import config
 
 gROOT.SetBatch(1)
 
-out_dir = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots%s/"
-def SaveCanvas(c,sample,uncname):
-    nhist = config.regions[sample.region]
-    variable = b_info.template.GetName()
-    varname = sample.varname.replace('_%s' % nhist,'')
-    outdir = out_dir % sample.year
-    outdir = "%s/%sPlots_EWK/UncertaintyPlots/%s"  % (outdir,sample.region,variable)
-    if not os.path.isdir(outdir): os.mkdir(outdir)
-    
-    outname = "%s_%s" % (uncname,varname)
-    c.SaveAs( "%s/%s.png" % (outdir,outname) )
 def plotCRUnc(sample,uncname):
     if 'Single' in sample.region: process = 'WJets'
     if 'Double' in sample.region: process = 'DYJets'
@@ -114,7 +103,7 @@ def plotCRUnc(sample,uncname):
     yaxis = makeYaxis(rymin,rymax,xmin,6,name="syst./cent.");
     yaxis.Draw("SAME");
 
-    SaveCanvas(c,sample,uncname)
+    SaveAs(c,"%s_%s" % (uncname,sample.varname),year=sample.year,region=sample.region,sub="UncertaintyPlots/%s" % b_info.template.GetName())
     
 def plotSRUnc(sample,uncname):
     print 'Fetching %s' % uncname
@@ -222,7 +211,8 @@ def plotSRUnc(sample,uncname):
     yaxis = makeYaxis(rymin,rymax,xmin,6,name="syst./cent.");
     yaxis.Draw("SAME");
 
-    SaveCanvas(c,sample,uncname)
+
+    SaveAs(c,"%s_%s" % (uncname,sample.varname),year=sample.year,region=sample.region,sub="UncertaintyPlots/%s" % b_info.template.GetName())
 
 def runRegion(args):
     sample = Region()
@@ -237,6 +227,7 @@ def runRegion(args):
         print 'Fetching %s' % uncname
         sample.addUnc(uncname)
     
+    sample.varname = sample.varname.replace('_%s' % nhist,'')
     if sample.region == 'SignalRegion':
         for uncname in variations: plotSRUnc(sample,uncname)
     else:

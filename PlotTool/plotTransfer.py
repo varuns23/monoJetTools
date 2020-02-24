@@ -8,7 +8,6 @@ import re
 gROOT.SetBatch(1)
 # gROOT.SetBatch(0)
 
-out_dir = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots%s/TransferFactors/%s/"
 processMap = {
     "SignalRegion": {
         "Z":{"proc":"ZJets","label":"Z(#nu#nu)",'text':'nn'},
@@ -131,13 +130,10 @@ def plotTF(num_sample,den_sample):
     else:
         variable = varname
         binning = ''
-    outdir = out_dir % (year,variable)
-    if not os.path.isdir(outdir): os.mkdir(outdir)
 
     tfproc = "%s%s%s%s" % (num_sample.num_boson,num_info['text'],den_sample.den_boson,den_info['text'])
-    outname = "%s_%s%s.png" % (tfproc,variable,binning)
-    output = os.path.join(outdir,outname)
-    c.SaveAs( output )
+    outname = "%s_%s%s" % (tfproc,variable,binning)
+    SaveAs(c,outname,year=year,sub="TransferFactors/%s"%variable)
 def plotTF_datamc(num_sample,den_sample):
     lumi_label = '%s' % float('%.3g' % (num_sample.lumi/1000.)) + " fb^{-1}"
     year = num_sample.year
@@ -238,13 +234,10 @@ def plotTF_datamc(num_sample,den_sample):
     else:
         variable = varname
         binning = ''
-    outdir = out_dir % (year,variable)
-    if not os.path.isdir(outdir): os.mkdir(outdir)
 
     tfproc = "%s%s%s%s" % (num_sample.num_boson,num_info['text'],den_sample.den_boson,den_info['text'])
-    outname = "%s_%s%s.png" % (tfproc,variable,binning)
-    output = os.path.join(outdir,outname)
-    c.SaveAs( output )
+    outname = "%s_%s%s" % (tfproc,variable,binning)
+    SaveAs(c,outname,year=year,sub="TransferFactors/%s"%variable)
 def plotTransfer(variable,samplemap):
     global varmap
     if variable in rangemap: varmap = rangemap[variable]

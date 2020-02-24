@@ -194,3 +194,5 @@ if not os.path.exists(directory):
     print directory
 c.SaveAs(directory+"/pileupComparison.pdf")
 c.SaveAs(directory+"/pileupComparison.png")
+
+SaveAs(c,"pileupComparison",year=samples.year,region=samples.region)

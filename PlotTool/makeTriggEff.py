@@ -38,17 +38,6 @@ args = parser.parse_args()
 samples.initiate(args.den)
 den=samples['Data'].histo.Clone()
 
-def AutoSave(samples,c):
-    file_path="/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/Plots"+samples.year+"/TrigEff/"+samples.region+"/"
-    #print file_path
-    sub = samples.varname
-    directory=os.path.join(os.path.dirname(file_path),sub)
-    if not os.path.exists(directory):
-        os.makedirs(directory,0755)
-        print directory
-    c.SaveAs(directory+"/eff_%s.pdf" % (samples.trigger))
-    c.SaveAs(directory+"/eff_%s.png" % (samples.trigger))
-
 def plotTrigEff(num,den):
     _,ndir = GetDirname(num)
     samples.initiate(num)
@@ -83,6 +72,6 @@ def plotTrigEff(num,den):
     texLumi,texCMS = getCMSText(lumi_label,samples.year,scale=0.8)
     texLumi.Draw();
     texCMS.Draw();
-    AutoSave(samples,c)
+    SaveAs(c,"eff_%s"%samples.trigger,year=samples.year,sub="TrigEff/%s"%samples.region,exts=".png")
 
 for num in args.num: plotTrigEff(num,den)
