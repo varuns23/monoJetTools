@@ -108,12 +108,15 @@ vector<int> monoJetGammaCR::getPho() {
   vector<int> elelist = getLooseEle();
   vector<int> pholist; pholist.clear();
   for (int ipho = 0; ipho < nPho; ipho++) {
+    bool pass = true;
     for (int iele : elelist) {
       float dr = deltaR(eleEta->at(iele),elePhi->at(iele),phoEta->at(ipho),phoPhi->at(ipho));
-      if ( dr > Iso5Cut ) {
-	pholist.push_back(ipho);
+      if ( dr <= Iso5Cut ) {
+	pass = false;
+	break;
       }
     }
+    if (pass) pholist.push_back(ipho);
   }
   return pholist;
 }
