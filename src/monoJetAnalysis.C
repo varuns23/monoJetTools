@@ -611,6 +611,9 @@ void monoJetAnalysis::initVars() {
     // genWeight is used for the total events rather than event_weight since it has pileup and kfactors applied at the beginning
     // data doesn't have genWeight so set it to 1
     genWeight = 1;
+    prefiringweight = 1;
+    prefiringweightup = 1;
+    prefiringweightdown = 1;
   } else {
     if (apply_correction) {
       pfMET = pfMETCorr;
@@ -1079,6 +1082,11 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("nGoodVtx", &nGoodVtx, &b_nGoodVtx);
   fChain->SetBranchAddress("rho", &rho, &b_rho);
   fChain->SetBranchAddress("rhoCentral", &rhoCentral, &b_rhoCentral);
+  if ( YEAR == 2017 ) {
+    fChain->SetBranchAddress("prefiringweight",&prefiringweight,&b_prefiringweight);
+    fChain->SetBranchAddress("prefiringweightup",&prefiringweightup,&b_prefiringweightup);
+    fChain->SetBranchAddress("prefiringweightdown",&prefiringweightdown,&b_prefiringweightdown);
+  }
   fChain->SetBranchAddress("HLTEleMuX", &HLTEleMuX, &b_HLTEleMuX);
   fChain->SetBranchAddress("HLTEleMuXIsPrescaled", &HLTEleMuXIsPrescaled, &b_HLTEleMuXIsPrescaled);
   fChain->SetBranchAddress("HLTEleMuXRejectedByPS", &HLTEleMuXRejectedByPS, &b_HLTEleMuXRejectedByPS);

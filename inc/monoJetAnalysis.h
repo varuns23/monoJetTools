@@ -173,6 +173,9 @@ public:
   Int_t           nGoodVtx;
   Float_t         rho;
   Float_t         rhoCentral;
+  Double_t        prefiringweight;
+  Double_t        prefiringweightup;
+  Double_t        prefiringweightdown;
   ULong64_t       HLTEleMuX;
   ULong64_t       HLTEleMuXIsPrescaled;
   ULong64_t       HLTEleMuXRejectedByPS;
@@ -527,6 +530,9 @@ public:
   TBranch        *b_nGoodVtx;   //!
   TBranch        *b_rho;   //!
   TBranch        *b_rhoCentral;   //!
+  TBranch        *b_prefiringweight;
+  TBranch        *b_prefiringweightup;
+  TBranch        *b_prefiringweightdown;
   TBranch        *b_HLTEleMuX;   //!
   TBranch        *b_HLTEleMuXIsPrescaled;   //!
   TBranch        *b_HLTEleMuXRejectedByPS;   //!

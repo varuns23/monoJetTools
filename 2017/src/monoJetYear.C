@@ -8,6 +8,11 @@ using namespace std;
 int monoJetAnalysis::YEAR = 2017;
 const string monoJetYear::SRDATA = "B";
 
+void monoJetYear::initTree(TTree* tree) {
+  monoJetAnalysis::initTree(tree);
+  tree->Branch("prefiring",&prefiringweight,"prefiring/D");
+}
+
 void monoJetYear::initVars() {
   monoJetAnalysis::initVars();
 }

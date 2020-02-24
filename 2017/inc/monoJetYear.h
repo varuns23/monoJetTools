@@ -10,6 +10,7 @@ public:
   virtual void BookHistos(int i,string histname);
   virtual void fillHistos(int nhist,float event_weight);
   virtual void initVars();
+  virtual void initTree(TTree* tree);
   virtual void SetScalingHistos();
 };
 
