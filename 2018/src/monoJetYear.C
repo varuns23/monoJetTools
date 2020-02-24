@@ -41,7 +41,7 @@ void monoJetYear::SetScalingHistos() {
     th2fmap["muon_iso_tight"]= (TH2F*)f_muon_iso->Get("NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta");
   } else if ( CROBJECT == Photon ){
     // Photon SF
-    TFile* f_photon_id_tight = TFile::Open("RootFiles/egamma/2017_PhotonsMedium_capped.root");
+    TFile* f_photon_id_tight = TFile::Open("RootFiles/egamma/2018_PhotonsMedium_capped.root");
     TFile* f_photon_csev = TFile::Open("RootFiles/egamma/CSEV_2018.root");
     th2fmap["photon_id_tight"] = (TH2F*)f_photon_id_tight->Get("EGamma_SF2D");
     th1fmap["photon_csev"] = (TH1F*)f_photon_csev->Get("eleVeto_SF");
