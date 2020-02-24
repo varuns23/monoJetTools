@@ -104,6 +104,20 @@ vector<int> monoJetGammaCR::jet_veto(int phoindex) {
   return jetindex;
 }
 
+vector<int> monoJetGammaCR::getPho() {
+  vector<int> elelist = getLooseEle();
+  vector<int> pholist; pholist.clear();
+  for (int ipho = 0; ipho < nPho; ipho++) {
+    for (int iele : elelist) {
+      float dr = deltaR(eleEta->at(iele),elePhi->at(iele),phoEta->at(ipho),phoPhi->at(ipho));
+      if ( dr > Iso5Cut ) {
+	pholist.push_back(ipho);
+      }
+    }
+  }
+  return pholist;
+}
+
 //Veto failed if a muon is found that passes Loose Muon ID, Loose Muon Isolation, and muPtcut, and does not overlap the candidate electron and jet within dR of 0.5
 bool monoJetGammaCR::muon_veto(int phoindex)
 {

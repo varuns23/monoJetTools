@@ -440,6 +440,24 @@ vector<int> monoJetAnalysis::getLoosePho(float phoPtCut,float phoEtaCut){
   return pho_cands;
 }
 
+
+vector<int> monoJetAnalysis::getLoosePho(vector<int> pholist,float phoPtCut,float phoEtaCut){
+  vector<int> pho_cands;
+  pho_cands.clear();
+
+  for(int i : pholist){
+    // passes pt cut
+    bool kinematics = ((phoCalibEt->at(i) > phoPtCut) && (fabs(phoSCEta->at(i)) < phoEtaCut));
+    bool IdIso = (phoIDbit->at(i)>>0&1==1);
+    bool eleVeto = phoEleVeto->at(i);
+    
+    if (kinematics && IdIso && eleVeto)
+      pho_cands.push_back(i);
+  }  
+
+  return pho_cands;
+}
+
 vector<int> monoJetAnalysis::photon_veto_looseID(int jetindex,float phoPtCut,float phoEtaCut) {
   vector<int> pho_cand; pho_cand.clear();
   vector<int> tmpcands = getLoosePho(phoPtCut,phoEtaCut);

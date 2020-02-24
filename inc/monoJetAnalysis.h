@@ -895,6 +895,7 @@ public:
   virtual vector<int> getTightEle(vector<int> looselist,float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
   
   virtual vector<int> getLoosePho(float phoPtCut=phoLoosePtCut,float phoEtaCut=phoLooseEtaCut);
+  virtual vector<int> getLoosePho(vector<int> pholist,float phoPtCut=phoLoosePtCut,float phoEtaCut=phoLooseEtaCut);
   virtual vector<int> photon_veto_looseID(int jetindex,float phoPtCut=phoLoosePtCut,float phoEtaCut=phoLooseEtaCut);
   virtual vector<int> getTightPho(float phoPtCut=phoTightPtCut,float phoEtaCut=phoTightEtaCut);
   virtual vector<int> getTightPho(vector<int> looselist,float phoPtCut=phoTightPtCut,float phoEtaCut=phoTightEtaCut);
