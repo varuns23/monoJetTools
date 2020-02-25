@@ -28,6 +28,17 @@ void monoJetYear::fillHistos(int nhist,float event_weight) {
 void monoJetYear::SetScalingHistos() {
   monoJetAnalysis::SetScalingHistos();
 
+  if ( CROBJECT == Electron) {
+    // Load trigger sf for electron trigger
+    TFile* f_trigger_sf = TFile::Open("RootFiles/trigger/electron_trigger_sf_2017.root");
+    th2fmap["electron_trigger_data_eff"] = (TH2F*)f_trigger_sf->Get("EGamma_EffData2D");
+    th2fmap["electron_trigger_mc_eff"] = (TH2F*)f_trigger_sf->Get("EGamma_EffMC2D");
+  } else if ( CROBJECT != Photon ) {
+    // Load trigger sf for met trigger
+    TFile* f_trigger_sf = TFile::Open("RootFiles/trigger/met_trigger_sf.root");
+    th1fmap["met_trigger_sf"] = (TH1F*)f_trigger_sf->Get("120pfht_hltmu_1m_2017");
+  }
+
   if ( CROBJECT == Electron ) {
     // Electron SF
     TFile* f_ele_reco = TFile::Open("RootFiles/egamma/2017_egammaEffi_txt_EGM2D_runBCDEF_passingRECO.root");

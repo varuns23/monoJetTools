@@ -122,6 +122,7 @@ public:
   float kfactor,nlo_ewk,nlo_qcd,nnlo_qcd;
   float sf;
   float pileup;
+  float trigger_sf;
 
   float n_Vtx;
   /* Selected Boson Variables */
@@ -865,6 +866,11 @@ public:
   virtual void ApplyPileup(float &event_weight);
   virtual void SetSF(float sf);
   virtual void ApplySF(float &event_weight);
+  virtual void ApplyPrefiring(float &event_weight);
+  virtual void ApplyTriggerSF(float &event_weight);
+  virtual void ApplyMET_TriggerSF(float &event_weight);
+  virtual void ApplyElectron_TriggerSF(float &event_weight);
+  virtual void ApplyPhoton_TriggerSF(float &event_weight);
 
   virtual inline bool isWZG() { return type == WJets || type == ZJets || type == GJets || type == DYJets; };
 

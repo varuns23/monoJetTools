@@ -31,6 +31,13 @@ float getMt(float pt1,float phi1,float pt2,float phi2) {
   return TMath::Sqrt( 2 * pt1 * pt2 * (1 - TMath::Cos(deltaPhi(phi1,phi2))) );
 }
 
+float sigmoid(float x,float a,float b,float c,float d) {
+  return c + (d - c) / (1 + TMath::Exp(-a * (x - b)));
+}
+
+float exponential(float x,float a,float b,float c) {
+  return a * TMath::Exp(-b * x) + c;
+}
 
 vector<string> split(string str,string delim) {
   vector<string> splitString;

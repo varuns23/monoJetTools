@@ -15,6 +15,7 @@ void monoJetAnalysis::SetScalingHistos() {
   TFile *weights = TFile::Open("RootFiles/pileup/PU_Central.root");
   TH1F* PU = (TH1F*)weights->Get("pileup");
   th1fmap["PU"] = PU;
+  
   if (isWZG()) {
     //This is the root file with EWK Corrections
     TH1F *NLO_QCD_EWK,*NLO_EWK,*NLO_QCD,*NNLO_QCD;
@@ -59,6 +60,7 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("nlo_ewk",&nlo_ewk);
   tree->Branch("nlo_qcd",&nlo_qcd);
   tree->Branch("nnlo_qcd",&nnlo_qcd);
+  tree->Branch("trigger_sf",&trigger_sf);
   tree->Branch("recoil",&recoil,"Recoil (GeV)");
   tree->Branch("j1pT",&j1pT,"Leading Jet P_{T} (GeV)");
   tree->Branch("j1Eta",&j1Eta,"Leading Jet Eta");
@@ -583,6 +585,70 @@ void monoJetAnalysis::ApplyPileup(float &event_weight) {
   weight_nopileup *= genWeight;
 }
 
+void monoJetAnalysis::ApplyPrefiring(float &event_weight) {
+  if ( YEAR == 2017 ) {
+    event_weight *= prefiringweight;
+    weight_nogen *= prefiringweight;
+    weight_nopileup *= prefiringweight;
+  }
+}
+
+void monoJetAnalysis::ApplyTriggerSF(float &event_weight) {
+  // event_weight *= trigger_sf;
+  // weight_nogen *= trigger_sf;
+  // weight_nopileup *= trigger_sf;
+}
+
+void monoJetAnalysis::ApplyMET_TriggerSF(float &event_weight) {
+  trigger_sf = th1fmap.getBin("met_trigger_sf",recoil);
+  ApplyTriggerSF(event_weight);
+}
+
+void monoJetAnalysis::ApplyElectron_TriggerSF(float &event_weight) {
+  float data_eff = 1;
+  float mc_eff = 1;
+  for (int i = 0; i < nEle; i++) {
+    float eta = eleEta->at(i);
+    float pt = elePt->at(i);
+    data_eff *= (1 - th2fmap.getBin("electron_trigger_data_eff",eta,pt));
+    mc_eff *= (1 - th2fmap.getBin("electron_trigger_mc_eff",eta,pt));
+  }
+  data_eff = 1 - data_eff;
+  mc_eff = 1 - mc_eff;
+  trigger_sf = data_eff / mc_eff;
+  ApplyTriggerSF(event_weight);
+}
+
+void monoJetAnalysis::ApplyPhoton_TriggerSF(float &event_weight) {
+  /*
+    The scale factor is obtained by separately fitting the
+    trigger turn-on with a sigmoid function in data and MC.
+    The scale factor is then the ratio of the two sigmoid
+    functions as a function of the photon pt.
+   */
+  float max_phoPt = 0;
+  for (int i = 0; i < nPho; i++) {
+    if (max_phoPt < phoCalibEt->at(i)) {
+      max_phoPt = phoCalibEt->at(i);
+    }
+  }
+  
+  float data_eff = 1;
+  float mc_eff = 1;
+  if (YEAR == 2017) {
+    data_eff = sigmoid(max_phoPt,0.335,217.91,0.065,0.996);
+    mc_eff = sigmoid(max_phoPt,0.244,212.34,0.050,1.000);
+  } else if (YEAR == 2018) {
+    data_eff = sigmoid(max_phoPt,1.022, 218.39, 0.086, 0.999);
+    mc_eff = sigmoid(max_phoPt,0.301,212.83,0.062,1.000);
+  }
+
+  if (mc_eff != 0) {
+    trigger_sf = data_eff/mc_eff;
+  }
+  ApplyTriggerSF(event_weight);
+}
+
 bool monoJetAnalysis::inclusiveCut() {
   if (isInclusive)
     return genHT < 100;
@@ -640,7 +706,8 @@ void monoJetAnalysis::initVars() {
     }
   }
 
-  weight = weight_nogen = weight_nopileup = kfactor = pileup = sf = nlo_ewk = nlo_qcd = nnlo_qcd = 1;
+  weight = weight_nogen = weight_nopileup = kfactor = 1;
+  pileup = sf = nlo_ewk = nlo_qcd = nnlo_qcd = trigger_sf = 1;
 
   bosonPt = j1pT = j1Eta = j1Phi = -99;
   recoil = pfMET;

@@ -10,6 +10,10 @@ float deltaR(float eta1, float phi1, float eta2, float phi2);
 
 float getMt(float pt1,float phi1,float pt2,float phi2);
 
+float sigmoid(float x,float a,float b,float c,float d);
+
+float exponential(float x,float a,float b,float c);
+
 std::vector<std::string> split(std::string str,std::string delim);
 
 bool fileSelection(std::string filename,std::string fileRange);
