@@ -70,6 +70,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (isMC) {
       SetSF( getSF(lepindex) );
       ApplySF(event_weight);
+      ApplyMET_TriggerSF(event_weight);
     }
 
     h_lepMET_MT->Fill(lepMET_mt,event_weight);

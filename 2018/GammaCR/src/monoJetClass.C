@@ -57,7 +57,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!inclusiveCut()) continue;
     fillEvent(1,event_weight);
 
-    vector<int> looselist = getLoosePho();
+    vector<int> pholist = getPho();
+    vector<int> looselist = getLoosePho(pholist);
     if (looselist.size() != 1) continue;
     fillEvent(2,event_weight);
 
@@ -69,6 +70,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (isMC) {
       SetSF( getSF(phoindex) );
       ApplySF(event_weight);
+      ApplyPhoton_TriggerSF(event_weight);
     }
     if(photon_pt <= phoTightPtCut) continue;
     fillEvent(4,event_weight);

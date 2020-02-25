@@ -69,6 +69,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (isMC) {
       SetSF( getSF(leadLepIndx,subleadLepIndx) );
       ApplySF(event_weight);
+      ApplyElectron_TriggerSF(event_weight);
     }
     fillEvent(4,event_weight);
 

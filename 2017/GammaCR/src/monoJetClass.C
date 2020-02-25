@@ -45,6 +45,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     float event_weight = 1.;
     if (isMC) {
       ApplyPileup(event_weight);
+      ApplyPrefiring(event_weight);
       if (isWZG()) {
 	SetBoson(PID);
 	ApplyKFactor(event_weight);
@@ -71,6 +72,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (isMC) {
       SetSF( getSF(phoindex) );
       ApplySF(event_weight);
+      ApplyPhoton_TriggerSF(event_weight);
     }
     if(photon_pt <= phoTightPtCut) continue;
     fillEvent(4,event_weight);

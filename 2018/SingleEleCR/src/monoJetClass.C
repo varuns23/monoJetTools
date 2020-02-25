@@ -70,6 +70,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (isMC) {
       SetSF( getSF(lepindex) );
       ApplySF(event_weight);
+      ApplyElectron_TriggerSF(event_weight);
     }
 
     if (pfMET <= 50) continue;

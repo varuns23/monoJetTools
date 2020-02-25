@@ -45,6 +45,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     float event_weight = 1.;
     if (isMC) {
       ApplyPileup(event_weight);
+      ApplyPrefiring(event_weight);
       if (isWZG()) {
       	SetBoson(PID);
       	ApplyKFactor(event_weight);
@@ -53,7 +54,6 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
 
     fillEvent(0,genWeight);
-
 			    
     if (!getElectronTrigger()) continue;
     if (!inclusiveCut()) continue;
@@ -71,6 +71,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (isMC) {
       SetSF( getSF(lepindex) );
       ApplySF(event_weight);
+      ApplyElectron_TriggerSF(event_weight);
     }
 
     if (pfMET <= 50) continue;
