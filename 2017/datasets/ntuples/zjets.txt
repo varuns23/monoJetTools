@@ -1,3 +1,8 @@
+>>100to200
+/hdfs/store/user/varuns/mc2017_2020Feb/ZJetsToNuNu_HT-100To200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT100-200/200223_220245/0000/
+/hdfs/store/user/varuns/mc2017_2020Feb/ZJetsToNuNu_HT-100To200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT100-200/200223_220245/0001/
+/hdfs/store/user/varuns/mc2017_2020Feb/ZJetsToNuNu_HT-100To200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT100-200/200223_220245/0002/
+
 >>200to400
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/ZJets/ZJetsToNuNu_HT200-400/0000/
 /hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/ZJets/ZJetsToNuNu_HT200-400/0001/
