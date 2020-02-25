@@ -4,7 +4,6 @@ from ROOT import *
 from PlotTool import *
 import config
 
-parser.add_argument("--sub",type=str,default=None)
 args = parser.parse_args()
 
 gROOT.SetBatch(1)
