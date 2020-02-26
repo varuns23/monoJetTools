@@ -91,21 +91,36 @@ public:
   ScaleUncCollection scaleUncs;
   ShapeUncCollection shapeUncs;
 
+
+  /* Event Weight Variables */
+  // made static so that the Cutflow class can access weights here
+  float weight,weight_nogen,weight_nopileup,weight_nok;
+  float kfactor,nlo_ewk,nlo_qcd,nlo_qcd_binned,nnlo_qcd;
+  float sf;
+  float pileup;
+  float trigger_sf;
+  
   struct Cutflow {
+    monoJetAnalysis* analysis;
     TH1F *h_cutflow;
     TH1F *h_cutflowNoWt;
+    TH1F *h_cutflowNoK;
     std::map<std::string,int> labels;
-    Cutflow(std::vector<std::string> labels) {
+    Cutflow(monoJetAnalysis* analysis, std::vector<std::string> labels) {
+      this->analysis = analysis;
       h_cutflow = new TH1F("h_cutflow","h_cutflow",labels.size(),0,labels.size());
       h_cutflowNoWt = new TH1F("h_cutflowNoWt","h_cutflowNoWt",labels.size(),0,labels.size());
+      h_cutflowNoK = new TH1F("h_cutflowNoK","h_cutflowNoK",labels.size(),0,labels.size());
     
       for (int i = 0; i < labels.size(); i++) {
 	h_cutflow->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
 	h_cutflowNoWt->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
+	h_cutflowNoK->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
 	this->labels[labels[i]] = i;
       }
       h_cutflow->Sumw2();
       h_cutflowNoWt->Sumw2();
+      h_cutflowNoK->Sumw2();
     }
     void Fill(std::string label,float weight=1) {
       this->Fill( labels[label],weight );
@@ -113,16 +128,10 @@ public:
     void Fill(std::size_t idx,float weight=1) {
       h_cutflow->Fill(idx,weight);
       h_cutflowNoWt->Fill(idx,1.0);
+      h_cutflowNoK->Fill(idx,analysis->weight_nok);
     }
   };
   Cutflow *cutflow;
-
-  /* Event Weight Variables */
-  float weight,weight_nogen,weight_nopileup;
-  float kfactor,nlo_ewk,nlo_qcd,nnlo_qcd;
-  float sf;
-  float pileup;
-  float trigger_sf;
 
   float n_Vtx;
   /* Selected Boson Variables */
@@ -152,6 +161,7 @@ public:
   TH1F *h_pfMETall[maxHisto],*h_pfMET[maxHisto],*h_pfMETPhi[maxHisto],*h_recoil[maxHisto],*h_recoilall[maxHisto],*h_recoilPhi[maxHisto];      
   // Jet Info         
   TH1F *h_nJets[maxHisto],*h_j1pT[maxHisto],*h_j1pTall[maxHisto],*h_j1Eta[maxHisto],*h_j1Phi[maxHisto],*h_j1etaWidth[maxHisto],*h_j1phiWidth[maxHisto],*h_j1CHF[maxHisto],*h_j1NHF[maxHisto],*h_j1ChMult[maxHisto],*h_j1NhMult[maxHisto],*h_j1Mt[maxHisto];
+  TH1F *h_j1CHFrounded[maxHisto],*h_j1NHFrounded[maxHisto];
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
