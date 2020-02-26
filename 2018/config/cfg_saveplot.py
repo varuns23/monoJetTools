@@ -1,5 +1,5 @@
 year=2017
-regions={'SignalRegion':'12','DoubleEleCR':'14','DoubleMuCR':'14','SingleEleCR':'15','SingleMuCR':'14','GammaCR':'13'}
+regions={'SignalRegion':'12','DoubleEleCR':'15','DoubleMuCR':'15','SingleEleCR':'15','SingleMuCR':'14','GammaCR':'14'}
 Uncertainty={
     'JES': [
         'JES'
