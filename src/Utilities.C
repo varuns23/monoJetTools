@@ -39,6 +39,13 @@ float exponential(float x,float a,float b,float c) {
   return a * TMath::Exp(-b * x) + c;
 }
 
+float getRounded(float x) {
+  union { float f; uint32_t u; };
+  f = x;
+  u &= 0xfffe0000u; 
+  return f;
+}
+
 vector<string> split(string str,string delim) {
   vector<string> splitString;
   char strChar[str.size() + 1];

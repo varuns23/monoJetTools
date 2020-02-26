@@ -59,6 +59,7 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("kfactor",&kfactor);
   tree->Branch("nlo_ewk",&nlo_ewk);
   tree->Branch("nlo_qcd",&nlo_qcd);
+  tree->Branch("nlo_qcd_binned",&nlo_qcd_binned);
   tree->Branch("nnlo_qcd",&nnlo_qcd);
   tree->Branch("trigger_sf",&trigger_sf);
   tree->Branch("recoil",&recoil,"Recoil (GeV)");
@@ -108,6 +109,8 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_j1phiWidth[i]     = MakeTH1F(new TH1F(Name("j1phiWidth").c_str()   ,"j1phiWidth; #phi width of Leading Jet"                  ,50, 0,0.5));
     h_j1CHF[i]          = MakeTH1F(new TH1F(Name("j1CHF").c_str()        ,"j1CHF;Charged Hadron Energy Fraction in Leading Jet"    ,50,0,1.1));
     h_j1NHF[i]          = MakeTH1F(new TH1F(Name("j1NHF").c_str()        ,"j1NHF;Neutral Hadron Energy Fraction in Leading Jet"    ,50,0,1.1)); 
+    h_j1CHFrounded[i]   = MakeTH1F(new TH1F(Name("j1CHFrounded").c_str() ,"j1CHF;Rounded Charged Hadron Energy Fraction in Leading Jet"    ,50,0,1.1));
+    h_j1NHFrounded[i]   = MakeTH1F(new TH1F(Name("j1NHFrounded").c_str() ,"j1NHF;Rounded Neutral Hadron Energy Fraction in Leading Jet"    ,50,0,1.1)); 
     h_j1ChMult[i]       = MakeTH1F(new TH1F(Name("j1ChMult").c_str()     ,"j1ChMult;Charged Multiplicity of Leading Jet"           ,25,0,50));
     h_j1NhMult[i]       = MakeTH1F(new TH1F(Name("j1NhMult").c_str()     ,"j1NhMult;Neutral Multiplicity of Leading Jet"           ,25,0,50)); 
     h_j1Mt[i]           = MakeTH1F(new TH1F(Name("j1Mt").c_str()         ,"j1Mt;M_{T} of Leading Jet (GeV)"                        ,nMtBins,MtBins));
@@ -170,45 +173,50 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
 
   // Jet Info         ;
   h_nJets[nhist]        ->Fill(nJet,event_weight);
-  if ( jetindex != -1 ) {
-    h_j1pT[nhist]         ->Fill(j1pT,event_weight);
-    h_j1pTall[nhist]      ->Fill(j1pT,event_weight);
-    h_j1Eta[nhist]        ->Fill(j1Eta,event_weight);
-    h_j1Phi[nhist]        ->Fill(j1Phi,event_weight);
-    h_j1etaWidth[nhist]   ->Fill(jetetaWidth->at(jetindex),event_weight);
-    h_j1phiWidth[nhist]   ->Fill(jetphiWidth->at(jetindex),event_weight);
-    h_j1CHF[nhist]        ->Fill(jetCHF->at(jetindex),event_weight);
-    h_j1NHF[nhist]        ->Fill(jetNHF->at(jetindex),event_weight);
-    h_j1ChMult[nhist]     ->Fill(jetNChargedHad->at(jetindex),event_weight);
-    h_j1NhMult[nhist]     ->Fill(jetNNeutralHad->at(jetindex),event_weight);
-    h_j1Mt[nhist]         ->Fill(jetMt->at(jetindex),event_weight);
-    // PF Jet Info      ;
-    h_Pt123[nhist]        ->Fill(Pt123,event_weight);
-    h_Pt123Fraction[nhist]->Fill(Pt123Fraction,event_weight);
-    h_ChNemPt[nhist]      ->Fill(ChNemPt,event_weight);
-    h_ChNemPt123[nhist]   ->Fill(ChNemPt123,event_weight);
-    h_ChNemPtFrac[nhist]  ->Fill(ChNemPtFrac,event_weight);
-    h_TotPFCands[nhist]   ->Fill(TotalPFCands,event_weight);
-    // PF Charged Info     ;
-    h_ChPFCands[nhist]    ->Fill(ChargedPFCands,event_weight);
-    h_ChPercCons[nhist]   ->Fill(ChargedPFCands/(float)TotalPFCands,event_weight);
-    h_ChargedPFPt[nhist]  ->Fill(pfHadronPt[0],event_weight);
-    h_ChPercPFPt[nhist]   ->Fill(pfHadronPt[0]/j1pT,event_weight);
-    // PF Neutral Info     ;
-    h_NhPFCands[nhist]    ->Fill(NeutralPFCands,event_weight);                     
-    h_NhPercCons[nhist]   ->Fill(NeutralPFCands/(float)TotalPFCands,event_weight); 
-    h_NhPFPt[nhist]       ->Fill(pfHadronPt[1],event_weight);                      
-    h_NhPercPFPt[nhist]   ->Fill(pfHadronPt[1]/j1pT,event_weight);                 
-    // PF Gamma Info       ;
-    h_GammaPFCands[nhist] ->Fill(GammaPFCands,event_weight);                     
-    h_GammaPercCons[nhist]->Fill(GammaPFCands/(float)TotalPFCands,event_weight); 
-    h_PhotonPFPt[nhist]   ->Fill(pfHadronPt[2],event_weight);                      
-    h_GammaPercPFPt[nhist]->Fill(pfHadronPt[2]/j1pT,event_weight);                 
-    // PF Misc Info        ;
-    h_MiscPFCands[nhist]  ->Fill(MiscPFCands,event_weight);                     
-    h_MiscPercCons[nhist] ->Fill(MiscPFCands/(float)TotalPFCands,event_weight); 
-    h_MiscPFPt[nhist]     ->Fill(pfHadronPt[3],event_weight);                      
-    h_MiscPercPFPt[nhist] ->Fill(pfHadronPt[3]/j1pT,event_weight);
+  int jetCand = jetindex != -1 ? jetindex : 0;
+  if ( nJet > 0 ) {
+    h_j1pT[nhist]         ->Fill(jetPt->at(jetCand),event_weight);
+    h_j1pTall[nhist]      ->Fill(jetPt->at(jetCand),event_weight);
+    h_j1Eta[nhist]        ->Fill(jetEta->at(jetCand),event_weight);
+    h_j1Phi[nhist]        ->Fill(jetPhi->at(jetCand),event_weight);
+    h_j1etaWidth[nhist]   ->Fill(jetetaWidth->at(jetCand),event_weight);
+    h_j1phiWidth[nhist]   ->Fill(jetphiWidth->at(jetCand),event_weight);
+    h_j1CHF[nhist]        ->Fill(jetCHF->at(jetCand),event_weight);
+    h_j1NHF[nhist]        ->Fill(jetNHF->at(jetCand),event_weight);
+    h_j1CHFrounded[nhist]        ->Fill(getRounded(getRounded(jetCHF->at(jetCand))),event_weight);
+    h_j1NHFrounded[nhist]        ->Fill(getRounded(getRounded(jetNHF->at(jetCand))),event_weight);
+    h_j1ChMult[nhist]     ->Fill(jetNChargedHad->at(jetCand),event_weight);
+    h_j1NhMult[nhist]     ->Fill(jetNNeutralHad->at(jetCand),event_weight);
+    h_j1Mt[nhist]         ->Fill(jetMt->at(jetCand),event_weight);
+    if ( jetindex != -1 ) {
+      // PF Jet Info      ;
+      h_Pt123[nhist]        ->Fill(Pt123,event_weight);
+      h_Pt123Fraction[nhist]->Fill(Pt123Fraction,event_weight);
+      h_ChNemPt[nhist]      ->Fill(ChNemPt,event_weight);
+      h_ChNemPt123[nhist]   ->Fill(ChNemPt123,event_weight);
+      h_ChNemPtFrac[nhist]  ->Fill(ChNemPtFrac,event_weight);
+      h_TotPFCands[nhist]   ->Fill(TotalPFCands,event_weight);
+      // PF Charged Info     ;
+      h_ChPFCands[nhist]    ->Fill(ChargedPFCands,event_weight);
+      h_ChPercCons[nhist]   ->Fill(ChargedPFCands/(float)TotalPFCands,event_weight);
+      h_ChargedPFPt[nhist]  ->Fill(pfHadronPt[0],event_weight);
+      h_ChPercPFPt[nhist]   ->Fill(pfHadronPt[0]/j1pT,event_weight);
+      // PF Neutral Info     ;
+      h_NhPFCands[nhist]    ->Fill(NeutralPFCands,event_weight);                     
+      h_NhPercCons[nhist]   ->Fill(NeutralPFCands/(float)TotalPFCands,event_weight); 
+      h_NhPFPt[nhist]       ->Fill(pfHadronPt[1],event_weight);                      
+      h_NhPercPFPt[nhist]   ->Fill(pfHadronPt[1]/j1pT,event_weight);                 
+      // PF Gamma Info       ;
+      h_GammaPFCands[nhist] ->Fill(GammaPFCands,event_weight);                     
+      h_GammaPercCons[nhist]->Fill(GammaPFCands/(float)TotalPFCands,event_weight); 
+      h_PhotonPFPt[nhist]   ->Fill(pfHadronPt[2],event_weight);                      
+      h_GammaPercPFPt[nhist]->Fill(pfHadronPt[2]/j1pT,event_weight);                 
+      // PF Misc Info        ;
+      h_MiscPFCands[nhist]  ->Fill(MiscPFCands,event_weight);                     
+      h_MiscPercCons[nhist] ->Fill(MiscPFCands/(float)TotalPFCands,event_weight); 
+      h_MiscPFPt[nhist]     ->Fill(pfHadronPt[3],event_weight);                      
+      h_MiscPercPFPt[nhist] ->Fill(pfHadronPt[3]/j1pT,event_weight);
+    }
   }
 }
 
@@ -650,9 +658,20 @@ void monoJetAnalysis::SetBoson(int PID) {
 }
 
 float monoJetAnalysis::getKFactor(float bosonPt) {
-  float nlo_ewk = th1fmap.getBin("NLO_EWK",bosonPt);
-  float nlo_qcd = th1fmap.getBin("NLO_QCD",bosonPt);
-  float nnlo_qcd = th1fmap.getBin("NNLO_QCD",bosonPt);
+  nlo_ewk = th1fmap.getBin("NLO_EWK",bosonPt);
+  nlo_qcd_binned = th1fmap.getBin("NLO_QCD",bosonPt);
+  
+  nlo_qcd = 1;
+  if ( bosonPt > 0 ){
+    if (type == WJets) {
+      nlo_qcd = exponential(bosonPt,1.053, 3.163e-3, 0.746);
+    } else if (type == ZJets || type == DYJets) {
+      nlo_qcd = exponential(bosonPt,1.434, 2.210e-3, 0.443);
+    } else if (type == GJets) {
+      nlo_qcd = exponential(bosonPt,1.159, 1.944e-3, 1.0);
+    }
+  }
+  nnlo_qcd = th1fmap.getBin("NNLO_QCD",bosonPt);
   float kfactor = 1;
   // if (isNLO) kfactor = nlo_ewk * nnlo_qcd;
   // else kfactor = nlo_ewk * nlo_qcd * nnlo_qcd;
@@ -662,9 +681,6 @@ float monoJetAnalysis::getKFactor(float bosonPt) {
 
 void monoJetAnalysis::SetKFactors(float bosonPt) {
   kfactor = getKFactor(bosonPt);
-  nlo_ewk = th1fmap.getBin("NLO_EWK",bosonPt);
-  nlo_qcd = th1fmap.getBin("NLO_QCD",bosonPt);
-  nnlo_qcd = th1fmap.getBin("NNLO_QCD",bosonPt);
 }
 
 void monoJetAnalysis::ApplyKFactor(float &event_weight) {
@@ -681,6 +697,7 @@ void monoJetAnalysis::ApplySF(float &event_weight) {
   event_weight *= sf;
   weight_nogen *= sf;
   weight_nopileup *= sf;
+  weight_nok *= sf;
 }
 
 void monoJetAnalysis::ApplyPileup(float &event_weight) {
@@ -691,6 +708,7 @@ void monoJetAnalysis::ApplyPileup(float &event_weight) {
   event_weight *= pileup * genWeight;
   weight_nogen *= pileup;
   weight_nopileup *= genWeight;
+  weight_nok *= pileup * genWeight;
 }
 
 void monoJetAnalysis::ApplyPrefiring(float &event_weight) {
@@ -698,6 +716,7 @@ void monoJetAnalysis::ApplyPrefiring(float &event_weight) {
     event_weight *= prefiringweight;
     weight_nogen *= prefiringweight;
     weight_nopileup *= prefiringweight;
+    weight_nok *= prefiringweight;
   }
 }
 
@@ -733,7 +752,7 @@ void monoJetAnalysis::ApplyPhoton_TriggerSF(float &event_weight) {
     trigger turn-on with a sigmoid function in data and MC.
     The scale factor is then the ratio of the two sigmoid
     functions as a function of the photon pt.
-   */
+  */
   float max_phoPt = 0;
   for (int i = 0; i < nPho; i++) {
     if (max_phoPt < phoCalibEt->at(i)) {
@@ -767,13 +786,13 @@ bool monoJetAnalysis::getJetHEMVeto(float jetPtCut){
 
   bool pass = true;
   for(int p=0;p<nJet;p++)
-  {
-    bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.4 && (*jetEta)[p] > -3.0 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
-    bool tightJetID = false;
-    if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
-    if(kinematic) // not chekcing ID here.                                                                                                                                         
-      pass = false;
-  }
+    {
+      bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.4 && (*jetEta)[p] > -3.0 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
+      bool tightJetID = false;
+      if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
+      if(kinematic) // not chekcing ID here.                                                                                                                                         
+	pass = false;
+    }
 
   return pass;
 }
@@ -782,11 +801,11 @@ bool monoJetAnalysis::getEleHEMVeto(float elePtCut){
 
   bool pass = true;
   for(int p=0;p<nEle;p++)
-  {
-    bool kinematic = (*elePt)[p] > elePtCut && (*eleEta)[p] < -1.4 && (*eleEta)[p] > -3.0 && (*elePhi)[p] > -1.57 && (*elePhi)[p] < -0.87 ;
-    if(kinematic) // not chekcing ID here.                                                                                                                                         
-      pass = false;
-  }
+    {
+      bool kinematic = (*elePt)[p] > elePtCut && (*eleEta)[p] < -1.4 && (*eleEta)[p] > -3.0 && (*elePhi)[p] > -1.57 && (*elePhi)[p] < -0.87 ;
+      if(kinematic) // not chekcing ID here.                                                                                                                                         
+	pass = false;
+    }
 
   return pass;
 }
@@ -814,8 +833,8 @@ void monoJetAnalysis::initVars() {
     }
   }
 
-  weight = weight_nogen = weight_nopileup = kfactor = 1;
-  pileup = sf = nlo_ewk = nlo_qcd = nnlo_qcd = trigger_sf = 1;
+  weight = weight_nogen = weight_nopileup = weight_nok = kfactor = 1;
+  pileup = sf = nlo_ewk = nlo_qcd = nlo_qcd_binned = nnlo_qcd = trigger_sf = 1;
 
   bosonPt = j1pT = j1Eta = j1Phi = -99;
   recoil = pfMET;
@@ -832,23 +851,23 @@ int monoJetAnalysis::getNfiles(TChain *chain,TString path,int nfiles) {
   TSystemFile* filename;
   int inFile=0;
   while ((filename = (TSystemFile*)nextlist()) && inFile < nfiles)
-  {
-    //Debug
-    if (debug) {
-      cout<<"file path found: "<<(path+filename->GetName())<<endl;
-      cout<<"name: "<<(filename->GetName())<<endl;
-      cout<<"fileNumber: "<<inFile<<endl;
+    {
+      //Debug
+      if (debug) {
+	cout<<"file path found: "<<(path+filename->GetName())<<endl;
+	cout<<"name: "<<(filename->GetName())<<endl;
+	cout<<"fileNumber: "<<inFile<<endl;
+      }
+
+      TString dataset = ".root";
+      TString  FullPathInputFile = (path+filename->GetName());
+      if ( !FullPathInputFile.EndsWith(dataset) ) continue;
+      if (debug)
+	cout<<"Adding FullPathInputFile to chain:"<<FullPathInputFile<<endl<<endl;
+      chain->Add(FullPathInputFile);
+      inFile++;
+
     }
-
-    TString dataset = ".root";
-    TString  FullPathInputFile = (path+filename->GetName());
-    if ( !FullPathInputFile.EndsWith(dataset) ) continue;
-    if (debug)
-      cout<<"Adding FullPathInputFile to chain:"<<FullPathInputFile<<endl<<endl;
-    chain->Add(FullPathInputFile);
-    inFile++;
-
-  }
   return inFile;
 }
 
@@ -861,32 +880,32 @@ int monoJetAnalysis::getFilesByNumber(TChain *chain,TString path,const char* fil
   int maxFiles = -1;
   int inFile=0;
   while ((filename = (TSystemFile*)nextlist()) && fileNumber >  maxFiles)
-  {
-    //Debug
-    if (debug) {
-      cout<<"file path found: "<<(path+filename->GetName())<<endl;
-      cout<<"name: "<<(filename->GetName())<<endl;
-      cout<<"fileNumber: "<<fileNumber<<endl;
-    }
-
-    TString dataset = ".root";
-    TString  FullPathInputFile = (path+filename->GetName());
-    TString name = filename->GetName();
-    if (name.Contains(dataset))
     {
-      string fname = string(name);
-      fname.erase(fname.end()-5,fname.end());
-      bool isin = fileSelection(fname,string(fileRange));
-      if(isin)
-      {
-	if (debug)
-	  cout<<"Adding FullPathInputFile to chain:"<<FullPathInputFile<<endl<<endl;
-	chain->Add(FullPathInputFile);
-	inFile++;
+      //Debug
+      if (debug) {
+	cout<<"file path found: "<<(path+filename->GetName())<<endl;
+	cout<<"name: "<<(filename->GetName())<<endl;
+	cout<<"fileNumber: "<<fileNumber<<endl;
       }
+
+      TString dataset = ".root";
+      TString  FullPathInputFile = (path+filename->GetName());
+      TString name = filename->GetName();
+      if (name.Contains(dataset))
+	{
+	  string fname = string(name);
+	  fname.erase(fname.end()-5,fname.end());
+	  bool isin = fileSelection(fname,string(fileRange));
+	  if(isin)
+	    {
+	      if (debug)
+		cout<<"Adding FullPathInputFile to chain:"<<FullPathInputFile<<endl<<endl;
+	      chain->Add(FullPathInputFile);
+	      inFile++;
+	    }
+	}
+      fileNumber++;
     }
-    fileNumber++;
-  }
   return inFile;
 }
 
@@ -1618,7 +1637,7 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
      d2K_EW      25  26
      d3K_EW      27  28
      dK_NLO_mix  29  30 
-     */
+  */
   string uncnames[7] = {"QCD_Scale","QCD_Shape","QCD_Proc","NNLO_EWK","NNLO_Miss","NNLO_Sud","QCD_EWK_Mix"};
   // Initializing
   if ( !scaleUncs.contains(uncnames[0]) ) {

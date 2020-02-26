@@ -123,7 +123,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
 
-  cutflow = new Cutflow({"Total Events","Triggers","One Loose Electron","One Tight Electron","pfMET50","Electron MET M_{T}","MET Filters",
+  cutflow = new Cutflow(this,{"Total Events","Triggers","One Loose Electron","One Tight Electron","pfMET50","Electron MET M_{T}","MET Filters",
 	"Muon Veto","Photon Veto","Tau Veto","BJet Veto","minDPhiJetMET","dPFCaloMET","Recoil","Jet Selection"});
 
   BookHistos(-1,"");
