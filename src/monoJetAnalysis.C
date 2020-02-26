@@ -118,6 +118,26 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_ChNemPt123[i]     = MakeTH1F(new TH1F(Name("ChNemPt123").c_str()   ,"ChNemPt123;Ch + NEM P^{123}_{T} (GeV)"                  ,nPt123Bins,Pt123Bins));
     h_ChNemPtFrac[i]    = MakeTH1F(new TH1F(Name("ChNemPtFrac").c_str()  ,"ChNemPtFrac;Ch + NEM P_{T}^{123} Fraction"              ,50,0,1.1));
     h_TotPFCands[i]     = MakeTH1F(new TH1F(Name("TotPFCands").c_str()   ,"TotPFCands;# of all PF candidates in Leading Jet"       ,nCandBins,lCand,uCand));
+    // Charged Info
+    h_ChPFCands[i]      = MakeTH1F(new TH1F(Name("ChPFCands").c_str()    ,"ChPFCands;# of PF charged hadrons in Leading Jet"       ,nCandBins,lCand,uCand));
+    h_ChPercCons[i]     = MakeTH1F(new TH1F(Name("ChPercCons").c_str()   ,"ChPercCons;Charged Hadron Constituent Percent"          ,50,0,1.1));
+    h_ChargedPFPt[i]    = MakeTH1F(new TH1F(Name("ChPFPt").c_str()       ,"ChPFPt;Charged Constituent P_{T}"                       ,nPt123Bins,Pt123Bins));
+    h_ChPercPFPt[i]     = MakeTH1F(new TH1F(Name("ChPercPFPt").c_str()   ,"ChPercPFPt; Charged Constituent P_{T} Percentage"       ,50,0,1.1));
+    // Neutral Info
+    h_NhPFCands[i]      = MakeTH1F(new TH1F(Name("NhPFCands").c_str()    ,"NeutPFCands;# of PF neutral hadrons in Leading Jet"     ,nCandBins,lCand,uCand));
+    h_NhPercCons[i]     = MakeTH1F(new TH1F(Name("NhPercCons").c_str()   ,"NhPercCons;Neutral Hadron Constituent Percent"          ,50,0,1.1));
+    h_NhPFPt[i]         = MakeTH1F(new TH1F(Name("NhPFPt").c_str()       ,"NhPFPt;Neutral Constituent P_{T}"                       ,nPt123Bins,Pt123Bins));
+    h_NhPercPFPt[i]     = MakeTH1F(new TH1F(Name("NhPercPFPt").c_str()   ,"NhPercPFPt; Nharged Constituent P_{T} Percentage"       ,50,0,1.1));
+    // Gamma Info
+    h_GammaPFCands[i]   = MakeTH1F(new TH1F(Name("GammaPFCands").c_str() ,"GammaPFCands;# of PF gammas in Leading Jet"             ,nCandBins,lCand,uCand));
+    h_GammaPercCons[i]  = MakeTH1F(new TH1F(Name("GammaPercCons").c_str(),"GammaPercCons;Photon Constituent Percent"               ,50,0,1.1));
+    h_PhotonPFPt[i]     = MakeTH1F(new TH1F(Name("GammaPFPt").c_str()    ,"GammaPFPt;Photon Constituent P_{T}"                     ,nPt123Bins,Pt123Bins));
+    h_GammaPercPFPt[i]  = MakeTH1F(new TH1F(Name("GammaPercPFPt").c_str(),"GammaPercPFPt; Gamma Constituent P_{T} Percentage"      ,50,0,1.1));
+    // Misc Info
+    h_MiscPFCands[i]    = MakeTH1F(new TH1F(Name("MiscPFCands").c_str()  ,"MiscPFCands;# of PF gammas in Leading Jet"              ,nCandBins,lCand,uCand));
+    h_MiscPercCons[i]   = MakeTH1F(new TH1F(Name("MiscPercCons").c_str() ,"MiscPercCons;Misc Constituent Percent"                  ,50,0,1.1));
+    h_MiscPFPt[i]       = MakeTH1F(new TH1F(Name("MiscPFPt").c_str()     ,"MiscPFPt;Misc Constituent P_{T}"                        ,nPt123Bins,Pt123Bins));
+    h_MiscPercPFPt[i]   = MakeTH1F(new TH1F(Name("MiscPercPFPt").c_str() ,"MiscPercPFPt; Misc Constituent P_{T} Percentage"        ,50,0,1.1));
   }
 }
 
@@ -169,6 +189,26 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_ChNemPt123[nhist]   ->Fill(ChNemPt123,event_weight);
     h_ChNemPtFrac[nhist]  ->Fill(ChNemPtFrac,event_weight);
     h_TotPFCands[nhist]   ->Fill(TotalPFCands,event_weight);
+    // PF Charged Info     ;
+    h_ChPFCands[nhist]    ->Fill(ChargedPFCands,event_weight);
+    h_ChPercCons[nhist]   ->Fill(ChargedPFCands/(float)TotalPFCands,event_weight);
+    h_ChargedPFPt[nhist]  ->Fill(pfHadronPt[0],event_weight);
+    h_ChPercPFPt[nhist]   ->Fill(pfHadronPt[0]/j1pT,event_weight);
+    // PF Neutral Info     ;
+    h_NhPFCands[nhist]    ->Fill(NeutralPFCands,event_weight);                     
+    h_NhPercCons[nhist]   ->Fill(NeutralPFCands/(float)TotalPFCands,event_weight); 
+    h_NhPFPt[nhist]       ->Fill(pfHadronPt[1],event_weight);                      
+    h_NhPercPFPt[nhist]   ->Fill(pfHadronPt[1]/j1pT,event_weight);                 
+    // PF Gamma Info       ;
+    h_GammaPFCands[nhist] ->Fill(GammaPFCands,event_weight);                     
+    h_GammaPercCons[nhist]->Fill(GammaPFCands/(float)TotalPFCands,event_weight); 
+    h_PhotonPFPt[nhist]   ->Fill(pfHadronPt[2],event_weight);                      
+    h_GammaPercPFPt[nhist]->Fill(pfHadronPt[2]/j1pT,event_weight);                 
+    // PF Misc Info        ;
+    h_MiscPFCands[nhist]  ->Fill(MiscPFCands,event_weight);                     
+    h_MiscPercCons[nhist] ->Fill(MiscPFCands/(float)TotalPFCands,event_weight); 
+    h_MiscPFPt[nhist]     ->Fill(pfHadronPt[3],event_weight);                      
+    h_MiscPercPFPt[nhist] ->Fill(pfHadronPt[3]/j1pT,event_weight);
   }
 }
 
@@ -297,7 +337,7 @@ int monoJetAnalysis::setJetCand(vector<int> jetlist) {
   j1PFConsPt = jetConstPt->at(jetindex);
   j1PFConsEta = jetConstEta->at(jetindex);
   j1PFConsPhi = jetConstPhi->at(jetindex);
-  j1PFConsPID = jetConstPID->at(jetindex);
+  j1PFConsPID = jetConstPdgId->at(jetindex);
   
   TotalPFCands = ChargedPFCands = NeutralPFCands = GammaPFCands = MiscPFCands = 0;
   for (int PID : j1PFConsPID) {

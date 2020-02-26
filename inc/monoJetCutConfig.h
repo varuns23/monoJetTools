@@ -2,7 +2,7 @@
 #define monoJetCutConfig_h
 
 /* Jet Selection Floating Cuts */
-const float jetCandPtCut = 100.;
+const float jetCandPtCut = 200.;
 const float jetCandEtaCut = 2.4;
 const float jetCandNHFCut = 0.8;
 const float jetCandCHFCut = 0.1;

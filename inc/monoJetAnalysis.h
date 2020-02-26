@@ -136,7 +136,6 @@ public:
   float n_Jet;
   int jetindex;
   vector<int> jetCand;
-  vector<int> jetCand;
   vector<float> j1PFConsEt;
   vector<float>j1PFConsPt;
   vector<float>j1PFConsEta;
@@ -164,6 +163,14 @@ public:
   TH1F *h_nJets[maxHisto],*h_j1pT[maxHisto],*h_j1pTall[maxHisto],*h_j1Eta[maxHisto],*h_j1Phi[maxHisto],*h_j1etaWidth[maxHisto],*h_j1phiWidth[maxHisto],*h_j1CHF[maxHisto],*h_j1NHF[maxHisto],*h_j1ChMult[maxHisto],*h_j1NhMult[maxHisto],*h_j1Mt[maxHisto];
   // PF Jet Info      
   TH1F *h_Pt123[maxHisto],*h_Pt123Fraction[maxHisto],*h_ChNemPt[maxHisto],*h_ChNemPt123[maxHisto],*h_ChNemPtFrac[maxHisto],*h_TotPFCands[maxHisto];
+  // Charged Info     
+  TH1F *h_ChPFCands[maxHisto],*h_ChPercCons[maxHisto],*h_ChargedPFPt[maxHisto],*h_ChPercPFPt[maxHisto];
+  // Neutral Info     
+  TH1F *h_NhPFCands[maxHisto],*h_NhPercCons[maxHisto],*h_NhPFPt[maxHisto],*h_NhPercPFPt[maxHisto];
+  // Gamma Info       
+  TH1F *h_GammaPFCands[maxHisto],*h_GammaPercCons[maxHisto],*h_PhotonPFPt[maxHisto],*h_GammaPercPFPt[maxHisto];  
+  // Misc Info        
+  TH1F *h_MiscPFCands[maxHisto],*h_MiscPercCons[maxHisto],*h_MiscPFPt[maxHisto],*h_MiscPercPFPt[maxHisto]; 
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 

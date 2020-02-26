@@ -50,16 +50,16 @@ legmap = {
     "QCD"       :"QCD"
 }
 colmap = {
-    "ZJets"     :9,
-    "ZJets-NLO" :9,
-    "WJets"     :kOrange-2,
-    "WJets-NLO" :kOrange-2,
-    "DYJets"    :7,
-    "DYJets-NLO":7,
-    "GJets"     :46,  
-    "TTJets"    :kSpring-9,
-    "DiBoson"   :kMagenta-7, 
-    "QCD"       :41
+    "ZJets"     :kAzure+10,
+    "ZJets-NLO" :kAzure+10,
+    "WJets"     :kRed-10,
+    "WJets-NLO" :kRed-10,
+    "DYJets"    :kTeal-9,
+    "DYJets-NLO":kTeal-9,
+    "GJets"     :kGray+2,  
+    "TTJets"    :kOrange-2,
+    "DiBoson"   :kCyan-10, 
+    "QCD"       :kGray
 }
 
 xsec = {

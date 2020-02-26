@@ -1,7 +1,7 @@
 from Parser import parser
 import os
 
-basepath = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoJet/"
+basepath = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoZprimeJet/"
 
 parser.add_argument("--path",help="Specify directory to save file in",default=basepath)
 parser.add_argument("--sub",help="Specify subdirectory from path directory to save file in")
