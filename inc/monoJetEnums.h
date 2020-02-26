@@ -10,4 +10,5 @@ static const char * RegionName[] = {"SignalRegion","SingleElectron","SingleMuon"
 enum CRobject{Electron,Muon,Photon,nCRobject,None};
 static const char * CRobjectName[] = {"Electron","Muon","Photon"};
 
+enum Hadron{Charged=211,Neutral=130,Gamma=22};
 #endif

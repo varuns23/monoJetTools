@@ -136,8 +136,18 @@ public:
   float n_Jet;
   int jetindex;
   vector<int> jetCand;
+  vector<int> jetCand;
+  vector<float> j1PFConsEt;
+  vector<float>j1PFConsPt;
+  vector<float>j1PFConsEta;
+  vector<float>j1PFConsPhi;
+  vector<int>j1PFConsPID;
 
   float j1pT,j1Eta,j1Phi;
+  float Pt123Fraction,Pt123;
+  float ChNemPtFrac,ChNemPt,ChNemPt123;
+  float TotalPFCands,ChargedPFCands,NeutralPFCands,GammaPFCands,MiscPFCands;
+  float pfHadronPt[4];
 
   /* CR Variables */
   float recoil,recoilPhi;
@@ -152,6 +162,8 @@ public:
   TH1F *h_pfMETall[maxHisto],*h_pfMET[maxHisto],*h_pfMETPhi[maxHisto],*h_recoil[maxHisto],*h_recoilall[maxHisto],*h_recoilPhi[maxHisto];      
   // Jet Info         
   TH1F *h_nJets[maxHisto],*h_j1pT[maxHisto],*h_j1pTall[maxHisto],*h_j1Eta[maxHisto],*h_j1Phi[maxHisto],*h_j1etaWidth[maxHisto],*h_j1phiWidth[maxHisto],*h_j1CHF[maxHisto],*h_j1NHF[maxHisto],*h_j1ChMult[maxHisto],*h_j1NhMult[maxHisto],*h_j1Mt[maxHisto];
+  // PF Jet Info      
+  TH1F *h_Pt123[maxHisto],*h_Pt123Fraction[maxHisto],*h_ChNemPt[maxHisto],*h_ChNemPt123[maxHisto],*h_ChNemPtFrac[maxHisto],*h_TotPFCands[maxHisto];
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
@@ -890,6 +902,7 @@ public:
   virtual vector<int> getJetCand
   (vector<int> jetlist,float jetPtCut=jetCandPtCut,float jetEtaCut=jetCandEtaCut,float jetNHFCut=jetCandNHFCut,float jetCHFCut=jetCandCHFCut);
   virtual int setJetCand(vector<int> jetlist);
+  virtual void SetPtFrac();
   virtual vector<int> getLooseJet(float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   

@@ -68,6 +68,7 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("nJets",&n_Jet,"Number of Jets");
   tree->Branch("bosonPt",&bosonPt,"Boson Pt");
   tree->Branch("nVtx",&n_Vtx,"Number of Verticies");
+  tree->Branch("ChNemPtFrac",&ChNemPtFrac,"Ch + NEM P_{T}^{123} Fraction");
 }
 
 void monoJetAnalysis::BookHistos(int i,string histname) {
@@ -110,6 +111,13 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_j1ChMult[i]       = MakeTH1F(new TH1F(Name("j1ChMult").c_str()     ,"j1ChMult;Charged Multiplicity of Leading Jet"           ,25,0,50));
     h_j1NhMult[i]       = MakeTH1F(new TH1F(Name("j1NhMult").c_str()     ,"j1NhMult;Neutral Multiplicity of Leading Jet"           ,25,0,50)); 
     h_j1Mt[i]           = MakeTH1F(new TH1F(Name("j1Mt").c_str()         ,"j1Mt;M_{T} of Leading Jet (GeV)"                        ,nMtBins,MtBins));
+    // PF Jet Info
+    h_Pt123[i]          = MakeTH1F(new TH1F(Name("Pt123").c_str()        ,"Pt123;P_{T}^{123}"                                      ,nPt123Bins,Pt123Bins));
+    h_Pt123Fraction[i]  = MakeTH1F(new TH1F(Name("Pt123Fraction").c_str(),"Pt123Fraction;P_{T}^{123} Fraction"                     ,50,0,1)); 
+    h_ChNemPt[i]        = MakeTH1F(new TH1F(Name("ChNemPt").c_str()      ,"ChNemPt;Ch + NEM Leading Jet P_{T} (GeV)"               ,nPt123Bins,Pt123Bins));
+    h_ChNemPt123[i]     = MakeTH1F(new TH1F(Name("ChNemPt123").c_str()   ,"ChNemPt123;Ch + NEM P^{123}_{T} (GeV)"                  ,nPt123Bins,Pt123Bins));
+    h_ChNemPtFrac[i]    = MakeTH1F(new TH1F(Name("ChNemPtFrac").c_str()  ,"ChNemPtFrac;Ch + NEM P_{T}^{123} Fraction"              ,50,0,1.1));
+    h_TotPFCands[i]     = MakeTH1F(new TH1F(Name("TotPFCands").c_str()   ,"TotPFCands;# of all PF candidates in Leading Jet"       ,nCandBins,lCand,uCand));
   }
 }
 
@@ -154,6 +162,13 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_j1ChMult[nhist]     ->Fill(jetNChargedHad->at(jetindex),event_weight);
     h_j1NhMult[nhist]     ->Fill(jetNNeutralHad->at(jetindex),event_weight);
     h_j1Mt[nhist]         ->Fill(jetMt->at(jetindex),event_weight);
+    // PF Jet Info      ;
+    h_Pt123[nhist]        ->Fill(Pt123,event_weight);
+    h_Pt123Fraction[nhist]->Fill(Pt123Fraction,event_weight);
+    h_ChNemPt[nhist]      ->Fill(ChNemPt,event_weight);
+    h_ChNemPt123[nhist]   ->Fill(ChNemPt123,event_weight);
+    h_ChNemPtFrac[nhist]  ->Fill(ChNemPtFrac,event_weight);
+    h_TotPFCands[nhist]   ->Fill(TotalPFCands,event_weight);
   }
 }
 
@@ -238,12 +253,65 @@ vector<int> monoJetAnalysis::getJetCand(vector<int> jetlist,float jetPtCut,float
   return tmpCand;
 }
 
+
+void monoJetAnalysis::SetPtFrac() {
+  Pt123Fraction=Pt123=ChNemPtFrac=ChNemPt=ChNemPt123=0.0;
+  for (int i = 0; i < 4; i++){
+    pfHadronPt[i] = 0.;
+  }
+  float first3_HadronPt[4] = {0,0,0,0};
+
+  for (int i = 0; i < j1PFConsPID.size(); i++) {
+    int absPID = abs(j1PFConsPID[i]);
+    float consPt = j1PFConsPt[i];
+    bool first3 = i < 3;
+    if (first3) Pt123 += consPt;
+    if ( absPID == Hadron::Charged ) {
+      if (first3) first3_HadronPt[0] += consPt;
+      pfHadronPt[0] += consPt;
+    } else if ( absPID == Hadron::Neutral ) {
+      if (first3) first3_HadronPt[1] += consPt;
+      pfHadronPt[1] += consPt;
+    } else if ( absPID == Hadron::Gamma ) {
+      if (first3) first3_HadronPt[2] += consPt;
+      pfHadronPt[2] += consPt;
+    } else {
+      if (first3) first3_HadronPt[3] += consPt;
+      pfHadronPt[3] += consPt;
+    }
+  }
+  Pt123Fraction = Pt123/j1pT;
+  ChNemPt = pfHadronPt[0] + pfHadronPt[2];
+  ChNemPt123 = first3_HadronPt[0] + first3_HadronPt[2];
+  ChNemPtFrac = ChNemPt123/ChNemPt;
+}
+
 int monoJetAnalysis::setJetCand(vector<int> jetlist) {
   if (jetlist.size() == 0) return -1;
   jetindex = jetlist[0];
   j1pT = jetPt->at(jetindex);
   j1Eta = jetEta->at(jetindex);
   j1Phi = jetPhi->at(jetindex);
+  
+  j1PFConsEt = jetConstEt->at(jetindex);
+  j1PFConsPt = jetConstPt->at(jetindex);
+  j1PFConsEta = jetConstEta->at(jetindex);
+  j1PFConsPhi = jetConstPhi->at(jetindex);
+  j1PFConsPID = jetConstPID->at(jetindex);
+  
+  TotalPFCands = ChargedPFCands = NeutralPFCands = GammaPFCands = MiscPFCands = 0;
+  for (int PID : j1PFConsPID) {
+    TotalPFCands++;
+    if ( abs(PID) == Hadron::Charged )
+      ChargedPFCands++;
+    else if ( abs(PID) == Hadron::Neutral )
+      NeutralPFCands++;
+    else if ( abs(PID) == Hadron::Gamma )
+      GammaPFCands++;
+    else
+      MiscPFCands++;
+  }
+  SetPtFrac();
 }
 
 vector<int> monoJetAnalysis::getLooseJet(float jetPtCut,float jetEtaCut) {
