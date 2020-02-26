@@ -41,7 +41,5 @@
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017F/0003/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017F/0004/
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017F/0005/
-
->>F
 /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/MET/MET2017Fv1/0000/
 
