@@ -1,5 +1,19 @@
 from collections import OrderedDict
 class CondorConfig(OrderedDict):
+    def __init__(self,fname=None):
+        OrderedDict.__init__(self)
+        if fname is None: return
+        with open(fname,'r') as f:
+            for line in f.readlines():
+                pair = line.strip('\n').split('=')
+                if len(pair) != 2: continue
+                key,value = pair
+                key = key.strip()
+                if 'Argument' not in key:
+                    self[key] = value
+                else:
+                    if key not in self: self[key] = []
+                    self[key].append(value)
     def __str__(self):
         if not any(self): return str(self)
         nspace = max( len(element) for element in self )
