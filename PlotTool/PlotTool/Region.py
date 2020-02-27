@@ -33,6 +33,7 @@ parser.add_argument("--normalize",help="Specify to normalize plots to unity",act
 parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
 parser.add_argument("--no-width",help="Disable bin width scaling",action="store_true",default=False)
 parser.add_argument("--nlo",help="Use all available NLO samples",action="store_true",default=False)
+parser.add_argument("--postpath",help="Force path to come from postpath.txt",action="store_true",default=False)
 
 class Region(object):
     def __init__(self,year=None,region=None,lumi=None,path=None,config=None,autovar=False,useMaxLumi=False,copy=None,show=True):
@@ -115,7 +116,8 @@ class Region(object):
         os.chdir(self.path); self.path = os.getcwd()
         hasLocalFiles = any( re.search('post.*\.root',fname) for fname in os.listdir('.') )
         hasOutputFiles = os.path.isdir('.output') and any( re.search('post.*\.root',fname) for fname in os.listdir('.output') )
-        if os.path.isfile('postpath.txt') and not (hasLocalFiles or hasOutputFiles):
+        useLocal = not self.args.postpath and (hasLocalFiles and hasOutputFiles)
+        if os.path.isfile('postpath.txt') and not useLocal:
             with open('postpath.txt') as f: self.path = f.read().strip()
             os.chdir(self.path); self.path = os.getcwd()
         print 'Using %s' % self.path
