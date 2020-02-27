@@ -96,12 +96,12 @@ def fillStack(samples,hs_datamc,threshold=0.001):
             samples.MCOrder.remove(process)
 ###################################################################
 
-def getLegend(xmin=0.75,ymin=0.5,xmax=0.95,ymax=0.887173):
+def getLegend(xmin=0.75,ymin=0.5,xmax=0.95,ymax=0.887173,textsize=0.032):
     leg = TLegend(xmin,ymin,xmax,ymax,"")
     boundaries.append( Box(xmin,ymin,xmax,ymax) )
     leg.SetFillColor(kWhite);
     leg.SetFillStyle(0);
-    leg.SetTextSize(0.025);
+    leg.SetTextSize(textsize);
     store.append(leg)
     return leg
 ###################################################################

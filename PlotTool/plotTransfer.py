@@ -65,7 +65,7 @@ def SetBounds(tf,num_sample,den_sample):
     avg = sum( ibin for ibin in bins ) / len(bins)
     maxdiff = max( abs(ibin - avg) for ibin in bins )
     tf.histo.SetMinimum( 0 )
-    tf.histo.SetMaximum( 2*avg )
+    tf.histo.SetMaximum( avg + 5*maxdiff )
     return
     if not any(varmap): return
     yrange = varmap[num_sample.region][den_sample.region]
@@ -246,33 +246,33 @@ def plotTransfer(variable,samplemap):
         samplemap[region].initiate(variable)
         samplemap[region].fullUnc(Transfer.tranunc,stat=True,show=False)
 
-    print "Z/W Linking"
-    samplemap["SignalRegion"].num_boson = "Z"
-    samplemap["SignalRegion"].den_boson = "W"
-    plotTF(samplemap["SignalRegion"],samplemap["SignalRegion"])
+    # print "Z/W Linking"
+    # samplemap["SignalRegion"].num_boson = "Z"
+    # samplemap["SignalRegion"].den_boson = "W"
+    # plotTF(samplemap["SignalRegion"],samplemap["SignalRegion"])
 
-    print "Z/G Linking"
-    samplemap["SignalRegion"].num_boson = "Z"
+    # print "Z/G Linking"
+    # samplemap["SignalRegion"].num_boson = "Z"
     samplemap["GammaCR"].den_boson = "G"
-    plotTF(samplemap["SignalRegion"],samplemap["GammaCR"])
+    # plotTF(samplemap["SignalRegion"],samplemap["GammaCR"])
     
-    print "DoubleEleCR Transfer"
-    samplemap["SignalRegion"].num_boson = "Z"
+    # print "DoubleEleCR Transfer"
+    # samplemap["SignalRegion"].num_boson = "Z"
     samplemap["DoubleEleCR"].den_boson = "Z"
-    plotTF(samplemap["SignalRegion"],samplemap["DoubleEleCR"])
-    print "DoubleMuCR Transfer"
-    samplemap["SignalRegion"].num_boson = "Z"
+    # plotTF(samplemap["SignalRegion"],samplemap["DoubleEleCR"])
+    # print "DoubleMuCR Transfer"
+    # samplemap["SignalRegion"].num_boson = "Z"
     samplemap["DoubleMuCR"].den_boson = "Z"
-    plotTF(samplemap["SignalRegion"],samplemap["DoubleMuCR"])
+    # plotTF(samplemap["SignalRegion"],samplemap["DoubleMuCR"])
     
-    print "SingleEleCR Transfer"
-    samplemap["SignalRegion"].num_boson = "W"
+    # print "SingleEleCR Transfer"
+    # samplemap["SignalRegion"].num_boson = "W"
     samplemap["SingleEleCR"].den_boson = "W"
-    plotTF(samplemap["SignalRegion"],samplemap["SingleEleCR"])
-    print "SingleMuCR Transfer"
-    samplemap["SignalRegion"].num_boson = "W"
+    # plotTF(samplemap["SignalRegion"],samplemap["SingleEleCR"])
+    # print "SingleMuCR Transfer"
+    # samplemap["SignalRegion"].num_boson = "W"
     samplemap["SingleMuCR"].den_boson = "W"
-    plotTF(samplemap["SignalRegion"],samplemap["SingleMuCR"])
+    # plotTF(samplemap["SignalRegion"],samplemap["SingleMuCR"])
 
     print "Electron CR W/G Linking"
     samplemap["SingleEleCR"].num_boson = "W"
@@ -308,7 +308,7 @@ def plotTransfer(variable,samplemap):
 
 def runAll(args):
     scale_lumi = max(config.lumi.values())
-    samplemap = { region:Region(path=region,show=False,lumi=scale_lumi,autovar=True) for region in config.regions }
+    samplemap = { region:Region(path=region,show=False,lumi=scale_lumi,autovar=True) for region in config.regions if region != 'SignalRegion'}
     for variable in args.argv: plotTransfer(variable,samplemap)
 
 if __name__ == "__main__":
