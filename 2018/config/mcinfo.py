@@ -59,7 +59,7 @@ xsec = {
 "postZ1200to2500":3.425e-01,
 "postZ2500toInf":5.263e-03,
     
-"postW70to100":0, # need to calculate
+"postW70to100":1.293e+03,
 "postW100to200":1.392e+03,
 "postW200to400":4.103e+02,
 "postW400to600":5.785e+01,
@@ -91,7 +91,7 @@ xsec = {
 "postST_tW_top_5f":3.491e+01,
 "postST_t_top_4f":0, #need to caluclate
 
-"postQCD50to100":0, #need to caluclate
+"postQCD50to100":1.856e+08, #need to caluclate
 "postQCD100to200":2.366e+07,
 "postQCD200to300":1.549e+06,
 "postQCD300to500":3.230e+05,
