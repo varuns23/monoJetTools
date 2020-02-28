@@ -54,6 +54,24 @@ rangemap = {
         "DoubleLepCR" : {
             "SingleLepCR" : (0,0.3)
         }
+    },
+    "ChNemPtFrac" : { 
+        "SignalRegion" : {
+            "SignalRegion" : (0,5),
+            "SingleEleCR" :  (0,6),
+            "SingleMuCR" : (0,6),
+            "DoubleEleCR" : (0,25),
+            "DoubleMuCR" : (0,15),
+        },
+        "DoubleMuCR" : {
+            "SingleMuCR" : (0,0.25)
+        },
+        "DoubleEleCR" : {
+            "SingleEleCR" : (0,0.45)
+        },
+        "DoubleLepCR" : {
+            "SingleLepCR" : (0,0.25)
+        }
     }
 }
 
@@ -66,8 +84,9 @@ def SetBounds(tf,num_sample,den_sample):
     maxdiff = max( abs(ibin - avg) for ibin in bins )
     tf.histo.SetMinimum( 0 )
     tf.histo.SetMaximum( avg + 5*maxdiff )
-    return
     if not any(varmap): return
+    if num_sample.region not in varmap: return
+    if den_sample.region not in varmap[num_sample.region]: return
     yrange = varmap[num_sample.region][den_sample.region]
     tf.histo.SetMinimum(yrange[0]); tf.histo.SetMaximum(yrange[1])
 def plotTF(num_sample,den_sample):
@@ -202,8 +221,8 @@ def plotTF_datamc(num_sample,den_sample):
     pad2.SetBottomMargin(0.35);
         
     datamc = GetRatio(tf_data.histo,tf_proc.histo)
-    # rymin = 0.65; rymax = 1.35
-    rymin = 0.35; rymax = 1.75
+    rymin = 0.65; rymax = 1.35
+    # rymin = 0.35; rymax = 1.75
     RatioStyle(datamc,rymin,rymax)
     datamc.Draw("A");
 
