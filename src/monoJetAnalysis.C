@@ -716,6 +716,10 @@ void monoJetAnalysis::initVars() {
     prefiringweight = 1;
     prefiringweightup = 1;
     prefiringweightdown = 1;
+  } else if (isSignal) {
+    prefiringweight = 1;
+    prefiringweightup = 1;
+    prefiringweightdown = 1;
   } else {
     if (apply_correction) {
       pfMET = pfMETCorr;
@@ -1185,7 +1189,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("nGoodVtx", &nGoodVtx, &b_nGoodVtx);
   fChain->SetBranchAddress("rho", &rho, &b_rho);
   fChain->SetBranchAddress("rhoCentral", &rhoCentral, &b_rhoCentral);
-  if ( YEAR == 2017 ) {
+  if ( YEAR == 2017 && !isSignal ) {
     fChain->SetBranchAddress("prefiringweight",&prefiringweight,&b_prefiringweight);
     fChain->SetBranchAddress("prefiringweightup",&prefiringweightup,&b_prefiringweightup);
     fChain->SetBranchAddress("prefiringweightdown",&prefiringweightdown,&b_prefiringweightdown);
@@ -1314,7 +1318,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("jetConstEta", &jetConstEta, &b_jetConstEta);
   fChain->SetBranchAddress("jetConstPhi", &jetConstPhi, &b_jetConstPhi);
   fChain->SetBranchAddress("jetConstPdgId", &jetConstPdgId, &b_jetConstPdgId);
-  if (isMC && apply_correction) {
+  if (isMC && !isSignal && apply_correction) {
     fChain->SetBranchAddress("jetP4Smear", &jetP4Smear, &b_jetP4Smear);
     fChain->SetBranchAddress("jetP4SmearUp", &jetP4SmearUp, &b_jetP4SmearUp);
     fChain->SetBranchAddress("jetP4SmearDo", &jetP4SmearDo, &b_jetP4SmearDo);
@@ -1450,7 +1454,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("caloMETsumEt", &caloMETsumEt, &b_caloMETsumEt);
   fChain->SetBranchAddress("pfMET", &pfMET, &b_pfMET);
   fChain->SetBranchAddress("pfMETPhi", &pfMETPhi, &b_pfMETPhi);
-  if (isMC && apply_correction) {
+  if (isMC && !isSignal && apply_correction) {
     fChain->SetBranchAddress("pfMETCorr", &pfMETCorr, &b_pfMETCorr);
     fChain->SetBranchAddress("pfMETPhiCorr", &pfMETPhiCorr, &b_pfMETPhiCorr);
   }
