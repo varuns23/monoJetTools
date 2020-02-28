@@ -12,7 +12,8 @@ SR:=monoJetSignalRegion
 
 LIBRARY:=$(addprefix $(ROOT)$(BIN),ScaleUncCollection.o ShapeUncCollection.o Utilities.o Dataset.o)
 INCLUDE:=$(addprefix $(ROOT)$(INC),monoJetCutConfig.h Dataset.h VariableBins.h ScaleUncCollection.h ShapeUncCollection.h Utilities.h)
-OBJECTS:=$(BIN)monoJetClass.o $(YEAR)$(BIN)monoJetYear.o $(ROOT)$(BIN)$(SR).o $(ROOT)$(BIN)monoJetAnalysis.o $(LIBRARY)SOURCES:=$(subst $(BIN),$(SRC),$(OBJECTS:.o=.C))
+OBJECTS:=$(BIN)monoJetClass.o $(YEAR)$(BIN)monoJetYear.o $(ROOT)$(BIN)$(SR).o $(ROOT)$(BIN)monoJetAnalysis.o $(LIBRARY)
+SOURCES:=$(subst $(BIN),$(SRC),$(OBJECTS:.o=.C))
 
 .PHONY:test clean condor_clean hadd bin
 
