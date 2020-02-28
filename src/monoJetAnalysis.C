@@ -541,7 +541,7 @@ vector<int> monoJetAnalysis::tau_veto_looseID(int jetindex,float tauPtCut,float 
 void monoJetAnalysis::SetBoson(int PID) {
   bosonPt = 0;
   for (int i = 0; i < nMC; i++){
-    if((*mcPID)[i] == PID && (mcStatusFlag->at(i)>>2&1) == 1){
+    if( abs((*mcPID)[i]) == PID && (mcStatusFlag->at(i)>>2&1) == 1){
       bosonPt = (*mcPt)[i];
       SetKFactors(bosonPt);
     }
