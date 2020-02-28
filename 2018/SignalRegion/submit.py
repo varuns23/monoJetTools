@@ -12,6 +12,7 @@ options['parallel'] = True
 options['batchsize'] = 100
 # options['submit'] = False
 #----Submit---#
-submit('met',sub='A',filelist=True)
+# submit('met',sub='A',filelist=True)
+submit('signal',split=1)
 for mc in mclist: submit(mc)
 

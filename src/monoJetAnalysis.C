@@ -281,10 +281,15 @@ vector<int> monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jet
   vector<int> tmpCand; tmpCand.clear();
   for(int i = 0; i < nJet; i++){
     bool tightJetID = (jetID->at(i)>>0&1) == 1;
-    bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
-    bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
-    if (tightJetID && kinematics && cleaning)
-      tmpCand.push_back(i);
+    if (tightJetID) {
+      bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
+      bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
+      if (kinematics && cleaning) {
+	tmpCand.push_back(i);
+	return tmpCand;
+      }
+      return tmpCand;
+    }
   }
   return tmpCand;
 }
@@ -293,10 +298,15 @@ vector<int> monoJetAnalysis::getJetCand(vector<int> jetlist,float jetPtCut,float
   vector<int> tmpCand; tmpCand.clear();
   for(int i : jetlist){
     bool tightJetID = (jetID->at(i)>>0&1) == 1;
-    bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
-    bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
-    if (tightJetID && kinematics && cleaning)
-      tmpCand.push_back(i);
+    if (tightJetID) {
+      bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
+      bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
+      if (kinematics && cleaning) {
+	tmpCand.push_back(i);
+	return tmpCand;
+      }
+      return tmpCand;
+    }
   }
   return tmpCand;
 }
@@ -650,7 +660,7 @@ vector<int> monoJetAnalysis::tau_veto_looseID(int jetindex,float tauPtCut,float 
 void monoJetAnalysis::SetBoson(int PID) {
   bosonPt = 0;
   for (int i = 0; i < nMC; i++){
-    if((*mcPID)[i] == PID && (mcStatusFlag->at(i)>>2&1) == 1){
+    if( abs((*mcPID)[i]) == PID && (mcStatusFlag->at(i)>>2&1) == 1){
       bosonPt = (*mcPt)[i];
       SetKFactors(bosonPt);
     }
@@ -822,6 +832,10 @@ void monoJetAnalysis::initVars() {
     // genWeight is used for the total events rather than event_weight since it has pileup and kfactors applied at the beginning
     // data doesn't have genWeight so set it to 1
     genWeight = 1;
+    prefiringweight = 1;
+    prefiringweightup = 1;
+    prefiringweightdown = 1;
+  } else if (isSignal) {
     prefiringweight = 1;
     prefiringweightup = 1;
     prefiringweightdown = 1;
@@ -1294,7 +1308,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("nGoodVtx", &nGoodVtx, &b_nGoodVtx);
   fChain->SetBranchAddress("rho", &rho, &b_rho);
   fChain->SetBranchAddress("rhoCentral", &rhoCentral, &b_rhoCentral);
-  if ( YEAR == 2017 ) {
+  if ( YEAR == 2017 && !isSignal ) {
     fChain->SetBranchAddress("prefiringweight",&prefiringweight,&b_prefiringweight);
     fChain->SetBranchAddress("prefiringweightup",&prefiringweightup,&b_prefiringweightup);
     fChain->SetBranchAddress("prefiringweightdown",&prefiringweightdown,&b_prefiringweightdown);
@@ -1423,7 +1437,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("jetConstEta", &jetConstEta, &b_jetConstEta);
   fChain->SetBranchAddress("jetConstPhi", &jetConstPhi, &b_jetConstPhi);
   fChain->SetBranchAddress("jetConstPdgId", &jetConstPdgId, &b_jetConstPdgId);
-  if (isMC && apply_correction) {
+  if (isMC && !isSignal && apply_correction) {
     fChain->SetBranchAddress("jetP4Smear", &jetP4Smear, &b_jetP4Smear);
     fChain->SetBranchAddress("jetP4SmearUp", &jetP4SmearUp, &b_jetP4SmearUp);
     fChain->SetBranchAddress("jetP4SmearDo", &jetP4SmearDo, &b_jetP4SmearDo);
@@ -1559,7 +1573,7 @@ void monoJetAnalysis::Init(TTree *tree)
   fChain->SetBranchAddress("caloMETsumEt", &caloMETsumEt, &b_caloMETsumEt);
   fChain->SetBranchAddress("pfMET", &pfMET, &b_pfMET);
   fChain->SetBranchAddress("pfMETPhi", &pfMETPhi, &b_pfMETPhi);
-  if (isMC && apply_correction) {
+  if (isMC && !isSignal && apply_correction) {
     fChain->SetBranchAddress("pfMETCorr", &pfMETCorr, &b_pfMETCorr);
     fChain->SetBranchAddress("pfMETPhiCorr", &pfMETPhiCorr, &b_pfMETPhiCorr);
   }
