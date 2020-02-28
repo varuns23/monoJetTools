@@ -9,9 +9,10 @@
 #define monoJetClass_h
 
 #include "monoJetYear.h"
+#include "monoJetSignalRegion.h"
 
 using namespace std;
-class monoJetClass : public monoJetYear {
+class monoJetClass : public monoJetYear, public monoJetSignalRegion {
 public :
   static const int nHisto = 13;
   static const int bHisto = 12;

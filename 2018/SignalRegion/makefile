@@ -8,9 +8,11 @@ INC:=inc/
 BIN:=bin/
 SCRIPTS:=scripts/
 
+SR:=monoJetSignalRegion
+
 LIBRARY:=$(addprefix $(ROOT)$(BIN),ScaleUncCollection.o ShapeUncCollection.o Utilities.o Dataset.o)
 INCLUDE:=$(addprefix $(ROOT)$(INC),monoJetCutConfig.h Dataset.h VariableBins.h ScaleUncCollection.h ShapeUncCollection.h Utilities.h)
-OBJECTS:=$(BIN)monoJetClass.o $(YEAR)$(BIN)monoJetYear.o $(ROOT)$(BIN)monoJetAnalysis.o $(LIBRARY)
+OBJECTS:=$(BIN)monoJetClass.o $(YEAR)$(BIN)monoJetYear.o $(ROOT)$(BIN)$(SR).o $(ROOT)$(BIN)monoJetAnalysis.o $(LIBRARY)
 
 .PHONY:test clean condor_clean hadd bin
 
@@ -24,6 +26,9 @@ $(BIN)monoJetClass.o: $(SRC)monoJetClass.C $(INC)monoJetClass.h $(YEAR)$(INC)mon
 
 $(YEAR)$(BIN)monoJetYear.o: $(YEAR)$(SRC)monoJetYear.C $(YEAR)$(INC)monoJetYear.h $(ROOT)$(INC)monoJetAnalysis.h $(INCLUDE)
 	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) $(RFLAGS) -c $< -o $@
+
+$(ROOT)$(BIN)$(SR).o: $(ROOT)$(SRC)$(SR).C $(ROOT)$(INC)$(SR).h $(INCLUDE)
+	g++ -I$(ROOT)$(INC) $(RFLAGS) -c $< -o $@
 
 $(ROOT)$(BIN)monoJetAnalysis.o: $(ROOT)$(SRC)monoJetAnalysis.C $(ROOT)$(INC)monoJetAnalysis.h $(INCLUDE)
 	g++ -I$(ROOT)$(INC) $(RFLAGS) -c $< -o $@
