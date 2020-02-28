@@ -225,10 +225,15 @@ vector<int> monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jet
   vector<int> tmpCand; tmpCand.clear();
   for(int i = 0; i < nJet; i++){
     bool tightJetID = (jetID->at(i)>>0&1) == 1;
-    bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
-    bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
-    if (tightJetID && kinematics && cleaning)
-      tmpCand.push_back(i);
+    if (tightJetID) {
+      bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
+      bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
+      if (kinematics && cleaning) {
+	tmpCand.push_back(i);
+	return tmpCand;
+      }
+      return tmpCand;
+    }
   }
   return tmpCand;
 }
@@ -237,10 +242,15 @@ vector<int> monoJetAnalysis::getJetCand(vector<int> jetlist,float jetPtCut,float
   vector<int> tmpCand; tmpCand.clear();
   for(int i : jetlist){
     bool tightJetID = (jetID->at(i)>>0&1) == 1;
-    bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
-    bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
-    if (tightJetID && kinematics && cleaning)
-      tmpCand.push_back(i);
+    if (tightJetID) {
+      bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
+      bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
+      if (kinematics && cleaning) {
+	tmpCand.push_back(i);
+	return tmpCand;
+      }
+      return tmpCand;
+    }
   }
   return tmpCand;
 }
