@@ -13,6 +13,7 @@ CR:=monoJetSingleEleCR
 LIBRARY:=$(addprefix $(ROOT)$(BIN),ScaleUncCollection.o ShapeUncCollection.o Utilities.o Dataset.o)
 INCLUDE:=$(addprefix $(ROOT)$(INC),monoJetCutConfig.h Dataset.h VariableBins.h ScaleUncCollection.h ShapeUncCollection.h Utilities.h)
 OBJECTS:=$(BIN)monoJetClass.o $(YEAR)$(BIN)monoJetYear.o $(ROOT)$(BIN)$(CR).o $(ROOT)$(BIN)monoJetAnalysis.o $(LIBRARY)
+SOURCES:=$(subst $(BIN),$(SRC),$(OBJECTS:.o=.C))
 
 .PHONY:test clean condor_clean hadd bin
 
@@ -35,6 +36,9 @@ $(ROOT)$(BIN)monoJetAnalysis.o: $(ROOT)$(SRC)monoJetAnalysis.C $(ROOT)$(INC)mono
 
 $(ROOT)$(BIN)%.o: $(ROOT)$(SRC)%.C $(ROOT)$(INC)%.h
 	g++ -I$(ROOT)$(INC) $(RFLAGS) -c $< -o $@
+
+profiler: $(ROOT)$(SCRIPTS)profiler.C $(OBJECTS)
+	g++ $(PROFILER) -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(INC) $(RFLAGS) $(WARNINGS) $< $(SOURCES) -o $@
 
 bin:
 	mkdir -p $(BIN)

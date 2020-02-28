@@ -1,5 +1,5 @@
-
 RFLAGS:=-I$ROOTSYS/include -L$ROOTSYS/lib `root-config --cflags` `root-config --libs` -lFoam -lMathMore -Wno-deprecated
+PROFILER:=-Wall -g -pg -O0 -fno-inline 
 
 ROOT:=../../
 YEAR:=../
@@ -12,14 +12,14 @@ SR:=monoJetSignalRegion
 
 LIBRARY:=$(addprefix $(ROOT)$(BIN),ScaleUncCollection.o ShapeUncCollection.o Utilities.o Dataset.o)
 INCLUDE:=$(addprefix $(ROOT)$(INC),monoJetCutConfig.h Dataset.h VariableBins.h ScaleUncCollection.h ShapeUncCollection.h Utilities.h)
-OBJECTS:=$(BIN)monoJetClass.o $(YEAR)$(BIN)monoJetYear.o $(ROOT)$(BIN)$(SR).o $(ROOT)$(BIN)monoJetAnalysis.o $(LIBRARY)
+OBJECTS:=$(BIN)monoJetClass.o $(YEAR)$(BIN)monoJetYear.o $(ROOT)$(BIN)$(SR).o $(ROOT)$(BIN)monoJetAnalysis.o $(LIBRARY)SOURCES:=$(subst $(BIN),$(SRC),$(OBJECTS:.o=.C))
 
 .PHONY:test clean condor_clean hadd bin
 
 analyze: $(ROOT)$(SCRIPTS)analyze.C $(OBJECTS)
 	@if [ ! -d RootFiles ]; then ln -s $(YEAR)RootFiles/; fi
 	@if [ ! -d PlotTool ]; then ln -s $(ROOT)PlotTool/; fi
-	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(INC) $(RFLAGS) $(WARNINGS) $< $(OBJECTS) -o $@
+	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(INC) $(RFLAGS) $< $(OBJECTS) -o $@
 
 $(BIN)monoJetClass.o: $(SRC)monoJetClass.C $(INC)monoJetClass.h $(YEAR)$(INC)monoJetYear.h $(ROOT)$(INC)monoJetAnalysis.h $(INCLUDE)
 	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(INC) $(RFLAGS) -c $< -o $@
@@ -35,6 +35,9 @@ $(ROOT)$(BIN)monoJetAnalysis.o: $(ROOT)$(SRC)monoJetAnalysis.C $(ROOT)$(INC)mono
 
 $(ROOT)$(BIN)%.o: $(ROOT)$(SRC)%.C $(ROOT)$(INC)%.h
 	g++ -I$(ROOT)$(INC) $(RFLAGS) -c $< -o $@
+
+profiler: $(ROOT)$(SCRIPTS)profiler.C $(OBJECTS)
+	g++ $(PROFILER) -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(INC) $(RFLAGS) $(WARNINGS) $< $(SOURCES) -o $@
 
 bin:
 	mkdir -p $(BIN)
