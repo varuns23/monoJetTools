@@ -35,10 +35,9 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
             HigherDimension(samples,variable)
         else:
             samples.initiate(variable)
-            samples.hasUncertainty = any(samples.args.uncertainty) and any(Nuisance.unclist)
-            if samples.hasUncertainty: samples.fullUnc(samples.args.uncertainty,stat=True)
+            if samples.isBlinded: blinded = True
+            samples.fullUnc(samples.args.uncertainty,stat=True)
     if samples.args.no_plot: return
-    samples.hasUncertainty = any(samples.args.uncertainty) and any(Nuisance.unclist)
     if samples['Data'].histo.Integral() == 0: blinded = True
     xwidth,ywidth = samples.args.dimension # default is 800,800
     c = TCanvas("c", "canvas",xwidth,ywidth);
@@ -94,10 +93,10 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
             if samples[mc].scaled_total == 0: continue
             leg.AddEntry(samples[mc].histo,samples[mc].leg,'f')
 
-    if samples.hasUncertainty:
-        uncband = samples.getUncBand(samples.args.uncertainty,stat=True)
-        UncBandStyle(uncband)
-        leg.AddEntry(uncband,"syst #otimes stat",'f')
+    uncband = samples.getUncBand(samples.args.uncertainty,stat=True)
+    UncBandStyle(uncband)
+    uncband_leg = 'syst #otimes stat' if any(samples.args.uncertainty) else 'stat'
+    leg.AddEntry(uncband,uncband_leg,'f')
         
     leg.Draw();
 
@@ -129,10 +128,8 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
         
         RatioStyle(Ratio,xname=samples.name)
         Ratio.Draw("pex0");
-        
-        if samples.hasUncertainty:
-            uncband.Draw('2same')
-        # Ratio.Draw('pex0same')
+        uncband.Draw('2same')
+        Ratio.Draw('pex0same')
         line = getRatioLine(data.histo.GetXaxis().GetXmin(),data.histo.GetXaxis().GetXmax())
         line.Draw("same");
         

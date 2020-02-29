@@ -9,6 +9,7 @@ def store(variable):
     output = TFile("Output/monojet_%s_%s.root" % (variable,config.version),"RECREATE")
     cwd = os.getcwd()
     regionmap = {
+        "SignalRegion":"signal",
         "SingleEleCR":"Wen",
         "SingleMuCR":"Wmn",
         "DoubleEleCR":"Zee",

@@ -57,7 +57,8 @@ class Region(object):
         if self.args.era is not None:
             self.lumimap = { era:self.lumimap[era] for era in self.args.era }
             self.lumi = sum(self.lumimap.values())
-        if useMaxLumi: self.lumi = max( config.lumi.values() )
+        self.max_lumi = max( config.lumi.values() )
+        if useMaxLumi: self.lumi = self.max_lumi
             
         self.lumi_label = '%s' % float('%.3g' % (self.lumi/1000.)) + " fb^{-1}"
         if (self.args.normalize): self.lumi_label="Normalized"
@@ -65,6 +66,8 @@ class Region(object):
         if autovar: self.nhist = config.regions[self.region]
         if self.args.autovar: self.nhist = config.regions[self.region]
         if self.args.nhists == -1: self.args.nhists = int(config.regions[self.region])
+
+        self.isBlinded = False
 
         self.MCList = []
         for mc in config.mclist:
@@ -158,10 +161,15 @@ class Region(object):
         proclist = self.processes.keys()
         for process in proclist:
             if not self[process].open():
+                if self[process].proctype == 'data':
+                    print 'Blinded: Setting data as SumOfBkg'
+                    self.isBlinded = True
                 self.processes.pop(process)
                 if process in self.SampleList: self.SampleList.remove(process)
                 if process in self.MCList: self.MCList.remove(process)
                 if hasattr(self,'SignalList') and process in self.SignalList: self.SignalList.remove(process)
+        if self.isBlinded:
+            for process in self: process.setLumi(self.max_lumi)
     def initiate(self,variable,weight=None):
         if os.getcwd() != self.path: os.chdir(self.path)
         self.initVariable(variable,weight)
@@ -175,12 +183,17 @@ class Region(object):
             else:
                 return self[process].scaled_total
         for process in self:
+            if self.isBlinded and process.proctype == 'data': continue
             process.setVariable(variable,b_info.template,b_info.weight,b_info.cut)
             self.scaleWidth = process.scaleWidth
             if process.proctype == 'bkg':
                 self.total_bkg += process.scaled_total
                 self.MCOrder.append(process.process); self.MCOrder.sort(key=mcsort,reverse=True)
         self.setXaxisTitle(variable)
+        if self.isBlinded:
+            self.setSumOfBkg()
+            self.processes['Data'] = Process(copy=self['SumOfBkg'])
+            self['Data'].proctype = 'data'
         if self.show: self.output()
         if os.getcwd() != self.cwd: os.chdir(self.cwd)
     def output(self):
@@ -200,7 +213,7 @@ class Region(object):
         ratio = ('%.6g' % (self.processes['Data'].scaled_total/self.total_bkg)) if self.total_bkg != 0 else 'Nan'
         print '            %s: %s' % (ntemp.format('data/mc'),itemp.format(ratio))
     def setSumOfBkg(self):
-        sumofbkg = Process('SumOfBkg',[],{},'sumofbkg',year=self.year,region=self.region)
+        sumofbkg = Process('SumOfBkg',[],{},'sumofbkg',year=self.year,region=self.region,args=self.args,config=self.config)
         for process in self:
             if process.proctype == 'bkg':
                 sumofbkg.add(process)

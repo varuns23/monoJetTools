@@ -222,6 +222,9 @@ class Process(object):
                 self.subprocesses.pop(subkey)
                 self.sublist.remove(subkey)
         return any(self)
+    def setLumi(self,lumi):
+        self.lumi = lumi
+        for subprocess in self: subprocess.lumi = lumi
     def initVariable(self):
         for subprocess in self: subprocess.initVariable()
         self.histo = None

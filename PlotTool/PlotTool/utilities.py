@@ -63,6 +63,11 @@ def GetRegion():
                 if any( pattern in fname for fname in os.listdir('.output/') ): found = True; break
             if any( pattern in fname for fname in os.listdir('.') ): found = True; break
         os.chdir(cwd)
+    if not found:
+        dirname = os.path.basename( os.getcwd() )
+        for region in RegionName:
+            if region in dirname:
+                found = True; break;
     if not found: return None
     return region
 def GetMCxsec(filenames,xsecMap):
