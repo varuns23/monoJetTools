@@ -1691,7 +1691,7 @@ void monoJetAnalysis::PSWeights(float event_weight) {
 			  "isr_G2GG_muR","isr_G2QQ_muR","isr_Q2QG_muR","isr_X2XG_muR",
 			  "isr_G2GG_cNS","isr_G2QQ_cNS","isr_Q2QG_cNS","isr_X2XG_cNS"  };
   if ( !scaleUncs.contains("PSW_"+pswlist[0]) ) {
-    TFile* file = TFile::Open("RootFiles/PSW_2018_SF.root");
+    TFile* file = TFile::Open("RootFiles/theory/unc/PSW_2018_SF.root");
     string prefix = "";
     if (isWZG()) {
       switch(type) {
