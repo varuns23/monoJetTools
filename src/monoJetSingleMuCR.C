@@ -16,9 +16,9 @@ void monoJetSingleMuCR::initVars() {
 }
 
 void monoJetSingleMuCR::initTree(TTree* tree) {
-  tree->Branch("LeptonPt",&lepton_pt,"Lepton P_{T} (GeV)");
-  tree->Branch("LeptonEta",&lepton_eta,"Lepton Eta");
-  tree->Branch("LeptonPhi",&lepton_phi,"LeptonPhi");
+  // tree->Branch("LeptonPt",&lepton_pt,"Lepton P_{T} (GeV)");
+  // tree->Branch("LeptonEta",&lepton_eta,"Lepton Eta");
+  // tree->Branch("LeptonPhi",&lepton_phi,"LeptonPhi");
   tree->Branch("tightID_sf",&tightID_sf);
   tree->Branch("tightISO_sf",&tightISO_sf);
 }
@@ -51,16 +51,20 @@ bool monoJetSingleMuCR::CRSelection(vector<int> tight,vector<int> loose) {
 
     lepton_pt = lep.Pt();
     lepton_eta = muEta->at(lepindex);
-    lepton_phi = muPhi->at(lepindex); 
+    lepton_phi = muPhi->at(lepindex);
+    setRecoil(lepindex);
+    return true;
+  }
+  return false;
+}
+
+void monoJetSingleMuCR::setRecoil(int lepindex) {
     lepMET_mt = getMt(muPt->at(lepindex),muPhi->at(lepindex),pfMET,pfMETPhi);
     TLorentzVector met_4vec;
     met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
     TLorentzVector leptoMET_4vec = lep+met_4vec;
     recoil = fabs(leptoMET_4vec.Pt());
     recoilPhi = leptoMET_4vec.Phi();
-    return true;
-  }
-  return false;
 }
 
 float monoJetSingleMuCR::getSF(int lepindex) {
@@ -74,19 +78,13 @@ float monoJetSingleMuCR::getSF(int lepindex) {
 }
 
 
-vector<int> monoJetSingleMuCR::getJetCand(vector<int> jetlist, int lead_lepIndex){  
-  vector<int> jet_cands;   
-  jet_cands.clear();       
-                    
-  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);       
-  for(int i : tmpcands){
-    float dR_lead_mu = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lead_lepIndex),  muPhi->at(lead_lepIndex));
-                           
-    if(dR_lead_mu > 0.4)
-      jet_cands.push_back(i);
-  }                        
-                           
-  return jet_cands;        
+int monoJetSingleMuCR::getJetCand(int lead_lepIndex){  
+  int jetCand = monoJetAnalysis::getJetCand();
+  if (jetCand == -1) return -1;
+
+  float dr = deltaR(jetEta->at(jetCand),jetPhi->at(jetCand),muEta->at(lepindex),muPhi->at(lepindex));
+  if (dr > Iso4Cut) return jetCand;
+  return -1;     
 }
 
 

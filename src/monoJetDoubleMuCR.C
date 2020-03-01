@@ -20,14 +20,14 @@ void monoJetDoubleMuCR::initVars() {
 }
 
 void monoJetDoubleMuCR::initTree(TTree* tree) {
-  tree->Branch("dileptonM",&dilepton_mass,"Z Mass (GeV)");
-  tree->Branch("dileptonPt",&dilepton_pt,"Z P_{T} (GeV)");
-  tree->Branch("leadingLeptonPt",&leadingLepton_pt,"Leading Lepton P_{T} (GeV)");
-  tree->Branch("leadingLeptonEta",&leadingLepton_eta,"Leading Lepton Eta");
-  tree->Branch("leadingLeptonPhi",&leadingLepton_phi,"Leading Lepton Phi");
-  tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
-  tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
-  tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
+  // tree->Branch("dileptonM",&dilepton_mass,"Z Mass (GeV)");
+  // tree->Branch("dileptonPt",&dilepton_pt,"Z P_{T} (GeV)");
+  // tree->Branch("leadingLeptonPt",&leadingLepton_pt,"Leading Lepton P_{T} (GeV)");
+  // tree->Branch("leadingLeptonEta",&leadingLepton_eta,"Leading Lepton Eta");
+  // tree->Branch("leadingLeptonPhi",&leadingLepton_phi,"Leading Lepton Phi");
+  // tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
+  // tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
+  // tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
   tree->Branch("tightID_sf",&tightID_sf);
   tree->Branch("tightISO_sf",&tightISO_sf);
   tree->Branch("looseID_sf",&looseID_sf);
@@ -101,6 +101,15 @@ bool monoJetDoubleMuCR::CRSelection(vector<int> tightlist,vector<int> looselist)
   return false;
 }
 
+void monoJetDoubleMuCR::setRecoil(int leading,int subleading) {
+      TLorentzVector ll = lep1 + lep2;
+      TLorentzVector met_4vec;
+      met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
+      TLorentzVector leptoMET_4vec = ll+met_4vec;
+      recoil = fabs(leptoMET_4vec.Pt());
+      recoilPhi = leptoMET_4vec.Phi();
+}
+
 
 float monoJetDoubleMuCR::getSF(int leading,int subleading) {
   float leading_pt = muPt->at(leading); float leading_abseta = fabs(muEta->at(leading)); 
@@ -114,20 +123,14 @@ float monoJetDoubleMuCR::getSF(int leading,int subleading) {
   return tightID_sf * tightISO_sf * looseID_sf * looseISO_sf;
 }
 
-vector<int> monoJetDoubleMuCR::getJetCand(vector<int> jetlist, int lead_lepIndex, int sublead_lepIndex){
-  vector<int> jet_cands;
-  jet_cands.clear();
-  
-  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);
-  for(int i : tmpcands){
-    float dR_lead_mu = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lead_lepIndex),  muPhi->at(lead_lepIndex));
-    float dR_sublead_mu = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(sublead_lepIndex), muPhi->at(sublead_lepIndex));
+int monoJetDoubleMuCR::getJetCand(int leading,int subleading){
+  int jetCand = monoJetAnalysis::getJetCand();
+  if (jetCand == -1) return -1;
 
-    if(dR_lead_mu > 0.4 && dR_sublead_mu > 0.4)
-      jet_cands.push_back(i);
-  }
-
-  return jet_cands;
+  float dr_leading = deltaR(jetEta->at(jetCand),jetPhi->at(jetCand),muEta->at(leading),muPhi->at(leading));
+  float dr_subleading = deltaR(jetEta->at(jetCand),jetPhi->at(jetCand),muEta->at(subleading),muPhi->at(subleading));
+  if (dr_leading > Iso4Cut && dr_subleading > Iso4Cut) return jetCand;
+  return -1;
 }
 
 vector<int> monoJetDoubleMuCR::jet_veto(int leading, int subleading) {

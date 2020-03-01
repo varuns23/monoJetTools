@@ -42,6 +42,7 @@ public :
   }
   
   void JetEnergyScale(float start_weight);
+  void JetEnergyResolution(float start_weight);
 };
 
 #endif
