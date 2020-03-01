@@ -112,9 +112,9 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (recoil <= recoilCut) continue;
     fillEvent(14,event_weight);
 			    
-    jetCand = getJetCand(jetlist,lepindex);
-    if (jetCand.size() < 1) continue;
-    setJetCand(jetCand);
+    jetindex = getJetCand(lepindex);
+    if (jetindex == -1) continue;
+    setJetCand(jetindex);
     fillEvent(15,event_weight);
   }
 
@@ -154,3 +154,165 @@ void monoJetClass::fillHistos(int nhist,float event_weight) {
   weight = event_weight;
   if (nhist == bHisto) tree->Fill();
 }
+
+void monoJetClass::JetEnergyScale(float start_weight) {
+  string uncname = "JES";
+  if ( !shapeUncs.contains(uncname) ) {
+    shapeUncs.addUnc(uncname);
+    initTree(shapeUncs.getTreeUp(uncname));
+    initTree(shapeUncs.getTreeDn(uncname));
+  }
+
+  /* Initializing Variables */
+  int n_jetindex = jetindex;
+  vector<float> n_jetPt;
+  for (float pt : (*jetPt)) n_jetPt.push_back(pt);
+  float n_pfMET = pfMET;
+  float n_pfMETPhi = pfMETPhi;
+  float n_recoil = recoil;
+  float n_recoilPhi = recoilPhi;
+
+  int unclist[2] = {-1,1};
+  for (int unc : unclist) {
+    float event_weight = start_weight;
+    for (int i = 0; i < nJet; i++)
+      jetPt->at(i) = n_jetPt[i]*(1 + unc*jetJECUnc->at(i));
+    switch(unc) {
+    case  1:
+      pfMET = pfMET_T1JESUp;
+      pfMETPhi = pfMETPhi_T1JESUp;
+      break;
+    case -1:
+      pfMET = pfMET_T1JESDo;
+      pfMETPhi = pfMETPhi_T1JESDo;
+      break;
+    }
+    recoil = pfMET;
+    recoilPhi = pfMETPhi;
+
+    setRecoil(lepindex);
+
+    if (pfMET <= 50) continue;
+
+    if (lepMET_mt >= lepMETMtCut) continue;
+
+    if (!getMetFilter()) continue;
+	      
+    if (!muon_veto()) continue;
+
+    if (!photon_veto(lepindex)) continue;
+
+    if (!tau_veto(lepindex)) continue;
+
+    if (!bjet_veto(lepindex, bjetDeepCSVCut_2017)) continue;
+
+    vector<int> jetlist = jet_veto(lepindex);
+    float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+    if (mindPhiJetMET <= dPhiJetMETCut) continue;
+      
+    float dpfcalo = fabs(pfMET-caloMET)/recoil;
+    if (dpfcalo >= metRatioCut) continue;
+
+    if (recoil <= recoilCut) continue;
+
+    jetindex = getJetCand(lepindex);
+    if (jetindex == -1) continue;
+    setJetCand(jetindex);
+
+    weight = event_weight;
+    switch(unc) {
+    case  1: shapeUncs.fillUp(uncname); break;
+    case -1: shapeUncs.fillDn(uncname); break;
+    }
+  }
+
+  /* Reset Changed Variables */
+  for (int i = 0; i < nJet; i++)
+    jetPt->at(i) = n_jetPt[i];
+  jetindex = n_jetindex;
+  setJetCand(jetindex);
+  pfMET = n_pfMET;
+  pfMETPhi = n_pfMETPhi;
+  recoil = n_recoil;
+  recoilPhi = n_recoilPhi;
+  setRecoil(lepindex);
+}
+
+void monoJetClass::JetEnergyResolution(float start_weight) {
+  string uncname = "JER";
+  if ( !shapeUncs.contains(uncname) ) {
+    shapeUncs.addUnc(uncname);
+    initTree(shapeUncs.getTreeUp(uncname));
+    initTree(shapeUncs.getTreeDn(uncname));
+  }
+  if (isData || isSignal) return;
+  /* Initializing Variables */
+  int n_jetindex = jetindex;
+  vector<float> n_jetPt;
+  for (float pt : (*jetPt)) n_jetPt.push_back(pt);
+  float n_pfMET = pfMET;
+  float n_recoil = recoil;
+
+  int unclist[2] = {-1,1};
+  for (int unc : unclist) {
+    float event_weight = start_weight;
+    for (int i = 0; i < nJet; i++) {
+      switch(unc) {
+      case 1: jetPt->at(i) = jetUnCorrPt->at(i) * jetP4SmearUp->at(i); break;
+      case -1: jetPt->at(i) = jetUnCorrPt->at(i) * jetP4SmearDo->at(i); break;
+      }
+    }
+    switch(unc) {
+    case 1:
+      pfMET = pfMET_T1JERUp; break;
+    case -1:
+      pfMET = pfMET_T1JERDo; break;
+    }
+    recoil = pfMET;
+
+    setRecoil(lepindex);
+
+    if (pfMET <= 50) continue;
+
+    if (lepMET_mt >= lepMETMtCut) continue;
+
+    if (!getMetFilter()) continue;
+	      
+    if (!muon_veto()) continue;
+
+    if (!photon_veto(lepindex)) continue;
+
+    if (!tau_veto(lepindex)) continue;
+
+    if (!bjet_veto(lepindex, bjetDeepCSVCut_2017)) continue;
+
+    vector<int> jetlist = jet_veto(lepindex);
+    float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+    if (mindPhiJetMET <= dPhiJetMETCut) continue;
+      
+    float dpfcalo = fabs(pfMET-caloMET)/recoil;
+    if (dpfcalo >= metRatioCut) continue;
+
+    if (recoil <= recoilCut) continue;
+
+    jetindex = getJetCand(lepindex);
+    if (jetindex == -1) continue;
+    setJetCand(jetindex);
+
+    weight = event_weight;
+    switch(unc) {
+    case 1: shapeUncs.fillUp(uncname); break;
+    case -1: shapeUncs.fillDn(uncname); break;
+    }
+  }
+
+  /* Reset Changed Variables */
+  for (int i = 0; i < nJet; i++)
+    jetPt->at(i) = n_jetPt[i];
+  jetindex = n_jetindex;
+  setJetCand(jetindex);
+  pfMET = n_pfMET;
+  recoil = n_recoil;
+  setRecoil(lepindex);
+}
+
