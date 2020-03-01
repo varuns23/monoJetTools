@@ -1,12 +1,12 @@
 >>FXFX
-/hdfs/store/user/varuns/mc2017_2020Feb/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_job_TTJets_FXFX/200224_042347/0000/
-/hdfs/store/user/varuns/mc2017_2020Feb/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_job_TTJets_FXFX/200224_042347/0001/
-/hdfs/store/user/varuns/mc2017_2020Feb/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_job_TTJets_FXFX/200224_042347/0002/
-/hdfs/store/user/varuns/mc2017_2020Feb/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_job_TTJets_FXFX/200224_042347/0003/
-/hdfs/store/user/varuns/mc2017_2020Feb/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_job_TTJets_FXFX/200224_042347/0004/
-/hdfs/store/user/varuns/mc2017_2020Feb/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_job_TTJets_FXFX/200224_042347/0005/
-/hdfs/store/user/varuns/mc2017_2020Feb/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_job_TTJets_FXFX/200224_042347/0006/
-/hdfs/store/user/varuns/mc2017_2020Feb/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_job_TTJets_FXFX/200224_042347/0007/
-/hdfs/store/user/varuns/mc2017_2020Feb/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_job_TTJets_FXFX/200224_042347/0008/
-/hdfs/store/user/varuns/mc2017_2020Feb/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_job_TTJets_FXFX/200224_042347/0009/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0000/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0001/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0002/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0003/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0004/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0005/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0006/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0007/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0008/
+/hdfs/store/user/varuns/NTuples/MC/MC2017_12Apr2018_JECv32/TTJets/TTJets_FXFX/0009/
 
