@@ -51,7 +51,6 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
       }
     }
 
-
     fillEvent(0,genWeight);
 
     if (!getElectronTrigger()) continue;
@@ -82,6 +81,9 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
     if (!getMetFilter()) continue;
     fillEvent(6,event_weight);
+
+    JetEnergyScale(event_weight);
+    JetEnergyResolution(event_weight);
 	      
     if(!getJetHEMVeto())continue;                                                                                                                             
     fillEvent(7,event_weight);
@@ -115,6 +117,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     jetindex = getJetCand(lepindex);
     if (jetindex == -1) continue;
     setJetCand(jetindex);
+
+    QCDVariations(event_weight);
     fillEvent(15,event_weight);
   }
 
@@ -197,6 +201,8 @@ void monoJetClass::JetEnergyScale(float start_weight) {
     if (lepMET_mt >= lepMETMtCut) continue;
 
     if (!getMetFilter()) continue;
+    
+    if(!getJetHEMVeto())continue;   
 	      
     if (!muon_veto()) continue;
 
@@ -204,7 +210,7 @@ void monoJetClass::JetEnergyScale(float start_weight) {
 
     if (!tau_veto(lepindex)) continue;
 
-    if (!bjet_veto(lepindex, bjetDeepCSVCut_2017)) continue;
+    if (!bjet_veto(lepindex, bjetDeepCSVCut_2018)) continue;
 
     vector<int> jetlist = jet_veto(lepindex);
     float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
@@ -277,6 +283,8 @@ void monoJetClass::JetEnergyResolution(float start_weight) {
     if (lepMET_mt >= lepMETMtCut) continue;
 
     if (!getMetFilter()) continue;
+    
+    if(!getJetHEMVeto())continue;   
 	      
     if (!muon_veto()) continue;
 
@@ -284,7 +292,7 @@ void monoJetClass::JetEnergyResolution(float start_weight) {
 
     if (!tau_veto(lepindex)) continue;
 
-    if (!bjet_veto(lepindex, bjetDeepCSVCut_2017)) continue;
+    if (!bjet_veto(lepindex, bjetDeepCSVCut_2018)) continue;
 
     vector<int> jetlist = jet_veto(lepindex);
     float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);

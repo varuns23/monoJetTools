@@ -193,21 +193,15 @@ void monoJetClass::JetEnergyScale(float start_weight) {
     setRecoil(leadLepIndx,subleadLepIndx);
 
     if (!bjet_veto(leadLepIndx,subleadLepIndx, bjetDeepCSVCut_2017)) continue;
-    fillEvent(10,event_weight);
 
     vector<int> jetlist = jet_veto(leadLepIndx,subleadLepIndx);
     float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
-    if ( recoil > recoilCut) h_dphimin->Fill(mindPhiJetMET,event_weight);
     if (mindPhiJetMET <= dPhiJetMETCut) continue;
-    fillEvent(11,event_weight);
 
     float dpfcalo = fabs(pfMET-caloMET)/recoil;
-    if ( recoil > recoilCut) h_metcut->Fill(dpfcalo,event_weight);
     if (dpfcalo >= metRatioCut) continue;
-    fillEvent(12,event_weight);
     
     if (recoil <= recoilCut) continue;
-    fillEvent(13,event_weight);
 	
     jetindex = getJetCand(leadLepIndx,subleadLepIndx);
     if (jetindex == -1) continue;
@@ -267,21 +261,15 @@ void monoJetClass::JetEnergyResolution(float start_weight) {
     setRecoil(leadLepIndx,subleadLepIndx);
 
     if (!bjet_veto(leadLepIndx,subleadLepIndx, bjetDeepCSVCut_2017)) continue;
-    fillEvent(10,event_weight);
 
     vector<int> jetlist = jet_veto(leadLepIndx,subleadLepIndx);
     float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
-    if ( recoil > recoilCut) h_dphimin->Fill(mindPhiJetMET,event_weight);
     if (mindPhiJetMET <= dPhiJetMETCut) continue;
-    fillEvent(11,event_weight);
 
     float dpfcalo = fabs(pfMET-caloMET)/recoil;
-    if ( recoil > recoilCut) h_metcut->Fill(dpfcalo,event_weight);
     if (dpfcalo >= metRatioCut) continue;
-    fillEvent(12,event_weight);
     
     if (recoil <= recoilCut) continue;
-    fillEvent(13,event_weight);
 	
     jetindex = getJetCand(leadLepIndx,subleadLepIndx);
     if (jetindex == -1) continue;

@@ -78,6 +78,9 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!getMetFilter()) continue;
     fillEvent(5,event_weight);
 
+    JetEnergyScale(event_weight);
+    JetEnergyResolution(event_weight);
+
     if(!getJetHEMVeto())continue;                                                                                                                             
     fillEvent(6,event_weight);
 
@@ -89,7 +92,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
     if (!tau_veto(phoindex)) continue;
     fillEvent(9,event_weight);
-
+    
     if (!bjet_veto(phoindex, bjetDeepCSVCut_2018)) continue;
     fillEvent(10,event_weight);
 
@@ -110,6 +113,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     jetindex = getJetCand(phoindex);
     if (jetindex == -1) continue;
     setJetCand(jetindex);
+
+    QCDVariations(event_weight);
     fillEvent(14,event_weight);
   }
    
@@ -186,8 +191,16 @@ void monoJetClass::JetEnergyScale(float start_weight) {
     recoilPhi = pfMETPhi;
 
     setRecoil(phoindex);
+
+    if(!getJetHEMVeto())continue;    
+
+    if (!electron_veto(phoindex)) continue;
+
+    if (!muon_veto(phoindex)) continue;
+
+    if (!tau_veto(phoindex)) continue;
     
-    if (!bjet_veto(phoindex, bjetDeepCSVCut_2017)) continue;
+    if (!bjet_veto(phoindex, bjetDeepCSVCut_2018)) continue;
 
     vector<int> jetlist = jet_veto(phoindex);
     float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
@@ -254,8 +267,16 @@ void monoJetClass::JetEnergyResolution(float start_weight) {
     recoil = pfMET;
 
     setRecoil(phoindex);
+
+    if(!getJetHEMVeto())continue;    
+
+    if (!electron_veto(phoindex)) continue;
+
+    if (!muon_veto(phoindex)) continue;
+
+    if (!tau_veto(phoindex)) continue;
     
-    if (!bjet_veto(phoindex, bjetDeepCSVCut_2017)) continue;
+    if (!bjet_veto(phoindex, bjetDeepCSVCut_2018)) continue;
 
     vector<int> jetlist = jet_veto(phoindex);
     float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);

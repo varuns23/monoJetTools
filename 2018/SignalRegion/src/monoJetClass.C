@@ -63,6 +63,9 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!getMetFilter()) continue;
     fillEvent(2,event_weight);
 
+    JetEnergyScale(event_weight);
+    JetEnergyResolution(event_weight);
+    
     if(!getJetHEMVeto())continue;                                                                                                                             
     fillEvent(3,event_weight);
     
@@ -77,8 +80,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
     if (!tau_veto()) continue;
     fillEvent(7,event_weight);
-
-    if (!bjet_veto(bjetDeepCSVCut_2017)) continue;
+    
+    if (!bjet_veto(bjetDeepCSVCut_2018)) continue;
     fillEvent(8,event_weight);
     
     vector<int> jetlist = getLooseJet();
@@ -98,6 +101,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     jetindex = getJetCand();
     if (jetindex == -1) continue;
     setJetCand(jetindex);
+    
+    QCDVariations(event_weight);
     fillEvent(12,event_weight);
   }
 
@@ -171,8 +176,18 @@ void monoJetClass::JetEnergyScale(float start_weight) {
     }
     recoil = pfMET;
     recoilPhi = pfMETPhi;
+    
+    if(!getJetHEMVeto())continue;   
+    
+    if (!electron_veto()) continue;
 
-    if (!bjet_veto(bjetDeepCSVCut_2017)) continue;
+    if (!muon_veto()) continue;
+
+    if (!photon_veto()) continue;
+
+    if (!tau_veto()) continue;
+
+    if (!bjet_veto(bjetDeepCSVCut_2018)) continue;
     
     vector<int> jetlist = getLooseJet();
     float mindPhiJetMET = dPhiJetMETmin(jetlist,pfMETPhi);
@@ -236,8 +251,18 @@ void monoJetClass::JetEnergyResolution(float start_weight) {
       pfMET = pfMET_T1JERDo; break;
     }
     recoil = pfMET;
+    
+    if(!getJetHEMVeto())continue;   
+    
+    if (!electron_veto()) continue;
 
-    if (!bjet_veto(bjetDeepCSVCut_2017)) continue;
+    if (!muon_veto()) continue;
+
+    if (!photon_veto()) continue;
+
+    if (!tau_veto()) continue;
+
+    if (!bjet_veto(bjetDeepCSVCut_2018)) continue;
     
     vector<int> jetlist = getLooseJet();
     float mindPhiJetMET = dPhiJetMETmin(jetlist,pfMETPhi);
