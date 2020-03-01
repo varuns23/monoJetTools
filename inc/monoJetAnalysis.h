@@ -915,14 +915,8 @@ public:
   /* Object Selction Methods */
   virtual int getJetCand
   (float jetPtCut=jetCandPtCut,float jetEtaCut=jetCandEtaCut,float jetNHFCut=jetCandNHFCut,float jetCHFCut=jetCandCHFCut);
-<<<<<<< HEAD
-  virtual vector<int> getJetCand
-  (vector<int> jetlist,float jetPtCut=jetCandPtCut,float jetEtaCut=jetCandEtaCut,float jetNHFCut=jetCandNHFCut,float jetCHFCut=jetCandCHFCut);
-  virtual int setJetCand(vector<int> jetlist);
-  virtual void SetPtFrac();
-=======
   virtual void setJetCand(int jetCand);
->>>>>>> master
+  virtual void SetPtFrac();
   virtual vector<int> getLooseJet(float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   
@@ -949,6 +943,8 @@ public:
   
   /* Systematic Uncertainty Methods */
   virtual void QCDVariations(float event_weight);
+  virtual void PFUncertainty(float event_weight);
+  virtual void PSWeights(float event_weight);
 };
 
 #endif

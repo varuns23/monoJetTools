@@ -1684,6 +1684,153 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
     scaleUncs.setUnc(name,weightUp,weightDn);
   }
 }
+void monoJetAnalysis::PSWeights(float event_weight) {
+  string pswlist[22] = { "isrRed", "fsrRed", "isrDef","fsrDef","isrCon","fsrCon",      
+			  "fsr_G2GG_muR","fsr_G2QQ_muR","fsr_Q2QG_muR","fsr_X2XG_muR",
+			  "fsr_G2GG_cNS","fsr_G2QQ_cNS","fsr_Q2QG_cNS","fsr_X2XG_cNS",
+			  "isr_G2GG_muR","isr_G2QQ_muR","isr_Q2QG_muR","isr_X2XG_muR",
+			  "isr_G2GG_cNS","isr_G2QQ_cNS","isr_Q2QG_cNS","isr_X2XG_cNS"  };
+  if ( !scaleUncs.contains("PSW_"+pswlist[0]) ) {
+    TFile* file = TFile::Open("RootFiles/PSW_2018_SF.root");
+    string prefix = "";
+    if (isWZG()) {
+      switch(type) {
+      case  WJets: prefix = "WJets"; break;
+      case  ZJets: prefix = "ZJets"; break;
+      case DYJets: prefix = "DYJets";break;
+      case  GJets: prefix = "ZJets"; break; // Need to calculate PSW for gjets sample
+      }
+    }
+    for (string psw : pswlist) {
+      scaleUncs.addUnc("PSW_"+psw,NULL);
+      if (isWZG()) {
+	string path = prefix+"/PSW_"+psw;
+	th1fmap[psw+"Up"] = (TH1F*)file->Get( (path+"Up").c_str() );
+	th1fmap[psw+"Down"] = (TH1F*)file->Get( (path+"Down").c_str() );
+      }
+    }
+  }
+
+  for (string psw : pswlist) {
+    float weightUp = 1;
+    float weightDn = 1;
+    if (isWZG()) {
+      float uncUp = th1fmap.getBin(psw+"Up",ChNemPtFrac);
+      float uncDn = th1fmap.getBin(psw+"Down",ChNemPtFrac);
+      weightUp = uncUp;
+      weightDn = uncDn;
+    }
+    scaleUncs.setUnc("PSW_"+psw,weightUp,weightDn);
+  }
+}
+
+void monoJetAnalysis::PFUncertainty(float event_weight) {
+  // 6 Histograms
+  //   Trk ECAL HCAL
+  //up  0   1    2
+  //dn  3   4    5
+  string pf_uncs[3] = {"tracker","ecal","hcal"};
+  string uncname = "PFU_";
+  if ( !shapeUncs.contains(uncname+pf_uncs[0]) ) {
+    for (int i = 0; i < 3; i++) {
+      string name = uncname + pf_uncs[i];
+      shapeUncs.addUnc(name);
+      
+      initTree(shapeUncs.getTreeUp(name));
+      initTree(shapeUncs.getTreeDn(name));
+    }
+  }
+  
+  vector<float> n_j1PFConsPt;
+  vector<float> j1PFConsPtUnc;
+
+  float jetPtNorm = j1pT;
+  for(int i=0;i<j1PFConsPID.size();i++) {
+    n_j1PFConsPt.push_back(j1PFConsPt[i]);
+    if ( abs(j1PFConsPID[i]) == 211 || abs(j1PFConsPID[i]) == 13 ) {
+      //Tracker Uncertainty
+      //deltaPt=(1/100)*sqrt((0.015*Pt)^2+(0.5)^2)
+      float deltaPt = (1/100.)*sqrt(pow(0.015*j1PFConsPt[i],2)+pow(0.5,2));
+      j1PFConsPtUnc.push_back(deltaPt);
+      // h_TrackerPtUnc->Fill(j1PFConsPtNorm[i],j1PFConsPtUnc[i]);
+      // cout << "Tracker Unc: " << deltaPt << endl;
+    }
+    else if ( abs(j1PFConsPID[i]) == 22 || abs(j1PFConsPID[i]) == 11 ) {
+      //ECAL Uncertainty
+      //deltaPt=(1/100)*sqrt((2.8)^2/Pt+(12.8/Pt)^2+(0.3)^2)
+      float deltaPt = (1/100.)*sqrt(pow(2.8,2)/j1PFConsPt[i]+pow(12.8/j1PFConsPt[i],2)+pow(0.3,2));
+      j1PFConsPtUnc.push_back(deltaPt);
+      // h_EcalPtUnc->Fill(j1PFConsPtNorm[i],j1PFConsPtUnc[i]);
+      // cout << "ECAL Unc: " << deltaPt << endl;
+    }
+    else if ( abs(j1PFConsPID[i]) == 130 ) {
+      //HCAL Uncertainty
+      //deltaPt=(1/100)*sqrt((115)^2/Pt+(5.5)^2)
+      float deltaPt = (1/100.)*sqrt(pow(115,2)/j1PFConsPt[i]+pow(5.5,2));
+      j1PFConsPtUnc.push_back(deltaPt);
+      // h_HcalPtUnc->Fill(j1PFConsPtNorm[i],j1PFConsPtUnc[i]);
+      // cout << "HCAL Unc: " << deltaPt << endl;
+    }
+    else {
+      j1PFConsPtUnc.push_back(0);
+    }
+  }
+  
+  // cout << "ChNemPtFrac:" << endl;
+  // cout << "\tNorm: " << ChNemPtFrac << endl;
+  weight = event_weight;
+  int UncType[2] = {1,-1};
+  for (int i = 0; i < 2; i++) {
+    int variation = UncType[i];
+    // Tracker
+    j1pT = 0;
+    j1PFConsPt.clear();
+    for (int j = 0; j < j1PFConsPID.size(); j++) {
+      if ( ( abs(j1PFConsPID[j]) == 221 || abs(j1PFConsPID[j]) == 13 ) )
+	j1PFConsPt.push_back( n_j1PFConsPt[j]*(1 + variation*j1PFConsPtUnc[j]) );
+      else j1PFConsPt.push_back(n_j1PFConsPt[j]);
+      j1pT += j1PFConsPt[j];
+    }
+    SetPtFrac();
+    if (variation == 1)  shapeUncs.fillUp(uncname+"tracker");
+    if (variation == -1) shapeUncs.fillDn(uncname+"tracker");
+    // cout << "\tTracker " << (variation == 1 ? "Up " : "Down ") << ChNemPtFrac << endl;
+    
+    // ECAL
+    j1pT = 0;
+    j1PFConsPt.clear();
+    for (int j = 0; j < j1PFConsPID.size(); j++) {
+      if ( ( abs(j1PFConsPID[j]) == 22 || abs(j1PFConsPID[j]) == 11 ) ) 
+	j1PFConsPt.push_back( n_j1PFConsPt[j]*(1 + variation*j1PFConsPtUnc[j]) );
+      else j1PFConsPt.push_back(n_j1PFConsPt[j]);
+      j1pT += j1PFConsPt[j];
+    }
+    SetPtFrac();
+    if (variation == 1)  shapeUncs.fillUp(uncname+"ecal");
+    if (variation == -1) shapeUncs.fillDn(uncname+"ecal");
+    // cout << "\tECAL " << (variation == 1 ? "Up " : "Down ") << ChNemPtFrac << endl;
+    
+    // HCAL
+    j1pT = 0;
+    j1PFConsPt.clear();
+    for (int j = 0; j < j1PFConsPID.size(); j++) {
+      if ( ( abs(j1PFConsPID[j]) == 130 ) )
+	j1PFConsPt.push_back( n_j1PFConsPt[j]*(1 + variation*j1PFConsPtUnc[j]) );
+      else j1PFConsPt.push_back(n_j1PFConsPt[j]);
+      j1pT += j1PFConsPt[j];
+    }
+    SetPtFrac();
+    if (variation == 1)  shapeUncs.fillUp(uncname+"hcal");
+    if (variation == -1) shapeUncs.fillDn(uncname+"hcal");
+    // cout << "\tHCAL " << (variation == 1 ? "Up " : "Down ") << ChNemPtFrac << endl;
+  }
+  
+  j1pT = jetPtNorm;
+  j1PFConsPt.clear();
+  for (float consPt : n_j1PFConsPt) j1PFConsPt.push_back(consPt);
+  SetPtFrac();
+  // cout << "\tReset: " << ChNemPtFrac << endl;
+}//Closing the Loop function
 
 void monoJetAnalysis::print() {
   cout << "Year: " << YEAR << endl;
