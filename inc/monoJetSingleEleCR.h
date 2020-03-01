@@ -19,7 +19,8 @@ public:
   virtual void initTree(TTree* tree);
   virtual float getSF(int lepindex);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
-  virtual vector<int> getJetCand(vector<int> jetlist, int lepindex);
+  void setRecoil(int lepindex);
+  virtual int getJetCand(int lepindex);
   virtual vector<int> jet_veto(int lepindex);
   virtual bool muon_veto();
   virtual bool photon_veto(int lepindex);

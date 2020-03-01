@@ -20,7 +20,8 @@ public:
   virtual void initTree(TTree* tree);
   virtual float getSF(int phoindex);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
-  virtual vector<int> getJetCand(vector<int> jetlist, int phoindex);
+  void setRecoil(int phoindex);
+  virtual int getJetCand(int phoindex);
   virtual vector<int> jet_veto(int phoindex);
   virtual vector<int> getPho();
   virtual bool muon_veto(int phoindex);

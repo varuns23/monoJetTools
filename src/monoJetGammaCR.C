@@ -16,10 +16,10 @@ void monoJetGammaCR::initVars() {
 }
 
 void monoJetGammaCR::initTree(TTree* tree) {
-  tree->Branch("photonPt",&photon_pt,"Photon P_{T} (GeV)");
-  tree->Branch("photonEta",&photon_eta,"Photon Eta");
-  tree->Branch("photonPhi",&photon_phi,"PhotonPhi");
-  tree->Branch("photonSigmaIEtaIEta",&photon_sieie,"Photon #sigma_{i#eta i#eta}");
+  // tree->Branch("photonPt",&photon_pt,"Photon P_{T} (GeV)");
+  // tree->Branch("photonEta",&photon_eta,"Photon Eta");
+  // tree->Branch("photonPhi",&photon_phi,"PhotonPhi");
+  // tree->Branch("photonSigmaIEtaIEta",&photon_sieie,"Photon #sigma_{i#eta i#eta}");
   tree->Branch("tightID_sf",&tightID_sf);
   tree->Branch("csev_sf",&csev_sf);
 }
@@ -65,6 +65,14 @@ bool monoJetGammaCR::CRSelection(vector<int> tight,vector<int> loose) {
   return false;
 }
 
+void monoJetGammaCR::setRecoil(int phoindex) {
+    TLorentzVector met_4vec;
+    met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
+    TLorentzVector photoMET_4vec = pho+met_4vec;
+    recoil = fabs(photoMET_4vec.Pt());
+    recoilPhi = photoMET_4vec.Phi();
+}
+
 float monoJetGammaCR::getSF(int phoindex) {
   float eta = phoSCEta->at(phoindex); float pt = phoCalibEt->at(phoindex);
   tightID_sf = th2fmap.getBin("photon_id_tight",eta,pt);
@@ -80,16 +88,13 @@ float monoJetGammaCR::getSF(int phoindex) {
   return tightID_sf * csev_sf;
 }
 
-vector<int> monoJetGammaCR::getJetCand(vector<int> jetlist,int phoindex) {
-  vector<int> jet_cand; jet_cand.clear();
+int monoJetGammaCR::getJetCand(int phoindex) {
+  int jetCand = monoJetAnalysis::getJetCand();
+  if (jetCand == -1) return -1;
 
-  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);
-  for (int ijet : tmpcands) {
-    float dR_jet = deltaR(jetEta->at(ijet),jetPhi->at(ijet),phoSCEta->at(phoindex),phoSCPhi->at(phoindex));
-    if (dR_jet > Iso4Cut)
-      jet_cand.push_back(ijet);
-  }
-  return jet_cand;
+  float dr = deltaR(jetEta->at(jetCand),jetPhi->at(jetCand),phoSCEta->at(phoindex),phoSCPhi->at(phoindex));
+  if (dr > Iso4Cut) return jetCand;
+  return -1;
 }
 
 vector<int> monoJetGammaCR::jet_veto(int phoindex) {

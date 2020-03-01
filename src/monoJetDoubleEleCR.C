@@ -19,14 +19,14 @@ void monoJetDoubleEleCR::initVars() {
 }
 
 void monoJetDoubleEleCR::initTree(TTree* tree) {
-  tree->Branch("dileptonM",&dilepton_mass,"Z Mass (GeV)");
-  tree->Branch("dileptonPt",&dilepton_pt,"Z P_{T} (GeV)");
-  tree->Branch("leadingLeptonPt",&leadingLepton_pt,"Leading Lepton P_{T} (GeV)");
-  tree->Branch("leadingLeptonEta",&leadingLepton_eta,"Leading Lepton Eta");
-  tree->Branch("leadingLeptonPhi",&leadingLepton_phi,"Leading Lepton Phi");
-  tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
-  tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
-  tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
+  // tree->Branch("dileptonM",&dilepton_mass,"Z Mass (GeV)");
+  // tree->Branch("dileptonPt",&dilepton_pt,"Z P_{T} (GeV)");
+  // tree->Branch("leadingLeptonPt",&leadingLepton_pt,"Leading Lepton P_{T} (GeV)");
+  // tree->Branch("leadingLeptonEta",&leadingLepton_eta,"Leading Lepton Eta");
+  // tree->Branch("leadingLeptonPhi",&leadingLepton_phi,"Leading Lepton Phi");
+  // tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
+  // tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
+  // tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
   tree->Branch("e1reco_sf",&e1reco_sf);
   tree->Branch("tightID_sf",&tightID_sf);
   tree->Branch("e2reco_sf",&e2reco_sf);
@@ -87,16 +87,21 @@ bool monoJetDoubleEleCR::CRSelection(vector<int> tightlist,vector<int> looselist
       subleadingLepton_pt = lep2.Pt();
       subleadingLepton_eta = lep2.Eta();
       subleadingLepton_phi = lep2.Phi();
-	
-      TLorentzVector met_4vec;
-      met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
-      TLorentzVector leptoMET_4vec = ll+met_4vec;
-      recoil = fabs(leptoMET_4vec.Pt());
-      recoilPhi = leptoMET_4vec.Phi();
+      
+      setRecoil(leading,subleading);
       return true;
     }
   }
   return false;
+}
+
+void monoJetDoubleEleCR::setRecoil(int leading,int subleading) {
+  TLorentzVector ll = lep1 + lep2;
+  TLorentzVector met_4vec;
+  met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
+  TLorentzVector leptoMET_4vec = ll+met_4vec;
+  recoil = fabs(leptoMET_4vec.Pt());
+  recoilPhi = leptoMET_4vec.Phi();
 }
 
 float monoJetDoubleEleCR::getSF(int leading, int subleading) {
@@ -116,17 +121,14 @@ float monoJetDoubleEleCR::getSF(int leading, int subleading) {
   return e1reco_sf * tightID_sf * e2reco_sf * looseID_sf;
 }
 
-vector<int> monoJetDoubleEleCR::getJetCand(vector<int> jetlist,int leading,int subleading) {
-  vector<int> jet_cand; jet_cand.clear();
+int monoJetDoubleEleCR::getJetCand(int leading,int subleading) {
+  int jetCand = monoJetAnalysis::getJetCand();
+  if (jetCand == -1) return -1;
 
-  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);
-  for (int ijet : tmpcands) {
-    float dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(leading),eleSCEta->at(subleading));
-    float dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(subleading),eleSCEta->at(subleading));
-    if (dR_leading > Iso4Cut && dR_subleading > Iso4Cut)
-      jet_cand.push_back(ijet);
-  }
-  return jet_cand;
+  float dr_leading = deltaR(jetEta->at(jetCand),jetPhi->at(jetCand),eleSCEta->at(leading),eleSCPhi->at(leading));
+  float dr_subleading = deltaR(jetEta->at(jetCand),jetPhi->at(jetCand),eleSCEta->at(subleading),eleSCPhi->at(subleading));
+  if (dr_leading > Iso4Cut && dr_subleading > Iso4Cut) return jetCand;
+  return -1;
 }
 
 vector<int> monoJetDoubleEleCR::jet_veto(int leading, int subleading) {

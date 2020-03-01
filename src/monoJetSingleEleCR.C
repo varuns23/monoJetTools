@@ -16,9 +16,9 @@ void monoJetSingleEleCR::initVars() {
 }
 
 void monoJetSingleEleCR::initTree(TTree* tree) {
-  tree->Branch("LeptonPt",&lepton_pt,"Lepton P_{T} (GeV)");
-  tree->Branch("LeptonEta",&lepton_eta,"Lepton Eta");
-  tree->Branch("LeptonPhi",&lepton_phi,"LeptonPhi");
+  // tree->Branch("LeptonPt",&lepton_pt,"Lepton P_{T} (GeV)");
+  // tree->Branch("LeptonEta",&lepton_eta,"Lepton Eta");
+  // tree->Branch("LeptonPhi",&lepton_phi,"LeptonPhi");
   tree->Branch("reco_sf",&reco_sf);
   tree->Branch("tightID_sf",&tightID_sf);
 }
@@ -51,15 +51,19 @@ bool monoJetSingleEleCR::CRSelection(vector<int> tight,vector<int> loose) {
     lepton_pt = lep.Pt();
     lepton_eta = eleEta->at(lepindex);
     lepton_phi = elePhi->at(lepindex);
+    setRecoil(lepindex);
+    return true;
+  }
+  return false;
+}
+
+void monoJetSingleEleCR::setRecoil(int lepindex) {
     lepMET_mt = getMt(eleCalibEt->at(lepindex),elePhi->at(lepindex),pfMET,pfMETPhi);
     TLorentzVector met_4vec;
     met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
     TLorentzVector leptoMET_4vec = lep+met_4vec;
     recoil = fabs(leptoMET_4vec.Pt());
     recoilPhi = leptoMET_4vec.Phi();
-    return true;
-  }
-  return false;
 }
 
 float monoJetSingleEleCR::getSF(int lepindex) {
@@ -72,16 +76,13 @@ float monoJetSingleEleCR::getSF(int lepindex) {
   return reco_sf * tightID_sf;
 }
 
-vector<int> monoJetSingleEleCR::getJetCand(vector<int> jetlist,int lepindex) {
-  vector<int> jet_cand; jet_cand.clear();
+int monoJetSingleEleCR::getJetCand(int lepindex) {
+  int jetCand = monoJetAnalysis::getJetCand();
+  if (jetCand == -1) return -1;
 
-  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);
-  for (int ijet : tmpcands) {
-    float dR_jet = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
-    if (dR_jet > Iso4Cut)
-      jet_cand.push_back(ijet);
-  }
-  return jet_cand;
+  float dr = deltaR(jetEta->at(jetCand),jetPhi->at(jetCand),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
+  if (dr > Iso4Cut) return jetCand;
+  return -1;
 }
 
 vector<int> monoJetSingleEleCR::jet_veto(int lepindex) {

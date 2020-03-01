@@ -144,7 +144,6 @@ public:
   /* Selected Jet Variables */
   float n_Jet;
   int jetindex;
-  vector<int> jetCand;
   vector<float> j1PFConsEt;
   vector<float>j1PFConsPt;
   vector<float>j1PFConsEta;
@@ -914,12 +913,16 @@ public:
   bool getEleHEMVeto(float elePtCut=eleHEMVetoPtCut);
   
   /* Object Selction Methods */
-  virtual vector<int> getJetCand
+  virtual int getJetCand
   (float jetPtCut=jetCandPtCut,float jetEtaCut=jetCandEtaCut,float jetNHFCut=jetCandNHFCut,float jetCHFCut=jetCandCHFCut);
+<<<<<<< HEAD
   virtual vector<int> getJetCand
   (vector<int> jetlist,float jetPtCut=jetCandPtCut,float jetEtaCut=jetCandEtaCut,float jetNHFCut=jetCandNHFCut,float jetCHFCut=jetCandCHFCut);
   virtual int setJetCand(vector<int> jetlist);
   virtual void SetPtFrac();
+=======
+  virtual void setJetCand(int jetCand);
+>>>>>>> master
   virtual vector<int> getLooseJet(float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   

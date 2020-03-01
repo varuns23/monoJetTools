@@ -62,14 +62,10 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("nlo_qcd_binned",&nlo_qcd_binned);
   tree->Branch("nnlo_qcd",&nnlo_qcd);
   tree->Branch("trigger_sf",&trigger_sf);
+  
   tree->Branch("recoil",&recoil,"Recoil (GeV)");
-  tree->Branch("j1pT",&j1pT,"Leading Jet P_{T} (GeV)");
-  tree->Branch("j1Eta",&j1Eta,"Leading Jet Eta");
-  tree->Branch("j1Phi",&j1Phi,"Leading Jet Phi");
-  tree->Branch("nJets",&n_Jet,"Number of Jets");
-  tree->Branch("bosonPt",&bosonPt,"Boson Pt");
-  tree->Branch("nVtx",&n_Vtx,"Number of Verticies");
   tree->Branch("ChNemPtFrac",&ChNemPtFrac,"Ch + NEM P_{T}^{123} Fraction");
+  tree->Branch("bosonPt",&bosonPt,"Boson Pt");
 }
 
 void monoJetAnalysis::BookHistos(int i,string histname) {
@@ -277,38 +273,24 @@ float monoJetAnalysis::dPhiJetMETmin(vector<int> jets,float metPhi) {
   return minDPhiJetMET_first4;
 }
 
-vector<int> monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
-  vector<int> tmpCand; tmpCand.clear();
-  for(int i = 0; i < nJet; i++){
-    bool tightJetID = (jetID->at(i)>>0&1) == 1;
-    if (tightJetID) {
-      bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
-      bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
-      if (kinematics && cleaning) {
-	tmpCand.push_back(i);
-	return tmpCand;
-      }
-      return tmpCand;
-    }
-  }
-  return tmpCand;
-}
+int monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
+  vector<int> jetCands; jetCands.clear();
 
-vector<int> monoJetAnalysis::getJetCand(vector<int> jetlist,float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
-  vector<int> tmpCand; tmpCand.clear();
-  for(int i : jetlist){
-    bool tightJetID = (jetID->at(i)>>0&1) == 1;
-    if (tightJetID) {
-      bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
-      bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
-      if (kinematics && cleaning) {
-	tmpCand.push_back(i);
-	return tmpCand;
-      }
-      return tmpCand;
-    }
+  for (int i = 0; i < nJet; i++) {
+    bool pass_tight = (jetID->at(i)>>0&1) == 1;
+    bool pass_pt = jetPt->at(i) > jetPtCut;
+
+    if (pass_tight && pass_pt)
+      jetCands.push_back(i);
   }
-  return tmpCand;
+  if (jetCands.size() > 0) {
+    int jetCand = jetCands[0];
+    bool pass_eta = fabs(jetEta->at(jetCand)) < jetEtaCut;
+    bool pass_cleaning = jetNHF->at(jetCand) < jetNHFCut && jetCHF->at(jetCand) > jetCHFCut;
+    if (pass_eta && pass_cleaning)
+      return jetCand;
+  }
+  return -1;
 }
 
 
@@ -344,9 +326,9 @@ void monoJetAnalysis::SetPtFrac() {
   ChNemPtFrac = ChNemPt123/ChNemPt;
 }
 
-int monoJetAnalysis::setJetCand(vector<int> jetlist) {
-  if (jetlist.size() == 0) return -1;
-  jetindex = jetlist[0];
+void monoJetAnalysis::setJetCand(int jetCand) {
+  if (jetCand < 0) return;
+  jetindex = jetCand;
   j1pT = jetPt->at(jetindex);
   j1Eta = jetEta->at(jetindex);
   j1Phi = jetPhi->at(jetindex);
@@ -1660,17 +1642,18 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
     string prefix = "";
     if (isWZG()) {
       if (type == WJets) {
-	file = TFile::Open("RootFiles/WJets_NLO_EWK.root");
+	file = TFile::Open("RootFiles/theory/unc/WJets_NLO_EWK.root");
 	prefix = "evj_pTV_";
       } else if (type == ZJets) {
-	file = TFile::Open("RootFiles/ZJets_NLO_EWK.root");
+	file = TFile::Open("RootFiles/theory/unc/ZJets_NLO_EWK.root");
 	prefix = "vvj_pTV_";
       } else if (type == DYJets) {
-	file = TFile::Open("RootFiles/DYJets_NLO_EWK.root");
+	file = TFile::Open("RootFiles/theory/unc/DYJets_NLO_EWK.root");
 	prefix = "eej_pTV_";
+      } else if (type == GJets) {
+	file = TFile::Open("RootFiles/theory/unc/GJets_NLO_EWK.root");
+	prefix = "vvj_pTV_";
       }
-      th1fmap["K_NLO_QCD"] = (TH1F*)file->Get( (prefix+"K_NLO").c_str() );
-      th1fmap["K_EW"]      = (TH1F*)file->Get( (prefix+"kappa_EW").c_str() );
     }
 
     for (int i = 0; i < 7; i++) {
@@ -1680,20 +1663,23 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
       scaleUncs.addUnc(name,histo);
     }
   }
-
   for (int i = 0; i < 7; i++) {
     string name = uncnames[i];
-    float weightUp = event_weight;
-    float weightDn = event_weight;
+    float weightUp = 1;
+    float weightDn = 1;
 
     if (isWZG()) {
       float unc = scaleUncs.getBin(name,bosonPt);
-      float k_qcd = th1fmap.getBin("K_NLO_QCD",bosonPt);
-      float k_ewk = th1fmap.getBin("K_EW",bosonPt);
-      if ( name.find("NNLO") != string::npos || name.find("EWK") != string::npos ) unc *= k_ewk;
-      else if ( name.find("QCD") != string::npos ) unc *= k_qcd;
-      weightUp += unc;
-      weightDn -= unc;
+      if ( name.find("Mix") != string::npos ) {
+	weightUp = (kfactor + unc)/kfactor;
+	weightDn = (kfactor - unc)/kfactor;
+      } else if ( name.find("QCD") != string::npos ) {
+	weightUp = ( (nlo_qcd + unc) * nlo_ewk )/kfactor;
+	weightDn = ( (nlo_qcd - unc) * nlo_ewk )/kfactor;
+      } else if ( name.find("NNLO") != string::npos ) {
+	weightUp = ( nlo_qcd * (nlo_ewk + unc) )/kfactor;
+	weightDn = ( nlo_qcd * (nlo_ewk - unc) )/kfactor;
+      }
     }
     scaleUncs.setUnc(name,weightUp,weightDn);
   }

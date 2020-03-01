@@ -30,6 +30,7 @@ public :
   void fillHistos(int nhist,float event_weight=1.0);
   
   void JetEnergyScale(float start_weight);
+  void JetEnergyResolution(float start_weight);
 };
 
 #endif
