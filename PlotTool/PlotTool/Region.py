@@ -24,7 +24,7 @@ MCOrderMap = {
         "ZJets","WJets","GJets","DiBoson","TTJets","QCD","DYJets"
     ],
     "SingleEleCR":[
-        "WJets","TTJets","GJets","DiBoson","QCD","DYJets","ZJets"
+        "WJets","TTJets","DiBoson","GJets","QCD","DYJets","ZJets"
     ],
     "SingleMuCR":[
         "WJets","TTJets","QCD","DYJets","DiBoson","GJets","ZJets"
@@ -180,7 +180,6 @@ class Region(object):
             print "Plotting at",self.lumi,"pb^{-1}"
             
         Nuisance.unclist = []
-        self.MCOrder = []
         self.total_bkg = 0
         if 'SumOfBkg' in self.processes:
             tmp = self.processes.pop('SumOfBkg')
@@ -203,14 +202,7 @@ class Region(object):
             process.setVariable(variable,self.lumi)
             if process.proctype == 'bkg':
                 self.total_bkg += process.scaled_total
-                self.MCOrder.append(process.process)
-        def mcsort(process):
-            if 'cutflow' in variable.variable:
-                return self[process].histo.GetBinContent(self[process].histo.GetNbinsX())
-            return self[process].scaled_total
-        if self.region not in MCOrderMap:
-            self.MCOrder.sort(key=mcsort,reverse=True)
-        else: self.MCOrder = MCOrderMap[self.region]
+        self.setMCOrder()
         self.setXaxisTitle(variable)
         if self.isBlinded:
             self.setSumOfBkg()
@@ -218,6 +210,15 @@ class Region(object):
             self['Data'].proctype = 'bkg'
         if self.show: self.output()
         if os.getcwd() != self.cwd: os.chdir(self.cwd)
+    def setMCOrder(self):
+        def mcsort(process):
+            if 'cutflow' in variable.variable:
+                return self[process].histo.GetBinContent(self[process].histo.GetNbinsX())
+            return self[process].scaled_total
+        if self.region not in MCOrderMap:
+            self.MCOrder = [ process.process for process in self if process.proctype == 'bkg']
+            self.MCOrder.sort(key=mcsort,reverse=True)
+        else: self.MCOrder = MCOrderMap[self.region]
     def output(self):
         if self.scaleWidth: print "Bin Width Normalization"
         prompt = 'integral of %s: %s'
