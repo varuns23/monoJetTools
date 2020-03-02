@@ -1549,17 +1549,18 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
     string prefix = "";
     if (isWZG()) {
       if (type == WJets) {
-	file = TFile::Open("RootFiles/WJets_NLO_EWK.root");
+	file = TFile::Open("RootFiles/theory/unc/WJets_NLO_EWK.root");
 	prefix = "evj_pTV_";
       } else if (type == ZJets) {
-	file = TFile::Open("RootFiles/ZJets_NLO_EWK.root");
+	file = TFile::Open("RootFiles/theory/unc/ZJets_NLO_EWK.root");
 	prefix = "vvj_pTV_";
       } else if (type == DYJets) {
-	file = TFile::Open("RootFiles/DYJets_NLO_EWK.root");
+	file = TFile::Open("RootFiles/theory/unc/DYJets_NLO_EWK.root");
 	prefix = "eej_pTV_";
+      } else if (type == GJets) {
+	file = TFile::Open("RootFiles/theory/unc/GJets_NLO_EWK.root");
+	prefix = "vvj_pTV_";
       }
-      th1fmap["K_NLO_QCD"] = (TH1F*)file->Get( (prefix+"K_NLO").c_str() );
-      th1fmap["K_EW"]      = (TH1F*)file->Get( (prefix+"kappa_EW").c_str() );
     }
 
     for (int i = 0; i < 7; i++) {
@@ -1569,20 +1570,23 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
       scaleUncs.addUnc(name,histo);
     }
   }
-
   for (int i = 0; i < 7; i++) {
     string name = uncnames[i];
-    float weightUp = event_weight;
-    float weightDn = event_weight;
+    float weightUp = 1;
+    float weightDn = 1;
 
     if (isWZG()) {
       float unc = scaleUncs.getBin(name,bosonPt);
-      float k_qcd = th1fmap.getBin("K_NLO_QCD",bosonPt);
-      float k_ewk = th1fmap.getBin("K_EW",bosonPt);
-      if ( name.find("NNLO") != string::npos || name.find("EWK") != string::npos ) unc *= k_ewk;
-      else if ( name.find("QCD") != string::npos ) unc *= k_qcd;
-      weightUp += unc;
-      weightDn -= unc;
+      if ( name.find("Mix") != string::npos ) {
+	weightUp = (kfactor + unc)/kfactor;
+	weightDn = (kfactor - unc)/kfactor;
+      } else if ( name.find("QCD") != string::npos ) {
+	weightUp = ( (nlo_qcd + unc) * nlo_ewk )/kfactor;
+	weightDn = ( (nlo_qcd - unc) * nlo_ewk )/kfactor;
+      } else if ( name.find("NNLO") != string::npos ) {
+	weightUp = ( nlo_qcd * (nlo_ewk + unc) )/kfactor;
+	weightDn = ( nlo_qcd * (nlo_ewk - unc) )/kfactor;
+      }
     }
     scaleUncs.setUnc(name,weightUp,weightDn);
   }
