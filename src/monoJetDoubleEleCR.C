@@ -116,32 +116,6 @@ float monoJetDoubleEleCR::getSF(int leading, int subleading) {
   return e1reco_sf * tightID_sf * e2reco_sf * looseID_sf;
 }
 
-vector<int> monoJetDoubleEleCR::getJetCand(vector<int> jetlist,int leading,int subleading) {
-  vector<int> jet_cand; jet_cand.clear();
-
-  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);
-  for (int ijet : tmpcands) {
-    float dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(leading),eleSCEta->at(subleading));
-    float dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(subleading),eleSCEta->at(subleading));
-    if (dR_leading > Iso4Cut && dR_subleading > Iso4Cut)
-      jet_cand.push_back(ijet);
-  }
-  return jet_cand;
-}
-
-vector<int> monoJetDoubleEleCR::jet_veto(int leading, int subleading) {
-  vector<int> jetindex; jetindex.clear();
-			  
-  vector<int> tmpcands = getLooseJet();
-  for (int ijet : tmpcands) {
-    float dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(leading),eleSCPhi->at(leading));
-    float dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(subleading),eleSCPhi->at(subleading));
-    if ( dR_leading > Iso4Cut && dR_subleading > Iso4Cut )
-      jetindex.push_back(ijet);
-  }
-  return jetindex;
-}
-
 //Veto failed if a muon is found that passes Loose Muon ID, Loose Muon Isolation, and muPtcut, and does not overlap the candidate electrons and jet within dR of 0.5
 bool monoJetDoubleEleCR::muon_veto() {
   vector<int> tmpcands = getLooseMu();
@@ -172,22 +146,6 @@ bool monoJetDoubleEleCR::tau_veto(int leading,int subleading) {
       tau_cands.push_back(itau);
   }
   return tau_cands.size() == 0;
-}
-
-bool monoJetDoubleEleCR::bjet_veto(int leading,int subleading, float cutValue) {
-  vector<int> bjet_cands; bjet_cands.clear();
-
-  for(int ijet = 0; ijet < nJet; ijet++){
-    bool kinematic = (jetPt->at(ijet) > bjetVetoPtCut && fabs(jetEta->at(ijet)) < bjetVetoEtaCut);
-    float bjetTag = jetDeepCSVTags_b->at(ijet) + jetDeepCSVTags_bb->at(ijet);
-    bool btagged = bjetTag > cutValue;
-
-    double dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(leading),eleSCPhi->at(leading));
-    double dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(subleading),eleSCPhi->at(subleading));
-    if ( kinematic && btagged && dR_leading > Iso4Cut && dR_subleading > Iso4Cut )
-      bjet_cands.push_back(ijet);
-  }
-  return bjet_cands.size() == 0;
 }
 
 #endif

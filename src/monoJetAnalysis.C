@@ -307,18 +307,18 @@ bool monoJetAnalysis::getJetID(int ijet) {
   return (jetID->at(ijet)>>0&1) == 1;
 }
 
-//-| vector<int> monoJetAnalysis::bjet_veto_looseID(int jetindex,float jetPtCut,float jetEtaCut) {
-//-|   vector<int> jet_cand; jet_cand.clear();
-//-|   for (int i = 0; i < nJet; i++) {
-//-|     float bjetTag = jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i);
-//-|     if (jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut && bjetTag > bjetDeepCSVCut);
-//-|     float dr_jet = deltaR(jetEta->at(i),jetPhi->at(i),jetEta->at(jetindex),jetPhi->at(jetindex));
-//-|     if (dr_jet > Iso4Cut) {
-//-|       jet_cand.push_back(i);
-//-|     }
-//-|   }
-//-|   return jet_cand;
-//-| }
+bool monoJetAnalysis::bjet_veto(float bjetCutValue,float jetPtCut,float jetEtaCut) {
+  vector<int> bjet_cands; bjet_cands.clear();
+  for (int ijet : jetCandList) {
+    bool kinematic = (jetPt->at(ijet) > bjetVetoPtCut && fabs(jetEta->at(ijet)) < bjetVetoEtaCut);
+    float bjetTag = jetDeepCSVTags_b->at(ijet) + jetDeepCSVTags_bb->at(ijet);
+    bool btagged = bjetTag > bjetCutValue;
+    if ( kinematic && btagged )
+      bjet_cands.push_back(ijet);
+    
+  }
+  return bjet_cands.size();
+}
 
 vector<int> monoJetAnalysis::getLooseEle(float elePtCut,float eleEtaCut){
   vector<int> ele_cands;

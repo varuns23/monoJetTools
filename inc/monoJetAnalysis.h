@@ -905,7 +905,7 @@ public:
   virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual bool getJetID(int ijet);
   
-//--|  virtual vector<int> bjet_veto_looseID(int jetindex,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
+  virtual bool bjet_veto(float bjetCutValue,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
   
   virtual vector<int> getLooseEle(float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
   virtual vector<int> electron_veto_looseID(int jetindex,float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);

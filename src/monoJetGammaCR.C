@@ -80,30 +80,6 @@ float monoJetGammaCR::getSF(int phoindex) {
   return tightID_sf * csev_sf;
 }
 
-vector<int> monoJetGammaCR::getJetCand(vector<int> jetlist,int phoindex) {
-  vector<int> jet_cand; jet_cand.clear();
-
-  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);
-  for (int ijet : tmpcands) {
-    float dR_jet = deltaR(jetEta->at(ijet),jetPhi->at(ijet),phoSCEta->at(phoindex),phoSCPhi->at(phoindex));
-    if (dR_jet > Iso4Cut)
-      jet_cand.push_back(ijet);
-  }
-  return jet_cand;
-}
-
-vector<int> monoJetGammaCR::jet_veto(int phoindex) {
-  vector<int> jetindex; jetindex.clear();
-
-  vector<int> tmpcands = getLooseJet();
-  for(int ijet : tmpcands ) {
-    float dR_jet = deltaR(jetEta->at(ijet),jetPhi->at(ijet),phoSCEta->at(phoindex),phoSCPhi->at(phoindex));
-    if( dR_jet > Iso4Cut )
-      jetindex.push_back(ijet);
-  }
-  return jetindex;
-}
-
 vector<int> monoJetGammaCR::getPho() {
   vector<int> elelist = getLooseEle();
   vector<int> pholist; pholist.clear();
@@ -160,20 +136,5 @@ bool monoJetGammaCR::tau_veto(int phoindex) {
       tau_cands.push_back(itau);
   }
   return tau_cands.size() == 0;
-}
-
-bool monoJetGammaCR::bjet_veto(int phoindex, float cutValue) {
-  vector<int> bjet_cands; bjet_cands.clear();
-
-  for(int ijet = 0; ijet < nJet; ijet++){
-    bool kinematic = (jetPt->at(ijet) > bjetVetoPtCut && fabs(jetEta->at(ijet)) < bjetVetoEtaCut);
-    double bjetTag = jetDeepCSVTags_b->at(ijet) + jetDeepCSVTags_bb->at(ijet);
-    bool btagged = bjetTag > cutValue;
-
-    float dR_pho = deltaR(jetEta->at(ijet),jetPhi->at(ijet),phoSCEta->at(phoindex),phoSCPhi->at(phoindex));
-    if (kinematic && btagged && dR_pho > Iso4Cut )
-      bjet_cands.push_back(ijet);
-  }
-  return bjet_cands.size() == 0;
 }
 #endif
