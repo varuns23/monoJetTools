@@ -246,33 +246,28 @@ void monoJetAnalysis::setJetCandList() {
   }
 }
 
-vector<int> monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
+int monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
   vector<int> tmpCand; tmpCand.clear();
-  for(int i : jetCandList){
-    bool tightJetID = (getJetID(i));
-    bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
-    bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
-    if (tightJetID && kinematics && cleaning)
+  for (int i : jetCandList) {
+    bool pass_id = getJetID(i);
+    bool pass_pt = jetPt->at(i) > jetPtCut;
+    if (pass_id && pass_pt) {
       tmpCand.push_back(i);
+    }
   }
-  return tmpCand;
+
+  if (tmpCand.size() > 0) {
+    int ijet = tmpCand[0];
+    bool pass_eta = fabs(jetEta->at(ijet)) < jetEtaCut;
+    bool pass_cleaning = jetNHF->at(ijet) < jetNHFCut && jetCHF->at(ijet) > jetCHFCut;
+    if (pass_eta && pass_cleaning) return ijet;
+  }
+  return -1;
 }
 
-vector<int> monoJetAnalysis::getJetCand(vector<int> jetlist,float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
-  vector<int> tmpCand; tmpCand.clear();
-  for(int i : jetlist){
-    bool tightJetID = (jetID->at(i)>>0&1) == 1;
-    bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
-    bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
-    if (tightJetID && kinematics && cleaning)
-      tmpCand.push_back(i);
-  }
-  return tmpCand;
-}
-
-int monoJetAnalysis::setJetCand(vector<int> jetlist) {
-  if (jetlist.size() == 0) return -1;
-  jetindex = jetlist[0];
+void monoJetAnalysis::setJetCand(int jetCand) {
+  if (jetCand <= 0) return;
+  jetindex = jetCand;
   j1pT = jetPt->at(jetindex);
   j1Eta = jetEta->at(jetindex);
   j1Phi = jetPhi->at(jetindex);
@@ -300,8 +295,8 @@ vector<int> monoJetAnalysis::jet_veto_looseID(int jetindex,float jetPtCut,float 
 }
 
 bool monoJetAnalysis::getJetID(int ijet) {
-  if (isSignal) {
-    // Current Signal is from 2016 has slightly different jetID bits
+  if (isSignal && dataset == "axial") {
+    // Current Axial Signal is from 2016 has slightly different jetID bits
     return (jetID->at(ijet)>>1&1) ==1;
   }
   return (jetID->at(ijet)>>0&1) == 1;
