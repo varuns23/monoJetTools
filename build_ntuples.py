@@ -20,24 +20,29 @@ def fullpath(path):
     return dirs
 
 class Query:
-    def __init__(self,tag,map=('','')):
+    def __init__(self,tag,mapping=None):
         self.tag = re.compile(tag)
-        def mapping(string): return string.replace(map[0],map[1])
-        self.map = mapping
+        self.mapping = mapping
     def parse(self,sub):
         sub = self.tag.findall(sub)
         if not any(sub): return False
-        self.sub = self.map(sub[0])
+        if self.mapping is not None: self.sub = self.mapping(sub[0])
+        
         return self.sub
 def getSub(sub):
-    
+    def replace(string,old="",new=""): return string.replace(old,new)
+    def axial(string):
+        mphi = re.findall('Mphi-\d+',string)[0].replace('Mphi-','Mphi')
+        mchi = re.findall('Mchi-\d+',string)[0].replace('Mchi-','Mchi')
+        return '%s_%s' % (mchi,mphi)
     querylist = [
         Query('\d+to\d+|\d+toInf|MLM|Incl|FXFX'),
-        Query('\d+To\d+|\d+ToInf',('To','to')),
-        Query('\d+-\d+|\d+-Inf',('-','to')),
-        Query('2017\w',('2017','')),
-        Query('2018\w',('2018','')),
-        Query('.*',('ST_',''))
+        Query('\d+To\d+|\d+ToInf',lambda s:replace(s,'To','to')),
+        Query('\d+-\d+|\d+-Inf',lambda s:replace(s,'-','to')),
+        Query('2017\w',lambda s:replace(s,'2017','')),
+        Query('2018\w',lambda s:replace(s,'2018','')),
+        Query('Mphi-\d+_Mchi-\d+',lambda s:axial(s)),
+        Query('.*',lambda s:replace(s,'ST_',''))
     ]
     for query in querylist:
         if query.parse(sub):
@@ -48,16 +53,22 @@ def build_dataset(data,path):
     data = data.lower()
     sublist = os.listdir(path)
     sort_nicely(sublist)
+    dataset = {}
     print data
+    for sub in sublist:
+        sub_path = os.path.join(path,sub)
+        sub = getSub(sub)
+        dirlist = fullpath(sub_path)
+        if not any(dirlist): print "Nothing in %s" % sub_path; continue
+        dataset[sub] = dirlist
+
+    sublist = dataset.keys()
+    sort_nicely(sublist)
     with open("ntuples/%s.txt" % data,"w") as f:
         for sub in sublist:
-            sub_path = os.path.join(path,sub)
-            sub = getSub(sub)
-            dirlist = fullpath(sub_path)
-            if not any(dirlist): print "Nothing in %s" % sub_path; continue
             print '>>%s' % sub
             f.write(">>%s\n" % sub)
-            for directory in dirlist:
+            for directory in dataset[sub]:
                 print directory
                 f.write("%s/\n" % directory)
             f.write("\n")

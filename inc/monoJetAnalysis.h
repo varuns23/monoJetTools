@@ -902,6 +902,7 @@ public:
   virtual int setJetCand(vector<int> jetlist);
   virtual vector<int> getLooseJet(float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
+  virtual bool getJetID(int ijet);
   
 //--|  virtual vector<int> bjet_veto_looseID(int jetindex,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
   

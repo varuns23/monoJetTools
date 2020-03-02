@@ -224,7 +224,7 @@ float monoJetAnalysis::dPhiJetMETmin(vector<int> jets,float metPhi) {
 vector<int> monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
   vector<int> tmpCand; tmpCand.clear();
   for(int i = 0; i < nJet; i++){
-    bool tightJetID = (jetID->at(i)>>0&1) == 1;
+    bool tightJetID = (getJetID(i));
     bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
     bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
     if (tightJetID && kinematics && cleaning)
@@ -256,7 +256,7 @@ int monoJetAnalysis::setJetCand(vector<int> jetlist) {
 vector<int> monoJetAnalysis::getLooseJet(float jetPtCut,float jetEtaCut) {
   vector<int> jetindex; jetindex.clear();
   for(int i = 0; i < nJet; i++) {
-    if (jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut && (jetID->at(i)>>0&1) == 1)
+    if (jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut && getJetID(i))
       jetindex.push_back(i);
   }
   return jetindex;
@@ -272,6 +272,14 @@ vector<int> monoJetAnalysis::jet_veto_looseID(int jetindex,float jetPtCut,float 
     }
   }
   return jet_cand;
+}
+
+bool monoJetAnalysis::getJetID(int ijet) {
+  if (isSignal) {
+    // Current Signal is from 2016 has slightly different jetID bits
+    return (jetID->at(ijet)>>1&1) ==1;
+  }
+  return (jetID->at(ijet)>>0&1) == 1;
 }
 
 //-| vector<int> monoJetAnalysis::bjet_veto_looseID(int jetindex,float jetPtCut,float jetEtaCut) {

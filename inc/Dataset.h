@@ -16,8 +16,7 @@ class Dataset {
   };
   static SubsetList dataset_;
 public:
-  static const std::vector<std::string> datalist;
-  static const std::map<std::string,Type> typemap;
+  static const std::map<std::string,Type> datamap;
 
   Type type;
   bool isInclusive;
