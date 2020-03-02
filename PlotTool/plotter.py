@@ -68,7 +68,7 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
         
 
     hs_datamc = THStack("hs_datamc","Data/MC comparison"); samples.stack = hs_datamc
-    fillStack(samples,hs_datamc,parser.args.ignore_mc)
+    MCLegOrder = fillStack(samples,hs_datamc,parser.args.ignore_mc)
     hs_bkg = hs_datamc.GetStack().Last()
     if parser.args.mc_solid:hs_bkg.Draw("hist")
     else:                    hs_datamc.Draw("hist")
@@ -89,7 +89,7 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
     if parser.args.mc_solid:
         leg.AddEntry(hs_bkg,"Background","f")
     else:
-        for mc in samples.MCOrder:
+        for mc in MCLegOrder:
             if samples[mc].scaled_total == 0: continue
             leg.AddEntry(samples[mc].histo,samples[mc].leg,'f')
 

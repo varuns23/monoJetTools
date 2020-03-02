@@ -88,12 +88,13 @@ def UncBandStyle(uncband,color=33):
 
 def fillStack(samples,hs_datamc,threshold=0.001):
     if samples.name == 'Cutflow': threshold=0
+    MCLegOrder = []
     for process in reversed(samples.MCOrder):
         percent=samples[process].scaled_total/samples.total_bkg
         if percent > threshold:
             hs_datamc.Add(samples[process].histo)
-        else:
-            samples.MCOrder.remove(process)
+            MCLegOrder.append(process)
+    return list(reversed(MCLegOrder))
 ###################################################################
 
 def getLegend(xmin=0.75,ymin=0.5,xmax=0.95,ymax=0.887173,textsize=0.032):
