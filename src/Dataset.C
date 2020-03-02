@@ -21,17 +21,14 @@ bool contains_substr(string str,string delim) {
   return strstr(str.c_str(),delim.c_str()) != NULL;
 }
 
-const vector<std::string> Dataset::datalist = {
-  "egamma","egamma_farmout","singleele","singleele_farmout","singlepho","singlepho_farmout","met","met_farmout","signal",
-  "zjets","zjets_nlo","wjets","wjets_nlo","dyjets","dyjets_nlo",
-  "gjets","ttjets","st","ewk","qcd"
+const std::map<std::string,Type> Dataset::datamap = {
+  {"egamma",Data},{"singleele",Data},{"singlepho",Data},{"met",Data},
+  {"zprime",Signal},{"axial",Signal},
+  {"zjets",ZJets},{"wjets",WJets},{"dyjets",DYJets},{"gjets",GJets},
+  {"zjets_nlo",ZJets},{"wjets_nlo",WJets},{"dyjets_nlo",DYJets},
+  {"qcd",QCD},{"ttjets",TTJets},{"st",ST},{"ewk",EWK}
 };
-const std::map<std::string,Type> Dataset::typemap = {
-  {"egamma",Data},{"egamma_farmout",Data},{"singleele",Data},{"singleele_farmout",Data}
-  ,{"singlepho",Data},{"singlepho_farmout",Data},{"met",Data},{"met_farmout",Data},{"signal",Signal},
-  {"zjets",ZJets},{"zjets_nlo",ZJets},{"wjets",WJets},{"wjets_nlo",WJets},{"dyjets",DYJets},{"dyjets_nlo",DYJets},
-  {"qcd",QCD},{"ttjets",TTJets},{"st",ST},{"gjets",GJets},{"ewk",EWK}
-};
+
 Dataset::SubsetList Dataset::dataset_;
 
 Dataset::SubsetList::SubsetList() {
@@ -60,9 +57,9 @@ void Dataset::SubsetList::addDataset(string path,string filename) {
     return;
   }
   string data = filename.erase( filename.length()-4,4 );
-  if ( std::find(datalist.begin(),datalist.end(),data) == datalist.end() ) {
+  if ( datamap.find(data) == datamap.end() ) {
     cout << "Unable to find "+data+" in known datalist" << endl;
-							   return;
+    return;
   }
   string line;
   Subset subset; string subname;
@@ -93,15 +90,18 @@ Dataset::Dataset() {
 }
 
 void Dataset::setTypeInfo(string path) {
-  for (string data : datalist) {
+  for (auto pair : datamap) {
+    string data = pair.first;
+    Type type = pair.second;
+    
     Subset subset = dataset_[data];
     for (auto& sub : subset) {
       for (string directory : sub.second) {
 	if ( contains_substr(path,directory) ) {
-	  this->path = path;
 	  dataset = data;
+	  this->path = path;
 	  this->subset = sub.first;
-	  type = typemap.find(data)->second;
+	  this->type = type;
 	  isNLO = contains_substr(data,"nlo");
 	  if ( type == WJets || type == DYJets ) {
 	    isInclusive = contains_substr(sub.first,"MLM") || contains_substr(sub.first,"Incl");
@@ -125,7 +125,8 @@ void Dataset::setInfo(string path) {
 }
 
 void Dataset::printDataset() {
-  for (string data : datalist) {
+  for (auto pair : datamap) {
+    string data = pair.first;
     if (!this->contains(data)) continue;
     Subset subset = dataset_[data];
     for (auto& sub : subset) {
