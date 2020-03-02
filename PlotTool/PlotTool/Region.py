@@ -19,6 +19,27 @@ DataFileMap = {
     "GammaCR":"postGamma"
 }
 
+MCOrderMap = {
+    "SignalRegion":[
+        "ZJets","WJets","GJets","DiBoson","TTJets","QCD","DYJets"
+    ],
+    "SingleEleCR":[
+        "WJets","TTJets","GJets","DiBoson","QCD","DYJets","ZJets"
+    ],
+    "SingleMuCR":[
+        "WJets","TTJets","QCD","DYJets","DiBoson","GJets","ZJets"
+    ],
+    "DoubleEleCR":[
+        "DYJets","DiBoson","TTJets","WJets","QCD","GJets","ZJets"
+    ],
+    "DoubleMuCR":[
+        "DYJets","DiBoson","TTJets","WJets","QCD","GJets","ZJets"
+    ],
+    "GammaCR":[
+        "GJets","QCD","WJets","DiBoson","TTJets","DYJets","ZJets"
+    ]
+}
+
 parser.add_argument("-r","--reset",help="removes all post files from currently directory and rehadds them from the .output directory",action="store_true", default=False)
 parser.add_argument("-l","--lumi",help="set the luminosity for scaling",action="store",type=float,dest="lumi")
 parser.add_argument("-s","--signal",help="specify the signal file to use",action="store",type=str,default=None,dest="signal")
@@ -187,7 +208,9 @@ class Region(object):
             if 'cutflow' in variable.variable:
                 return self[process].histo.GetBinContent(self[process].histo.GetNbinsX())
             return self[process].scaled_total
-        self.MCOrder.sort(key=mcsort,reverse=True)
+        if self.region not in MCOrderMap:
+            self.MCOrder.sort(key=mcsort,reverse=True)
+        else: self.MCOrder = MCOrderMap[self.region]
         self.setXaxisTitle(variable)
         if self.isBlinded:
             self.setSumOfBkg()

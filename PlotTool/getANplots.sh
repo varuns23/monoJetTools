@@ -1,6 +1,6 @@
 #!/bin/sh
 
-nvariables='recoil nJets j1pT j1Eta j1Phi nVtx'
+nvariables='recoil pfMET recoilall pfMETall nJets j1pT j1Eta j1Phi nVtx'
 singleleps='LeptonPt LeptonEta LeptonPhi'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta leadingLeptonPhi subleadingLeptonEta subleadingLeptonPt subleadingLeptonPhi'
 gamma='photonPt photonEta photonPhi'
@@ -32,12 +32,12 @@ run2() {
 }
 
 region() {
-    run SignalRegion || exit 1
-    run SingleEleCR $singleleps  || exit 1
-    run SingleMuCR $singleleps || exit 1
-    run DoubleEleCR $doubleleps || exit 1
-    run DoubleMuCR $doubleleps || exit 1
-    run GammaCR $gamma || exit 1
+    # run SignalRegion || exit 1
+    run SingleEleCR $singleleps  & #|| exit 1
+    run SingleMuCR $singleleps & #|| exit 1
+    run DoubleEleCR $doubleleps & #|| exit 1
+    run DoubleMuCR $doubleleps & #|| exit 1
+    run GammaCR $gamma & #|| exit 1
 }
 
 region2() {
