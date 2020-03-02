@@ -97,6 +97,7 @@ bool monoJetDoubleMuCR::CRSelection(vector<int> tightlist,vector<int> looselist)
 }
 
 void monoJetDoubleMuCR::setRecoil() {
+  TLorentzVector ll = lep1 + lep2;
   TLorentzVector met_4vec;
   met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
   TLorentzVector leptoMET_4vec = ll+met_4vec;
