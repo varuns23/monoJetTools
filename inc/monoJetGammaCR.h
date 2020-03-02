@@ -20,6 +20,7 @@ public:
   virtual void initTree(TTree* tree);
   virtual float getSF(int phoindex);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
+  void setRecoil();
   virtual vector<int> getPho();
   virtual bool muon_veto(int phoindex);
   virtual bool electron_veto(int phoindex);

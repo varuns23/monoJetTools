@@ -16,10 +16,10 @@ void monoJetGammaCR::initVars() {
 }
 
 void monoJetGammaCR::initTree(TTree* tree) {
-  tree->Branch("photonPt",&photon_pt,"Photon P_{T} (GeV)");
-  tree->Branch("photonEta",&photon_eta,"Photon Eta");
-  tree->Branch("photonPhi",&photon_phi,"PhotonPhi");
-  tree->Branch("photonSigmaIEtaIEta",&photon_sieie,"Photon #sigma_{i#eta i#eta}");
+  // tree->Branch("photonPt",&photon_pt,"Photon P_{T} (GeV)");
+  // tree->Branch("photonEta",&photon_eta,"Photon Eta");
+  // tree->Branch("photonPhi",&photon_phi,"PhotonPhi");
+  // tree->Branch("photonSigmaIEtaIEta",&photon_sieie,"Photon #sigma_{i#eta i#eta}");
   tree->Branch("tightID_sf",&tightID_sf);
   tree->Branch("csev_sf",&csev_sf);
 }
@@ -55,14 +55,17 @@ bool monoJetGammaCR::CRSelection(vector<int> tight,vector<int> loose) {
     photon_eta = phoEta->at(phoindex);
     photon_phi = phoPhi->at(phoindex);
     photon_sieie = phoSigmaIEtaIEtaFull5x5->at(phoindex);
-    TLorentzVector met_4vec;
-    met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
-    TLorentzVector photoMET_4vec = pho+met_4vec;
-    recoil = fabs(photoMET_4vec.Pt());
-    recoilPhi = photoMET_4vec.Phi();
     return true;
   }
   return false;
+}
+
+void monoJetGammaCR::setRecoil() {
+  TLorentzVector met_4vec;
+  met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
+  TLorentzVector photoMET_4vec = pho+met_4vec;
+  recoil = fabs(photoMET_4vec.Pt());
+  recoilPhi = photoMET_4vec.Phi();
 }
 
 float monoJetGammaCR::getSF(int phoindex) {

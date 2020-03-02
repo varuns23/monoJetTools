@@ -19,6 +19,7 @@ public:
   virtual void initTree(TTree* tree);
   virtual float getSF(int lepindex);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
+  void setRecoil();
   virtual bool electron_veto();
   virtual bool photon_veto(int lepindex);
   virtual bool tau_veto(int lepindex);

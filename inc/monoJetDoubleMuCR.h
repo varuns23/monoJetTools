@@ -21,6 +21,7 @@ public:
   virtual void initVars();
   virtual void initTree(TTree* tree);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
+  void setRecoil();
   float getSF(int leading,int subleading);
   virtual bool electron_veto();
   virtual bool photon_veto(int leading,int subleading);

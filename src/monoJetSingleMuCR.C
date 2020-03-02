@@ -16,9 +16,9 @@ void monoJetSingleMuCR::initVars() {
 }
 
 void monoJetSingleMuCR::initTree(TTree* tree) {
-  tree->Branch("LeptonPt",&lepton_pt,"Lepton P_{T} (GeV)");
-  tree->Branch("LeptonEta",&lepton_eta,"Lepton Eta");
-  tree->Branch("LeptonPhi",&lepton_phi,"LeptonPhi");
+  // tree->Branch("LeptonPt",&lepton_pt,"Lepton P_{T} (GeV)");
+  // tree->Branch("LeptonEta",&lepton_eta,"Lepton Eta");
+  // tree->Branch("LeptonPhi",&lepton_phi,"LeptonPhi");
   tree->Branch("tightID_sf",&tightID_sf);
   tree->Branch("tightISO_sf",&tightISO_sf);
 }
@@ -51,16 +51,20 @@ bool monoJetSingleMuCR::CRSelection(vector<int> tight,vector<int> loose) {
 
     lepton_pt = lep.Pt();
     lepton_eta = muEta->at(lepindex);
-    lepton_phi = muPhi->at(lepindex); 
-    lepMET_mt = getMt(muPt->at(lepindex),muPhi->at(lepindex),pfMET,pfMETPhi);
-    TLorentzVector met_4vec;
-    met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
-    TLorentzVector leptoMET_4vec = lep+met_4vec;
-    recoil = fabs(leptoMET_4vec.Pt());
-    recoilPhi = leptoMET_4vec.Phi();
+    lepton_phi = muPhi->at(lepindex);
+    setRecoil();
     return true;
   }
   return false;
+}
+
+void monoJetSingleMuCR::setRecoil() {
+  lepMET_mt = getMt(muPt->at(lepindex),muPhi->at(lepindex),pfMET,pfMETPhi);
+  TLorentzVector met_4vec;
+  met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
+  TLorentzVector leptoMET_4vec = lep+met_4vec;
+  recoil = fabs(leptoMET_4vec.Pt());
+  recoilPhi = leptoMET_4vec.Phi();
 }
 
 float monoJetSingleMuCR::getSF(int lepindex) {
