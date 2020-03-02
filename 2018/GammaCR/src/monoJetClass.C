@@ -107,7 +107,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (recoil <= recoilCut) continue;
     fillEvent(13,event_weight);
 
-    jetCand = getJetCand(jetlist,phoindex);
+    vector<int> jetCand = getJetCand(jetlist,phoindex);
     if (jetCand.size() < 1) continue;
     setJetCand(jetCand);
     fillEvent(14,event_weight);

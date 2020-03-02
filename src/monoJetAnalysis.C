@@ -221,9 +221,34 @@ float monoJetAnalysis::dPhiJetMETmin(vector<int> jets,float metPhi) {
   return minDPhiJetMET_first4;
 }
 
+void monoJetAnalysis::setJetCandList() {
+  vector<int> elelist = getLooseEle();
+  vector<int> pholist = getLoosePho();
+  vector<int> mulist = getLooseMu();
+  jetCandList.clear();
+  for (int ijet = 0; ijet < nJet; ijet++) {
+    bool pass = true;
+    for (int iele : elelist) {
+      float dr = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(iele),eleSCPhi->at(iele));
+      if (dr <= Iso4Cut) pass = false;
+    }
+    for (int ipho : pholist) {
+      float dr = deltaR(jetEta->at(ijet),jetPhi->at(ijet),phoSCEta->at(ipho),phoSCPhi->at(ipho));
+      if (dr <= Iso4Cut) pass = false;
+    }
+    for (int imu : mulist) {
+      float dr = deltaR(jetEta->at(ijet),jetPhi->at(ijet),muEta->at(imu),muPhi->at(imu));
+      if (dr <= Iso4Cut) pass = false;
+    }
+    if (pass) {
+      jetCandList.push_back(ijet);
+    }
+  }
+}
+
 vector<int> monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
   vector<int> tmpCand; tmpCand.clear();
-  for(int i = 0; i < nJet; i++){
+  for(int i : jetCandList){
     bool tightJetID = (getJetID(i));
     bool kinematics = jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut;
     bool cleaning = jetNHF->at(i) < jetNHFCut && jetCHF->at(i) > jetCHFCut;
@@ -255,7 +280,7 @@ int monoJetAnalysis::setJetCand(vector<int> jetlist) {
 
 vector<int> monoJetAnalysis::getLooseJet(float jetPtCut,float jetEtaCut) {
   vector<int> jetindex; jetindex.clear();
-  for(int i = 0; i < nJet; i++) {
+  for(int i : jetCandList) {
     if (jetPt->at(i) > jetPtCut && fabs(jetEta->at(i)) < jetEtaCut && getJetID(i))
       jetindex.push_back(i);
   }
@@ -744,6 +769,7 @@ void monoJetAnalysis::initVars() {
   recoilPhi = pfMETPhi;
   n_Vtx = nVtx;
   n_Jet = nJet;
+  setJetCandList();
 }
 
 // Constructor Stuff 
