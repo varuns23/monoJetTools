@@ -79,7 +79,7 @@ def MCStyle(hs_mc,color):
     hs_mc.SetFillColor(color);
 ###################################################################
 
-def UncBandStyle(uncband,color=12):
+def UncBandStyle(uncband,color=33):
     uncband.SetTitle("")
     # uncband.SetFillStyle(3144)
     uncband.SetFillStyle(2001)
