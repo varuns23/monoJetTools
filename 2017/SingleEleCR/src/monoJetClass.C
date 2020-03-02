@@ -74,10 +74,13 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
       ApplyElectron_TriggerSF(event_weight);
     }
 
+    JetEnergyScale(event_weight);
+    JetEnergyResolution(event_weight);
+
     if (pfMET <= 50) continue;
     fillEvent(4,event_weight);
 
-    h_lepMET_MT->Fill(lepMET_mt,event_weight);
+    if (recoil > recoilCut) h_lepMET_MT->Fill(lepMET_mt,event_weight);
     if (lepMET_mt >= lepMETMtCut) continue;
     fillEvent(5,event_weight);
 
@@ -113,6 +116,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     int jetCand = getJetCand();
     if (jetCand == -1) continue;
     setJetCand(jetCand);
+
+    QCDVariations(event_weight);
     fillEvent(14,event_weight);
   }
 
@@ -151,4 +156,144 @@ void monoJetClass::fillHistos(int nhist,float event_weight) {
   monoJetSingleEleCR::fillHistos(nhist,event_weight);
   weight = event_weight;
   if (nhist == bHisto) tree->Fill();
+}
+
+bool monoJetClass::UncLoop(float &event_weight) {
+  if (pfMET <= 50) return false;
+  
+  if (lepMET_mt >= lepMETMtCut) return false;
+  
+  if (!getMetFilter()) return false;
+  
+  if (!muon_veto()) return false;
+  
+  if (!photon_veto(lepindex)) return false;
+  
+  if (!tau_veto(lepindex)) return false;
+  
+  if (!bjet_veto( bjetDeepCSVCut_2017)) return false;
+  
+  vector<int> jetlist = getLooseJet();
+  float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+  if (mindPhiJetMET <= dPhiJetMETCut) return false;
+  
+  float dpfcalo = fabs(pfMET-caloMET)/recoil;
+  if (dpfcalo >= metRatioCut) return false;
+  
+  if (recoil <= recoilCut) return false;
+  
+  int jetCand = getJetCand();
+  if (jetCand == -1) return false;
+  setJetCand(jetCand);
+  return true;
+}
+
+void monoJetClass::JetEnergyScale(float start_weight) {
+  string uncname = "JES";
+  if ( !shapeUncs.contains(uncname) ) {
+    shapeUncs.addUnc(uncname);
+    initTree(shapeUncs.getTreeUp(uncname));
+    initTree(shapeUncs.getTreeDn(uncname));
+  }
+
+  /* Initializing Variables */
+  int n_jetindex = jetindex;
+  vector<float> n_jetPt;
+  for (float pt : (*jetPt)) n_jetPt.push_back(pt);
+  float n_pfMET = pfMET;
+  float n_pfMETPhi = pfMETPhi;
+  float n_recoil = recoil;
+  float n_recoilPhi = recoilPhi;
+
+  int unclist[2] = {-1,1};
+  for (int unc : unclist) {
+    float event_weight = start_weight;
+    for (int i = 0; i < nJet; i++)
+      jetPt->at(i) = n_jetPt[i]*(1 + unc*jetJECUnc->at(i));
+    switch(unc) {
+    case  1:
+      pfMET = pfMET_T1JESUp;
+      pfMETPhi = pfMETPhi_T1JESUp;
+      break;
+    case -1:
+      pfMET = pfMET_T1JESDo;
+      pfMETPhi = pfMETPhi_T1JESDo;
+      break;
+    }
+    recoil = pfMET;
+    recoilPhi = pfMETPhi;
+
+    setRecoil();
+
+    if (!UncLoop(event_weight)) continue;
+
+    weight = event_weight;
+    switch(unc) {
+    case  1: shapeUncs.fillUp(uncname); break;
+    case -1: shapeUncs.fillDn(uncname); break;
+    }
+  }
+
+  /* Reset Changed Variables */
+  for (int i = 0; i < nJet; i++)
+    jetPt->at(i) = n_jetPt[i];
+  jetindex = n_jetindex;
+  setJetCand(jetindex);
+  pfMET = n_pfMET;
+  pfMETPhi = n_pfMETPhi;
+  recoil = n_recoil;
+  recoilPhi = n_recoilPhi;
+  setRecoil();
+}
+void monoJetClass::JetEnergyResolution(float start_weight) {
+  string uncname = "JER";
+  if ( !shapeUncs.contains(uncname) ) {
+    shapeUncs.addUnc(uncname);
+    initTree(shapeUncs.getTreeUp(uncname));
+    initTree(shapeUncs.getTreeDn(uncname));
+  }
+  if (isData || isSignal) return;
+  /* Initializing Variables */
+  int n_jetindex = jetindex;
+  vector<float> n_jetPt;
+  for (float pt : (*jetPt)) n_jetPt.push_back(pt);
+  float n_pfMET = pfMET;
+  float n_recoil = recoil;
+
+  int unclist[2] = {-1,1};
+  for (int unc : unclist) {
+    float event_weight = start_weight;
+    for (int i = 0; i < nJet; i++) {
+      switch(unc) {
+      case 1: jetPt->at(i) = jetUnCorrPt->at(i) * jetP4SmearUp->at(i); break;
+      case -1: jetPt->at(i) = jetUnCorrPt->at(i) * jetP4SmearDo->at(i); break;
+      }
+    }
+    switch(unc) {
+    case 1:
+      pfMET = pfMET_T1JERUp; break;
+    case -1:
+      pfMET = pfMET_T1JERDo; break;
+    }
+    recoil = pfMET;
+
+    setRecoil();
+
+    if (!UncLoop(event_weight)) continue;
+
+    weight = event_weight;
+    switch(unc) {
+    case 1: shapeUncs.fillUp(uncname); break;
+    case -1: shapeUncs.fillDn(uncname); break;
+    }
+  }
+
+  /* Reset Changed Variables */
+  for (int i = 0; i < nJet; i++)
+    jetPt->at(i) = n_jetPt[i];
+  jetindex = n_jetindex;
+  setJetCand(jetindex);
+  pfMET = n_pfMET;
+  recoil = n_recoil;
+  setRecoil();
 }

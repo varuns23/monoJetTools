@@ -29,7 +29,9 @@ public :
   void BookHistos(const char* file2);
   void fillHistos(int nhist,float event_weight=1.0);
   
+  bool UncLoop(float &event_weight);
   void JetEnergyScale(float start_weight);
+  void JetEnergyResolution(float start_weight);
 };
 
 #endif
