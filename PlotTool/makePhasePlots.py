@@ -15,7 +15,7 @@ Usage: python ../PlotTool/makePhasePlots.py variable_1 variable_2 variable_3 ...
 
 gROOT.SetBatch(1)
 samples=Region()
-for variable in samples.args:
+for variable in parser.args.argv:
     samples.initiate(variable)
     bkgPlot = samples.getSumOfBkg().Clone("Sum of Background")
     dataPlot = samples.histo['Data'].Clone("Data")

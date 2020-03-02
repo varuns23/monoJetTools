@@ -17,7 +17,7 @@ run() {
     subdir="AN"
     pushd $1
     shift 1
-    array="$@ $nvariables"
+    array="$nvariables $@"
     plot $options --sub $subdir -a $array $uncertainty || exit 1
     plot $options --sub $subdir $cutvars || exit 1
     popd

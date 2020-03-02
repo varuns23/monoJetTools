@@ -54,7 +54,7 @@ def compare():
             leg.Draw()
             
             lumi_label = '%s' % float('%.3g' % (samples.lumi/1000.)) + " fb^{-1}"
-            if (samples.args.normalize): lumi_label="Normalized"
+            if (parser.args.normalize): lumi_label="Normalized"
             texLumi,texCMS = getCMSText(lumi_label,samples.year,scale=0.8)
             texLumi.Draw();
             texCMS.Draw();
@@ -79,6 +79,6 @@ def compare():
             SaveAs(c,"%s_%s"%(name.lower(),variable),year=samples.year,region=samples.region,sub="Compare_Corrected")
         plot_type(corrected['SumOfBkg'],uncorrected['SumOfBkg'],'MC')
         plot_type(corrected['Data'],uncorrected['Data'],'Data')
-    for variable in corrected.args.argv:
+    for variable in parser.args.argv:
         plot(variable)
 compare()

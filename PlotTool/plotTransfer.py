@@ -316,6 +316,6 @@ def runAll(args):
     for variable in args.argv: plotTransfer(variable,samplemap)
 
 if __name__ == "__main__":
-    args = parser.parse_args()
-    if not any(args.argv): args.argv.append('recoil')
+    parser.parse_args()
+    if not any(args.argv): parser.args.argv.append('recoil')
     runAll(args)

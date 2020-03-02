@@ -7,7 +7,7 @@ gROOT.SetBatch(1)
 
 samples = Region()
     
-for variable in samples.args:          
+for variable in parser.args.argv:          
     print "Plotting",variable
     samples.initiate(variable)
     c = TCanvas("c","canvas",800,800)
@@ -36,7 +36,7 @@ for variable in samples.args:
     for order in keylist:hs_datamc.Add(samples.histo[hs_order[order]])
     hs_datamc.SetTitle("");
     min=pow(10,-6);max=pow(10,2.5);
-    hs_datamc.SetMinimum(0.1 if not samples.args.normalize else hs_datamc.GetMaximum()*min);
+    hs_datamc.SetMinimum(0.1 if not parser.args.normalize else hs_datamc.GetMaximum()*min);
     hs_datamc.SetMaximum(hs_datamc.GetMaximum()*max);
 
     hs_datamc.Draw("hist")
@@ -67,7 +67,7 @@ for variable in samples.args:
     leg.Draw();
 
     lumi_label = '%s' % float('%.3g' % (samples.lumi/1000.)) + " fb^{-1}"
-    if (samples.args.normalize): lumi_label="Normalized"
+    if (parser.args.normalize): lumi_label="Normalized"
     texS = TLatex(0.20,0.837173,("#sqrt{s} = 13 TeV, "+lumi_label));
     texS.SetNDC();
     texS.SetTextFont(42);
