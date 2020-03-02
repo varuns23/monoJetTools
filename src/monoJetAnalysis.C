@@ -312,7 +312,7 @@ bool monoJetAnalysis::bjet_veto(float bjetCutValue,float jetPtCut,float jetEtaCu
       bjet_cands.push_back(ijet);
     
   }
-  return bjet_cands.size();
+  return bjet_cands.size() == 0;
 }
 
 vector<int> monoJetAnalysis::getLooseEle(float elePtCut,float eleEtaCut){
