@@ -1,6 +1,7 @@
 from ROOT import TFile
 import os
 from mcinfo import *
+import signalinfo
 from cfg_saveplot import *
 from filevariants import *
 
