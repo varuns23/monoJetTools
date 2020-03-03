@@ -41,7 +41,9 @@ class SubProcess(object):
     def setVariable(self,variable,weight="weight",cut=None):
         self.tfile.cd()
         self.initVariable()
-        if type(variable) == str: variable = VariableInfo(self.tfile,variable,weight,cut)
+        if type(variable) == str:
+            variable = VariableInfo(self.tfile)
+            variable.setVariable(variable,weight,cut)
         self.variable = variable
         self.scaleWidth = variable.scaleWidth
         if variable.isGlobal: self.histo = GetTObject(variable.variable,self.tfile)
@@ -127,7 +129,9 @@ class Process:
         return any(self)
     def setVariable(self,variable,lumi,weight="weight",cut=None):
         self.initVariable()
-        if type(variable) == str: variable = VariableInfo(self[0].tfile,variable,weight,cut)
+        if type(variable) == str:
+            variable = VariableInfo(self[0].tfile)
+            variable.setVariable(variable,weight,cut)
         self.variable = variable
         for subprocess in self:
             subprocess.setVariable(variable)

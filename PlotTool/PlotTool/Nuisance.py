@@ -18,7 +18,6 @@ def AddDiffNuisances(nuisances,up,dn,norm):
         up[ibin] = norm[ibin] * TMath.Sqrt( sum( (nuisance.up[ibin]/norm[ibin])**2 for nuisance in nuisances) )
         dn[ibin] = norm[ibin] * TMath.Sqrt( sum( (nuisance.dn[ibin]/norm[ibin])**2 for nuisance in nuisances) )
 class Nuisance(object):
-    unclist = []
     def __init__(self,process,name,up,dn,norm,type="diff"):
         self.process = process
         self.name = name
@@ -71,8 +70,7 @@ def GetNuisanceList(tfile,dirname):
     nuisances = {}
     for shape in shapelist:
         nuisances[shape] = 'shape'
-        if shape not in Nuisance.unclist: Nuisance.unclist.append(shape)
     for scale in scalelist:
         nuisances[scale] = 'scale'
-        if scale not in Nuisance.unclist: Nuisance.unclist.append(scale)
+    nuisances['Stat'] = True
     return nuisances

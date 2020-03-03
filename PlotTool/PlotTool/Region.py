@@ -63,9 +63,8 @@ class Region(object):
         if self.region is None: self.region = GetRegion()
         self.setLumi(lumi,useMaxLumi)
         
-        if autovar: self.nhist = self.config.regions[self.region]
-        if parser.args.autovar: self.nhist = self.config.regions[self.region]
-        if parser.args.nhists == -1: parser.args.nhists = int(self.config.regions[self.region])
+        self.autovar = autovar
+        if parser.args.autovar: self.autovar = True
 
         self.isBlinded = False
 
@@ -173,30 +172,32 @@ class Region(object):
                 if process in self.MCList: self.MCList.remove(process)
                 if hasattr(self,'SignalList') and process in self.SignalList: self.SignalList.remove(process)
         if self.isBlinded: self.setLumi(self.max_lumi)
-    def initVariable(self,variable):
-        if self.show and not hasattr(self,'first_init'):
+    def initVariable(self,variable,weight,cut):
+        if not hasattr(self,'first_init'):
             self.first_init = True
-            print "Running in "+self.region+":"
-            print "Plotting at",self.lumi,"pb^{-1}"
+            tfile = next( process[0].tfile for process in self if process[0].tfile is not None )
+            self.variable = VariableInfo(tfile)
             
-        Nuisance.unclist = []
+            if self.show:
+                print "Running in "+self.region+":"
+                print "Plotting at",self.lumi,"pb^{-1}"
+
+            
         self.total_bkg = 0
         if 'SumOfBkg' in self.processes:
             tmp = self.processes.pop('SumOfBkg')
             del tmp
-        self.variable = variable
+        self.variable.setVariable(variable,weight,cut,autovar=self.autovar)
         self.scaleWidth = self.variable
         self.varname = self.variable.variable
-        if hasattr(self,'nhist'): self.varname = self.variable.base
+        if self.autovar: self.varname = self.variable.base
         if hasattr(self.variable,'cutfix'): self.varname += self.variable.cutfix
         if hasattr(self.variable,'binfix'): self.varname += '_'+self.variable.binfix
     def initiate(self,variable,weight='weight',cut=None):
         if os.getcwd() != self.path: os.chdir(self.path)
         self.open()
-        if hasattr(self,'nhist') and 'h_' not in variable: variable = '%s_%s' % (variable,self.nhist)
-        tfile =next( process[0].tfile for process in self if process[0].tfile is not None )
-        variable = VariableInfo(tfile,variable,weight,cut)
-        self.initVariable(variable)
+        self.initVariable(variable,weight,cut)
+        variable = self.variable
         for process in self:
             if self.isBlinded and process.proctype == 'data': continue
             process.setVariable(variable,self.lumi)

@@ -38,10 +38,22 @@ class VariableInfo:
     binningMap = {
         'rebin':rebin
     }
-    def __init__(self,tfile=None,variable=None,weight=None,cut=None):
+    def __init__(self,tfile=None):
         self.initVariable()
-        if variable is not None and tfile is not None:
-            self.setVariable(tfile,variable,weight,cut)
+        self.initFile(tfile)
+    def initFile(self,tfile):
+        if type(tfile) == str: tfile = TFile(tfile)
+        finaldir = None
+        finalnhs = None
+        for key in tfile.GetListOfKeys():
+            if tfile.GetDirectory(key.GetName()):
+                finaldir = key.GetName()
+                finalnhs = finaldir.split('_')[1]
+        self.nuisances = {'Stat':True}
+        if tfile.GetDirectory('%s/trees'%finaldir ): self.nuisances = GetNuisanceList(tfile,'%s/trees'%finaldir)
+        self.finaldir = finaldir
+        self.finalnhs = finalnhs
+        self.tfile = tfile
     def initVariable(self):
         self.variable = None
         self.base = None
@@ -54,8 +66,11 @@ class VariableInfo:
         self.isBranch = False
 
         self.nuisances = {}
-    def setVariable(self,tfile,variable,weight="weight",cut=None):
+    def setVariable(self,variable,weight="weight",cut=None,autovar=False,tfile=None):
+        if tfile is not None: self.initFile(tfile)
+        tfile = self.tfile
         self.initVariable()
+        if autovar: variable += '_'+self.finalnhs
         self.variable = variable
         self.weight = weight
         
@@ -94,7 +109,6 @@ class VariableInfo:
         self.template.SetDirectory(0)
         self.template.Reset()
         self.dirname,ndir = GetDirname(variable,'trees')
-        self.nuisances = GetNuisanceList(tfile,self.dirname)
     def getBinning(self,tfile,variable):
         if parser.args.binning is None:
             dirname,ndir = GetDirname(variable)
