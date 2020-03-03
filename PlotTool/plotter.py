@@ -75,16 +75,18 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
         
     if not blinded: data.histo.Draw('pex0same')
     
-    if hasattr(samples,'signal'):
-        signal = samples.processes[samples.signal]
-        signal.histo.SetLineWidth(2)
-        signal.histo.Draw("HIST SAME")
+    if hasattr(samples,'SignalList'):
+        signals = [ samples[signal] for signal in samples.SignalList ]
+        for signal in signals:
+            signal.histo.SetLineWidth(2)
+            signal.histo.Draw("HIST SAME")
 
     #################################################
 
     leg = getLegend(xmin=0.5,xmax=0.7); #0.62,0.60,0.86,0.887173
     if not blinded: leg.AddEntry(data.histo,"Data","lp");
-    if (hasattr(samples,'signal')): leg.AddEntry(signal.histo, signal.process,'l')
+    if (hasattr(samples,'SignalList')):
+        for signal in signals: leg.AddEntry(signal.histo, signal.process,'l')
 
     if parser.args.mc_solid:
         leg.AddEntry(hs_bkg,"Background","f")
