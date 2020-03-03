@@ -94,3 +94,32 @@ def GetDirname(variable,sub=None):
     dirname = 'monoJet_%s' % ndir
     if sub != None: dirname += '/%s' % sub
     return dirname,ndir
+def CheckHisto(histo):
+    pass
+def GetTObject(name,tfile):
+    tobject = tfile.Get(name)
+    if tobject == None: raise ValueError("Unable to find %s in %s" % (name,tfile.GetName()))
+    return tobject
+def GetBranch(name,variable,tree,weight=None,cut=None):
+    if weight is None: weight = variable.weight
+    if cut is None:    cut = variable.cut
+    
+    histo = variable.template.Clone(name); histo.Reset()
+    if variable.cut == None: tree.Draw("%s>>%s" % (variable.base,name),weight,'goff')
+    else:                    tree.Draw("%s>>%s" % (variable.base,name),'%s*(%s)' % (weight,cut),'goff')
+    return histo
+def HistoEqual(hs1,hs2):
+    if hs1 == hs2: return True
+    if hs1 is None: return True
+    if hs2 is None: return False
+    xarray1 = list(hs1.GetXaxis().GetXbins())
+    xmin1,xmax1 = hs1.GetXaxis().GetXmin(),hs1.GetXaxis().GetXmax()
+    xarray2 = list(hs2.GetXaxis().GetXbins())
+    xmin2,xmax2 = hs2.GetXaxis().GetXmin(),hs2.GetXaxis().GetXmax()
+    if len(xarray1) != len(xarray2): return False
+    if xmin1 != xmin2 or xmax1 != xmax2: return False
+    return not any( width1 != width2 for width1,width2 in zip(xarray1,xarray2) )
+def GetProcessName(name,year,region):
+    if region is not None: name = "%s_%s" % (region,name)
+    if year is not None:   name = "%s_%s" % (year,name)
+    return name

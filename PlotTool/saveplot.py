@@ -125,5 +125,5 @@ def saveplot(variable):
     rfile.Close()
 ################################################################################
 if __name__ == "__main__":
-    args = parser.parse_args()
-    for variable in args.argv: saveplot(variable)
+    parser.parse_args()
+    for variable in parser.args.argv: saveplot(variable)

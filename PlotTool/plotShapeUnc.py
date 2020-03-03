@@ -240,9 +240,9 @@ def runAll(args):
         os.chdir(cwd)
     
 if __name__ == "__main__":
-    args = parser.parse_args()
-    if not any(args.argv): args.argv.append('ChNemPtFrac')
+    parser.parse_args()
+    if not any(parser.args.argv): parser.args.argv.append('ChNemPtFrac')
     runall = ( GetRegion() == None )
 
-    if runall: runAll(args)
-    else:      runRegion(args)
+    if runall: runAll(parser.args)
+    else:      runRegion(parser.args)

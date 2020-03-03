@@ -7,12 +7,12 @@ parser.add_argument("--path",help="Specify directory to save file in",default=ba
 parser.add_argument("--sub",help="Specify subdirectory from path directory to save file in")
 
 def GetOutDir(path,year,region,sub):
-    args = parser.parse_args()
-    if path is None: path = args.path
+    parser.parse_args()
+    if path is None: path = parser.args.path
     if year is not None: path = os.path.join(path,'Plots'+year)
     if region is not None: path = os.path.join(path,region+'Plots_EWK')
     if sub is not None: path = os.path.join(path,sub)
-    if args.sub is not None: path = os.path.join(path,args.sub)
+    if parser.args.sub is not None: path = os.path.join(path,parser.args.sub)
     return path
 def SaveAs(c,name,path=None,year=None,region=None,sub=None,exts='.png'):
     path = GetOutDir(path,year,region,sub)
