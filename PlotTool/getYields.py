@@ -75,10 +75,10 @@ parser.add_argument('--percent',help='print percentage of background table of cu
 parser.add_argument('--efficiency',help='print cut efficiecies table of current region',action='store_true',default=False)
 parser.add_argument('--no-weight',help='use the none weighted cutflow',action='store_true',default=False)
 if __name__ == "__main__":
-    args = parser.parse_args()
+    parser.parse_args()
     
     samples = Region(show=False)
-    if args.no_weight:
+    if parser.args.no_weight:
         samples.initiate('h_cutflowNoWt')
     else:
         samples.initiate('h_cutflow')
@@ -90,13 +90,13 @@ if __name__ == "__main__":
     samples.setSumOfBkg()
     hslist.insert(1, ('SumOfBkg',samples.processes['SumOfBkg'].histo) )
 
-    if not any(args.argv): args.argv = range(int(config.regions[samples.region])+1)
-    binlist = [ int(ibin) for ibin in args.argv ]
+    if not any(parser.args.argv): parser.args.argv = range(int(config.regions[samples.region])+1)
+    binlist = [ int(ibin) for ibin in parser.args.argv ]
     tableSet = TableSet()
-    if args.yields: tableSet.add(getYields(hslist,binlist))
-    if args.percent: tableSet.add(getPercBkg(hslist,binlist))
-    if args.efficiency: tableSet.add(getCutEff(hslist,binlist))
-    if not args.yields and not args.percent and not args.efficiency:
+    if parser.args.yields: tableSet.add(getYields(hslist,binlist))
+    if parser.args.percent: tableSet.add(getPercBkg(hslist,binlist))
+    if parser.args.efficiency: tableSet.add(getCutEff(hslist,binlist))
+    if not parser.args.yields and not parser.args.percent and not parser.args.efficiency:
         tableSet.add(getYields(hslist,binlist))
 
     print tableSet

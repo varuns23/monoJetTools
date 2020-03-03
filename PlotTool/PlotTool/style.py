@@ -79,21 +79,22 @@ def MCStyle(hs_mc,color):
     hs_mc.SetFillColor(color);
 ###################################################################
 
-def UncBandStyle(uncband,color=kGray+2):
+def UncBandStyle(uncband,color=33):
     uncband.SetTitle("")
     # uncband.SetFillStyle(3144)
-    uncband.SetFillStyle(3003)
+    uncband.SetFillStyle(2001)
     uncband.SetFillColor(color)
 ###################################################################
 
 def fillStack(samples,hs_datamc,threshold=0.001):
     if samples.name == 'Cutflow': threshold=0
+    MCLegOrder = []
     for process in reversed(samples.MCOrder):
         percent=samples[process].scaled_total/samples.total_bkg
         if percent > threshold:
             hs_datamc.Add(samples[process].histo)
-        else:
-            samples.MCOrder.remove(process)
+            MCLegOrder.append(process)
+    return list(reversed(MCLegOrder))
 ###################################################################
 
 def getLegend(xmin=0.75,ymin=0.5,xmax=0.95,ymax=0.887173,textsize=0.032):

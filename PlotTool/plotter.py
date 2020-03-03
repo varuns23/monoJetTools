@@ -31,15 +31,15 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
     del store[:] # Clear storage list 
     print "Plotting",variable
     if initiate:
-        if (samples.args.thn):
+        if (parser.args.thn):
             HigherDimension(samples,variable)
         else:
             samples.initiate(variable)
             if samples.isBlinded: blinded = True
-            samples.fullUnc(samples.args.uncertainty,stat=True)
-    if samples.args.no_plot: return
+            if 'Stat' not in parser.args.uncertainty: parser.args.uncertainty.append('Stat')
+    if parser.args.no_plot: return
     if samples['Data'].histo.Integral() == 0: blinded = True
-    xwidth,ywidth = samples.args.dimension # default is 800,800
+    xwidth,ywidth = parser.args.dimension # default is 800,800
     c = TCanvas("c", "canvas",xwidth,ywidth);
     gStyle.SetOptStat(0);
     gStyle.SetLegendBorderSize(0);
@@ -59,18 +59,18 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
     if not blinded:
         data = samples.processes['Data']
         DataStyle(data.histo)
-        if (samples.args.normalize): data.histo.Scale(1/data.total)
+        if (parser.args.normalize): data.histo.Scale(1/data.total)
 
     for mc in samples.MCList:
         mc_proc = samples.processes[mc]
         MCStyle(mc_proc.histo,mc_proc.color)
-        if (samples.args.normalize): mc_proc.histo.Scale(1/samples.bkgIntegral)
+        if (parser.args.normalize): mc_proc.histo.Scale(1/samples.bkgIntegral)
         
 
     hs_datamc = THStack("hs_datamc","Data/MC comparison"); samples.stack = hs_datamc
-    fillStack(samples,hs_datamc,threshold=samples.args.ignore_mc)
+    MCLegOrder = fillStack(samples,hs_datamc,parser.args.ignore_mc)
     hs_bkg = hs_datamc.GetStack().Last()
-    if samples.args.mc_solid:hs_bkg.Draw("hist")
+    if parser.args.mc_solid:hs_bkg.Draw("hist")
     else:                    hs_datamc.Draw("hist")
         
     if not blinded: data.histo.Draw('pex0same')
@@ -86,28 +86,28 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
     if not blinded: leg.AddEntry(data.histo,"Data","lp");
     if (hasattr(samples,'signal')): leg.AddEntry(signal.histo, signal.process,'l')
 
-    if samples.args.mc_solid:
+    if parser.args.mc_solid:
         leg.AddEntry(hs_bkg,"Background","f")
     else:
-        for mc in samples.MCOrder:
+        for mc in MCLegOrder:
             if samples[mc].scaled_total == 0: continue
             leg.AddEntry(samples[mc].histo,samples[mc].leg,'f')
 
-    uncband = samples.getUncBand(samples.args.uncertainty,stat=True)
+    uncband = samples.getUncBand(parser.args.uncertainty)
     UncBandStyle(uncband)
-    uncband_leg = 'syst #otimes stat' if any(samples.args.uncertainty) else 'stat'
+    uncband_leg = 'syst #otimes stat' if len(parser.args.uncertainty) > 1 else 'stat'
     leg.AddEntry(uncband,uncband_leg,'f')
         
     leg.Draw();
 
     lumi_label = '%s' % float('%.3g' % (samples.lumi/1000.)) + " fb^{-1}"
-    if (samples.args.normalize): lumi_label="Normalized"
+    if (parser.args.normalize): lumi_label="Normalized"
     texLumi,texCMS = getCMSText(lumi_label,samples.year,scale=0.8 if blinded else 1)
     texLumi.Draw();
     texCMS.Draw();
 
     
-    if samples.args.mc_solid:
+    if parser.args.mc_solid:
         StackStyle(hs_bkg,scaleWidth=samples.scaleWidth)
         hs_bkg.GetXaxis().SetTitle(samples.name)
     else:
@@ -140,8 +140,7 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
     
 def plotter(args=[]):
     samples = Region()
-    if samples.args.nhists > 0: samples.getNHists(samples.args.nhists)
-    if not any(args): args = samples.args.argv
+    if not any(args): args = parser.args.argv
     for variable in args:
         plotVariable(samples,variable)
 ###################################################################
@@ -156,8 +155,8 @@ def run2plotter(region):
         useMaxLumi = region == 'SignalRegion' and blinded
         yearmap[year] = Region(path='%s/%s' % (year,region),config=import_module(".config",year),autovar=True,show=False,useMaxLumi=useMaxLumi)
     
-    args = parser.parse_args()
-    for variable in args.argv:
+    parser.parse_args()
+    for variable in parser.args.argv:
 
         for year in yearlist:
             yearmap[year].initiate(variable)
@@ -172,6 +171,6 @@ def run2plotter(region):
   
 
 if __name__ == "__main__":
-    args = parser.parse_args()
-    if args.run2 is None: plotter()
+    parser.parse_args()
+    if parser.args.run2 is None: plotter()
     else: run2plotter(args.run2)
