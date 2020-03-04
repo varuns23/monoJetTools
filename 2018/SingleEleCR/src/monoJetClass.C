@@ -116,6 +116,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (jetCand == -1) continue;
     setJetCand(jetCand);
 
+    PSWeights(event_weight);
+    PFUncertainty(event_weight);
     QCDVariations(event_weight);
     fillEvent(15,event_weight);
   }
