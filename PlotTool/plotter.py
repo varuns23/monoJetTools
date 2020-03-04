@@ -173,6 +173,7 @@ def run2plotter(region):
   
 
 if __name__ == "__main__":
+    from PlotTool import parser
     parser.parse_args()
     if parser.args.run2 is None: plotter()
     else: run2plotter(args.run2)
