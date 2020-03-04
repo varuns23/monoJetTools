@@ -47,11 +47,9 @@ parser.add_argument("-s","--signal",help="specify the signal file to use",action
 parser.add_argument("--nhists",help="Plot all 1D plots at nhists level",type=int,nargs='?',const=-1)
 parser.add_argument("--mc-solid",help="Make MC solid color",action="store_true",default=False)
 parser.add_argument("-d","--directory",help="Specify directory to get post files from",type=valid_directory)
-parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
 parser.add_argument("-e","--era",help="Specify the eras to use",type=lambda arg:sorted(arg.upper()),default=None)
 parser.add_argument("-a","--autovar",help="Specify to use the automatic basic nhist",action="store_true",default=False)
 parser.add_argument("--normalize",help="Specify to normalize plots to unity",action="store_true",default=False)
-parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
 parser.add_argument("--nlo",help="Use all available NLO samples",action="store_true",default=False)
 parser.add_argument("--postpath",help="Force path to come from postpath.txt",action="store_true",default=False)
 

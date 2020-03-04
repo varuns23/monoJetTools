@@ -6,6 +6,8 @@ from Nuisance import *
 from Parser import parser
 
 parser.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
+parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
+parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
 parser.add_argument("--no-width",help="Disable bin width scaling",action="store_true",default=False)
 
 def IsGlobal(variable,tfile):
@@ -25,7 +27,9 @@ def IsBranch(variable,tfile):
     tree = tdir.Get('norm')
     isBranch = tree.GetListOfBranches().Contains(b_variable)
     # tdir.Close()
-    return isBranch
+    if 'recoil' in variable or 'bosonPt' in variable:
+        return isBranch
+    return False
 def linspace(xmin,xmax,nx): return list(np.linspace(xmin,xmax,nx+1))
 
 def rebin(arg,sample,name):
@@ -72,9 +76,12 @@ class VariableInfo:
         self.initVariable()
         if autovar: variable += '_'+self.finalnhs
         self.variable = variable
+
         self.weight = weight
+        if self.weight is "weight": self.weight = parser.args.weight
         
         self.cut = cut
+        if self.cut is None: self.cut = parser.args.cut
         if cut is not None:
             cutvar = cut.replace('>','?').replace('<','?').split('?')[0]
             if cutvar in variable: self.cutfix = cut.replace(cutvar,'').replace('<','-').replace('>','+')

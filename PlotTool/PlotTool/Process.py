@@ -93,7 +93,7 @@ class Process:
         self.process = name; self.filenames = filenames; self.xsecs = xsecs; self.proctype = proctype
         self.year = year; self.region = region; self.leg = leg; self.color = color
         self.name = GetProcessName(name,year,region)
-        self.sublist = [ '%s_%s' % (self.name,filename) for filename in self.filenames ]
+        self.sublist = [ '%s_%s' % (self.process,filename.replace("post","")) for filename in self.filenames ]
         self.xsecs = { sub:xsecs[filename] for sub,filename in zip(self.sublist,self.filenames) } if xsecs is not None else None
 
         self.subprocesses = {}

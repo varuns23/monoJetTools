@@ -1,9 +1,9 @@
 from ROOT import *
 from utilities import *
-from Nuisance import Nuisance
+from Nuisance import *
 
 class Transfer:
-    tranunc = [
+    zwunc = [
             "QCD_Scale",
             "QCD_Shape",
             "QCD_Proc",
@@ -21,30 +21,8 @@ class Transfer:
             stat_hs[ibin] = stat
             self.histo.SetBinError(ibin,stat)
         self.nuisances['Stat'] = Nuisance(self.name,'Stat',stat_hs,stat_hs,self.histo)
-            
-        if not any(num.nuisances): return
-        if namelist is None:
-            numname = num.process
-            denname = den.process
-        else:
-            numname = namelist[0]
-            denname = namelist[1]
-        for nuisance in Transfer.tranunc:
-            #Numerator Variation
-            numup,numdn = num.nuisances[nuisance].GetHistos()
-            tfnumup = GetRatio(numup,den.histo)
-            tfnumdn = GetRatio(numdn,den.histo)
-            numunc = '%s_%s' % (nuisance,numname)
-            self.nuisances[numunc] = Nuisance(self.name,numunc,tfnumup,tfnumdn,self.histo,type='abs')
-            # self.nuisances[numunc].printByBin()
 
-            #Denomenator Variation
-            denup,dendn = den.nuisances[nuisance].GetHistos()
-            tfdenup = GetRatio(num.histo,denup)
-            tfdendn = GetRatio(num.histo,dendn)
-            denunc = '%s_%s' % (nuisance,denname)
-            self.nuisances[denunc] = Nuisance(self.name,denunc,tfdenup,tfdendn,self.histo,type='abs')
-            # self.nuisances[denunc].printByBin()
+        self.getZWUnc()
 
         up,dn = self.histo.Clone(),self.histo.Clone()
         for ibin in range(1,self.histo.GetNbinsX()+1):
@@ -52,6 +30,18 @@ class Transfer:
             dn[ibin] = TMath.Sqrt( sum( nuisance.dn[ibin]**2 for nuisance in self.nuisances.values() ) )
         self.nuisances['Total'] = Nuisance(self.name,'Total',up,dn,self.histo)
         # self.nuisances['Total'].printByBin()
+    def getZWUnc(self):
+        isZ = (self.num.process == "ZJets" or self.num.process == "DYJets")
+        isW = self.den.process == "WJets"
+        if not (isZ and isW): return
+        for theory in self.zwunc:
+            if theory in self.num.variable.nuisances:
+                self.num.addUnc(theory)
+                self.den.addUnc(theory)
+            else:
+                self.getTheoryUnc(theory)
+    def getTheoryUnc(self,theory): pass
+        
     def getUncBand(self,nuisance='Total'):
         up,dn = self.nuisances[nuisance].GetHistos()
         return GetUncBand(up,dn)

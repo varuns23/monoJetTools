@@ -88,6 +88,17 @@ def FindConfig():
     config_path = helper('.')
     if config_path is not None: sys.path.append(config_path)
 
+def GetRootFiles():
+    wd,wf = os.path.split(__file__)
+    def updirectory(path,ntimes=1):
+        for _ in range(ntimes): path += '/../';
+        return path
+    repo_path = os.path.realpath( updirectory(wd,2) )
+    def helper(path):
+        if any( directory == 'RootFiles' for directory in os.listdir(path) ): return os.path.realpath(path)
+        elif os.path.realpath(path) != repo_path: return helper( updirectory(path) )
+    return helper('.')
+
 def GetDirname(variable,sub=None):
     ndir = variable.split('_')[-1]
     if not ndir.isdigit(): return None,None

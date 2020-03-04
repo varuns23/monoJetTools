@@ -12,4 +12,5 @@ from samplenames import samplenames
 from SaveAs import SaveAs
 
 FindConfig()
+root_files = GetRootFiles()
 
