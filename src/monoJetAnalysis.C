@@ -63,12 +63,12 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("nnlo_qcd",&nnlo_qcd);
   tree->Branch("trigger_sf",&trigger_sf);
   tree->Branch("recoil",&recoil,"Recoil (GeV)");
-  tree->Branch("j1pT",&j1pT,"Leading Jet P_{T} (GeV)");
-  tree->Branch("j1Eta",&j1Eta,"Leading Jet Eta");
-  tree->Branch("j1Phi",&j1Phi,"Leading Jet Phi");
-  tree->Branch("nJets",&n_Jet,"Number of Jets");
+  // tree->Branch("j1pT",&j1pT,"Leading Jet P_{T} (GeV)");
+  // tree->Branch("j1Eta",&j1Eta,"Leading Jet Eta");
+  // tree->Branch("j1Phi",&j1Phi,"Leading Jet Phi");
+  // tree->Branch("nJets",&n_Jet,"Number of Jets");
   tree->Branch("bosonPt",&bosonPt,"Boson Pt");
-  tree->Branch("nVtx",&n_Vtx,"Number of Verticies");
+  // tree->Branch("nVtx",&n_Vtx,"Number of Verticies");
 }
 
 void monoJetAnalysis::BookHistos(int i,string histname) {

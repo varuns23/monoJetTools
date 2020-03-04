@@ -16,10 +16,10 @@ void monoJetGammaCR::initVars() {
 }
 
 void monoJetGammaCR::initTree(TTree* tree) {
-  tree->Branch("photonPt",&photon_pt,"Photon P_{T} (GeV)");
-  tree->Branch("photonEta",&photon_eta,"Photon Eta");
-  tree->Branch("photonPhi",&photon_phi,"PhotonPhi");
-  tree->Branch("photonSigmaIEtaIEta",&photon_sieie,"Photon #sigma_{i#eta i#eta}");
+  // tree->Branch("photonPt",&photon_pt,"Photon P_{T} (GeV)");
+  // tree->Branch("photonEta",&photon_eta,"Photon Eta");
+  // tree->Branch("photonPhi",&photon_phi,"PhotonPhi");
+  // tree->Branch("photonSigmaIEtaIEta",&photon_sieie,"Photon #sigma_{i#eta i#eta}");
   tree->Branch("tightID_sf",&tightID_sf);
   tree->Branch("csev_sf",&csev_sf);
 }
