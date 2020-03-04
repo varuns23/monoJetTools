@@ -208,7 +208,7 @@ class Region(object):
             tmp = self.processes.pop('SumOfBkg')
             del tmp
         self.variable.setVariable(variable,weight,cut,autovar=self.autovar)
-        self.scaleWidth = self.variable
+        self.scaleWidth = self.variable.scaleWidth
         self.varname = self.variable.variable
         if self.autovar: self.varname = self.variable.base
         if hasattr(self.variable,'cutfix'): self.varname += self.variable.cutfix
