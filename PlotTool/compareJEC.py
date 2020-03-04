@@ -45,7 +45,7 @@ def makeComparison(num,den,process):
     leg.Draw()
 
     lumi_label = '%s' % float('%.3g' % (num.lumi/1000.)) + " fb^{-1}"
-    if (num.args.normalize): lumi_label="Normalized"
+    if (parser.args.normalize): lumi_label="Normalized"
     texLumi,texCMS = getCMSText(lumi_label,num.year,scale=0.8)
     texLumi.Draw();
     texCMS.Draw();

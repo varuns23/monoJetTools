@@ -76,9 +76,6 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!tau_veto()) continue;
     fillEvent(6,event_weight);
 
-    JetEnergyScale(event_weight);
-    JetEnergyResolution(event_weight);
-
     if (!bjet_veto(bjetDeepCSVCut_2017)) continue;
     fillEvent(7,event_weight);
     
@@ -96,9 +93,9 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (pfMET <= recoilCut) continue;
     fillEvent(10,event_weight);
 
-    jetindex = getJetCand();
-    if (jetindex == -1) continue;
-    setJetCand(jetindex);
+    int jetCand = getJetCand();
+    if (jetCand == -1) continue;
+    setJetCand(jetCand);
 
     QCDVariations(event_weight);
     fillEvent(11,event_weight);
@@ -140,6 +137,23 @@ void monoJetClass::fillHistos(int nhist,float event_weight) {
   if (nhist == bHisto) tree->Fill();
 }
 
+bool monoJetClass::UncLoop(float &event_weight) {
+  if (!bjet_veto(bjetDeepCSVCut_2017)) return false;
+    
+  vector<int> jetlist = getLooseJet();
+  float mindPhiJetMET = dPhiJetMETmin(jetlist,pfMETPhi);
+  if (mindPhiJetMET <= dPhiJetMETCut) return false;
+		      
+  float dpfcalo = fabs(pfMET-caloMET)/pfMET;
+  if (dpfcalo >= metRatioCut) return false;
+
+  if (pfMET <= recoilCut) return false;
+
+  int jetCand = getJetCand();
+  if (jetCand == -1) return false;
+  setJetCand(jetCand);
+  return true;
+}
 void monoJetClass::JetEnergyScale(float start_weight) {
   string uncname = "JES";
   if ( !shapeUncs.contains(uncname) ) {
@@ -175,20 +189,7 @@ void monoJetClass::JetEnergyScale(float start_weight) {
     recoil = pfMET;
     recoilPhi = pfMETPhi;
 
-    if (!bjet_veto(bjetDeepCSVCut_2017)) continue;
-    
-    vector<int> jetlist = getLooseJet();
-    float mindPhiJetMET = dPhiJetMETmin(jetlist,pfMETPhi);
-    if (mindPhiJetMET <= dPhiJetMETCut) continue;
-		      
-    float dpfcalo = fabs(pfMET-caloMET)/pfMET;
-    if (dpfcalo >= metRatioCut) continue;
-
-    if (pfMET <= recoilCut) continue;
-
-    jetindex = getJetCand();
-    if (jetindex == -1) continue;
-    setJetCand(jetindex);
+    if (!UncLoop(event_weight)) continue;
 
     weight = event_weight;
     switch(unc) {
@@ -207,7 +208,6 @@ void monoJetClass::JetEnergyScale(float start_weight) {
   recoil = n_recoil;
   recoilPhi = n_recoilPhi;
 }
-
 void monoJetClass::JetEnergyResolution(float start_weight) {
   string uncname = "JER";
   if ( !shapeUncs.contains(uncname) ) {
@@ -228,36 +228,23 @@ void monoJetClass::JetEnergyResolution(float start_weight) {
     float event_weight = start_weight;
     for (int i = 0; i < nJet; i++) {
       switch(unc) {
-      case  1: jetPt->at(i) = jetUnCorrPt->at(i) * jetP4SmearUp->at(i); break;
+      case 1: jetPt->at(i) = jetUnCorrPt->at(i) * jetP4SmearUp->at(i); break;
       case -1: jetPt->at(i) = jetUnCorrPt->at(i) * jetP4SmearDo->at(i); break;
       }
     }
     switch(unc) {
-    case  1:
+    case 1:
       pfMET = pfMET_T1JERUp; break;
     case -1:
       pfMET = pfMET_T1JERDo; break;
     }
     recoil = pfMET;
 
-    if (!bjet_veto(bjetDeepCSVCut_2017)) continue;
-    
-    vector<int> jetlist = getLooseJet();
-    float mindPhiJetMET = dPhiJetMETmin(jetlist,pfMETPhi);
-    if (mindPhiJetMET <= dPhiJetMETCut) continue;
-		      
-    float dpfcalo = fabs(pfMET-caloMET)/pfMET;
-    if (dpfcalo >= metRatioCut) continue;
-
-    if (pfMET <= recoilCut) continue;
-
-    jetindex = getJetCand();
-    if (jetindex == -1) continue;
-    setJetCand(jetindex);
+    if (!UncLoop(event_weight)) continue;
 
     weight = event_weight;
     switch(unc) {
-    case  1: shapeUncs.fillUp(uncname); break;
+    case 1: shapeUncs.fillUp(uncname); break;
     case -1: shapeUncs.fillDn(uncname); break;
     }
   }

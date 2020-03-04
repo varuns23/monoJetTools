@@ -149,6 +149,7 @@ public:
   vector<float>j1PFConsEta;
   vector<float>j1PFConsPhi;
   vector<int>j1PFConsPID;
+  vector<int> jetCandList;
 
   float j1pT,j1Eta,j1Phi;
   float Pt123Fraction,Pt123;
@@ -913,14 +914,16 @@ public:
   bool getEleHEMVeto(float elePtCut=eleHEMVetoPtCut);
   
   /* Object Selction Methods */
+  virtual void setJetCandList();
   virtual int getJetCand
   (float jetPtCut=jetCandPtCut,float jetEtaCut=jetCandEtaCut,float jetNHFCut=jetCandNHFCut,float jetCHFCut=jetCandCHFCut);
   virtual void setJetCand(int jetCand);
   virtual void SetPtFrac();
   virtual vector<int> getLooseJet(float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
+  virtual bool getJetID(int ijet);
   
-//--|  virtual vector<int> bjet_veto_looseID(int jetindex,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
+  virtual bool bjet_veto(float bjetCutValue,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
   
   virtual vector<int> getLooseEle(float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
   virtual vector<int> electron_veto_looseID(int jetindex,float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);

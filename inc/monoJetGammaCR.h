@@ -20,14 +20,11 @@ public:
   virtual void initTree(TTree* tree);
   virtual float getSF(int phoindex);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
-  void setRecoil(int phoindex);
-  virtual int getJetCand(int phoindex);
-  virtual vector<int> jet_veto(int phoindex);
+  void setRecoil();
   virtual vector<int> getPho();
   virtual bool muon_veto(int phoindex);
   virtual bool electron_veto(int phoindex);
   virtual bool tau_veto(int phoindex);
-  virtual bool bjet_veto(int phoindex, float cutValue);
 };
 
 #endif

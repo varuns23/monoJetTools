@@ -21,14 +21,11 @@ public:
   virtual void initVars();
   virtual void initTree(TTree* tree);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
-  void setRecoil(int leading,int subleading);
+  void setRecoil();
   float getSF(int leading,int subleading);
-  virtual int getJetCand(int leading,int subleading);
-  virtual vector<int> jet_veto(int leading,int subleading);
   virtual bool electron_veto();
   virtual bool photon_veto(int leading,int subleading);
   virtual bool tau_veto(int leading,int subleading);
-  virtual bool bjet_veto(int leading,int subleading, float cutValue);
 };
 
 #endif

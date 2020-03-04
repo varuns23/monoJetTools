@@ -33,9 +33,9 @@ parser.add_argument('-den',help='Specify the denomenator of trigger efficiency',
 
 samples = Region(show=False)
 
-args = parser.parse_args()
+parser.parse_args()
 
-samples.initiate(args.den)
+samples.initiate(parser.args.den)
 den=samples['Data'].histo.Clone()
 
 def plotTrigEff(num,den):
@@ -68,10 +68,10 @@ def plotTrigEff(num,den):
     eff.Draw('lpex0')
 
     lumi_label = '%s' % float('%.3g' % (samples.lumi/1000.)) + " fb^{-1}"
-    if (samples.args.normalize): lumi_label="Normalized"
+    if (parser.args.normalize): lumi_label="Normalized"
     texLumi,texCMS = getCMSText(lumi_label,samples.year,scale=0.8)
     texLumi.Draw();
     texCMS.Draw();
     SaveAs(c,"eff_%s"%samples.trigger,year=samples.year,sub="TrigEff/%s"%samples.region,exts=".png")
 
-for num in args.num: plotTrigEff(num,den)
+for num in parser.args.num: plotTrigEff(num,den)

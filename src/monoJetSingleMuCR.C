@@ -52,19 +52,19 @@ bool monoJetSingleMuCR::CRSelection(vector<int> tight,vector<int> loose) {
     lepton_pt = lep.Pt();
     lepton_eta = muEta->at(lepindex);
     lepton_phi = muPhi->at(lepindex);
-    setRecoil(lepindex);
+    setRecoil();
     return true;
   }
   return false;
 }
 
-void monoJetSingleMuCR::setRecoil(int lepindex) {
-    lepMET_mt = getMt(muPt->at(lepindex),muPhi->at(lepindex),pfMET,pfMETPhi);
-    TLorentzVector met_4vec;
-    met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
-    TLorentzVector leptoMET_4vec = lep+met_4vec;
-    recoil = fabs(leptoMET_4vec.Pt());
-    recoilPhi = leptoMET_4vec.Phi();
+void monoJetSingleMuCR::setRecoil() {
+  lepMET_mt = getMt(muPt->at(lepindex),muPhi->at(lepindex),pfMET,pfMETPhi);
+  TLorentzVector met_4vec;
+  met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
+  TLorentzVector leptoMET_4vec = lep+met_4vec;
+  recoil = fabs(leptoMET_4vec.Pt());
+  recoilPhi = leptoMET_4vec.Phi();
 }
 
 float monoJetSingleMuCR::getSF(int lepindex) {
@@ -75,29 +75,6 @@ float monoJetSingleMuCR::getSF(int lepindex) {
   tightISO_sf = th2fmap.getBin("muon_iso_tight",pt,abseta);
   
   return tightID_sf * tightISO_sf;
-}
-
-
-int monoJetSingleMuCR::getJetCand(int lead_lepIndex){  
-  int jetCand = monoJetAnalysis::getJetCand();
-  if (jetCand == -1) return -1;
-
-  float dr = deltaR(jetEta->at(jetCand),jetPhi->at(jetCand),muEta->at(lepindex),muPhi->at(lepindex));
-  if (dr > Iso4Cut) return jetCand;
-  return -1;     
-}
-
-
-vector<int> monoJetSingleMuCR::jet_veto(int lepindex) {
-  vector<int> jetindex; jetindex.clear();
-			  
-  vector<int> tmpcands = getLooseJet();
-  for (int ijet : tmpcands) {
-    float dR_mu = deltaR(jetEta->at(ijet),jetPhi->at(ijet),muEta->at(lepindex),muPhi->at(lepindex));
-    if ( dR_mu > Iso4Cut)
-      jetindex.push_back(ijet);
-  }
-  return jetindex;
 }
 
 bool monoJetSingleMuCR::electron_veto() {
@@ -129,22 +106,6 @@ bool monoJetSingleMuCR::tau_veto(int leading_mu_index){
       tau_cands.push_back(i);
   }
   return tau_cands.size() == 0;
-}  
-   
-bool monoJetSingleMuCR::bjet_veto(int leading_mu_index, float cutValue){
-  vector<int> bjet_cands;
-  bjet_cands.clear();
-  
-  for(int i = 0; i < nJet; i++){
-    bool kinematic = (jetPt->at(i) > bjetVetoPtCut && fabs(jetEta->at(i)) < bjetVetoEtaCut);
-    float bjetTag = jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i);
-    bool btagged = bjetTag > cutValue;
-
-    double dR_leadingMu    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(leading_mu_index), muPhi->at(leading_mu_index));  
-    if(kinematic && btagged && dR_leadingMu > 0.4 )
-      bjet_cands.push_back(i);
-  }
-  return bjet_cands.size() == 0;
-}  
+}   
 
 #endif

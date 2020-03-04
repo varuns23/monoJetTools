@@ -51,19 +51,19 @@ bool monoJetSingleEleCR::CRSelection(vector<int> tight,vector<int> loose) {
     lepton_pt = lep.Pt();
     lepton_eta = eleEta->at(lepindex);
     lepton_phi = elePhi->at(lepindex);
-    setRecoil(lepindex);
+    setRecoil();
     return true;
   }
   return false;
 }
 
-void monoJetSingleEleCR::setRecoil(int lepindex) {
-    lepMET_mt = getMt(eleCalibEt->at(lepindex),elePhi->at(lepindex),pfMET,pfMETPhi);
-    TLorentzVector met_4vec;
-    met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
-    TLorentzVector leptoMET_4vec = lep+met_4vec;
-    recoil = fabs(leptoMET_4vec.Pt());
-    recoilPhi = leptoMET_4vec.Phi();
+void monoJetSingleEleCR::setRecoil() {
+  lepMET_mt = getMt(eleCalibEt->at(lepindex),elePhi->at(lepindex),pfMET,pfMETPhi);
+  TLorentzVector met_4vec;
+  met_4vec.SetPtEtaPhiE(pfMET,0.,pfMETPhi,pfMET);
+  TLorentzVector leptoMET_4vec = lep+met_4vec;
+  recoil = fabs(leptoMET_4vec.Pt());
+  recoilPhi = leptoMET_4vec.Phi();
 }
 
 float monoJetSingleEleCR::getSF(int lepindex) {
@@ -74,27 +74,6 @@ float monoJetSingleEleCR::getSF(int lepindex) {
   if ( YEAR == 2017 && pt < 20 )
     reco_sf = th2fmap.getBin("ele_reco_pt_lt_20",eta,pt);
   return reco_sf * tightID_sf;
-}
-
-int monoJetSingleEleCR::getJetCand(int lepindex) {
-  int jetCand = monoJetAnalysis::getJetCand();
-  if (jetCand == -1) return -1;
-
-  float dr = deltaR(jetEta->at(jetCand),jetPhi->at(jetCand),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
-  if (dr > Iso4Cut) return jetCand;
-  return -1;
-}
-
-vector<int> monoJetSingleEleCR::jet_veto(int lepindex) {
-  vector<int> jetindex; jetindex.clear();
-
-  vector<int> tmpcands = getLooseJet();
-  for(int ijet : tmpcands ) {
-    float dR_ele = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
-    if( dR_ele > Iso4Cut )
-      jetindex.push_back(ijet);
-  }
-  return jetindex;
 }
 
 //Veto failed if a muon is found that passes Loose Muon ID, Loose Muon Isolation, and muPtcut, and does not overlap the candidate electron and jet within dR of 0.5
@@ -125,20 +104,5 @@ bool monoJetSingleEleCR::tau_veto(int lepindex) {
       tau_cands.push_back(itau);
   }
   return tau_cands.size() == 0;
-}
-
-bool monoJetSingleEleCR::bjet_veto(int lepindex, float cutValue) {
-  vector<int> bjet_cands; bjet_cands.clear();
-
-  for(int ijet = 0; ijet < nJet; ijet++){
-    bool kinematic = (jetPt->at(ijet) > bjetVetoPtCut && fabs(jetEta->at(ijet)) < bjetVetoEtaCut);
-    float bjetTag = jetDeepCSVTags_b->at(ijet) + jetDeepCSVTags_bb->at(ijet);
-    bool btagged = bjetTag > cutValue;
-
-    double dR_ele = deltaR(jetEta->at(ijet),jetPhi->at(ijet),eleSCEta->at(lepindex),eleSCPhi->at(lepindex));
-    if ( kinematic && btagged && dR_ele > Iso4Cut )
-      bjet_cands.push_back(ijet);
-  }
-  return bjet_cands.size() == 0;
 }
 #endif

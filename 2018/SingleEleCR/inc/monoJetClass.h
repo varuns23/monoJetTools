@@ -42,6 +42,7 @@ public :
     monoJetSingleEleCR::initTree(tree);
   }
   
+  bool UncLoop(float &event_weight);
   void JetEnergyScale(float start_weight);
   void JetEnergyResolution(float start_weight);
 };

@@ -11,6 +11,8 @@ const string monoJetYear::SRDATA = "B";
 void monoJetYear::initTree(TTree* tree) {
   monoJetAnalysis::initTree(tree);
   tree->Branch("prefiring",&prefiringweight,"prefiring/D");
+  tree->Branch("prefiringUp",&prefiringweightup,"prefiringup/D");
+  tree->Branch("prefiringDown",&prefiringweightdown,"prefiringdown/D");
 }
 
 void monoJetYear::initVars() {
