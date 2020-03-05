@@ -706,7 +706,7 @@ bool monoJetAnalysis::getJetHEMVeto(float jetPtCut){
   bool pass = true;
   for(int p=0;p<nJet;p++)
   {
-    bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.4 && (*jetEta)[p] > -3.0 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
+    bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.3 && (*jetEta)[p] > -3.0 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
     bool tightJetID = false;
     if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
     if(kinematic) // not chekcing ID here.                                                                                                                                         
