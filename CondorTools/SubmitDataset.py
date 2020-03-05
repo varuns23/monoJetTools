@@ -13,7 +13,7 @@ labelmap = {
 }
 mclist = ['dyjets_nlo','dyjets','ewk','gjets','qcd','st','ttjets','wjets_nlo','wjets','zjets_nlo','zjets']
 datalist = ['met','egamma','singleele','singlepho']
-signalist = ['axial']
+signalist = ['zprime']
 full_list = mclist + datalist
 
 options = {
