@@ -74,8 +74,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
       ApplyElectron_TriggerSF(event_weight);
     }
 
-    JetEnergyScale(event_weight);
-    JetEnergyResolution(event_weight);
+    // JetEnergyScale(event_weight);
+    // JetEnergyResolution(event_weight);
 
     if (pfMET <= 50) continue;
     fillEvent(4,event_weight);

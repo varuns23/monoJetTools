@@ -78,6 +78,9 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!getMetFilter()) continue;
     fillEvent(5,event_weight);
 
+    JetEnergyScale(event_weight);
+    JetEnergyResolution(event_weight);
+
     if(!getJetHEMVeto())continue;                                                                                                                             
     fillEvent(6,event_weight);
 
