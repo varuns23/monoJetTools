@@ -52,15 +52,19 @@ class Transfer:
             tfdendn = GetRatio(self.num.histo,dendn)
             denunc = '%s_%s' % (nuisance,denname)
             self.nuisances[denunc] = Nuisance(self.name,denunc,tfdenup,tfdendn,self.histo,type='abs')
+
+            nuislist = [self.nuisances[numunc],self.nuisances[denunc]]
+            tfup = tfdenup.Clone()
+            tfdn = tfdendn.Clone()
+            AddDiffNuisances(nuislist,tfup,tfdn,self.histo)
+            self.nuisances[nuisance] = Nuisance(self.name,nuisance,tfup,tfdn,self.histo)
     def fullUnc(self,unclist):
         nuislist = []
         for unc in unclist:
             for nuisance in self.nuisances.values():
                 if unc in nuisance.name: nuislist.append(nuisance)
         up,dn = self.histo.Clone(),self.histo.Clone()
-        for ibin in range(1,self.histo.GetNbinsX()+1):
-            up[ibin] = TMath.Sqrt( sum( nuisance.up[ibin]**2 for nuisance in nuislist ) )
-            dn[ibin] = TMath.Sqrt( sum( nuisance.dn[ibin]**2 for nuisance in nuislist ) )
+        AddDiffNuisances(nuislist,up,dn,self.histo)
         self.nuisances['Total'] = Nuisance(self.name,'Total',up,dn,self.histo)
     def getUncBand(self,nuisance='Total'):
         up,dn = self.nuisances[nuisance].GetHistos()
