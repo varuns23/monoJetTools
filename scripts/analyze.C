@@ -85,8 +85,8 @@ int setup_test(int argc, const char* argv[]) {
   if ( monoJetClass::REGION == SR ) {
     mcdir = dataset.getDirlist("zjets","400to600")[0];
     datadir = dataset.getDirlist("met",monoJetClass::SRDATA)[0];
-    if ( dataset.getSubset("axial").size() != 0 )
-      signaldir = dataset.getSubset("axial").begin()->second[0];
+    if ( dataset.getSubset("zprime").size() != 0 )
+      signaldir = dataset.getSubset("zprime").begin()->second[0];
     
   } else if ( monoJetClass::REGION == WE || monoJetClass::REGION == WM ) {
     mcdir = dataset.getDirlist("wjets","400to600")[0];
