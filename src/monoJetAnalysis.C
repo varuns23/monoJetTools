@@ -64,12 +64,12 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("trigger_sf",&trigger_sf);
   tree->Branch("recoil",&recoil,"Recoil (GeV)");
   tree->Branch("ChNemPtFrac",&ChNemPtFrac,"Ch + NEM P_{T}^{123} Fraction");
-  tree->Branch("bosonPt",&bosonPt,"Boson Pt");
   
   // tree->Branch("j1pT",&j1pT,"Leading Jet P_{T} (GeV)");
   // tree->Branch("j1Eta",&j1Eta,"Leading Jet Eta");
   // tree->Branch("j1Phi",&j1Phi,"Leading Jet Phi");
   // tree->Branch("nJets",&n_Jet,"Number of Jets");
+  tree->Branch("bosonPt",&bosonPt,"Boson Pt");
   // tree->Branch("nVtx",&n_Vtx,"Number of Verticies");
 }
 
@@ -815,6 +815,7 @@ bool monoJetAnalysis::getJetHEMVeto(float jetPtCut){
 
   bool pass = true;
   for(int p=0;p<nJet;p++)
+<<<<<<< HEAD
     {
       bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.4 && (*jetEta)[p] > -3.0 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
       bool tightJetID = false;
@@ -822,6 +823,15 @@ bool monoJetAnalysis::getJetHEMVeto(float jetPtCut){
       if(kinematic) // not chekcing ID here.                                                                                                                                         
 	pass = false;
     }
+=======
+  {
+    bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.3 && (*jetEta)[p] > -3.0 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
+    bool tightJetID = false;
+    if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
+    if(kinematic) // not chekcing ID here.                                                                                                                                         
+      pass = false;
+  }
+>>>>>>> WithUncertainty
 
   return pass;
 }

@@ -89,6 +89,9 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!tau_veto(phoindex)) continue;
     fillEvent(8,event_weight);
 
+    JetEnergyScale(event_weight);
+    JetEnergyResolution(event_weight);
+
     if (!bjet_veto( bjetDeepCSVCut_2017)) continue;
     fillEvent(9,event_weight);
 
