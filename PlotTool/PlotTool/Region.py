@@ -274,8 +274,8 @@ class Region(object):
                 for subprocess in process:
                     self.name = subprocess.histo.GetXaxis().GetTitle()
                     break
-    def addUnc(self,nuisance):
-        for process in self: process.addUnc(nuisance)
+    def addUnc(self,nuisance,show=False):
+        for process in self: process.addUnc(nuisance,show)
     def fullUnc(self,unclist,show=False):
         for process in self: process.fullUnc(unclist,show)
         self.setSumOfBkg()

@@ -142,7 +142,7 @@ class Process:
 
             if self.histo is None: self.histo = subprocess.histo.Clone( "%s_%s" % (self.name,variable.base))
             else:                  self.histo.Add(subprocess.histo)
-    def addUnc(self,nuisance):
+    def addUnc(self,nuisance,show=False):
         if self.proctype == 'data': return
         if nuisance in self.nuisances: return
         for subprocess in self: subprocess.addUnc(nuisance)
@@ -152,6 +152,7 @@ class Process:
         dn = self.histo.Clone("%s_%s_%sDown" % (self.name,self.variable.base,nuisance)); dn.Reset()
         AddLikeNuisances([subprocess.nuisances[nuisance] for subprocess in self],up,dn)
         self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo)
+        if show: print self.nuisances[nuisance]
     def fullUnc(self,unclist,show=True):
         if self.proctype == 'data': return
         for nuisance in unclist: self.addUnc(nuisance)

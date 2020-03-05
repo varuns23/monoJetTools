@@ -39,6 +39,7 @@ def GetScaleWeight(nuisance):
             "NNLO_Sud",
             "QCD_EWK_Mix"]
     if nuisance in zwunc: return nuisance+"%s/kfactor"
+    if nuisance == 'prefiring': return nuisance+"%s/prefiring"
     return nuisance
         
 class Nuisance(object):
