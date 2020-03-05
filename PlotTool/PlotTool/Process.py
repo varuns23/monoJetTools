@@ -76,8 +76,9 @@ class SubProcess(object):
         isScale = self.variable.nuisances[nuisance] == 'scale'
         name = '%s_%s_%s' % (self.name,self.variable.base,nuisance)
         if isScale:
-            up = GetBranch('%sUp' % name,self.variable,self.treemap['norm'],'%s*%sUp' % (self.variable.weight,nuisance))
-            dn = GetBranch('%sDown' % name,self.variable,self.treemap['norm'],'%s*%sDown' % (self.variable.weight,nuisance))
+            scale_weight = GetScaleWeight(nuisance)
+            up = GetBranch('%sUp' % name,self.variable,self.treemap['norm'],"%s*%s" % (self.variable.weight,scale_weight%"Up"))
+            dn = GetBranch('%sDown' % name,self.variable,self.treemap['norm'],"%s*%s" % (self.variable.weight,scale_weight%"Down"))
         else:
             treeup = '%sUp' % nuisance; self.setTree(self.variable.dirname,treeup)
             treedn = '%sDown' % nuisance; self.setTree(self.variable.dirname,treedn)

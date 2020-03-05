@@ -1,3 +1,4 @@
+
 from ROOT import TH1F
 from array import array
 import numpy as np
@@ -32,11 +33,11 @@ def IsBranch(variable,tfile):
     return False
 def linspace(xmin,xmax,nx): return list(np.linspace(xmin,xmax,nx+1))
 
-def rebin(arg,sample,name):
+def rebin(arg,name):
     bins = array('d',[250.,280.,310.,340.,370.,400.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.,1400.])
     histo = TH1F(name,'',len(bins)-1,bins)
     histo.Rebin(2)
-    b_info.template = histo
+    return histo
     
 class VariableInfo:
     binningMap = {
@@ -68,8 +69,6 @@ class VariableInfo:
         self.isGlobal = False
         self.isNhisto = False
         self.isBranch = False
-
-        self.nuisances = {}
     def setVariable(self,variable,weight="weight",cut=None,autovar=False,tfile=None):
         if tfile is not None: self.initFile(tfile)
         tfile = self.tfile
@@ -122,7 +121,7 @@ class VariableInfo:
             return tfile.Get("%s/%s"%(dirname,variable)).Clone('template_%s'%self.base)
         for label,binning in self.binningMap.iteritems():
             if label in parser.args.binning:
-                if label is not 'fix': self.binfix = self.args.binning
+                if label is not 'fix': self.binfix = parser.args.binning
                 return binning(parser.args.binning,self.base)
         
 

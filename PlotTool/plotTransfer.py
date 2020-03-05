@@ -102,9 +102,19 @@ def plotTF(num_sample,den_sample):
     
     SetBounds(tf,num_sample,den_sample)
     tf.histo.Draw("axis")
-    uncband = tf.getUncBand()
-    UncBandStyle(uncband)
-    uncband.Draw("2same")
+
+    if (num_sample.region is 'SignalRegion' and (den_sample.region is 'SignalRegion' or den_sample.region is "GammaCR")):
+        fullband = tf.getUncBand()
+        tf.fullUnc(['Stat','QCD_Shape','QCD_Scale','QCD_Proc','QCD_EWK_Mix'])
+        midband = tf.getUncBand()
+        UncBandStyle(fullband,color=kGreen)
+        fullband.Draw("2same")
+        UncBandStyle(midband)
+        midband.Draw("2same")
+    else:
+        uncband = tf.getUncBand()
+        UncBandStyle(uncband)
+        uncband.Draw("2same")
     tf.histo.Draw("pex0same")
     
     tf.histo.SetLineWidth(2)
@@ -244,7 +254,7 @@ def plotTransfer(variable,samplemap):
     for region in samplemap:
         print region
         samplemap[region].initiate(variable)
-        samplemap[region].fullUnc(Transfer.tranunc,stat=True,show=False)
+        samplemap[region].fullUnc(Transfer.zwunc+['Stat'])
 
     for region in samplemap:
         if 'SignalRegion' in region: continue
@@ -264,9 +274,8 @@ def plotTransfer(variable,samplemap):
     samplemap["SignalRegion"].den_boson = "W"
     plotTF(samplemap["SignalRegion"],samplemap["SignalRegion"])
 
-    print "G/Z Linking"
-    samplemap["SignalRegion"].den_boson = "Z"
-    plotTF(samplemap["GammaCR"],samplemap["SignalRegion"])
+    print "Z/G Linking"
+    plotTF(samplemap["SignalRegion"],samplemap["GammaCR"])
     
     print "DoubleEleCR Transfer"
     samplemap["SignalRegion"].num_boson = "Z"
@@ -276,11 +285,11 @@ def plotTransfer(variable,samplemap):
     plotTF(samplemap["SignalRegion"],samplemap["DoubleMuCR"])
     
     print "SingleEleCR Transfer"
-    samplemap["SignalRegion"].den_boson = "W"
-    plotTF(samplemap["SingleEleCR"],samplemap["SignalRegion"])
+    samplemap["SignalRegion"].num_boson = "W"
+    plotTF(samplemap["SignalRegion"],samplemap["SingleEleCR"])
     print "SingleMuCR Transfer"
-    samplemap["SignalRegion"].den_boson = "W"
-    plotTF(samplemap["SingleMuCR"],samplemap["SignalRegion"])
+    samplemap["SignalRegion"].num_boson = "W"
+    plotTF(samplemap["SignalRegion"],samplemap["SingleMuCR"])
 
     print "Electron CR W/G Linking"
     plotTF_datamc(samplemap['SingleEleCR'],samplemap['GammaCR'])
@@ -299,9 +308,9 @@ def plotTransfer(variable,samplemap):
     for region in samplemap:
         if 'CR' not in region: continue
         samplemap[region].setSumOfBkg()
-    doublelep = Region(copy=samplemap["DoubleEleCR"]); doublelep.add(samplemap["DoubleMuCR"])
+    doublelep = samplemap["DoubleEleCR"]; doublelep.add(samplemap["DoubleMuCR"])
     doublelep.region = "DoubleLepCR"; doublelep.num_boson = "Z"
-    singlelep = Region(copy=samplemap["SingleEleCR"]); singlelep.add(samplemap["SingleMuCR"])
+    singlelep = samplemap["SingleEleCR"]; singlelep.add(samplemap["SingleMuCR"])
     singlelep.region = "SingleLepCR"; singlelep.num_boson = "W"; singlelep.den_boson = "W"
     print "CR Z/G Linking"
     plotTF_datamc(doublelep,samplemap["GammaCR"])
@@ -316,6 +325,7 @@ def runAll(args):
     for variable in args.argv: plotTransfer(variable,samplemap)
 
 if __name__ == "__main__":
+    from PlotTool import parser
     parser.parse_args()
-    if not any(args.argv): parser.args.argv.append('recoil')
-    runAll(args)
+    if not any(parser.args.argv): parser.args.argv.append('recoil')
+    runAll(parser.args)
