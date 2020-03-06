@@ -8,7 +8,7 @@ gROOT.SetBatch(1)
 
 samples = Region(show=0)
     
-for variable in samples.args:
+for variable in parser.args.argv:
     isGreater = None
     cut = None
     if (variable.find("+") != -1):

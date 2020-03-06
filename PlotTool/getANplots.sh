@@ -1,6 +1,6 @@
 #!/bin/sh
 
-nvariables='recoil nJets j1pT j1Eta j1Phi nVtx'
+nvariables='recoil pfMET recoilall pfMETall nJets j1pT j1Eta j1Phi nVtx'
 singleleps='LeptonPt LeptonEta LeptonPhi'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta leadingLeptonPhi subleadingLeptonEta subleadingLeptonPt subleadingLeptonPhi'
 gamma='photonPt photonEta photonPhi'
@@ -14,10 +14,10 @@ plot() {
 }
 
 run() {
-    subdir="AN"
+    subdir="CorrectJetCandv3"
     pushd $1
     shift 1
-    array="$@ $nvariables"
+    array="$nvariables $@"
     plot $options --sub $subdir -a $array $uncertainty || exit 1
     plot $options --sub $subdir $cutvars || exit 1
     popd

@@ -22,12 +22,9 @@ public:
   virtual void initTree(TTree* tree);
   bool CRSelection(std::vector<int> tight,std::vector<int> loose);
   float getSF(int leading,int subleading);
-  virtual vector<int> getJetCand(vector<int> jetlist,int leading,int subleading);
-  virtual vector<int> jet_veto(int leading,int subleading);
   virtual bool electron_veto();
   virtual bool photon_veto(int leading,int subleading);
   virtual bool tau_veto(int leading,int subleading);
-  virtual bool bjet_veto(int leading,int subleading, float cutValue);
 };
 
 #endif

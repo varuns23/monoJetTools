@@ -20,14 +20,14 @@ void monoJetDoubleMuCR::initVars() {
 }
 
 void monoJetDoubleMuCR::initTree(TTree* tree) {
-  tree->Branch("dileptonM",&dilepton_mass,"Z Mass (GeV)");
-  tree->Branch("dileptonPt",&dilepton_pt,"Z P_{T} (GeV)");
-  tree->Branch("leadingLeptonPt",&leadingLepton_pt,"Leading Lepton P_{T} (GeV)");
-  tree->Branch("leadingLeptonEta",&leadingLepton_eta,"Leading Lepton Eta");
-  tree->Branch("leadingLeptonPhi",&leadingLepton_phi,"Leading Lepton Phi");
-  tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
-  tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
-  tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
+  // tree->Branch("dileptonM",&dilepton_mass,"Z Mass (GeV)");
+  // tree->Branch("dileptonPt",&dilepton_pt,"Z P_{T} (GeV)");
+  // tree->Branch("leadingLeptonPt",&leadingLepton_pt,"Leading Lepton P_{T} (GeV)");
+  // tree->Branch("leadingLeptonEta",&leadingLepton_eta,"Leading Lepton Eta");
+  // tree->Branch("leadingLeptonPhi",&leadingLepton_phi,"Leading Lepton Phi");
+  // tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
+  // tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
+  // tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
   tree->Branch("tightID_sf",&tightID_sf);
   tree->Branch("tightISO_sf",&tightISO_sf);
   tree->Branch("looseID_sf",&looseID_sf);
@@ -114,35 +114,6 @@ float monoJetDoubleMuCR::getSF(int leading,int subleading) {
   return tightID_sf * tightISO_sf * looseID_sf * looseISO_sf;
 }
 
-vector<int> monoJetDoubleMuCR::getJetCand(vector<int> jetlist, int lead_lepIndex, int sublead_lepIndex){
-  vector<int> jet_cands;
-  jet_cands.clear();
-  
-  vector<int> tmpcands = monoJetAnalysis::getJetCand(jetlist);
-  for(int i : tmpcands){
-    float dR_lead_mu = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(lead_lepIndex),  muPhi->at(lead_lepIndex));
-    float dR_sublead_mu = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(sublead_lepIndex), muPhi->at(sublead_lepIndex));
-
-    if(dR_lead_mu > 0.4 && dR_sublead_mu > 0.4)
-      jet_cands.push_back(i);
-  }
-
-  return jet_cands;
-}
-
-vector<int> monoJetDoubleMuCR::jet_veto(int leading, int subleading) {
-  vector<int> jetindex; jetindex.clear();
-			  
-  vector<int> tmpcands = getLooseJet();
-  for (int ijet : tmpcands) {
-    float dR_leading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),muEta->at(leading),muPhi->at(leading));
-    float dR_subleading = deltaR(jetEta->at(ijet),jetPhi->at(ijet),muEta->at(subleading),muPhi->at(subleading));
-    if ( dR_leading > Iso4Cut && dR_subleading > Iso4Cut )
-      jetindex.push_back(ijet);
-  }
-  return jetindex;
-}
-
 bool monoJetDoubleMuCR::electron_veto() {
   vector<int> tmpcands = getLooseEle();
   return tmpcands.size() == 0;
@@ -174,24 +145,6 @@ bool monoJetDoubleMuCR::tau_veto(int leadLep_index, int subleadLep_index){
       tau_cands.push_back(i);
   }
   return tau_cands.size() == 0;
-}
-
-bool monoJetDoubleMuCR::bjet_veto(int leadLep_index, int subleadLep_index, float cutValue){
-  vector<int> bjet_cands;
-  bjet_cands.clear();
-
-  for(int i = 0; i < nJet; i++){
-    bool kinematic = (jetPt->at(i) > bjetVetoPtCut && fabs(jetEta->at(i)) < bjetVetoEtaCut);
-    float bjetTag = jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i);
-    bool btagged = bjetTag > cutValue;
-
-    double dR_leadLep    = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(leadLep_index), muPhi->at(leadLep_index));  
-    double dR_subleadLep = deltaR(jetEta->at(i), jetPhi->at(i), muEta->at(subleadLep_index), muPhi->at(subleadLep_index)); 
-
-    if(kinematic && btagged && dR_leadLep > 0.4 && dR_subleadLep > 0.4)
-      bjet_cands.push_back(i);
-  }
-  return bjet_cands.size() == 0;
 }
 
 #endif

@@ -4,7 +4,7 @@ from ROOT import *
 from PlotTool import *
 import config
 
-args = parser.parse_args()
+parser.parse_args()
 
 gROOT.SetBatch(1)
 
@@ -58,5 +58,5 @@ def compareOutput(fname1,fname2):
             compare(key)
 
 
-compareOutput(args.argv[0],args.argv[1])
+compareOutput(parser.args.argv[0],parser.args.argv[1])
     

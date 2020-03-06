@@ -8,122 +8,90 @@ import config
 
 gROOT.SetBatch(1)
 
-def printVars(obj):
-    for var,val in vars(obj).iteritems():
-        print var,':',val
-    exit()
+dirlist = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR","GammaCR"]
+dirmap = {"SignalRegion":"sr","DoubleEleCR":"ze","DoubleMuCR":"zm","SingleEleCR":"we","SingleMuCR":"wm","GammaCR":"ga"}
+if not path.isdir("Systematics"): mkdir("Systematics")
 
-outdir = "Systematics"
-if not path.isdir(outdir): mkdir(outdir)
-dirlist = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR"]
-dirmap = {"SignalRegion":"sr","DoubleEleCR":"ze","DoubleMuCR":"zm","SingleEleCR":"we","SingleMuCR":"wm"}
-
-def GetZWLinking(rfile,centmap):
-    print '-Fetching Z/W Linking'
-    if type(rfile) == str: rfile = TFile.Open(rfile)
-    rfile.cd(); rfile.mkdir('sr/zwlink'); rfile.cd('sr/zwlink')
-    sr = centmap["SignalRegion"]
-    tf = Transfer('zwlink',sr['ZJets'],sr['WJets'],namelist=['Znn','Wln'])
-    rfile.cd('sr/zwlink')
-    tf.histo.SetName('ZWlink'); tf.histo.Write()
-    for nuisance in tf.nuisances.values():
-        uncname = 'ZWlink_%s' % nuisance.name
-        up,dn = nuisance.GetHistos()
-        rfile.cd('sr/zwlink')
-        up.SetName('%sUp' % uncname); up.Write()
-        dn.SetName('%sDown' % uncname); dn.Write()
-##################################################################
-
-def GetTransferFactors(rfile,centmap):
-    if type(rfile) == str: rfile = TFile.Open(rfile)
-    namemap = {''}
-    for region,dirname in dirmap.iteritems():
-        if 'CR' not in region: continue
-        print '-Fetching %s Transfer Factors' % region
-        rfile.cd(); rfile.mkdir('%s/transfer' % dirname); rfile.cd('%s/transfer' % dirname)
-        if 'Double' in region:
-            den = centmap[region]['DYJets']; num = centmap['SignalRegion']['ZJets']
-            if 'Ele' in region: namelist = ['Znn','Zee']
-            else:               namelist = ['Znn','Zmm']
-        else:
-            den = centmap[region]['WJets']; num = centmap['SignalRegion']['WJets']
-            if 'Ele' in region: namelist = ['Wln','Wen']
-            else:               namelist = ['Wln','Wmn']
-        tf = Transfer('CSlink',num,den,namelist=namelist)
-        rfile.cd('%s/transfer' % dirname)
-        tf.histo.SetName(den.process); tf.histo.Write()
-        for nuisance in tf.nuisances.values():
-            uncname = '%s_%s' % (den.process,nuisance.name)
-            up,dn = nuisance.GetHistos()
-            rfile.cd('%s/transfer' % dirname)
-            up.SetName('%sUp' % uncname); up.Write()
-            dn.SetName('%sDown' % uncname); dn.Write()
-###################################################################
-
-def saveplot(variable):
+def SavePlot(variable):
     print variable
-    lumi = max( config.lumi.values() )
-    centmap = {}
-    for region in dirlist:
-        print 'Fetching Variable in %s' % region
-        centmap[region] = Region(path=region,lumi=lumi,show=False,autovar=True)
-        centmap[region].initiate(variable)
-        centmap[region].setSumOfBkg()
-        varname = centmap[region].varname.split('_')[0]
-    rfile = TFile( "%s/%s_%s.sys.root" % (outdir,varname,config.version) ,'recreate')
-    for region,norm in centmap.iteritems():
-        print "Writing Histograms from %s" % region
-        rfile.cd(); cwd = rfile.mkdir(dirmap[region]); cwd.cd()
-        norm["SumOfBkg"].histo.Write("SumOfBkg")
-        for process in norm:
-            print '--Writing %s Histogram' % process.name
-            if process.proctype == 'data':
-                if region == 'SignalRegion':
-                    data_obs = norm["SumOfBkg"].histo.Clone("data_obs")
-                else:
-                    data_obs = process.histo.Clone("data_obs")
-                data_obs.Write()
-            elif process.proctype == 'signal':
-                signal = process.histo.Clone(process.process)
-                signal.Write()
-            else:
-                bkg = process.histo.Clone(process.process)
-                bkg.Write()
-        for unclist in config.Uncertainty.values():
-            for unc in unclist:
-                print '-Fetching %s Uncertainty' % unc
-                for process in norm:
-                    print '--Writing %s Histogram' % process.name
-                    process.addUnc(unc,show=False)
-                    cwd.cd()
-                    if process.proctype == 'data': continue
-                    elif process.proctype == 'signal':
-                        for subprocess in process:
-                            up,dn = subprocess.nuisances[unc].GetHistos()
-                            up = up.Clone('%s_%sUp' % (subprocess.process,unc))
-                            dn = dn.Clone('%s_%sDown' % (subprocess.process,unc))
-                            up.Write();dn.Write()
-                    else:
-                        up,dn = process.nuisances[unc].GetHistos()
-                        up = up.Clone('%s_%sUp' % (process.process,unc))
-                        dn = dn.Clone('%s_%sDown' % (process.process,unc))
-                        up.Write(); dn.Write()
-    ###########################################################################
-    GetZWLinking(rfile,centmap)
-    GetTransferFactors(rfile,centmap)
-    rfile.cd()
+
+    class save: pass
+    save.tfile = None
+    def SaveRegion(region,save=save):
+        region = Region(path=region,show=False,autovar=True)
+        region.initiate(variable)
+        region.setSumOfBkg()
+        
+        if save.tfile is None: save.tfile = TFile("Systematics/%s_%s.sys.root" % (region.varname,region.year),'recreate')
+        output = save.tfile
+
+        print "Writing Histograms from %s" % region.region
+        output.cd(); cwd = output.mkdir(dirmap[region.region]); cwd.cd()
+        region['SumOfBkg'].histo.Write("SumOfBkg")
+        if region.isBlinded:
+            region['Data'].histo.Write('data_obs')
+        for process in region:
+            print "--Writing %s Histogram" % process.name
+            if process.proctype == "data": process.histo.Write("data_obs")
+            else: process.histo.Write(process.process)
+        return region
+    regionmap = { dirmap[region]:SaveRegion(region) for region in dirlist }
+    def WCR_TF(wln,sr,output):
+        print "-%s to %s Transfer" % (dirmap[wln.region],dirmap[sr.region])
+        tf = Transfer('%s_to_sr' % dirmap[wln.region],sr['WJets'],wln['WJets'],['sr',dirmap[wln.region]])
+        output.cd(); output.cd(dirmap[wln.region]);
+        cwd = gDirectory.mkdir("transfer"); cwd.cd()
+        tf.histo.Write('%s_to_sr' % dirmap[wln.region])
+    def ZCR_TF(zll,sr,output):
+        print "-%s to %s Transfer" % (dirmap[zll.region],dirmap[sr.region])
+        tf = Transfer("%s_to_sr" % dirmap[zll.region],sr["ZJets"],zll["DYJets"],['sr',dirmap[zll.region]])
+        output.cd(); output.cd(dirmap[zll.region])
+        cwd = gDirectory.mkdir("transfer"); cwd.cd()
+        tf.histo.Write('%s_to_sr' % dirmap[zll.region])
+    def GCR_TF(ga,sr,output):
+        print "-%s to %s Transfer" % (dirmap[ga.region],dirmap[sr.region])
+        tf = Transfer("%s_to_sr" % dirmap[ga.region],sr["ZJets"],ga["GJets"],['sr',dirmap[ga.region]])
+        output.cd(); output.cd(dirmap[ga.region])
+        cwd = gDirectory.mkdir("transfer"); cwd.cd()
+        tf.histo.Write('%s_to_sr' % dirmap[ga.region])
+        for nuisance in tf.nuisances.values():
+            uncname = "ga_to_sr_%s" % nuisance.name
+            up,dn = nuisance.GetHistos()
+            up.Write(uncname+"Up")
+            dn.Write(uncname+"Down")
+        return
+    def SR_TF(sr,output):
+        print "-Wsr to Zsr Transfer"
+        tf = Transfer("wsr_to_zsr",sr["ZJets"],sr["WJets"],['zsr','wsr'])
+        output.cd(); output.cd(dirmap[sr.region])
+        cwd = gDirectory.mkdir("transfer"); cwd.cd()
+        tf.histo.Write('wsr_to_zsr')
+        for nuisance in tf.nuisances.values():
+            uncname = "wsr_to_zsr_%s" % nuisance.name
+            up,dn = nuisance.GetHistos()
+            up.Write(uncname+"Up")
+            dn.Write(uncname+"Down")
+        return
+    output = save.tfile
+    SR_TF(regionmap["sr"],output)
+    for wln in ("we","wm"): WCR_TF(regionmap[wln],regionmap["sr"],output)
+    for zll in ("ze","zm"): ZCR_TF(regionmap[zll],regionmap["sr"],output)
+    GCR_TF(regionmap["ga"],regionmap["sr"],output)
+    output.cd()
+    norm = regionmap["sr"]
     lumi_hs = TH1F("lumi","lumi",1,0,1)
     lumi_hs.SetBinContent(1,norm.lumi)
     lumi_hs.Write()
     year_hs = TH1F("year","year",1,0,1)
-    year_hs.SetBinContent(1,config.year)
+    year_hs.SetBinContent(1,int(norm.year))
     year_hs.Write()
     var_hs = TH1F("variable",variable+';'+norm.name,1,0,1)
-    var_hs = b_info.template.Clone('variable')
+    var_hs = norm.variable.template.Clone('variable')
     var_hs.Reset(); var_hs.SetTitle(variable); var_hs.GetXaxis().SetTitle(norm.name);
     var_hs.Write()
-    rfile.Close()
+    output.Close()
 ################################################################################
 if __name__ == "__main__":
-    args = parser.parse_args()
-    for variable in args.argv: saveplot(variable)
+    from PlotTool import parser
+    parser.parse_args()
+    for variable in parser.args.argv: SavePlot(variable)

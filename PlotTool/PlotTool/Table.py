@@ -9,7 +9,7 @@ class Table:
         self.table = []
         self.nspaces = [ len(h) for h in header ]
         self.num_temp = '%.6g'
-        self.args = parser.parse_args()
+        parser.parse_args()
     def addRow(self,row):
         if len(row) != len(self.header):
             print 'Current header length %i' % len(self.header)
@@ -36,7 +36,7 @@ class Table:
             return sep.join(rowstr)
         def RowSep(char): return char*( sum(self.nspaces)+3*len(self.nspaces) )
         lines = [ ]
-        if self.args.raw_output:
+        if parser.args.raw_output:
             rowdivide = ' '
             coldivide = '|'
         else:
@@ -45,11 +45,11 @@ class Table:
             lines.append( RowSep('=') )
             
         rowsep = RowSep(rowdivide)
-        lines.append(RowStr(self.header,coldivide,raw=self.args.raw_output))
-        if not self.args.raw_output: lines.append( rowsep )
+        lines.append(RowStr(self.header,coldivide,raw=parser.args.raw_output))
+        if not parser.args.raw_output: lines.append( rowsep )
         for row in str_table:
-            lines.append( RowStr(row,coldivide,raw=self.args.raw_output) )
-            if not self.args.raw_output: lines.append( rowsep )
+            lines.append( RowStr(row,coldivide,raw=parser.args.raw_output) )
+            if not parser.args.raw_output: lines.append( rowsep )
         return '\n'.join(lines)
 
 class TableSet:

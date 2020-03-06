@@ -37,5 +37,5 @@ def store(variable):
         try: store_region(region)
         except: pass
 
-args = parser.parse_args()
-for variable in args.argv: store(variable)
+parser.parse_args()
+for variable in parser.args.argv: store(variable)

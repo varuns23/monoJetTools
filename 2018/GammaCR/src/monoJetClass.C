@@ -90,10 +90,10 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!tau_veto(phoindex)) continue;
     fillEvent(9,event_weight);
 
-    if (!bjet_veto(phoindex, bjetDeepCSVCut_2018)) continue;
+    if (!bjet_veto( bjetDeepCSVCut_2018)) continue;
     fillEvent(10,event_weight);
 
-    vector<int> jetlist = jet_veto(phoindex);
+    vector<int> jetlist = getLooseJet();
     float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
     h_dphimin->Fill(mindPhiJetMET,event_weight);
     if (mindPhiJetMET <= dPhiJetMETCut) continue;
@@ -107,8 +107,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (recoil <= recoilCut) continue;
     fillEvent(13,event_weight);
 
-    jetCand = getJetCand(jetlist,phoindex);
-    if (jetCand.size() < 1) continue;
+    int jetCand = getJetCand();
+    if (jetCand == -1) continue;
     setJetCand(jetCand);
     fillEvent(14,event_weight);
   }
