@@ -14,7 +14,7 @@ plot() {
 }
 
 run() {
-    subdir="AN"
+    subdir="CorrectJetCandv3"
     pushd $1
     shift 1
     array="$nvariables $@"
@@ -32,7 +32,7 @@ run2() {
 }
 
 region() {
-    # run SignalRegion || exit 1
+    run SignalRegion || exit 1
     run SingleEleCR $singleleps  || exit 1
     run SingleMuCR $singleleps || exit 1
     run DoubleEleCR $doubleleps || exit 1

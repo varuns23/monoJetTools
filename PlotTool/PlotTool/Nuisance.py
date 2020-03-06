@@ -17,8 +17,32 @@ def AddDiffNuisances(nuisances,up,dn,norm):
         if norm[ibin] == 0: continue
         up[ibin] = norm[ibin] * TMath.Sqrt( sum( (nuisance.up[ibin]/norm[ibin])**2 for nuisance in nuisances) )
         dn[ibin] = norm[ibin] * TMath.Sqrt( sum( (nuisance.dn[ibin]/norm[ibin])**2 for nuisance in nuisances) )
+def GetNuisanceList(tfile,dirname):
+    tfile.cd(dirname)
+    shapelist = [ key.GetName().replace('Up','') for key in gDirectory.GetListOfKeys() if 'Up' in key.GetName() ]
+    tree = gDirectory.Get('norm')
+    scalelist = [ key.GetName().replace('Up','') for key in tree.GetListOfBranches() if 'Up' in key.GetName() ]
+    nuisances = {}
+    for shape in shapelist:
+        nuisances[shape] = 'shape'
+    for scale in scalelist:
+        nuisances[scale] = 'scale'
+    nuisances['Stat'] = True
+    return nuisances
+def GetScaleWeight(nuisance):
+    zwunc = [
+            "QCD_Scale",
+            "QCD_Shape",
+            "QCD_Proc",
+            "NNLO_EWK",
+            "NNLO_Miss",
+            "NNLO_Sud",
+            "QCD_EWK_Mix"]
+    if nuisance in zwunc: return nuisance+"%s/kfactor"
+    if nuisance == 'prefiring': return nuisance+"%s/prefiring"
+    return nuisance
+        
 class Nuisance(object):
-    unclist = []
     def __init__(self,process,name,up,dn,norm,type="diff"):
         self.process = process
         self.name = name
@@ -43,6 +67,24 @@ class Nuisance(object):
             up[ibin] = self.norm[ibin] + self.up[ibin]
             dn[ibin] = self.norm[ibin] - self.dn[ibin]
         return up,dn
+    def GetDiff(self):
+        up = self.up.Clone(); dn = self.dn.Clone()
+        dn.Scale(-1)
+        return up,dn
+    def GetScale(self):
+        up = self.up.Clone(); dn = self.dn.Clone()
+        nbins = self.norm.GetNbinsX()
+        for ibin in range(1,nbins+1):
+            up[ibin] =  (self.up[ibin])/self.norm[ibin]
+            dn[ibin] = -(self.dn[ibin])/self.norm[ibin]
+        return up,dn
+    def GetScaleDiff(self):
+        up = self.up.Clone(); dn = self.dn.Clone()
+        nbins = self.norm.GetNbinsX()
+        for ibin in range(1,nbins+1):
+            up[ibin] =  (self.norm + self.up[ibin])/self.norm[ibin]
+            dn[ibin] =  (self.norm - self.dn[ibin])/self.norm[ibin]
+        return up,dn
     def __str__(self):
         varup,vardn = self.VarDiff()
         return '{0:<20}'.format('%s %s' % (self.name,self.process))+'%+.1e/%+.1e' % (varup,vardn)
@@ -62,17 +104,3 @@ class Nuisance(object):
         return Nuisance(process,name,up,dn,norm)
     def addLike(self,nuisance):
         AddLikeNuisances([self,nuisance],self.up,self.dn)
-
-def GetNuisanceList(tfile,dirname):
-    tfile.cd(dirname)
-    shapelist = [ key.GetName().replace('Up','') for key in gDirectory.GetListOfKeys() if 'Up' in key.GetName() ]
-    tree = gDirectory.Get('norm')
-    scalelist = [ key.GetName().replace('Up','') for key in tree.GetListOfBranches() if 'Up' in key.GetName() ]
-    nuisances = {}
-    for shape in shapelist:
-        nuisances[shape] = 'shape'
-        if shape not in Nuisance.unclist: Nuisance.unclist.append(shape)
-    for scale in scalelist:
-        nuisances[scale] = 'scale'
-        if scale not in Nuisance.unclist: Nuisance.unclist.append(scale)
-    return nuisances
