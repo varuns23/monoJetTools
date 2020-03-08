@@ -7,8 +7,10 @@ import config
 gROOT.SetBatch(1)
 
 def plotCRUnc(sample,uncname):
+    print 'Fetching %s' % uncname
     if 'Single' in sample.region: process = 'WJets'
     if 'Double' in sample.region: process = 'DYJets'
+    if 'Gamma' in sample.region: process = 'GJets'
 
     norm = sample.processes[process].histo.Clone('norm')
     up,dn = sample.processes[process].nuisances[uncname].GetHistos()
@@ -23,42 +25,11 @@ def plotCRUnc(sample,uncname):
     #c.SetLogy();
     #c.cd();
     
-    pad1 = TPad("pad1","pad1",0.01,0.25,0.99,0.99);
+    pad1 = TPad("pad1","pad1",0.01,0.01,0.99,0.99);
     pad1.Draw(); pad1.cd();
     pad1.SetLogy();
     pad1.SetFillColor(0); pad1.SetFrameBorderMode(0); pad1.SetBorderMode(0);
     pad1.SetBottomMargin(0.);
-
-    ymax = max( h.GetMaximum() for h in (norm,up,dn) ) * pow(10,2.5)
-    ymin = 0.001
-
-    for h in (up,dn): h.SetLineStyle(2)
-    for h in (norm,up,dn):
-        h.SetTitle("")
-        h.GetYaxis().SetTitle("Events")
-        h.GetYaxis().SetRangeUser(ymin,ymax)
-    
-    norm.Draw('hist')
-    up.Draw('hist same')
-    dn.Draw('hist same')
-    
-    lumi_label = '%s' % float('%.3g' % (sample.lumi/1000.)) + " fb^{-1}"
-    texLumi,texCMS = getCMSText(lumi_label,sample.year)
-    texLumi.Draw();
-    texCMS.Draw();
-
-    pt = TPaveText(0.62,0.60,0.86,0.887173,'NDC');
-    pt.AddText("Systematic Variation")
-    pt.AddText(uncname)
-    pt.AddText(process)
-    pt.Draw()
-    
-    c.cd();
-    pad2 = TPad("pad2","pad2",0.01,0.01,0.99,0.25);
-    pad2.Draw(); pad2.cd();
-    pad2.SetFillColor(0); pad2.SetFrameBorderMode(0); pad2.SetBorderMode(0);
-    pad2.SetTopMargin(0);
-    pad2.SetBottomMargin(0.35);
 
     rbins = []
     for r in (r_up,r_dn): rbins += [ b for b in r if b != 0 ]
@@ -71,21 +42,12 @@ def plotCRUnc(sample,uncname):
     rstdv = stdv(rbins)
     rymin = 1 - 3*rstdv; rymax = 1 + 3*rstdv
     
-    RatioStyle(r_up,rymin,rymax)
-    RatioStyle(r_dn,rymin,rymax)
 
     for r in (r_up,r_dn):
-        r.SetMarkerStyle(1)
-        r.SetTitle("")
-        r.GetXaxis().SetTitle("");
-        r.GetXaxis().SetTickLength(0);
-        r.GetXaxis().SetLabelOffset(999);
-        r.GetYaxis().SetTitle("");
-        r.GetYaxis().SetTickLength(0);
-        r.GetYaxis().SetLabelOffset(999);
+        RatioStyle(r_up,rymin,rymax,yname="syst./cent.")
     
-    r_up.Draw()
-    r_dn.Draw('same')
+    r_up.Draw("hist")
+    r_dn.Draw('hist same')
     
     nbins = norm.GetNbinsX();
     xmin = norm.GetXaxis().GetXmin();
@@ -93,17 +55,16 @@ def plotCRUnc(sample,uncname):
     xwmin = xmin;
     xwmax = xmax;
     
+    
+    lumi_label = '%s' % float('%.3g' % (sample.lumi/1000.)) + " fb^{-1}"
+    texLumi,texCMS = getCMSText(lumi_label,sample.year,scale=0.8)
+    texLumi.Draw();
+    texCMS.Draw();
+    
     line = getRatioLine(xmin,xmax)
     line.Draw("same");
 
-    xname = sample.name if type(sample.name) == str else None
-    xaxis = makeXaxis(xmin,xmax,rymin,510,name=xname);
-    xaxis.Draw("SAME");
-
-    yaxis = makeYaxis(rymin,rymax,xmin,6,name="syst./cent.");
-    yaxis.Draw("SAME");
-
-    SaveAs(c,"%s_%s" % (uncname,sample.varname),year=sample.year,region=sample.region,sub="UncertaintyPlots/%s" % b_info.template.GetName())
+    SaveAs(c,"%s_%s" % (uncname,sample.varname),year=sample.year,region=sample.region,sub="UncertaintyPlots/%s" % sample.variable.base)
     
 def plotSRUnc(sample,uncname):
     print 'Fetching %s' % uncname
@@ -127,47 +88,12 @@ def plotSRUnc(sample,uncname):
     #c.SetLogy();
     #c.cd();
     
-    pad1 = TPad("pad1","pad1",0.01,0.25,0.99,0.99);
-    pad1.Draw(); pad1.cd();
-    pad1.SetLogy();
-    pad1.SetFillColor(0); pad1.SetFrameBorderMode(0); pad1.SetBorderMode(0);
-    pad1.SetBottomMargin(0.);
-
-    ymax = max( h.GetMaximum() for h in (z_norm,w_norm,z_up,z_dn,w_up,w_dn) ) * pow(10,2.5)
-    ymin = 0.001
-
-    z_norm.SetLineColor(kRed)
-    for h in (z_up,z_dn): h.SetLineStyle(2); h.SetLineColor(kRed)
-
-    w_norm.SetLineColor(kBlue)
-    for h in (w_up,w_dn): h.SetLineStyle(2); h.SetLineColor(kBlue)
-    for h in (z_norm,w_norm,z_up,z_dn,w_up,w_dn):
-        h.SetTitle("")
-        h.GetYaxis().SetTitle("Events")
-        h.GetYaxis().SetRangeUser(ymin,ymax)
-        h.Draw('hist same')
-    
-    lumi_label = '%s' % float('%.3g' % (sample.lumi/1000.)) + " fb^{-1}"
-    texLumi,texCMS = getCMSText(lumi_label,sample.year)
-    texLumi.Draw();
-    texCMS.Draw();
-
-    pt = TPaveText(0.62,0.7,0.86,0.887173,'NDC');
-    pt.AddText("Systematic Variation")
-    pt.AddText(uncname)
-    pt.Draw()
-
-    leg = getLegend(0.62,0.5,0.86,0.7)
-    leg.AddEntry(z_norm,'Z+jets','l')
-    leg.AddEntry(w_norm,'W+jets','l')
-    leg.Draw()
-    
-    c.cd();
-    pad2 = TPad("pad2","pad2",0.01,0.01,0.99,0.25);
-    pad2.Draw(); pad2.cd();
-    pad2.SetFillColor(0); pad2.SetFrameBorderMode(0); pad2.SetBorderMode(0);
-    pad2.SetTopMargin(0);
-    pad2.SetBottomMargin(0.35);
+    # pad1 = TPad("pad1","pad1",0.01,0.01,0.99,0.99);
+    # pad1.Draw(); pad1.cd();
+    # pad1.SetLogy();
+    # pad1.SetFillColor(0); pad1.SetFrameBorderMode(0); pad1.SetBorderMode(0);
+    # pad1.SetBottomMargin(0.);
+    # pad1.SetGridy()
 
     rbins = []
     for r in (z_r_up,z_r_dn,w_r_up,w_r_dn): rbins += [ b for b in r if b != 0 ]
@@ -182,17 +108,12 @@ def plotSRUnc(sample,uncname):
 
     for r in (z_r_up,z_r_dn): r.SetLineColor(kRed)
     for r in (w_r_up,w_r_dn): r.SetLineColor(kBlue)
-    for r in (z_r_up,z_r_dn,w_r_up,w_r_dn):
-        RatioStyle(r,rymin,rymax)
-        r.SetMarkerStyle(1)
-        r.SetTitle("")
-        r.GetXaxis().SetTitle("");
-        r.GetXaxis().SetTickLength(0);
-        r.GetXaxis().SetLabelOffset(999);
-        r.GetYaxis().SetTitle("");
-        r.GetYaxis().SetTickLength(0);
-        r.GetYaxis().SetLabelOffset(999);
-        r.Draw('same')
+    hslist =(z_r_up,z_r_dn,w_r_up,w_r_dn)
+    for r in hslist:
+        # RatioStyle(r,rymin,rymax,yname=uncname)
+        r.GetYaxis().SetTitle(uncname)
+        r.GetYaxis().SetRangeUser(rymin,rymax)
+        r.Draw('hist same')
     
     
     nbins = z_norm.GetNbinsX();
@@ -204,45 +125,45 @@ def plotSRUnc(sample,uncname):
     line = getRatioLine(xmin,xmax)
     line.Draw("same");
 
-    xname = sample.name if type(sample.name) == str else None
-    xaxis = makeXaxis(xmin,xmax,rymin,510,name=xname);
-    xaxis.Draw("SAME");
-
-    yaxis = makeYaxis(rymin,rymax,xmin,6,name="syst./cent.");
-    yaxis.Draw("SAME");
-
-
-    SaveAs(c,"%s_%s" % (uncname,sample.varname),year=sample.year,region=sample.region,sub="UncertaintyPlots/%s" % b_info.template.GetName())
-
-def runRegion(args):
-    sample = Region()
-    variable = args.argv[0]
-    nvariable = variable+'_'+config.regions[sample.region]
-    variations = []
-    for name,unclist in config.Uncertainty.iteritems(): variations += unclist
-
-    print 'Running for %s' % nvariable
-    sample.initiate(nvariable)
-    for uncname in variations:
-        print 'Fetching %s' % uncname
-        sample.addUnc(uncname)
     
-    sample.varname = sample.varname.replace('_%s' % nhist,'')
+    lumi_label = '%s' % float('%.3g' % (sample.lumi/1000.)) + " fb^{-1}"
+    texLumi,texCMS = getCMSText(lumi_label,sample.year,scale=0.8)
+    texLumi.Draw();
+    texCMS.Draw();
+
+    leg = getLegend(xmin=0.1,xmax=0.3,ymin=0.5,ymax=0.8)
+    leg.AddEntry(z_r_up,'Z+jets','l')
+    leg.AddEntry(w_r_up,'W+jets','l')
+    leg.Draw()
+
+    SaveAs(c,"%s_%s" % (uncname,sample.varname),year=sample.year,region=sample.region,sub="UncertaintyPlots/%s" % sample.variable.base)
+
+def runRegion(region,args):
+    sample = Region(autovar=True)
+    variable = args.argv[0]
+    # for name,unclist in config.Uncertainty.iteritems(): variations += unclist
+
+    print 'Running for %s' % variable
+    sample.initiate(variable)
+    variations = sample.variable.nuisances.keys()
+    for uncname in variations: sample.addUnc(uncname,True)
+        
+        
     if sample.region == 'SignalRegion':
         for uncname in variations: plotSRUnc(sample,uncname)
     else:
-        for uncname in variations: plotCRUnc(sample,uncname)
+        for uncname in variations:  plotCRUnc(sample,uncname)
 def runAll(args):
-    cwd = os.getcwd()
-    for region,nhist in config.regions.items():
-        os.chdir(region)
-        runRegion(args)
-        os.chdir(cwd)
+    runRegion('SignalRegion',args)
+    # for region,nhist in config.regions.items():
+        # runRegion(region,args)
     
 if __name__ == "__main__":
+    from PlotTool import parser
     parser.parse_args()
-    if not any(parser.args.argv): parser.args.argv.append('ChNemPtFrac')
-    runall = ( GetRegion() == None )
+    if not any(parser.args.argv): parser.args.argv.append('recoil')
+    region = GetRegion()
+    runall = ( region  == None )
 
     if runall: runAll(parser.args)
-    else:      runRegion(parser.args)
+    else:      runRegion(region,parser.args)

@@ -41,7 +41,9 @@ class SubProcess(object):
     def setVariable(self,variable,weight="weight",cut=None):
         self.tfile.cd()
         self.initVariable()
-        if type(variable) == str: variable = VariableInfo(self.tfile,variable,weight,cut)
+        if type(variable) == str:
+            variable = VariableInfo(self.tfile)
+            variable.setVariable(variable,weight,cut)
         self.variable = variable
         self.scaleWidth = variable.scaleWidth
         if variable.isGlobal: self.histo = GetTObject(variable.variable,self.tfile)
@@ -74,8 +76,9 @@ class SubProcess(object):
         isScale = self.variable.nuisances[nuisance] == 'scale'
         name = '%s_%s_%s' % (self.name,self.variable.base,nuisance)
         if isScale:
-            up = GetBranch('%sUp' % name,self.variable,self.treemap['norm'],'%s*%sUp' % (self.variable.weight,nuisance))
-            dn = GetBranch('%sDown' % name,self.variable,self.treemap['norm'],'%s*%sDown' % (self.variable.weight,nuisance))
+            scale_weight = GetScaleWeight(nuisance)
+            up = GetBranch('%sUp' % name,self.variable,self.treemap['norm'],"%s*%s" % (self.variable.weight,scale_weight%"Up"))
+            dn = GetBranch('%sDown' % name,self.variable,self.treemap['norm'],"%s*%s" % (self.variable.weight,scale_weight%"Down"))
         else:
             treeup = '%sUp' % nuisance; self.setTree(self.variable.dirname,treeup)
             treedn = '%sDown' % nuisance; self.setTree(self.variable.dirname,treedn)
@@ -91,7 +94,7 @@ class Process:
         self.process = name; self.filenames = filenames; self.xsecs = xsecs; self.proctype = proctype
         self.year = year; self.region = region; self.leg = leg; self.color = color
         self.name = GetProcessName(name,year,region)
-        self.sublist = [ '%s_%s' % (self.name,filename) for filename in self.filenames ]
+        self.sublist = [ '%s_%s' % (self.process,filename.replace("post","")) for filename in self.filenames ]
         self.xsecs = { sub:xsecs[filename] for sub,filename in zip(self.sublist,self.filenames) } if xsecs is not None else None
 
         self.subprocesses = {}
@@ -127,7 +130,9 @@ class Process:
         return any(self)
     def setVariable(self,variable,lumi,weight="weight",cut=None):
         self.initVariable()
-        if type(variable) == str: variable = VariableInfo(self[0].tfile,variable,weight,cut)
+        if type(variable) == str:
+            variable = VariableInfo(self[0].tfile)
+            variable.setVariable(variable,weight,cut)
         self.variable = variable
         for subprocess in self:
             subprocess.setVariable(variable)
@@ -137,7 +142,7 @@ class Process:
 
             if self.histo is None: self.histo = subprocess.histo.Clone( "%s_%s" % (self.name,variable.base))
             else:                  self.histo.Add(subprocess.histo)
-    def addUnc(self,nuisance):
+    def addUnc(self,nuisance,show=False):
         if self.proctype == 'data': return
         if nuisance in self.nuisances: return
         for subprocess in self: subprocess.addUnc(nuisance)
@@ -147,6 +152,7 @@ class Process:
         dn = self.histo.Clone("%s_%s_%sDown" % (self.name,self.variable.base,nuisance)); dn.Reset()
         AddLikeNuisances([subprocess.nuisances[nuisance] for subprocess in self],up,dn)
         self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo)
+        if show: print self.nuisances[nuisance]
     def fullUnc(self,unclist,show=True):
         if self.proctype == 'data': return
         for nuisance in unclist: self.addUnc(nuisance)
