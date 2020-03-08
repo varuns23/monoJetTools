@@ -25,11 +25,11 @@ def plotCRUnc(sample,uncname):
     #c.SetLogy();
     #c.cd();
     
-    pad1 = TPad("pad1","pad1",0.01,0.01,0.99,0.99);
-    pad1.Draw(); pad1.cd();
-    pad1.SetLogy();
-    pad1.SetFillColor(0); pad1.SetFrameBorderMode(0); pad1.SetBorderMode(0);
-    pad1.SetBottomMargin(0.);
+    # pad1 = TPad("pad1","pad1",0.01,0.01,0.99,0.99);
+    # pad1.Draw(); pad1.cd();
+    # pad1.SetLogy();
+    # pad1.SetFillColor(0); pad1.SetFrameBorderMode(0); pad1.SetBorderMode(0);
+    # pad1.SetBottomMargin(0.);
 
     rbins = []
     for r in (r_up,r_dn): rbins += [ b for b in r if b != 0 ]
@@ -44,7 +44,8 @@ def plotCRUnc(sample,uncname):
     
 
     for r in (r_up,r_dn):
-        RatioStyle(r_up,rymin,rymax,yname="syst./cent.")
+        r.GetYaxis().SetTitle(uncname)
+        r.GetYaxis().SetRangeUser(rymin,rymax)
     
     r_up.Draw("hist")
     r_dn.Draw('hist same')
@@ -142,11 +143,17 @@ def runRegion(region,args):
     sample = Region(autovar=True)
     variable = args.argv[0]
     # for name,unclist in config.Uncertainty.iteritems(): variations += unclist
+    if 'Single' in sample.region: processes = ['WJets']
+    if 'Double' in sample.region: processes = ['DYJets']
+    if 'Gamma' in sample.region: processes = ['GJets']
+    if 'Signal' in sample.region: processes = ['ZJets','WJets']
 
     print 'Running for %s' % variable
     sample.initiate(variable)
     variations = sample.variable.nuisances.keys()
-    for uncname in variations: sample.addUnc(uncname,True)
+    for uncname in variations:
+        for procname in processes:
+            sample[procname].addUnc(uncname,True)
         
         
     if sample.region == 'SignalRegion':

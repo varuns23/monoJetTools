@@ -282,7 +282,7 @@ class Region(object):
         for nuisance in ['Total']:
             up = self['SumOfBkg'].histo.Clone('%s_%s_TotalUp' % (self['SumOfBkg'].name,self.variable.base));  up.Reset()
             dn = self['SumOfBkg'].histo.Clone('%s_%s_TotalDown' % (self['SumOfBkg'].name,self.variable.base)); dn.Reset()
-            AddDiffNuisances([process.nuisances[nuisance] for process in self if process.proctype == 'bkg'],up,dn,self['SumOfBkg'].histo)
+            AddDiffNuisances([process.nuisances[nuisance] for process in self if process.proctype == 'bkg' and nuisance in process.nuisances],up,dn,self['SumOfBkg'].histo)
             self['SumOfBkg'].nuisances[nuisance] = Nuisance('SumOfBkg',nuisance,up,dn,self['SumOfBkg'].histo)
         if show: print self['SumOfBkg'].nuisances['Total']
     def getUncBand(self,unclist):

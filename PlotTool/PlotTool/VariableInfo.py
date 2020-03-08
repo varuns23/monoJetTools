@@ -40,15 +40,15 @@ def AddOverflow(hs):
     hs.SetBinContent(nbins,overflow)
     return
 
-def inclusiveBinning(arg,saxmple,name):
+def inclusiveBinning(self,arg):
     nbins = int(arg.replace('incl',''))
-    b_info.template = TH1F(name,'',nbins,0,1)
+    b_info.template = TH1F(self.base,'',nbins,0,1)
     b_info.post = AddOverflow
 
-def inclusiveCutBinning(arg,sample,name):
+def inclusiveCutBinning(self,arg):
     nbins = arg.replace('incu','')
-    cut = sample.cut
-    inclusiveBinning(nbins,sample,name)
+    cut = self.cut
+    inclusiveBinning(self,nbins)
     hs = b_info.template
     if '>' in cut:
         lim = float(cut.split('>')[-1])
@@ -57,9 +57,9 @@ def inclusiveCutBinning(arg,sample,name):
     binlist = array('d',[ hs.GetXaxis().GetBinLowEdge(ibin) for ibin in range(bmin,bmax+2) ])
     b_info.template= hs.Rebin(len(binlist)-1,name,binlist)
     
-def rebin(arg,name):
+def rebin(self,arg):
     bins = array('d',[250.,280.,310.,340.,370.,400.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.,1400.])
-    histo = TH1F(name,'',len(bins)-1,bins)
+    histo = TH1F(self.base,'',len(bins)-1,bins)
     histo.Rebin(2)
     return histo
     
@@ -148,7 +148,7 @@ class VariableInfo:
         for label,binning in self.binningMap.iteritems():
             if label in parser.args.binning:
                 if label is not 'fix': self.binfix = parser.args.binning
-                return binning(parser.args.binning,self.base)
+                return binning(self,parser.args.binning)
         
 
  
