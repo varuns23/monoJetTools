@@ -198,7 +198,7 @@ def submit(argv=sys.argv,redirect=False):
     config['on_exit_remove'] = '(ExitBySignal == FALSE && (ExitCode == 0 || ExitCode == 42 || NumJobStarts>3))'
     config['+IsFastQueueJob'] = 'True'
     config['getenv'] = 'true'
-    config['request_memory'] = 5000
+    config['request_memory'] = 2000
     config['request_disk'] = 2048000
     config['script'] = args.script
     config['inputdir'] = args.inputdir
