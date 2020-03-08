@@ -33,15 +33,15 @@ def IsBranch(variable,tfile):
     return False
 def linspace(xmin,xmax,nx): return list(np.linspace(xmin,xmax,nx+1))
 
-def rebin(arg,name):
+def rebin(self,arg):
     bins = array('d',[250.,280.,310.,340.,370.,400.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.,1400.])
-    histo = TH1F(name,'',len(bins)-1,bins)
+    histo = TH1F(self.base,'',len(bins)-1,bins)
     histo.Rebin(2)
     return histo
     
 class VariableInfo:
     binningMap = {
-        'rebin':rebin
+        "rebin":rebin
     }
     def __init__(self,tfile=None):
         self.initVariable()
@@ -122,7 +122,7 @@ class VariableInfo:
         for label,binning in self.binningMap.iteritems():
             if label in parser.args.binning:
                 if label is not 'fix': self.binfix = parser.args.binning
-                return binning(parser.args.binning,self.base)
+                return binning(self,parser.args.binning)
         
 
  
