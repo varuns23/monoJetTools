@@ -34,10 +34,11 @@ class SubProcess(object):
         self.cutflow = cutflow.GetBinContent(1)
         return True
     def setTree(self,dirname,treename):
+        tree = None
         if treename not in self.treemap:
-            self.treemap[treename] = GetTObject('%s/%s' % (dirname,treename),self.tfile)
-        elif self.treemap[treename] == None:
-            self.treemap[treename] = GetTObject('%s/%s' % (dirname,treename),self.tfile)
+            tree = GetTObject('%s/%s' % (dirname,treename),self.tfile)
+        if tree is not None: self.treemap[treename] = tree
+        return tree is None
     def setVariable(self,variable,weight="weight",cut=None):
         self.tfile.cd()
         self.initVariable()
@@ -60,6 +61,14 @@ class SubProcess(object):
         if self.scaleWidth: histo.Scale(self.scaling,"width")
         elif self.scaling != 1: histo.Scale(self.scaling)
         if histo == self.histo: self.scaled_total = histo.Integral()
+    def hasUnc(self,nuisance):
+        isScale = self.variable.nuisances[nuisance] == 'scale'
+        if isScale: return hasattr(self.treemap['norm'],nuisance+'Up')
+        try:
+            self.setTree(self.variable.dirname,nuisance+'Up')
+            self.setTree(self.variable.dirname,nuisance+'Down')
+        except ValueError: return False
+        return True
     def addStat(self):
         self.tfile.cd()
         up = self.histo.Clone('%s_%s_StatUp' % (self.name,self.variable.base)); up.Reset()
@@ -73,20 +82,24 @@ class SubProcess(object):
         self.tfile.cd()
         if nuisance == 'Stat': self.addStat()
         if nuisance in self.nuisances: return
+        if not self.hasUnc(nuisance): return
         isScale = self.variable.nuisances[nuisance] == 'scale'
         name = '%s_%s_%s' % (self.name,self.variable.base,nuisance)
-        if isScale:
+        def getScale():
             scale_weight = GetScaleWeight(nuisance)
             up = GetBranch('%sUp' % name,self.variable,self.treemap['norm'],"%s*%s" % (self.variable.weight,scale_weight%"Up"))
             dn = GetBranch('%sDown' % name,self.variable,self.treemap['norm'],"%s*%s" % (self.variable.weight,scale_weight%"Down"))
-        else:
-            treeup = '%sUp' % nuisance; self.setTree(self.variable.dirname,treeup)
-            treedn = '%sDown' % nuisance; self.setTree(self.variable.dirname,treedn)
+            return up,dn
+        def getShape():
+            treeup = '%sUp' % nuisance;   
+            treedn = '%sDown' % nuisance; 
             up = GetBranch('%sUp' % name,self.variable,self.treemap[treeup])
             dn = GetBranch('%sDown' % name,self.variable,self.treemap[treeup])
+            return up,dn
+        if isScale: up,dn = getScale()
+        else:       up,dn = getShape()
         self.scale(histo=up); self.scale(histo=dn)
         self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo,type="abs")
-        
 class Process:
     def __init__(self,name=None,filenames=None,xsecs=None,proctype=None,year=None,region=None,leg=None,color=kGray+1):
         if name is None and filenames is None: return
@@ -150,7 +163,7 @@ class Process:
         nbins = self.histo.GetNbinsX()
         up = self.histo.Clone("%s_%s_%sUp" % (self.name,self.variable.base,nuisance)); up.Reset()
         dn = self.histo.Clone("%s_%s_%sDown" % (self.name,self.variable.base,nuisance)); dn.Reset()
-        AddLikeNuisances([subprocess.nuisances[nuisance] for subprocess in self],up,dn)
+        AddLikeNuisances([subprocess.nuisances[nuisance] for subprocess in self if nuisance in subprocess.nuisances],up,dn)
         self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo)
         if show: print self.nuisances[nuisance]
     def fullUnc(self,unclist,show=True):
@@ -158,7 +171,7 @@ class Process:
         for nuisance in unclist: self.addUnc(nuisance)
         up = self.histo.Clone('%s_%s_TotalUp' % (self.name,self.variable.base));  up.Reset()
         dn = self.histo.Clone('%s_%s_TotalDown' % (self.name,self.variable.base)); dn.Reset()
-        AddDiffNuisances([self.nuisances[nuisance] for nuisance in unclist],up,dn,self.histo)
+        AddDiffNuisances([self.nuisances[nuisance] for nuisance in unclist if nuisance in self.nuisances],up,dn,self.histo)
         self.nuisances['Total'] = Nuisance(self.process,'Total',up,dn,self.histo)
 
         if not show: return
