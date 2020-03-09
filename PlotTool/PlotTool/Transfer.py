@@ -53,11 +53,11 @@ class Transfer:
             denunc = '%s_%s' % (nuisance,denname)
             self.nuisances[denunc] = Nuisance(self.name,denunc,tfdenup,tfdendn,self.histo,type='abs')
 
-            nuislist = [self.nuisances[numunc],self.nuisances[denunc]]
-            tfup = tfdenup.Clone()
-            tfdn = tfdendn.Clone()
-            AddDiffNuisances(nuislist,tfup,tfdn,self.histo)
-            self.nuisances[nuisance] = Nuisance(self.name,nuisance,tfup,tfdn,self.histo)
+            # nuislist = [self.nuisances[numunc],self.nuisances[denunc]]
+            # tfup = tfdenup.Clone()
+            # tfdn = tfdendn.Clone()
+            # AddDiffNuisances(nuislist,tfup,tfdn,self.histo)
+            # self.nuisances[nuisance] = Nuisance(self.name,nuisance,tfup,tfdn,self.histo)
     def fullUnc(self,unclist):
         nuislist = []
         for unc in unclist:

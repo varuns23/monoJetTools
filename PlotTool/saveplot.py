@@ -12,6 +12,9 @@ dirlist = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR",
 dirmap = {"SignalRegion":"sr","DoubleEleCR":"ze","DoubleMuCR":"zm","SingleEleCR":"we","SingleMuCR":"wm","GammaCR":"ga"}
 if not path.isdir("Systematics"): mkdir("Systematics")
 
+def validHisto(hs,total=0,threshold=0.2):return hs.Integral() > threshold*total
+def validShape(up,dn):return any( up[ibin] != dn[ibin] for ibin in range(1,up.GetNbinsX()+1) ) and validHisto(up) and validHisto(dn)
+
 def SavePlot(variable):
     print variable
 
@@ -33,7 +36,17 @@ def SavePlot(variable):
         for process in region:
             print "--Writing %s Histogram" % process.name
             if process.proctype == "data": process.histo.Write("data_obs")
-            else: process.histo.Write(process.process)
+            else:
+                process.histo.Write(process.process)
+                for nuisance in region.variable.nuisances:
+                    process.addUnc(nuisance)
+                    cwd.cd()
+                    if nuisance in process.nuisances:
+                        up,dn = process.nuisances[nuisance].GetHistos()
+                        if not validShape(up,dn): continue
+                        print "----Writing",process.nuisances[nuisance]
+                        up.Write("%s_%sUp"%(process.process,nuisance))
+                        dn.Write("%s_%sDown"%(process.process,nuisance))
         return region
     regionmap = { dirmap[region]:SaveRegion(region) for region in dirlist }
     def WCR_TF(wln,sr,output):
