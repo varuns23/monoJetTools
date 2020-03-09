@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 from ROOT import TFile
 from sys import argv
+import os
 
 path=argv[1]
 def compare(f1,f2,ibin=1):
+    if not os.path.isfile(f1) or not os.path.isfile(f2): return
     fn_unknown = TFile.Open(f1)
     fn_known = TFile.Open(f2)
     
