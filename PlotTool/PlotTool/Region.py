@@ -52,6 +52,7 @@ parser.add_argument("-a","--autovar",help="Specify to use the automatic basic nh
 parser.add_argument("--normalize",help="Specify to normalize plots to unity",action="store_true",default=False)
 parser.add_argument("--nlo",help="Use all available NLO samples",action="store_true",default=False)
 parser.add_argument("--postpath",help="Force path to come from postpath.txt",action="store_true",default=False)
+parser.add_argument("--verbose",help="Specify verbose level",type=int,default=0)
 
 class Region(object):
     def __init__(self,year=None,region=None,lumi=None,path=None,config=None,autovar=False,useMaxLumi=False,show=True):
@@ -242,16 +243,12 @@ class Region(object):
         if self.scaleWidth: print "Bin Width Normalization"
         prompt = 'integral of %s: %s'
         ntemp = '{0:<15}'; itemp = '{0:<8}'
-        print prompt % ( ntemp.format('Data'),itemp.format( '%.6g' % self.processes['Data'].scaled_total ) )
+        verbose = parser.args.verbose == 1
+        self['Data'].output(verbose=verbose)
         if hasattr(self,'SignalList'):
-            for signal in self.SignalList:
-                signal = self[signal]
-                print prompt % ( ntemp.format(signal.process),itemp.format( '%.6g' % signal.scaled_total ) )
+            for signal in self.SignalList: self[signal].output(verbose=verbose)
         print prompt % ( ntemp.format('SumOfBkg'),itemp.format( '%.6g' % self.total_bkg ) )
-        for sample in self.MCOrder:
-            process = self.processes[sample]
-            percent = ("%.4g%%" % (100*process.scaled_total/self.total_bkg)) if self.total_bkg != 0 else 'Nan'
-            print prompt % ( ntemp.format(sample),itemp.format( '%.6g' % process.scaled_total ) ),'| %s' % (percent)
+        for sample in self.MCOrder: self[sample].output(verbose=verbose,total_bkg=self.total_bkg)
         ratio = ('%.6g' % (self.processes['Data'].scaled_total/self.total_bkg)) if self.total_bkg != 0 else 'Nan'
         print '            %s: %s' % (ntemp.format('data/mc'),itemp.format(ratio))
     def setSumOfBkg(self):
