@@ -356,7 +356,7 @@ void monoJetAnalysis::SetPtFrac() {
 }
 
 void monoJetAnalysis::setJetCand(int jetCand) {
-  if (jetCand <= 0) return;
+  if (nJet == 0 || jetCand < 0) return;
   jetindex = jetCand;
   j1pT = jetPt->at(jetindex);
   j1Eta = jetEta->at(jetindex);
