@@ -33,6 +33,12 @@ class SubProcess(object):
         cutflow = GetTObject('h_cutflow',self.tfile)
         self.cutflow = cutflow.GetBinContent(1)
         return True
+    def output(self,prompt="-- integral of %s: %s",ntemp="{0:<15}",itemp="{0:<8}",total_bkg=0):
+        if total_bkg > 0:
+            percent = ("%.4g%%" % (100*self.scaled_total/total_bkg))
+            print prompt % ( ntemp.format(self.process),itemp.format( '%.6g' % self.scaled_total ) ),'| %s' % (percent)
+        else:
+            print prompt % ( ntemp.format(self.process),itemp.format( '%.6g' % self.scaled_total ) )
     def setTree(self,dirname,treename):
         tree = None
         if treename not in self.treemap:
@@ -104,7 +110,7 @@ class Process:
     def __init__(self,name=None,filenames=None,xsecs=None,proctype=None,year=None,region=None,leg=None,color=kGray+1):
         if name is None and filenames is None: return
         
-        self.process = name; self.filenames = filenames; self.xsecs = xsecs; self.proctype = proctype
+        self.process = name; self.filenames = list(filenames); self.xsecs = xsecs; self.proctype = proctype
         self.year = year; self.region = region; self.leg = leg; self.color = color
         self.name = GetProcessName(name,year,region)
         self.sublist = [ '%s_%s' % (self.process,filename.replace("post","")) for filename in self.filenames ]
@@ -124,6 +130,14 @@ class Process:
         return self.subprocesses[key];
     def __iter__(self):
         for i in range(len(self)): yield self[i]
+    def output(self,prompt="integral of %s: %s",ntemp="{0:<15}",itemp="{0:<8}",total_bkg=0,verbose=False):
+        if total_bkg > 0:
+            percent = ("%.4g%%" % (100*self.scaled_total/total_bkg))
+            print prompt % ( ntemp.format(self.process),itemp.format( '%.6g' % self.scaled_total ) ),'| %s' % (percent)
+        else:
+            print prompt % ( ntemp.format(self.process),itemp.format( '%.6g' % self.scaled_total ) )
+        if verbose and len(self) > 1:
+            for subprocess in self: subprocess.output(total_bkg=self.scaled_total)
     def initVariable(self):
         for subprocess in self: subprocess.initVariable()
         self.histo = None
@@ -154,7 +168,7 @@ class Process:
             self.scaled_total += subprocess.scaled_total
 
             if self.histo is None: self.histo = subprocess.histo.Clone( "%s_%s" % (self.name,variable.base))
-            else:                  self.histo.Add(subprocess.histo)
+            else:                  self.histo.Add(subprocess.histo.Clone())
     def addUnc(self,nuisance,show=False):
         if self.proctype == 'data': return
         if nuisance in self.nuisances: return
