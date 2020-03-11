@@ -59,13 +59,43 @@ rangemap = {
 
 varmap = {}
 
+def tfmc_style(tf_proc,color=kBlue,xname=None):
+    tf_proc.histo.SetLineWidth(2)
+    tf_proc.histo.SetLineColor(color);
+    tf_proc.histo.SetTitle("")
+    tf_proc.histo.GetYaxis().SetTitle(tf_proc.name)
+    tf_proc.histo.GetYaxis().SetTitleOffset(1.05)
+    tf_proc.histo.GetYaxis().SetTitleSize(0.049)
+    tf_proc.histo.GetYaxis().SetLabelSize(0.04)
+    if xname is not None:
+        tf_proc.histo.GetXaxis().SetTitle(xname)
+    tf_proc.histo.GetXaxis().SetTitleOffset(1.2)
+def tf_style(tf,color=kBlack,xname=None):
+    tf.histo.SetLineWidth(2)
+    tf.histo.SetLineColor(kBlack);
+    tf.histo.SetMarkerStyle(20);
+    tf.histo.SetMarkerSize(1.5);
+    tf.histo.SetTitle("")
+    tf.histo.GetYaxis().SetTitle(tf.name)
+    tf.histo.GetYaxis().SetTitleSize(0.049)
+    tf.histo.GetYaxis().SetLabelSize(0.04)
+    tf.histo.GetYaxis().SetTitleOffset(1.2)
+    if xname is not None:
+        tf.histo.GetXaxis().SetTitle(xname)
+    tf.histo.GetXaxis().SetTitleOffset(1.2)
+    tf.histo.GetXaxis().SetLabelSize(0.045);
+    tf.histo.GetXaxis().SetTitleSize(0.045);
+    tf.histo.GetXaxis().SetLabelFont(42);
+    tf.histo.GetXaxis().SetTitleFont(42);
+    tf.histo.GetXaxis().SetTitleOffset(1.1);
+    tf.histo.GetXaxis().SetTickLength(0.05);
 def SetBounds(tf,num_sample,den_sample):
-    global varmap
     bins = list(tf.histo)[1:-1]
     avg = sum( ibin for ibin in bins ) / len(bins)
     maxdiff = max( abs(ibin - avg) for ibin in bins )
-    tf.histo.SetMinimum( 0 )
+    tf.histo.SetMinimum( avg - 5*maxdiff )
     tf.histo.SetMaximum( avg + 5*maxdiff )
+    
     return
     if not any(varmap): return
     yrange = varmap[num_sample.region][den_sample.region]
@@ -80,14 +110,13 @@ def plotTF(num_sample,den_sample):
     num_proc = num_sample[num_info["proc"]]
     den_proc = den_sample[den_info["proc"]]
 
-    tfname = "Ratio_{%s/%s}" % (num_info['label'],den_info['label'])
+    tfname = "%s+jets / %s+jets" % (num_info['label'],den_info['label'])
     tf = Transfer(tfname,num_proc,den_proc)
     tf.printUnc()
 
     c = TCanvas("c", "canvas",800,800);
     gStyle.SetOptStat(0);
     gStyle.SetLegendBorderSize(0);
-    # c.SetLeftMargin(0.15);
     #c.SetLogy();
     #c.cd();
     
@@ -97,7 +126,7 @@ def plotTF(num_sample,den_sample):
     pad1.SetFillColor(0);
     pad1.SetFrameBorderMode(0);
     pad1.SetBorderMode(0);
-    # pad1.SetLeftMargin(0.2)
+    pad1.SetLeftMargin(0.15)
     # pad1.SetBottomMargin(0.);
     
     SetBounds(tf,num_sample,den_sample)
@@ -116,21 +145,10 @@ def plotTF(num_sample,den_sample):
         UncBandStyle(uncband)
         uncband.Draw("2same")
     tf.histo.Draw("pex0same")
+    tf_style(tf,xname=num_sample.name)
     
-    tf.histo.SetLineWidth(2)
-    tf.histo.SetLineColor(kBlack);
-    tf.histo.SetMarkerStyle(20);
-    tf.histo.SetMarkerSize(1);
-    tf.histo.SetTitle("")
-    tf.histo.GetYaxis().SetTitle(tf.name)
-    tf.histo.GetYaxis().CenterTitle()
-    tf.histo.GetYaxis().SetTitleOffset(1.2)
-    tf.histo.GetXaxis().SetTitle(num_sample.name)
-    tf.histo.GetXaxis().SetTitleOffset(1.2)
-    
-    texCMS,texLumi = getCMSText(lumi_label,year)
-    for tex in (texCMS,texLumi): tex.SetTextSize(0.03)
-    leg = getLegend(xmin=0.5,xmax=0.7)
+    texCMS,texLumi = getCMSText(lumi_label,year,scale=0.8)
+    leg = getLegend(xmin=0.45,xmax=0.85,ymin=0.6,scale=0.6)
     leg.AddEntry(tf.histo,"Transfer Factor (Stat Uncert)","p")
     leg.Draw()
 
@@ -156,14 +174,14 @@ def plotTF_datamc(num_sample,den_sample):
     num_data = num_sample["Data"]
     den_data = den_sample["Data"]
 
-    tfname = "Ratio_{%s/%s}" % (num_info['label'],den_info['label'])
+    tfname = "%s+jets / %s+jets" % (num_info['label'],den_info['label'])
     tf_data = Transfer(tfname,num_data,den_data)
     tf_proc = Transfer(tfname,num_proc,den_proc)
 
     c = TCanvas("c", "canvas",800,800);
     gStyle.SetOptStat(0);
     gStyle.SetLegendBorderSize(0);
-    # c.SetLeftMargin(0.15);
+    c.SetLeftMargin(0.5);
     #c.SetLogy();
     #c.cd();
     
@@ -180,27 +198,20 @@ def plotTF_datamc(num_sample,den_sample):
     UncBandStyle(uncband)
     uncband.Draw("2same")
     tf_proc.histo.Draw("histsame")
-    tf_data.histo.Draw("pex0same")
-    
-    tf_proc.histo.SetLineWidth(2)
-    tf_proc.histo.SetLineColor(kBlue);
-    tf_proc.histo.SetTitle("")
-    tf_proc.histo.GetYaxis().SetTitle(tf_proc.name)
-    tf_proc.histo.GetYaxis().CenterTitle()
-    tf_proc.histo.GetYaxis().SetTitleOffset(1.2)
-    tf_proc.histo.GetXaxis().SetTitle(num_sample.name)
-    tf_proc.histo.GetXaxis().SetTitleOffset(1.2)
+    tf_data.histo.Draw("pe0same")
+
+    tfmc_style(tf_proc,xname=num_sample.name)
 
     tf_data.histo.SetLineWidth(2)
     tf_data.histo.SetLineColor(kBlack)
     tf_data.histo.SetMarkerStyle(20);
-    tf_data.histo.SetMarkerSize(1);
+    tf_data.histo.SetMarkerSize(1.5);
+    tf_data.histo.SetMarkerColor(kBlack)
     
     texCMS,texLumi = getCMSText(lumi_label,year)
-    for tex in (texCMS,texLumi): tex.SetTextSize(0.03)
-    leg = getLegend(xmin=0.5,xmax=0.7)
-    leg.AddEntry(tf_data.histo,"%s/%s Data" % (num_info['label'],den_info['label']),"p")
-    leg.AddEntry(tf_proc.histo,"%s/%s MC" % (num_info['label'],den_info['label']),"l")
+    leg = getLegend(ymin=0.7,scale=0.8)
+    leg.AddEntry(tf_data.histo,"Data","lp")
+    leg.AddEntry(tf_proc.histo,"Background","l")
     leg.Draw()
 
     #######################################
@@ -208,35 +219,17 @@ def plotTF_datamc(num_sample,den_sample):
     pad2 = TPad("pad2","pad2",0.01,0.01,0.99,0.25);
     pad2.Draw(); pad2.cd();
     pad2.SetFillColor(0); pad2.SetFrameBorderMode(0); pad2.SetBorderMode(0);
-    pad2.SetTopMargin(0);
+    pad2.SetTopMargin(0); pad2.SetGridy()
     pad2.SetBottomMargin(0.35);
         
     datamc = GetRatio(tf_data.histo,tf_proc.histo)
     # rymin = 0.65; rymax = 1.35
-    rymin = 0.35; rymax = 1.75
-    RatioStyle(datamc,rymin,rymax)
-    datamc.Draw("A");
-
-    datamc.Draw("pex0same")
+    rymin = 0.5; rymax = 1.5
+    RatioStyle(datamc,rymin,rymax,color=38,xname=num_sample.name)
+    datamc.Draw("pe0")
     line = getRatioLine(datamc.GetXaxis().GetXmin(),datamc.GetXaxis().GetXmax())
     line.Draw("same");
     c.Update()
-    
-    nbins = datamc.GetXaxis().GetNbins();
-    xmin = datamc.GetXaxis().GetXmin();
-    xmax = datamc.GetXaxis().GetXmax();
-    xwmin = xmin;
-    xwmax = xmax;
-    
-    xname = num_sample.name if type(num_sample.name) == str else None
-    xaxis = makeXaxis(xmin,xmax,rymin,510,name=xname);
-    xaxis.Draw("SAME");
-    
-    if (num_sample.name == "Cutflow"): XaxisCutflowStyle(xaxis,hs_bkg)
-    
-    yaxis = makeYaxis(rymin,rymax,xmin,6,name="Data/MC");
-    yaxis.Draw("SAME");
-    #######################################
 
     if len(varname.split("_")) == 2:
         variable = varname.split("_")[0]
@@ -254,7 +247,7 @@ def plotTransfer(variable,samplemap):
     for region in samplemap:
         print region
         samplemap[region].initiate(variable)
-        samplemap[region].fullUnc(Transfer.zwunc+['Stat'])
+        samplemap[region].fullUnc(['Stat'])
 
     for region in samplemap:
         if 'SignalRegion' in region: continue
