@@ -5,7 +5,6 @@ nvariables='recoil pfMET recoilall pfMETall nJets j1pT j1Eta j1Phi nVtx'
 singleleps='LeptonPt LeptonEta LeptonPhi'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta leadingLeptonPhi subleadingLeptonEta subleadingLeptonPt subleadingLeptonPhi'
 gamma='photonPt photonEta photonPhi'
-cutvars='h_metcut h_dphimin'
 uncertainty=''
 
 options=$@
@@ -15,7 +14,7 @@ plot() {
 }
 
 run() {
-    subdir="CorrectJetCandv3"
+    subdir="test/WithUncertainty"
     pushd $1
     shift 1
     array="$nvariables $@"

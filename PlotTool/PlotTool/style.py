@@ -97,60 +97,62 @@ def fillStack(samples,hs_datamc,threshold=0.001):
     return list(reversed(MCLegOrder))
 ###################################################################
 
-def getLegend(xmin=0.75,ymin=0.5,xmax=0.95,ymax=0.887173,textsize=0.032):
+def getLegend(xmin=0.55,ymin=0.5,xmax=0.9,ymax=0.887173,scale=1):
     leg = TLegend(xmin,ymin,xmax,ymax,"")
-    boundaries.append( Box(xmin,ymin,xmax,ymax) )
     leg.SetFillColor(kWhite);
     leg.SetFillStyle(0);
-    leg.SetTextSize(textsize);
+    leg.SetTextSize(0.048*scale);
     store.append(leg)
     return leg
 ###################################################################
-
-def getCMSText(lumi,year,scale=1):
-    global boundaries
-    x1,y1 = 0.62,0.907173
-    texS = TLatex(x1,y1,("%s (13 TeV, %s)" % (lumi,year)));#VS
-    texS.SetNDC();
-    texS.SetTextFont(42);
-    texS.SetTextSize(0.040*scale);
+def getCMSTex(x=0.15,y=0.8,scale=1,text="#bf{CMS} #it{Preliminary}"):
+    texCMS = TLatex(x,y,text); 
+    texCMS.SetNDC();
+    texCMS.SetTextFont(42);
+    texCMS.SetTextSize(0.060*scale);
+    return texCMS
+###################################################################
+def getLumiTex(lumi_label,year,x=0.58,y=0.907173,scale=1,text="%s (13 TeV, %s)"):
+    texLumi = TLatex(x,y,text % (lumi_label,year)); 
+    texLumi.SetNDC();
+    texLumi.SetTextFont(42);
+    texLumi.SetTextSize(0.048*scale);
+    return texLumi
+###################################################################
+def getCMSText(lumi_label,year,scale=1):
+    texS = getLumiTex(lumi_label,year,scale=scale)
     texS.Draw();
-    box1 = Box(x=x1,y=y1,w=texS.GetXsize(),h=texS.GetYsize())
-
-    x2,y2 = 0.15,0.837173
-    texS1 = TLatex(x2,y2,"#bf{CMS} #it{Preliminary}");
-    # texS1 = TLatex(x2,y2,"#bf{CMS} #it{Analysis in Progress}"); 
-    texS1.SetNDC();
-    texS1.SetTextFont(42);
-    texS1.SetTextSize(0.040*scale);
+    texS1 = getCMSTex(scale=scale)
     texS1.Draw();
-    box2 = Box(x=x2,y=y2,w=texS1.GetXsize(),h=texS1.GetYsize())
 
-    boundaries += [box1,box2]
     return texS,texS1
 ###################################################################
 
-def RatioStyle(ratio,rymin=0.65,rymax=1.35,xname=None,yname='Data/MC'):
+def RatioStyle(ratio,rymin=0.65,rymax=1.35,color=kBlack,xname=None,yname='Data/Bkg'):
     ratio.SetStats(0);
+    ratio.SetMarkerColor(color)
+    ratio.SetLineColor(color)
+    ratio.SetLineWidth(1)
     ratio.SetMarkerStyle(20);
-    ratio.SetMarkerSize(1);
+    ratio.SetMarkerSize(1.5);
 
-    ratio.GetYaxis().SetTitle(yname);
-    ratio.GetYaxis().SetLabelFont(42);
-    ratio.GetYaxis().SetLabelSize(0.10);
-    ratio.GetYaxis().SetTitleFont(42);
+    ratio.GetYaxis().CenterTitle();
+    ratio.GetYaxis().SetTitle(yname)
+    ratio.GetYaxis().SetLabelSize(0.12);
     ratio.GetYaxis().SetTitleSize(0.12);
+    ratio.GetYaxis().SetLabelFont(42);
+    ratio.GetYaxis().SetTitleFont(42);
     ratio.GetYaxis().SetTitleOffset(0.35);
-    ratio.GetYaxis().SetNdivisions(6)
-    ratio.GetYaxis().CenterTitle()
+    ratio.GetYaxis().SetNdivisions(208);
     ratio.GetYaxis().SetRangeUser(rymin,rymax);
 
     if xname is not None and xname is not 'Cutflow': ratio.GetXaxis().SetTitle(xname)
+    ratio.GetXaxis().SetLabelSize(0.15);
+    ratio.GetXaxis().SetTitleSize(0.15);
     ratio.GetXaxis().SetLabelFont(42);
-    ratio.GetXaxis().SetLabelSize(0.10);
     ratio.GetXaxis().SetTitleFont(42);
-    ratio.GetXaxis().SetTitleSize(0.12);
-    ratio.GetXaxis().SetTitleOffset(1.2);
+    ratio.GetXaxis().SetTitleOffset(1.1);
+    ratio.GetXaxis().SetTickLength(0.05);
 ###################################################################
 
 def getRatioLine(xmin,xmax):
