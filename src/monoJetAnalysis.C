@@ -189,35 +189,34 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_j1ChMult[nhist]     ->Fill(jetNChargedHad->at(jetCand),event_weight);
     h_j1NhMult[nhist]     ->Fill(jetNNeutralHad->at(jetCand),event_weight);
     h_j1Mt[nhist]         ->Fill(jetMt->at(jetCand),event_weight);
-    if ( jetindex != -1 ) {
-      // PF Jet Info      ;
-      h_Pt123[nhist]        ->Fill(Pt123,event_weight);
-      h_Pt123Fraction[nhist]->Fill(Pt123Fraction,event_weight);
-      h_ChNemPt[nhist]      ->Fill(ChNemPt,event_weight);
-      h_ChNemPt123[nhist]   ->Fill(ChNemPt123,event_weight);
-      h_ChNemPtFrac[nhist]  ->Fill(ChNemPtFrac,event_weight);
-      h_TotPFCands[nhist]   ->Fill(TotalPFCands,event_weight);
-      // PF Charged Info     ;
-      h_ChPFCands[nhist]    ->Fill(ChargedPFCands,event_weight);
-      h_ChPercCons[nhist]   ->Fill(ChargedPFCands/(float)TotalPFCands,event_weight);
-      h_ChargedPFPt[nhist]  ->Fill(pfHadronPt[0],event_weight);
-      h_ChPercPFPt[nhist]   ->Fill(pfHadronPt[0]/j1pT,event_weight);
-      // PF Neutral Info     ;
-      h_NhPFCands[nhist]    ->Fill(NeutralPFCands,event_weight);                     
-      h_NhPercCons[nhist]   ->Fill(NeutralPFCands/(float)TotalPFCands,event_weight); 
-      h_NhPFPt[nhist]       ->Fill(pfHadronPt[1],event_weight);                      
-      h_NhPercPFPt[nhist]   ->Fill(pfHadronPt[1]/j1pT,event_weight);                 
-      // PF Gamma Info       ;
-      h_GammaPFCands[nhist] ->Fill(GammaPFCands,event_weight);                     
-      h_GammaPercCons[nhist]->Fill(GammaPFCands/(float)TotalPFCands,event_weight); 
-      h_PhotonPFPt[nhist]   ->Fill(pfHadronPt[2],event_weight);                      
-      h_GammaPercPFPt[nhist]->Fill(pfHadronPt[2]/j1pT,event_weight);                 
-      // PF Misc Info        ;
-      h_MiscPFCands[nhist]  ->Fill(MiscPFCands,event_weight);                     
-      h_MiscPercCons[nhist] ->Fill(MiscPFCands/(float)TotalPFCands,event_weight); 
-      h_MiscPFPt[nhist]     ->Fill(pfHadronPt[3],event_weight);                      
-      h_MiscPercPFPt[nhist] ->Fill(pfHadronPt[3]/j1pT,event_weight);
-    }
+    
+    // PF Jet Info      ;
+    h_Pt123[nhist]        ->Fill(Pt123,event_weight);
+    h_Pt123Fraction[nhist]->Fill(Pt123Fraction,event_weight);
+    h_ChNemPt[nhist]      ->Fill(ChNemPt,event_weight);
+    h_ChNemPt123[nhist]   ->Fill(ChNemPt123,event_weight);
+    h_ChNemPtFrac[nhist]  ->Fill(ChNemPtFrac,event_weight);
+    h_TotPFCands[nhist]   ->Fill(TotalPFCands,event_weight);
+    // PF Charged Info     ;
+    h_ChPFCands[nhist]    ->Fill(ChargedPFCands,event_weight);
+    h_ChPercCons[nhist]   ->Fill(ChargedPFCands/(float)TotalPFCands,event_weight);
+    h_ChargedPFPt[nhist]  ->Fill(pfHadronPt[0],event_weight);
+    h_ChPercPFPt[nhist]   ->Fill(pfHadronPt[0]/j1pT,event_weight);
+    // PF Neutral Info     ;
+    h_NhPFCands[nhist]    ->Fill(NeutralPFCands,event_weight);                     
+    h_NhPercCons[nhist]   ->Fill(NeutralPFCands/(float)TotalPFCands,event_weight); 
+    h_NhPFPt[nhist]       ->Fill(pfHadronPt[1],event_weight);                      
+    h_NhPercPFPt[nhist]   ->Fill(pfHadronPt[1]/j1pT,event_weight);                 
+    // PF Gamma Info       ;
+    h_GammaPFCands[nhist] ->Fill(GammaPFCands,event_weight);                     
+    h_GammaPercCons[nhist]->Fill(GammaPFCands/(float)TotalPFCands,event_weight); 
+    h_PhotonPFPt[nhist]   ->Fill(pfHadronPt[2],event_weight);                      
+    h_GammaPercPFPt[nhist]->Fill(pfHadronPt[2]/j1pT,event_weight);                 
+    // PF Misc Info        ;
+    h_MiscPFCands[nhist]  ->Fill(MiscPFCands,event_weight);                     
+    h_MiscPercCons[nhist] ->Fill(MiscPFCands/(float)TotalPFCands,event_weight); 
+    h_MiscPFPt[nhist]     ->Fill(pfHadronPt[3],event_weight);                      
+    h_MiscPercPFPt[nhist] ->Fill(pfHadronPt[3]/j1pT,event_weight);
   }
 }
 
@@ -875,6 +874,7 @@ void monoJetAnalysis::initVars() {
   n_Vtx = nVtx;
   n_Jet = nJet;
   setJetCandList();
+  setJetCand(0);
 }
 
 // Constructor Stuff 
