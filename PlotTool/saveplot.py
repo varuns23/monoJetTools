@@ -15,6 +15,16 @@ if not path.isdir("Systematics"): mkdir("Systematics")
 def validHisto(hs,total=0,threshold=0.2):return hs.Integral() > threshold*total
 def validShape(up,dn):return any( up[ibin] != dn[ibin] for ibin in range(1,up.GetNbinsX()+1) ) and validHisto(up) and validHisto(dn)
 
+tfcorrelation = {
+    "QCD_Scale":True,
+    "QCD_Shape":True,
+    "QCD_Proc":True,
+    "NNLO_Sud":True,
+    "NNLO_Miss":False,
+    "NNLO_EWK":False,
+    "QCD_EWK_Mix":True
+}
+
 def WCR_TF(wln,sr,output):
     print "-%s to %s Transfer" % (dirmap[wln.region],dirmap[sr.region])
     tf = Transfer('%s_to_sr' % dirmap[wln.region],sr['WJets'],wln['WJets'],['sr',dirmap[wln.region]])
@@ -33,11 +43,23 @@ def GCR_TF(ga,sr,output):
     output.cd(); output.cd(dirmap[ga.region])
     cwd = gDirectory.mkdir("transfer"); cwd.cd()
     tf.histo.Write('%s_to_sr' % dirmap[ga.region])
-    for nuisance in tf.nuisances.values():
-        uncname = "ga_to_sr_%s" % nuisance.name
-        up,dn = nuisance.GetHistos()
-        up.Write(uncname+"Up")
-        dn.Write(uncname+"Down")
+    tfname = "ga_to_sr_%s"
+    for nuisance,isCorrelated in tfcorrelation.iteritems():
+        tf.addUnc(nuisance,isCorrelated)
+        if isCorrelated:
+            uncname = tfname % nuisance
+            print "--Writing %s" % nuisance
+            up,dn = tf.nuisances[nuisance].GetHistos()
+            up.Write(uncname+"Up")
+            dn.Write(uncname+"Down")
+        else:
+            for proc in ('sr',dirmap[ga.region]):
+                nuisance_proc = "%s_%s" % (nuisance,proc)
+                print "--Writing %s" % nuisance_proc
+                uncname = tfname % nuisance_proc
+                up,dn = tf.nuisances[nuisance_proc].GetHistos()
+                up.Write(uncname+"Up")
+                dn.Write(uncname+"Down")
     return
 def SR_TF(sr,output):
     print "-Wsr to Zsr Transfer"
@@ -45,12 +67,24 @@ def SR_TF(sr,output):
     output.cd(); output.cd(dirmap[sr.region])
     cwd = gDirectory.mkdir("transfer"); cwd.cd()
     tf.histo.Write('wsr_to_zsr')
-    for nuisance in tf.nuisances.values():
-        uncname = "wsr_to_zsr_%s" % nuisance.name
-        up,dn = nuisance.GetHistos()
-        up.Write(uncname+"Up")
-        dn.Write(uncname+"Down")
-    return
+    tfname = "wsr_to_zsr_%s"
+    for nuisance,isCorrelated in tfcorrelation.iteritems():
+        tf.addUnc(nuisance,isCorrelated)
+        cwd.cd()
+        if isCorrelated:
+            uncname = tfname % nuisance
+            print "--Writing %s" % nuisance
+            up,dn = tf.nuisances[nuisance].GetHistos()
+            up.Write(uncname+"Up")
+            dn.Write(uncname+"Down")
+        else:
+            for proc in ('zsr','wsr'):
+                nuisance_proc = "%s_%s" % (nuisance,proc)
+                print "--Writing %s" % nuisance_proc
+                uncname = tfname % nuisance_proc
+                up,dn = tf.nuisances[nuisance_proc].GetHistos()
+                up.Write(uncname+"Up")
+                dn.Write(uncname+"Down")
 def SaveRegion(region,save):
     region = Region(path=region,show=False,autovar=True)
     region.initiate(variable)

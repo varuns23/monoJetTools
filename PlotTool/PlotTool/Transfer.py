@@ -20,35 +20,34 @@ class Transfer:
             self.numname = self.num.process
             self.denname = self.den.process
         else:
-            self.numname = self.namelist[0]
-            self.denname = self.namelist[1]
-        stat_hs = self.histo.Clone()
-        for ibin in range(1,self.histo.GetNbinsX()+1):
-            stat = self.histo[ibin] * TMath.Sqrt(sum( (proc.histo.GetBinError(ibin)/proc.histo[ibin])**2 for proc in (num,den) if proc.histo[ibin] != 0))
-            stat_hs[ibin] = stat
-            self.histo.SetBinError(ibin,stat)
-        self.nuisances['Stat'] = Nuisance(self.name,'Stat',stat_hs,stat_hs,self.histo)
-    def addUnc(self,nuisance,combine=False):
+            self.numname = namelist[0]
+            self.denname = namelist[1]
+        # stat_hs = self.histo.Clone()
+        # for ibin in range(1,self.histo.GetNbinsX()+1):
+        #     stat = self.histo[ibin] * TMath.Sqrt(sum( (proc.histo.GetBinError(ibin)/proc.histo[ibin])**2 for proc in (num,den) if proc.histo[ibin] != 0))
+        #     stat_hs[ibin] = stat
+        #     self.histo.SetBinError(ibin,stat)
+        # self.nuisances['Stat'] = Nuisance(self.name,'Stat',stat_hs,stat_hs,self.histo)
+    def addUnc(self,nuisance,correlated=False):
         self.num.addUnc(nuisance)
         self.den.addUnc(nuisance)
 
         numup,numdn = self.num.nuisances[nuisance].GetHistos()
-        tfnumup = GetRatio(numup,self.den.histo)
-        tfnumdn = GetRatio(numdn,self.den.histo)
-        numunc = "%s_%s" % (nuisance,self.numname)
-        self.nuisances[numunc] = Nuisance(self.name,numunc,tfnumup,tfnumdn,self.histo,type='abs')
-
         denup,dendn = self.den.nuisances[nuisance].GetHistos()
-        tfdenup = GetRatio(self.num.histo,denup)
-        tfdendn = GetRatio(self.num.histo,dendn)
-        denunc = "%s_%s" % (nuisance,self.denname)
-        self.nuisances[denunc] = Nuisance(self.name,denunc,tfdenup,tfdendn,self.histo,type='abs')
-
-        if not combine: return
-        up,dn = self.histo.Clone(),self.histo.Clone()
-        AddDiffNuisances([self.nuisances[numunc],self.nuisances[denunc]],up,dn,self.histo)
-        uncname = '%s_Comb' % nuisance
-        self.nuisances[uncname] = Nuisance(self.name,uncname,up,dn,self.histo)
+        if not correlated:
+            tfnumup = GetRatio(numup,self.den.histo)
+            tfnumdn = GetRatio(numdn,self.den.histo)
+            numunc = "%s_%s" % (nuisance,self.numname)
+            self.nuisances[numunc] = Nuisance(self.name,numunc,tfnumup,tfnumdn,self.histo,type='abs')
+            
+            tfdenup = GetRatio(self.num.histo,denup)
+            tfdendn = GetRatio(self.num.histo,dendn)
+            denunc = "%s_%s" % (nuisance,self.denname)
+            self.nuisances[denunc] = Nuisance(self.name,denunc,tfdenup,tfdendn,self.histo,type='abs')
+        else:
+            tfup = GetRatio(numup,denup)
+            tfdn = GetRatio(numdn,dendn)
+            self.nuisances[nuisance] = Nuisance(self.name,nuisance,tfup,tfdn,self.histo,type='abs')
     def fullUnc(self,unclist):
         nuislist = []
         for unc in unclist:
