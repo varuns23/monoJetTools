@@ -78,7 +78,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!tau_veto()) continue;
     fillEvent(7,event_weight);
 
-    if (!bjet_veto(bjetDeepCSVCut_2017)) continue;
+    if (!bjet_veto(bjetDeepCSVCut_2018)) continue;
     fillEvent(8,event_weight);
     
     vector<int> jetlist = getLooseJet();

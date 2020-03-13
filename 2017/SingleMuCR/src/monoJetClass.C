@@ -75,7 +75,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
       ApplyMET_TriggerSF(event_weight);
     }
 
-    h_lepMET_MT->Fill(lepMET_mt,event_weight);
+    if (recoil > recoilCut) h_lepMET_MT->Fill(lepMET_mt,event_weight);
     if (lepMET_mt >= lepMETMtCut) continue;
     fillEvent(4,event_weight);
 	      
