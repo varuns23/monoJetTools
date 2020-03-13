@@ -28,9 +28,7 @@ def IsBranch(variable,tfile):
     tree = tdir.Get('norm')
     isBranch = tree.GetListOfBranches().Contains(b_variable)
     # tdir.Close()
-    if 'recoil' in variable or 'bosonPt' in variable:
-        return isBranch
-    return False
+    return isBranch
 def linspace(xmin,xmax,nx): return list(np.linspace(xmin,xmax,nx+1))
 
 @staticmethod
@@ -42,21 +40,21 @@ def AddOverflow(hs):
 
 def inclusiveBinning(self,arg):
     nbins = int(arg.replace('incl',''))
-    b_info.template = TH1F(self.base,'',nbins,0,1)
-    b_info.post = AddOverflow
+    template = TH1F(self.base,'',nbins,0,1)
+    template.post = AddOverflow
+    return template
 
 def inclusiveCutBinning(self,arg):
     nbins = arg.replace('incu','')
     cut = self.cut
-    inclusiveBinning(self,nbins)
-    hs = b_info.template
+    hs = inclusiveBinning(self,nbins)
     if '>' in cut:
         lim = float(cut.split('>')[-1])
         bmin = hs.GetXaxis().FindBin(lim); bmax = hs.GetNbinsX()
 
     binlist = array('d',[ hs.GetXaxis().GetBinLowEdge(ibin) for ibin in range(bmin,bmax+2) ])
-    b_info.template= hs.Rebin(len(binlist)-1,name,binlist)
-    
+    template= hs.Rebin(len(binlist)-1,self.base,binlist)
+    return template
 def rebin(self,arg):
     bins = array('d',[250.,280.,310.,340.,370.,400.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.,1400.])
     histo = TH1F(self.base,'',len(bins)-1,bins)
@@ -107,10 +105,10 @@ class VariableInfo:
         
         self.cut = cut
         if self.cut is None: self.cut = parser.args.cut
-        if cut is not None:
-            cutvar = cut.replace('>','?').replace('<','?').split('?')[0]
-            if cutvar in variable: self.cutfix = cut.replace(cutvar,'').replace('<','-').replace('>','+')
-            else: self.cutfix = cut.replace('<','-').replace('>','+')
+        if self.cut is not None:
+            cutvar = self.cut.replace('>','?').replace('<','?').split('?')[0]
+            if cutvar in variable: self.cutfix = self.cut.replace(cutvar,'').replace('<','-').replace('>','+')
+            else: self.cutfix = self.cut.replace('<','-').replace('>','+')
         
         if IsGlobal(variable,tfile): self.initGlobal(tfile,variable)
         elif IsBranch(variable,tfile): self.initBranch(tfile,variable)

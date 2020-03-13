@@ -22,12 +22,12 @@ class Transfer:
         else:
             self.numname = self.namelist[0]
             self.denname = self.namelist[1]
-        # stat_hs = self.histo.Clone()
-        # for ibin in range(1,self.histo.GetNbinsX()+1):
-        #     stat = self.histo[ibin] * TMath.Sqrt(sum( (proc.histo.GetBinError(ibin)/proc.histo[ibin])**2 for proc in (num,den) if proc.histo[ibin] != 0))
-        #     stat_hs[ibin] = stat
-        #     self.histo.SetBinError(ibin,stat)
-        # self.nuisances['Stat'] = Nuisance(self.name,'Stat',stat_hs,stat_hs,self.histo)
+        stat_hs = self.histo.Clone()
+        for ibin in range(1,self.histo.GetNbinsX()+1):
+            stat = self.histo[ibin] * TMath.Sqrt(sum( (proc.histo.GetBinError(ibin)/proc.histo[ibin])**2 for proc in (num,den) if proc.histo[ibin] != 0))
+            stat_hs[ibin] = stat
+            self.histo.SetBinError(ibin,stat)
+        self.nuisances['Stat'] = Nuisance(self.name,'Stat',stat_hs,stat_hs,self.histo)
     def addUnc(self,nuisance,combine=False):
         self.num.addUnc(nuisance)
         self.den.addUnc(nuisance)
@@ -58,6 +58,9 @@ class Transfer:
         AddDiffNuisances(nuislist,up,dn,self.histo)
         self.nuisances['Total'] = Nuisance(self.name,'Total',up,dn,self.histo)
     def getUncBand(self,nuisance='Total'):
+        if nuisance not in self.nuisances:
+            if nuisance is 'Total': self.fullUnc(self.nuisances.keys())
+            else: self.addUnc(nuisance)
         up,dn = self.nuisances[nuisance].GetHistos()
         return GetUncBand(up,dn)
     def printUnc(self):

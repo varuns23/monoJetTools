@@ -111,10 +111,10 @@ def GetTObject(name,tfile):
 def GetBranch(name,variable,tree,weight=None,cut=None):
     if weight is None: weight = variable.weight
     if cut is None:    cut = variable.cut
-    
     histo = variable.template.Clone(name); histo.Reset()
-    if variable.cut == None: tree.Draw("%s>>%s" % (variable.base,name),weight,'goff')
-    else:                    tree.Draw("%s>>%s" % (variable.base,name),'%s*(%s)' % (weight,cut),'goff')
+    if cut == None: tree.Draw("%s>>%s" % (variable.base,name),weight,'goff')
+    else:           tree.Draw("%s>>%s" % (variable.base,name),'%s*(%s)' % (weight,cut),'goff')
+    if hasattr(variable.template,'post'): variable.template.post(histo)
     return histo
 def HistoEqual(hs1,hs2):
     if hs1 == hs2: return True
