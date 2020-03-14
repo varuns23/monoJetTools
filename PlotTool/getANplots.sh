@@ -4,7 +4,7 @@ nvariables='recoil pfMET recoilall pfMETall nJets j1pT j1Eta j1Phi nVtx'
 singleleps='LeptonPt LeptonEta LeptonPhi'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta leadingLeptonPhi subleadingLeptonEta subleadingLeptonPt subleadingLeptonPhi'
 gamma='photonPt photonEta photonPhi'
-cutvars='h_metcut h_dphimin'
+ncut='h_metcut h_dphimin'
 uncertainty=''
 
 options=$@
@@ -15,11 +15,16 @@ plot() {
 
 run() {
     subdir="AN"
+    if [[ "$1" == "Single"* ]]; then
+	n_cut="$ncut h_lepMET_MT"
+    else
+   	n_cut="$ncut"
+    fi
     pushd $1
     shift 1
     array="$nvariables $@"
     plot $options --sub $subdir -a $array $uncertainty || exit 1
-    plot $options --sub $subdir $cutvars || exit 1
+    plot $options --sub $subdir $n_cut || exit 1
     popd
 }
 
@@ -32,7 +37,7 @@ run2() {
 }
 
 region() {
-    # run SignalRegion || exit 1
+    run SignalRegion || exit 1
     run SingleEleCR $singleleps  || exit 1
     run SingleMuCR $singleleps || exit 1
     run DoubleEleCR $doubleleps || exit 1

@@ -50,26 +50,23 @@ def GetRegion():
     region_pattern = ["postMETdata","postSingleEle","postSingleMu","postDoubleEle","postDoubleMu","postGamma"]
     RegionName = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR","GammaCR"]
 
-    found = False
-    for region,pattern in zip(RegionName,region_pattern):
-        if os.path.isdir('.output/'):
-            if any( pattern in fname for fname in os.listdir('.output/') ): found = True; break
-        if any( pattern in fname for fname in os.listdir('.') ): found = True; break
-    if not found and os.path.isfile('postpath.txt'):
-        with open('postpath.txt') as f: postpath = f.read().strip()
-        cwd = os.getcwd(); os.chdir(postpath)
+    def checkdir(dirname):
         for region,pattern in zip(RegionName,region_pattern):
-            if os.path.isdir('.output/'):
-                if any( pattern in fname for fname in os.listdir('.output/') ): found = True; break
-            if any( pattern in fname for fname in os.listdir('.') ): found = True; break
-        os.chdir(cwd)
-    if not found:
-        dirname = os.path.basename( os.getcwd() )
-        for region in RegionName:
-            if region in dirname:
-                found = True; break;
-    if not found: return None
-    return region
+            if region in dirname: return region
+            if any( pattern in fname for fname in os.listdir('.') ): return region
+            if os.path.isdir('.output/') and any( pattern in fname for fname in os.listdir('.output/') ): return region
+
+    dirname = os.getcwd()
+    region = checkdir(dirname)
+    if region != None: return region
+    
+    if not os.path.isfile('postpath.txt'): return
+    
+    with open('postpath.txt') as f: postpath = f.read().strip()
+    cwd = os.getcwd(); os.chdir(postpath)
+    dirname = os.path.realpath( os.getcwd() + '/../' )
+    region = checkdir(dirname)
+    if region != None: return region
 def GetMCxsec(filenames,xsecMap):
     return { fname:xsecMap[fname] for fname in filenames }
 
@@ -87,6 +84,17 @@ def FindConfig():
         elif os.path.realpath(path) != repo_path: return helper( updirectory(path) )
     config_path = helper('.')
     if config_path is not None: sys.path.append(config_path)
+
+def GetRootFiles():
+    wd,wf = os.path.split(__file__)
+    def updirectory(path,ntimes=1):
+        for _ in range(ntimes): path += '/../';
+        return path
+    repo_path = os.path.realpath( updirectory(wd,2) )
+    def helper(path):
+        if any( directory == 'RootFiles' for directory in os.listdir(path) ): return os.path.realpath(path)
+        elif os.path.realpath(path) != repo_path: return helper( updirectory(path) )
+    return helper('.')
 
 def GetDirname(variable,sub=None):
     ndir = variable.split('_')[-1]

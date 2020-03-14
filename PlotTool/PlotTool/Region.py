@@ -8,6 +8,7 @@ from Nuisance import Nuisance
 from utilities import *
 from samplenames import samplenames
 from VariableInfo import *
+from argparse import ArgumentParser
 import copy
 
 DataFileMap = {
@@ -41,18 +42,17 @@ MCOrderMap = {
 }
 
 parser.add_argument("-r","--reset",help="removes all post files from currently directory and rehadds them from the .output directory",action="store_true", default=False)
-parser.add_argument("-l","--lumi",help="set the luminosity for scaling",action="store",type=float,dest="lumi")
-parser.add_argument("-s","--signal",help="specify the signal file to use",action="store",type=str,default=None,dest="signal")
+parser.add_argument("-l","--lumi",help="set the luminosity for scaling",action="store",type=float)
+parser.add_argument("-s","--signal",help="specify the signal file to use",action="store",nargs="+",default=[])
 parser.add_argument("--nhists",help="Plot all 1D plots at nhists level",type=int,nargs='?',const=-1)
 parser.add_argument("--mc-solid",help="Make MC solid color",action="store_true",default=False)
 parser.add_argument("-d","--directory",help="Specify directory to get post files from",type=valid_directory)
-parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
 parser.add_argument("-e","--era",help="Specify the eras to use",type=lambda arg:sorted(arg.upper()),default=None)
 parser.add_argument("-a","--autovar",help="Specify to use the automatic basic nhist",action="store_true",default=False)
 parser.add_argument("--normalize",help="Specify to normalize plots to unity",action="store_true",default=False)
-parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
 parser.add_argument("--nlo",help="Use all available NLO samples",action="store_true",default=False)
 parser.add_argument("--postpath",help="Force path to come from postpath.txt",action="store_true",default=False)
+parser.add_argument("--verbose",help="Specify verbose level",type=int,default=0)
 
 class Region(object):
     def __init__(self,year=None,region=None,lumi=None,path=None,config=None,autovar=False,useMaxLumi=False,show=True):
@@ -63,9 +63,8 @@ class Region(object):
         if self.region is None: self.region = GetRegion()
         self.setLumi(lumi,useMaxLumi)
         
-        if autovar: self.nhist = self.config.regions[self.region]
-        if parser.args.autovar: self.nhist = self.config.regions[self.region]
-        if parser.args.nhists == -1: parser.args.nhists = int(self.config.regions[self.region])
+        self.autovar = autovar
+        if parser.args.autovar: self.autovar = True
 
         self.isBlinded = False
 
@@ -87,7 +86,7 @@ class Region(object):
         self.processes["Data"] =    Process("Data",datalist,None,'data',year=self.year,region=self.region)
         for mc in self.MCList: self.processes[mc] = Process(mc,self.config.filemap[mc],GetMCxsec(self.config.filemap[mc],self.config.xsec),'bkg',
                                                             leg=self.config.legmap[mc],color=self.config.colmap[mc],year=self.year,region=self.region)
-        if self.region == "SignalRegion" and parser.args.signal != None:
+        if self.region == "SignalRegion" and any(parser.args.signal):
             self.setSignalInfo()
         self.haddFiles()
         if os.getcwd() != self.cwd: os.chdir(self.cwd)
@@ -106,6 +105,9 @@ class Region(object):
         filelist = []
         for process in self: filelist += [ filename for filename in process.filenames if not validfile(filename+'.root') ]
         filelist += [ filename for filename in self.xsec if filename not in filelist and not validfile(filename+'.root') ]
+        if self.region == 'SignalRegion':
+            for signal,xsecmap in self.signalinfo.XsecMap.iteritems():
+                filelist += [ filename for filename in xsecmap if not validfile(filename+'.root') ]
         merge.HaddFiles(filelist)
         if os.getcwd() != self.cwd: os.chdir(self.cwd)
     def setPath(self,path=None):
@@ -127,6 +129,7 @@ class Region(object):
         self.config = config
         if self.year is None: self.year = config.version
         self.xsec = config.xsec
+        self.signalinfo = config.signalinfo
     def setLumi(self,lumi=None,useMaxLumi=False):
         self.lumi = lumi
         self.lumimap = self.config.lumi_by_era[self.region]
@@ -141,23 +144,38 @@ class Region(object):
         self.lumi_label = '%s' % float('%.3g' % (self.lumi/1000.)) + " fb^{-1}"
         if (parser.args.normalize): self.lumi_label="Normalized"
     def setSignalInfo(self,scale=1):
-        from monoJet_XS import centralxsec as signalxsec
-        self.SignalList = [ ]
-        if parser.args.signal == '-1':
-            self.signal = 'Signal'
-            for signal in signalxsec:
-                self.SignalList.append(signal)
-                fname = 'post'+signal
-                xsecmap = { fname:signalxsec[signal]}
-                self.processes[signal] = Process(signal,[fname],xsecmap,'signal',lumi=self.lumi,year=self.year,region=self.region,args=parser.args)
-                self.SampleList.insert(1,signal)
-        elif IsSignal(parser.args.signal):
-            self.signal = parser.args.signal
-            self.SignalList.append(self.signal)
-            fname = 'post'+self.signal
-            xsecmap = {fname:signalxsec[self.signal]}
-            self.processes[self.signal] = Process(self.signal,[fname],xsecmap,'signal',lumi=self.lumi,year=self.year,region=self.region,args=parser.args)
-            self.SampleList.insert(1,self.signal)
+        self.SignalList = []
+        self.SignalToPlot = []
+        signal_parser = ArgumentParser()
+        signal_parser.add_argument("extra",nargs="*",default=None)
+        for signal in self.signalinfo.XsecMap: signal_parser.add_argument("-"+signal,nargs="*")
+        signal_args = [ '-'+arg if arg in self.signalinfo.XsecMap else arg for arg in parser.args.signal ]
+        signal_args = signal_parser.parse_args(signal_args)
+        signalmap = {}
+        if "-1" in signal_args.extra:
+            for xsecmap in self.signalinfo.XsecMap.values(): signalmap.update(xsecmap)
+        else:
+            for signal in self.signalinfo.XsecMap:
+                if hasattr(signal_args,signal) and getattr(signal_args,signal) is not None:
+                    signal_to_plot = None
+                    args = getattr(signal_args,signal)
+                    if "-1" in args: signalmap.update(self.signalinfo.XsecMap[signal])
+                    elif len(args) == 2:
+                        fname = self.signalinfo.GetFileMap[signal](args[0],args[1])
+                        signalmap[fname] = self.signalinfo.XsecMap[signal][fname]
+                        signal_to_plot = fname
+                    else:
+                        fname = self.signalinfo.DefaultMap[signal]
+                        signalmap[fname] = self.signalinfo.XsecMap[signal][fname]
+                    if signal_to_plot is None: signal_to_plot = self.signalinfo.DefaultMap[signal]
+                    self.SignalToPlot.append(signal_to_plot)
+        for fname,xsec in signalmap.iteritems():
+            signal = fname.strip('post')
+            if fname in self.SignalToPlot: self.SignalToPlot[self.SignalToPlot.index(fname)] = signal
+            self.SignalList.append(signal)
+            xsecmap = {fname:xsec}
+            self.processes[signal] = Process(signal,[fname],xsecmap,'signal',year=self.year,region=self.region)
+            self.SampleList.insert(1,signal)
     def open(self):
         if hasattr(self,'isOpen'): return
         self.isOpen = True
@@ -173,30 +191,32 @@ class Region(object):
                 if process in self.MCList: self.MCList.remove(process)
                 if hasattr(self,'SignalList') and process in self.SignalList: self.SignalList.remove(process)
         if self.isBlinded: self.setLumi(self.max_lumi)
-    def initVariable(self,variable):
-        if self.show and not hasattr(self,'first_init'):
+    def initVariable(self,variable,weight,cut):
+        if not hasattr(self,'first_init'):
             self.first_init = True
-            print "Running in "+self.region+":"
-            print "Plotting at",self.lumi,"pb^{-1}"
+            tfile = next( process[0].tfile for process in self if process[0].tfile is not None )
+            self.variable = VariableInfo(tfile)
             
-        Nuisance.unclist = []
+            if self.show:
+                print "Running in "+self.region+":"
+                print "Plotting at",self.lumi,"pb^{-1}"
+
+            
         self.total_bkg = 0
         if 'SumOfBkg' in self.processes:
             tmp = self.processes.pop('SumOfBkg')
             del tmp
-        self.variable = variable
-        self.scaleWidth = self.variable
+        self.variable.setVariable(variable,weight,cut,autovar=self.autovar)
+        self.scaleWidth = self.variable.scaleWidth
         self.varname = self.variable.variable
-        if hasattr(self,'nhist'): self.varname = self.variable.base
+        if self.autovar: self.varname = self.variable.base
         if hasattr(self.variable,'cutfix'): self.varname += self.variable.cutfix
         if hasattr(self.variable,'binfix'): self.varname += '_'+self.variable.binfix
     def initiate(self,variable,weight='weight',cut=None):
         if os.getcwd() != self.path: os.chdir(self.path)
         self.open()
-        if hasattr(self,'nhist') and 'h_' not in variable: variable = '%s_%s' % (variable,self.nhist)
-        tfile =next( process[0].tfile for process in self if process[0].tfile is not None )
-        variable = VariableInfo(tfile,variable,weight,cut)
-        self.initVariable(variable)
+        self.initVariable(variable,weight,cut)
+        variable = self.variable
         for process in self:
             if self.isBlinded and process.proctype == 'data': continue
             process.setVariable(variable,self.lumi)
@@ -223,16 +243,12 @@ class Region(object):
         if self.scaleWidth: print "Bin Width Normalization"
         prompt = 'integral of %s: %s'
         ntemp = '{0:<15}'; itemp = '{0:<8}'
-        print prompt % ( ntemp.format('Data'),itemp.format( '%.6g' % self.processes['Data'].scaled_total ) )
-        if hasattr(self,'signal'):
-            for signal in self.SignalList:
-                signal = self[signal]
-                print prompt % ( ntemp.format(signal.process),itemp.format( '%.6g' % signal.scaled_total ) )
+        verbose = parser.args.verbose == 1
+        self['Data'].output(verbose=verbose)
+        if hasattr(self,'SignalList'):
+            for signal in self.SignalList: self[signal].output(verbose=verbose)
         print prompt % ( ntemp.format('SumOfBkg'),itemp.format( '%.6g' % self.total_bkg ) )
-        for sample in self.MCOrder:
-            process = self.processes[sample]
-            percent = ("%.4g%%" % (100*process.scaled_total/self.total_bkg)) if self.total_bkg != 0 else 'Nan'
-            print prompt % ( ntemp.format(sample),itemp.format( '%.6g' % process.scaled_total ) ),'| %s' % (percent)
+        for sample in self.MCOrder: self[sample].output(verbose=verbose,total_bkg=self.total_bkg)
         ratio = ('%.6g' % (self.processes['Data'].scaled_total/self.total_bkg)) if self.total_bkg != 0 else 'Nan'
         print '            %s: %s' % (ntemp.format('data/mc'),itemp.format(ratio))
     def setSumOfBkg(self):
@@ -255,15 +271,15 @@ class Region(object):
                 for subprocess in process:
                     self.name = subprocess.histo.GetXaxis().GetTitle()
                     break
-    def addUnc(self,nuisance):
-        for process in self: process.addUnc(nuisance)
+    def addUnc(self,nuisance,show=False):
+        for process in self: process.addUnc(nuisance,show)
     def fullUnc(self,unclist,show=False):
         for process in self: process.fullUnc(unclist,show)
         self.setSumOfBkg()
         for nuisance in ['Total']:
             up = self['SumOfBkg'].histo.Clone('%s_%s_TotalUp' % (self['SumOfBkg'].name,self.variable.base));  up.Reset()
             dn = self['SumOfBkg'].histo.Clone('%s_%s_TotalDown' % (self['SumOfBkg'].name,self.variable.base)); dn.Reset()
-            AddDiffNuisances([process.nuisances[nuisance] for process in self if process.proctype == 'bkg'],up,dn,self['SumOfBkg'].histo)
+            AddDiffNuisances([process.nuisances[nuisance] for process in self if process.proctype == 'bkg' and nuisance in process.nuisances],up,dn,self['SumOfBkg'].histo)
             self['SumOfBkg'].nuisances[nuisance] = Nuisance('SumOfBkg',nuisance,up,dn,self['SumOfBkg'].histo)
         if show: print self['SumOfBkg'].nuisances['Total']
     def getUncBand(self,unclist):

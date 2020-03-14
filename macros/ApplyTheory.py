@@ -55,20 +55,20 @@ def qcd(nlo_qcd,nlo_ewk,bosonPt,hs=None):
     unc = getBin(hs,bosonPt)
     weightUp = ( (nlo_qcd + unc) * nlo_ewk )
     weightDn = ( (nlo_qcd - unc) * nlo_ewk )
-    return weightUp,weightDn
+    return weightUp,weightDn,unc
 def ewk(nlo_qcd,nlo_ewk,bosonPt,hs=None):
     if hs is None: return
     unc = getBin(hs,bosonPt)
     weightUp = ( nlo_qcd * (nlo_ewk + unc) )
     weightDn = ( nlo_qcd * (nlo_ewk - unc) )
-    return weightUp,weightDn
+    return weightUp,weightDn,unc
 def mix(nlo_qcd,nlo_ewk,bosonPt,hs=None):
     if hs is None: return
     unc = getBin(hs,bosonPt)
     kfactor = nlo_qcd * nlo_ewk
     weightUp = ( kfactor + unc )
     weightDn = ( kfactor - unc )
-    return weightUp,weightDn
+    return weightUp,weightDn,unc
 applymap = {
     "QCD_Scale":qcd,
     "QCD_Shape":qcd,
@@ -83,9 +83,10 @@ def ApplyTheory(tfile):
     
     for mc,pattern in patternmap:
         if any(pattern.findall(tfile.GetName())): break
-
+    mc = 'ZJets'
     print tfile.GetName(),mc
     tree = FindTree(tfile)
+    branchlist = [ branch for branch in tree.GetListOfBranches() ]
     
     rootdir = GetRootFiles()
 
@@ -97,28 +98,46 @@ def ApplyTheory(tfile):
     for theory in applymap:
         varmap[theory+'Up'] = array('f',[1])
         varmap[theory+'Down'] = array('f',[1])
+        varmap[theory] = array('f',[0])
+
+        if any( theory+'Up' == branch.GetName() for branch in branchlist ): tree.GetListOfBranches().Remove(branch)
+        if any( theory+'Down' == branch.GetName() for branch in branchlist ): tree.GetListOfBranches().Remove(branch)
 
         branchmap[theory+'Up'] = tree.Branch(theory+'Up',varmap[theory+'Up'],theory+'Up/F')
         branchmap[theory+'Dn'] = tree.Branch(theory+'Down',varmap[theory+'Down'],theory+'Down/F')
+        branchmap[theory] = tree.Branch(theory,varmap[theory],theory+'/F')
+        
         if mc is not 'None':
             fname,prefix = filemap[mc]
             hsmap[theory] = {}
             hsmap[theory][TFile] = TFile("%s/%s" % (rootdir,fname))
             hsmap[theory][TH1F] = hsmap[theory][TFile].Get("%s_%s" % (prefix,uncmap[theory]))
+            # hsmap[theory][TCanvas] = TCanvas(theory,theory)
+            # hsmap[theory][TH1F].Draw("hist")
             getmap[theory] = lambda nlo_qcd,nlo_ewk,bosonPt : applymap[theory](nlo_qcd,nlo_ewk,bosonPt,hs = hsmap[theory][TH1F])
         else:
             getmap[theory] = ones
     for i,event in enumerate(tree):
+        
         if i%10000 == 0: print "Processing %i of %i" % (i,tree.GetEntriesFast())
         nlo_qcd,nlo_ewk,bosonPt = event.nlo_qcd,event.nlo_ewk,event.bosonPt
+        # print bosonPt
         for theory,get in getmap.iteritems():
             varmap[theory+'Up'][0] = 1
             varmap[theory+'Down'][0] = 1
-            up,dn = get(nlo_qcd,nlo_ewk,bosonPt)
+            varmap[theory][0] = 0
+            up,dn,unc = get(nlo_qcd,nlo_ewk,bosonPt)
             varmap[theory+'Up'][0] = up
             varmap[theory+'Down'][0] = dn
+            varmap[theory][0] = unc
+            # print theory
+            # print hsmap[theory][TFile].GetName()
+            # print hsmap[theory][TH1F].GetName()
+            # print up,dn,unc
             branchmap[theory+'Up'].Fill()
             branchmap[theory+'Dn'].Fill()
+            branchmap[theory].Fill()
+
     dir = tree.GetDirectory()
     dir.cd()
     tree.Write("",TObject.kOverwrite)
