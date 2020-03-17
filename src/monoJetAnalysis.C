@@ -1709,14 +1709,14 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
     if (isWZG()) {
       float unc = scaleUncs.getBin(name,bosonPt);
       if ( name.find("Mix") != string::npos ) {
-	weightUp = (kfactor + unc)/kfactor;
-	weightDn = (kfactor - unc)/kfactor;
+	weightUp = (kfactor + unc);
+	weightDn = (kfactor - unc);
       } else if ( name.find("QCD") != string::npos ) {
-	weightUp = ( (nlo_qcd + unc) * nlo_ewk )/kfactor;
-	weightDn = ( (nlo_qcd - unc) * nlo_ewk )/kfactor;
+	weightUp = ( (nlo_qcd + unc) * nlo_ewk );
+	weightDn = ( (nlo_qcd - unc) * nlo_ewk );
       } else if ( name.find("NNLO") != string::npos ) {
-	weightUp = ( nlo_qcd * (nlo_ewk + unc) )/kfactor;
-	weightDn = ( nlo_qcd * (nlo_ewk - unc) )/kfactor;
+	weightUp = ( nlo_qcd * (nlo_ewk + unc) );
+	weightDn = ( nlo_qcd * (nlo_ewk - unc) );
       }
     }
     scaleUncs.setUnc(name,weightUp,weightDn);

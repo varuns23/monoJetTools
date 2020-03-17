@@ -5,6 +5,7 @@ nvariables='recoil pfMET recoilall pfMETall nJets j1pT j1Eta j1Phi nVtx'
 singleleps='LeptonPt LeptonEta LeptonPhi'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta leadingLeptonPhi subleadingLeptonEta subleadingLeptonPt subleadingLeptonPhi'
 gamma='photonPt photonEta photonPhi'
+ncut='h_metcut h_dphimin'
 uncertainty=''
 
 options=$@
@@ -14,13 +15,18 @@ plot() {
 }
 
 run() {
-    subdir="test/WithUncertainty"
+    subdir="AN"
+    if [[ "$1" == "Single"* ]]; then
+	n_cut="$ncut h_lepMET_MT"
+    else
+   	n_cut="$ncut"
+    fi
     pushd $1
     shift 1
     array="$nvariables $@"
     plot $options --sub $subdir -a $array $uncertainty || exit 1
     plot $options --sub $subdir -a $zprime || exit 1
-    plot $options --sub $subdir $cutvars || exit 1
+    plot $options --sub $subdir $n_cut || exit 1
     popd
 }
 
