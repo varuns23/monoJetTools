@@ -1,0 +1,113 @@
+//For use with Ntuples made from JetAnalyzer
+////Required arguments: 1 is folder containing input files, 2 is output file path, 3 is maxEvents (-1 to run over all events), 4 is reportEvery
+////
+////To compile using rootcom to an executable named 'analyze':
+////$ ./rootcom monoJetClass analyze
+////
+////To run, assuming this is compiled to an executable named 'analyze':
+////$ ./analyze /hdfs/store/user/uhussain/monoJet_Ntuples/ /cms/uhussain/MonoJet/CMSSW_8_0_8/src/LightZPrimeAnalysis/JetAnalyzer/test/output.root -1 10000
+////Runs over every event in the folder monoJet_Ntuples, reporting progress every 10000 events
+////and storing the resulting histograms in the file output.root.
+////
+//
+#define monoJetClass_cxx
+#include "monoJetClass.h"
+#include "Utilities.h"
+
+using namespace std;
+
+void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
+  if (fChain == 0) return;
+
+  Long64_t nentries = fChain->GetEntries();
+  cout<<"Coming in:"<<endl;
+  cout<<"nentries:"<<nentries<<endl;
+  Long64_t nentriesToCheck = nentries;
+  
+  if (isMC) SetScalingHistos();
+
+  if (maxEvents != -1LL && nentries > maxEvents)
+    nentriesToCheck = maxEvents;
+  int nTotal = nentriesToCheck;
+  Long64_t nbytes = 0, nb = 0;
+  cout<<"Running over "<<nTotal<<" events."<<endl;  
+  for (Long64_t jentry=0; jentry<nentriesToCheck; isMC ? jentry++ : jentry += 4) {
+    Long64_t ientry = LoadTree(jentry);
+    if (ientry < 0) break;
+    nb = fChain->GetEntry(jentry);   nbytes += nb;
+
+    if (jentry%reportEvery == 0){
+      cout<<"Analyzing entry "<<jentry<<"/"<<(nentriesToCheck)<<endl;
+    }
+    
+    initVars();
+
+    float event_weight = 1.;
+    // if (isMC) {
+    //   ApplyPileup(event_weight);
+    //   ApplyPrefiring(event_weight);
+    //   if (isWZG()) {
+    //   	SetBoson(PID);
+    //   	ApplyKFactor(event_weight);
+    //   }
+    // }
+
+    cutflow->Fill(0);
+    if (!getMetTrigger()) continue;
+    if (!inclusiveCut()) continue;
+    cutflow->Fill(1);
+    // if (isMC) {
+    //   ApplyMET_TriggerSF(event_weight);
+    // }
+
+    if (!getMetFilter()) continue;
+    cutflow->Fill(2);
+
+    if (pfMET <= recoilCut) continue;
+    cutflow->Fill(3);
+
+    int jetCand = getJetCand();
+    if (jetCand == -1) continue;
+    setJetCand(jetCand);
+    cutflow->Fill(4);
+
+    for (auto key : theorymap) {
+      theorymap[key.first] = th1fmap.getBin(key.first,recoil);
+    }
+    
+    
+    tree->Fill();
+  }
+
+}//Closing the Loop function
+
+void monoJetClass::BookHistos(const char* outputFilename) {
+
+  output = new TFile(outputFilename, "RECREATE");
+  output->cd();
+
+  cutflow = new Cutflow(this,{"Total Events","Trigger","MET Filters","Recoil","Jet Selection"});
+
+  monoJetYear::BookHistos(-1,"");
+  for(int i = 0; i<nHisto; i++) {
+    char ptbins[100];
+    sprintf(ptbins, "_%d", i);
+    string histname(ptbins);
+    auto dir = output->mkdir( ("monoJet"+histname).c_str() );
+    dir->cd();
+    if (i == bHisto) {
+      auto treedir = dir->mkdir("trees");
+      treedir->cd();
+      tree = new TTree("norm","norm");
+      initTree(tree);
+      // scaleUncs.setTree(tree);
+      // shapeUncs.setDir(treedir);
+      dir->cd();
+    }
+    monoJetYear::BookHistos(i,histname);
+  }
+}
+
+void monoJetClass::fillHistos(int nhist,float event_weight) {
+  if (nhist == bHisto) tree->Fill();
+}
