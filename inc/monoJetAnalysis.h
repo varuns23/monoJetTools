@@ -132,7 +132,10 @@ public:
       h_cutflowNoWt->Fill(idx,1.0);
       h_cutflowNoK->Fill(idx,analysis->weight_nok);
     }
-    string getLabel(std::size_t idx) { return _labels[idx]; }
+    string getLabel(std::size_t idx) {
+      if (idx < _labels.size()) return _labels[idx];
+      return "None";
+    }
   };
   Cutflow *cutflow;
 
@@ -158,9 +161,10 @@ public:
   float dpfcalo,mindPhiJetMET;
 
   /* Histograms */
-  TH1F *h_metcut,*h_dphimin,*h_metfilters;
+  TH1F *h_metcutBefore,*h_dphiminBefore,*h_metfilters;
   // Event Info       
-  TH1F *h_nVtx[maxHisto],*h_eventWeight[maxHisto],*h_kfactor[maxHisto],*h_pileup[maxHisto],*h_genWeight[maxHisto],*h_sf[maxHisto];          
+  TH1F *h_nVtxNoW[maxHisto],*h_nVtxReW[maxHisto],*h_eventWeight[maxHisto],*h_kfactor[maxHisto],*h_pileup[maxHisto],*h_genWeight[maxHisto],*h_sf[maxHisto];
+  TH1F *h_metcut[maxHisto],*h_dphimin[maxHisto];
   // MC Info          
   TH1F *h_puTrueNoW[maxHisto],*h_puTrueReW[maxHisto],*h_genHT[maxHisto],*h_bosonPt[maxHisto],*h_bosonPtwK[maxHisto];      
   // MET Info         

@@ -74,17 +74,20 @@ void monoJetAnalysis::initTree(TTree* tree) {
 void monoJetAnalysis::BookHistos(int i,string histname) {
   if (i == -1) {
     h_metfilters = new TH1F("h_metfilters","metFilters",8,0.5,8.5); h_metfilters->Sumw2();
-    h_metcut  = MakeTH1F(new TH1F("h_metcut","h_metcut; |pfMET-caloMET|/pfMET", 50,0,1.2));
-    h_dphimin = MakeTH1F(new TH1F("h_dphimin","h_dphimin; Minimum dPhiJetMET",50,0,3.2));
+    h_metcutBefore  = MakeTH1F(new TH1F("h_metcut","h_metcut; |pfMET-caloMET|/pfMET", 50,0,1.2));
+    h_dphiminBefore = MakeTH1F(new TH1F("h_dphimin","h_dphimin; Minimum dPhiJetMET",50,0,3.2));
   } else {
     auto Name = [histname](string name) { return name+histname; };
     // Event Info
-    h_nVtx[i]           = MakeTH1F(new TH1F(Name("nVtx").c_str()         ,"nVtx;nVtx"                                              ,40,0,80));
+    h_nVtxNoW[i]        = MakeTH1F(new TH1F(Name("nVtxNoW").c_str()      ,"nVtx Unweighted;unweighted nVtx"                        ,40,0,80));
+    h_nVtxReW[i]        = MakeTH1F(new TH1F(Name("nVtxReW").c_str()      ,"nVtx Reweighted;reweighted nVtx"                        ,40,0,80));
     h_eventWeight[i]    = MakeTH1F(new TH1F(Name("eventWeight").c_str()  ,"eventWeight;Event Weight"                               ,50,0,2));
     h_kfactor[i]        = MakeTH1F(new TH1F(Name("kfactor").c_str()      ,"kfactor;kfactor"                                        ,50,-2,2));
     h_pileup[i]         = MakeTH1F(new TH1F(Name("pileup").c_str()       ,"pileup;pileup"                                          ,50,-2,2));
     h_genWeight[i]      = MakeTH1F(new TH1F(Name("genWeight").c_str()    ,"genWeight;genWeight"                                    ,50,-2,2));
     h_sf[i]             = MakeTH1F(new TH1F(Name("scaleFactor").c_str()  ,"scaleFactor;Scale Factor"                               ,50,-2,2));
+    h_metcut[i]         = MakeTH1F(new TH1F(Name("metcut").c_str()       ,"metcut; |pfMET-caloMET|/pfMET"                          ,50,0,1.2));
+    h_dphimin[i]        = MakeTH1F(new TH1F(Name("dphimin").c_str()      ,"dphimin; Minimum dPhiJetMET"                            ,50,0,3.2));
     // MC Info
     h_puTrueNoW[i]      = MakeTH1F(new TH1F(Name("puTrueNoW").c_str()    ,"puTrue Unweighted;unweighted true number of iteractions",100,0,100));
     h_puTrueReW[i]      = MakeTH1F(new TH1F(Name("puTrueReW").c_str()    ,"puTrue Reweighted;reweighted true number of iteractions",100,0,100));
@@ -127,14 +130,26 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_bosonPt[nhist]    ->Fill(bosonPt,genWeight);
     h_bosonPtwK[nhist]  ->Fill(bosonPt,genWeight * kfactor);
   }
+
+  if (cutflow->getLabel(nhist+1) == "minDPhiJetMET") {
+    if (recoil > recoilCut)
+      h_dphiminBefore->Fill(mindPhiJetMET,event_weight);
+  }
+  if (cutflow->getLabel(nhist+1) == "dPFCaloMET") {
+    if (recoil > recoilCut)
+      h_metcutBefore->Fill(dpfcalo,event_weight);
+  }
   
   // Event Info       
-  h_nVtx[nhist]         ->Fill(nVtx,event_weight);   
+  h_nVtxNoW[nhist]      ->Fill(nVtx,weight_nopileup);   
+  h_nVtxReW[nhist]      ->Fill(nVtx,event_weight); 
   h_eventWeight[nhist]  ->Fill(event_weight,event_weight);
   h_kfactor[nhist]      ->Fill(kfactor,event_weight);
   h_pileup[nhist]       ->Fill(pileup,event_weight);
   h_genWeight[nhist]    ->Fill(genWeight,event_weight);
   h_sf[nhist]           ->Fill(sf,event_weight);
+  h_metcut[nhist]       ->Fill(dpfcalo,event_weight);
+  h_dphimin[nhist]      ->Fill(mindPhiJetMET,event_weight);
   
   // MET Info         ;
   h_pfMETall[nhist]     ->Fill(pfMET,event_weight);
