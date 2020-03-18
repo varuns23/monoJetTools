@@ -207,6 +207,10 @@ bool monoJetAnalysis::getPhotonTrigger() {
   return (HLTPho>>11&1) == 1;
 }
 
+float monoJetAnalysis::dPFCaloMET(float met) {
+  return fabs(pfMET-caloMET)/met;
+}
+
 float monoJetAnalysis::dPhiJetMETmin(vector<int> jets,float metPhi) {
   //Only look at first four jets (because that's what monojet analysis do)
   int njets = jets.size();
@@ -765,6 +769,9 @@ void monoJetAnalysis::initVars() {
   n_Vtx = nVtx;
   n_Jet = nJet;
   setJetCandList();
+
+  dpfcalo = dPFCaloMET(pfMET);
+  mindPhiJetMET = dPhiJetMETmin(getLooseJet(),pfMET);
 }
 
 // Constructor Stuff 

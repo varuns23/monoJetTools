@@ -64,6 +64,7 @@ void monoJetSingleEleCR::setRecoil() {
   TLorentzVector leptoMET_4vec = lep+met_4vec;
   recoil = fabs(leptoMET_4vec.Pt());
   recoilPhi = leptoMET_4vec.Phi();
+  dpfcalo = dPFCaloMET(recoil);
 }
 
 float monoJetSingleEleCR::getSF(int lepindex) {

@@ -85,12 +85,12 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     fillEvent(8,event_weight);
     
     vector<int> jetlist = getLooseJet();
-    float mindPhiJetMET = dPhiJetMETmin(jetlist,pfMETPhi);
+    mindPhiJetMET = dPhiJetMETmin(jetlist,pfMETPhi);
     if (pfMET > recoilCut) h_dphimin->Fill(mindPhiJetMET,event_weight);
     if (mindPhiJetMET <= dPhiJetMETCut) continue;
     fillEvent(9,event_weight);
 		      
-    float dpfcalo = fabs(pfMET-caloMET)/pfMET;
+    
     if (pfMET > recoilCut) h_metcut->Fill(dpfcalo,event_weight);
     if (dpfcalo >= metRatioCut) continue;
     fillEvent(10,event_weight);
@@ -156,10 +156,10 @@ bool monoJetClass::UncLoop(float &event_weight) {
   if (!bjet_veto(bjetDeepCSVCut_2018)) return false;
   
   vector<int> jetlist = getLooseJet();
-  float mindPhiJetMET = dPhiJetMETmin(jetlist,pfMETPhi);
+  mindPhiJetMET = dPhiJetMETmin(jetlist,pfMETPhi);
   if (mindPhiJetMET <= dPhiJetMETCut) return false;
   
-  float dpfcalo = fabs(pfMET-caloMET)/pfMET;
+  
   if (dpfcalo >= metRatioCut) return false;
   
   if (pfMET <= recoilCut) return false;

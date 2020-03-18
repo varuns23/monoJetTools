@@ -34,12 +34,13 @@ def plotUnc(tf,sample):
         colorlist = [1,2,4,8]
         coliter = iter(colorlist)
         tf.addUnc(subset)
+        tf.addUnc(subset,True)
         variations = {
             tf.numname:next( nuisance for nuisance in tf.nuisances if subset in nuisance and tf.numname in nuisance ),
             tf.denname:next( nuisance for nuisance in tf.nuisances if subset in nuisance and tf.denname in nuisance ),
-            # 'combined':nuisance+'_Comb'
+            'combined':subset
         }
-        varlist = (tf.numname,tf.denname)
+        varlist = (tf.numname,tf.denname,'combined')
         
         c = TCanvas("%s_%s" % (tf.name,subset),"",800,800)
         
