@@ -31,7 +31,6 @@ def IsBranch(variable,tfile):
     return isBranch
 def linspace(xmin,xmax,nx): return list(np.linspace(xmin,xmax,nx+1))
 
-@staticmethod
 def AddOverflow(hs):
     nbins = hs.GetNbinsX()
     overflow = hs.GetBinContent(nbins) + hs.GetBinContent(nbins+1)
