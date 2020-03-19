@@ -131,11 +131,11 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_bosonPtwK[nhist]  ->Fill(bosonPt,genWeight * kfactor);
   }
 
-  if (cutflow->getLabel(nhist+1) == "minDPhiJetMET") {
+  if (cutflow->getLabel(nhist+1) == s_minDPhiJetMET) {
     if (recoil > recoilCut)
       h_dphiminBefore->Fill(mindPhiJetMET,event_weight);
   }
-  if (cutflow->getLabel(nhist+1) == "dPFCaloMET") {
+  if (cutflow->getLabel(nhist+1) == s_dPFCaloMET) {
     if (recoil > recoilCut)
       h_metcutBefore->Fill(dpfcalo,event_weight);
   }
