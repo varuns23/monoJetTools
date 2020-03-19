@@ -98,6 +98,8 @@ def SetBounds(tf,num_sample,den_sample):
     
     return
     if not any(varmap): return
+    if num_sample.region not in varmap: return
+    if den_sample.region not in varmap[num_sample.region]: return
     yrange = varmap[num_sample.region][den_sample.region]
     tf.histo.SetMinimum(yrange[0]); tf.histo.SetMaximum(yrange[1])
 def plotTF(num_sample,den_sample):
