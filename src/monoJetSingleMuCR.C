@@ -46,6 +46,7 @@ void monoJetSingleMuCR::fillHistos(int nhist,float event_weight) {
     h_LeptonPt[nhist] ->Fill(lepton_pt,event_weight);
     h_LeptonEta[nhist]->Fill(lepton_eta,event_weight);
     h_LeptonPhi[nhist]->Fill(lepton_phi,event_weight);
+    h_lepMET_MT[nhist]->Fill(lepMET_mt,event_weight);
   }
 }
 
