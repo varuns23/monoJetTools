@@ -81,10 +81,10 @@ class VariableInfo:
         
         self.cut = cut
         if self.cut is None: self.cut = parser.args.cut
-        if cut is not None:
-            cutvar = cut.replace('>','?').replace('<','?').split('?')[0]
-            if cutvar in variable: self.cutfix = cut.replace(cutvar,'').replace('<','-').replace('>','+')
-            else: self.cutfix = cut.replace('<','-').replace('>','+')
+        if self.cut is not None:
+            cutvar = self.cut.replace('>','?').replace('<','?').split('?')[0]
+            if cutvar in variable: self.cutfix = self.cut.replace(cutvar,'').replace('<','-').replace('>','+')
+            else: self.cutfix = self.cut.replace('<','-').replace('>','+')
         
         if IsGlobal(variable,tfile): self.initGlobal(tfile,variable)
         elif IsBranch(variable,tfile): self.initBranch(tfile,variable)

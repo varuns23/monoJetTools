@@ -134,7 +134,7 @@ def RatioStyle(ratio,rymin=0.65,rymax=1.35,color=kBlack,xname=None,yname='Data/B
     ratio.SetLineColor(color)
     ratio.SetLineWidth(1)
     ratio.SetMarkerStyle(20);
-    ratio.SetMarkerSize(1.5);
+    ratio.SetMarkerSize(1.1);
 
     ratio.GetYaxis().CenterTitle();
     ratio.GetYaxis().SetTitle(yname)
@@ -163,7 +163,7 @@ def getRatioLine(xmin,xmax):
     return line
 ###################################################################
 
-def StackStyle(hs_stack,ymin=None,ymax=None,scaleWidth=False):
+def StackStyle(hs_stack,yscale=5,scaleWidth=False):
     hs_stack.GetYaxis().SetTitle("Events" if not scaleWidth else "Events / GeV");
     hs_stack.GetYaxis().SetTitleOffset(1.5);
     hs_stack.SetTitle("");
@@ -172,14 +172,7 @@ def StackStyle(hs_stack,ymin=None,ymax=None,scaleWidth=False):
             # print '%f < %f < %f && %f > %f' % (box.userx1(),x,box.userx2(),y,box.usery1())
             return y/box.usery1()
         return 1;
-    hs = hs_stack
-    if type(hs) == THStack: hs = hs.GetStack().Last()
-    scale = 1
-    ymax = max( hs[ibin] for ibin in range(1,hs.GetNbinsX()+1) if hs[ibin] != 0 )
-    for box in boundaries:
-        for ibin in range(1,hs.GetNbinsX()+1):
-            scale = max(scale,checkbin(hs.GetBinCenter(ibin),hs[ibin],box))
-    ymax *= scale*pow(10,2.5)
+    ymax = hs_stack.GetMaximum()*pow(10,yscale)
     ymin = pow(10,-2)
     
     hs_stack.SetMaximum(ymax)

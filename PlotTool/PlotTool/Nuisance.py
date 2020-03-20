@@ -40,7 +40,7 @@ def GetScaleWeight(nuisance):
             "QCD_EWK_Mix"]
     if nuisance in zwunc: return nuisance+"%s/kfactor"
     if nuisance == 'prefiring': return nuisance+"%s/prefiring"
-    return nuisance
+    return nuisance+'%s'
         
 class Nuisance(object):
     def __init__(self,process,name,up,dn,norm,type="diff"):

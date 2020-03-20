@@ -23,7 +23,7 @@ class SubProcess(object):
         if not os.path.isfile(self.fname+'.root'):
             print 'No file %s.root' % self.fname,
             if config is not None and self.fname in config.filevariants:
-                alt_fname = next( (fname for fname in self.config.filevariants[self.fname] if os.path.isfile(fname+'.root')),None )
+                alt_fname = next( (fname for fname in config.filevariants[self.fname] if os.path.isfile(fname+'.root')),None )
                 if alt_fname is None: print 'skipping'; return False
                 self.fname = alt_fname
                 print 'using %s.root instead' % self.fname
