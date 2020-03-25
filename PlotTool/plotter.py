@@ -29,7 +29,6 @@ def HigherDimension(samples,variable):
             process.histo = process.histo.ProjectionZ()
 ################################################p###################
 def plotVariable(samples,variable,initiate=True,blinded=False):
-    del store[:] # Clear storage list 
     print "Plotting",variable
     if initiate:
         if (parser.args.thn):
@@ -106,8 +105,6 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
     lumi_label = '%s' % float('%.3g' % (samples.lumi/1000.)) + " fb^{-1}"
     if (parser.args.normalize): lumi_label="Normalized"
     texLumi,texCMS = getCMSText(lumi_label,samples.year,scale=0.8 if blinded else 1)
-    texLumi.Draw();
-    texCMS.Draw();
 
     
     if parser.args.mc_solid:
