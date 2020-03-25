@@ -28,7 +28,11 @@ def SaveRegion(region,save):
     output.cd();
     # region['SumOfBkg'].histo.Write("SumOfBkg")
     if region.isBlinded:
-        region['Data'].histo.Write("%s_data" % dirmap[region.region])
+        data = region['Data'].histo
+        name = "%s_data" % dirmap[region.region]
+        data.SetName(name)
+        data.SetTitle(name)
+        data.Write()
     for process in region:
         print "--Writing %s Histogram" % process.name
         
@@ -36,7 +40,9 @@ def SaveRegion(region,save):
             sigproc = next( signalmap[signal] for signal in signalmap if signal in process.process )
             export = "%s_%s" % (dirmap[region.region],sigproc)
         else: export = "%s_%s" % (dirmap[region.region],procmap[process.process])
-        process.histo.Write(export)
+        process.histo.SetName(export)
+        process.histo.SetTitle(export)
+        process.histo.Write()
             # for nuisance in region.variable.nuisances:
             #     process.addUnc(nuisance)
             #     cwd.cd()
