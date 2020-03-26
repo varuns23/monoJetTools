@@ -99,8 +99,16 @@ def plotUnc(tf,sample):
         ratio_dn.Draw("hist same")
 
         store.append(vars())
+
+        varname = sample.varname
+        if len(varname.split("_")) == 2:
+            variable = varname.split("_")[0]
+            binning = '_'+varname.split("_")[1]
+        else:
+            variable = varname
+            binning = ''
         outname = "%s_%s" % (tf.name,subset)
-        SaveAs(c,outname,year=sample.year,sub="TransferFactors/%s/Uncertainty/"%sample.variable.base)
+        SaveAs(c,outname,year=sample.year,sub="TransferFactors/%s/Uncertainty/"%variable)
     for nuisance in nuisances: plotTFUnc(tf,sample,nuisance)
 if __name__ == "__main__":
     from PlotTool import parser
