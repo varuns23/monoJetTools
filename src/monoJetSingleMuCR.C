@@ -25,21 +25,28 @@ void monoJetSingleMuCR::initTree(TTree* tree) {
 
 void monoJetSingleMuCR::BookHistos(int i,string histname) {
   if (i == -1) {
-    h_lepMET_MT = MakeTH1F(new TH1F("h_lepMET_MT","h_lepMET_MT; transverse mass of the lepton-Emiss system",40,0,400));
+    h_lepMET_MTBefore = MakeTH1F(new TH1F("h_lepMET_MT","h_lepMET_MT; transverse mass of the lepton-Emiss system",40,0,400));
   } else {
     auto Name = [histname](string name) { return (name+histname); };
     h_LeptonPt[i]  = MakeTH1F(new TH1F(Name("LeptonPt").c_str() ,"LeptonPt;Lepton P_{T}" ,nLeadingLeptonPtBins,LeadingLeptonPtBins));
     h_LeptonEta[i] = MakeTH1F(new TH1F(Name("LeptonEta").c_str(),"LeptonEta;Lepton #eta" ,nEtaBins,lEta,uEta));
     h_LeptonPhi[i] = MakeTH1F(new TH1F(Name("LeptonPhi").c_str(),"LeptonPhi;Lepton #phi" ,nPhiBins,lPhi,uPhi));
+    h_lepMET_MT[i] = MakeTH1F(new TH1F(Name("lepMET_MT").c_str(),"lepMET_MT; transverse mass of the lepton-Emiss system",40,0,400));
   }
 }
 
 void monoJetSingleMuCR::fillHistos(int nhist,float event_weight) {
+  if (cutflow->getLabel(nhist+1) == s_MuMET_MT) {
+    bool cleaning = recoil > recoilCut;
+    if ( YEAR == 2018 ) cleaning = cleaning && getJetHEMVeto();
+    if (cleaning) h_lepMET_MTBefore->Fill(lepMET_mt,event_weight);
+  }
   //CR Histograms
   if(lepindex >= 0){ 
     h_LeptonPt[nhist] ->Fill(lepton_pt,event_weight);
     h_LeptonEta[nhist]->Fill(lepton_eta,event_weight);
     h_LeptonPhi[nhist]->Fill(lepton_phi,event_weight);
+    h_lepMET_MT[nhist]->Fill(lepMET_mt,event_weight);
   }
 }
 
@@ -65,6 +72,7 @@ void monoJetSingleMuCR::setRecoil() {
   TLorentzVector leptoMET_4vec = lep+met_4vec;
   recoil = fabs(leptoMET_4vec.Pt());
   recoilPhi = leptoMET_4vec.Phi();
+  dpfcalo = dPFCaloMET(recoil);
 }
 
 float monoJetSingleMuCR::getSF(int lepindex) {

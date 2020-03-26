@@ -95,16 +95,14 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     fillEvent(10,event_weight);
 
     if (!bjet_veto( bjetDeepCSVCut_2018)) continue;
-    fillEvent(11,event_weight);
-
     vector<int> jetlist = getLooseJet();
-    float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
-    if (recoil > recoilCut) h_dphimin->Fill(mindPhiJetMET,event_weight);
+    mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+    fillEvent(11,event_weight);
+    
     if (mindPhiJetMET <= dPhiJetMETCut) continue;
     fillEvent(12,event_weight);
     
-    float dpfcalo = fabs(pfMET-caloMET)/recoil;
-    if (recoil > recoilCut) h_metcut->Fill(dpfcalo,event_weight);
+    
     if (dpfcalo >= metRatioCut) continue;
     fillEvent(13,event_weight);
 	
@@ -128,8 +126,8 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
   
-  cutflow = new Cutflow(this,{"Total Events","Trigger", "Two Loose Ele", "One Tight Ele","Opp Charge", "ZMass",
-	"MET Filters", "HEM Veto", "Muon Veto","Photon Veto","Tau Veto","BJet Veto","mindPhiJetMET","dPFCaloMET","Recoil","Jet Selection"});
+  cutflow = new Cutflow(this,{s_TotalEvents,s_Triggers, s_TwoLooseEle, s_OneTightEle,s_OppCharge, s_ZMass,
+	s_METFilters, s_HEMVeto, s_MuonVeto,s_PhotonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_dPFCaloMET,s_Recoil,s_JetSelection});
 
   BookHistos(-1,"");
   for(int i = 0; i<nHisto; i++) {
@@ -170,10 +168,10 @@ bool monoJetClass::UncLoop(float &event_weight) {
   if (!bjet_veto( bjetDeepCSVCut_2018)) return false;
 
   vector<int> jetlist = getLooseJet();
-  float mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
+  mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
   if (mindPhiJetMET <= dPhiJetMETCut) return false;
     
-  float dpfcalo = fabs(pfMET-caloMET)/recoil;
+  
   if (dpfcalo >= metRatioCut) return false;
 	
   if (recoil <= recoilCut) return false;
