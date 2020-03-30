@@ -28,9 +28,7 @@ def IsBranch(variable,tfile):
     tree = tdir.Get('norm')
     isBranch = tree.GetListOfBranches().Contains(b_variable)
     # tdir.Close()
-    if 'recoil' in variable or 'bosonPt' in variable:
-        return isBranch
-    return False
+    return isBranch
 def linspace(xmin,xmax,nx): return list(np.linspace(xmin,xmax,nx+1))
 
 def rebin(self,arg):
