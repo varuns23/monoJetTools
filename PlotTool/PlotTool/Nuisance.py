@@ -89,7 +89,7 @@ class Nuisance(object):
         varup,vardn = self.VarDiff()
         return '{0:<20}'.format('%s %s' % (self.name,self.process))+'%+.1e/%+.1e' % (varup,vardn)
     def printByBin(self):
-        string = '{0:<20}'.format('%s %s' % (self.name,self.process))
+        string = str(self)
         for ibin in range(1,self.norm.GetNbinsX()+1):
             varup = self.up[ibin]/self.norm[ibin]
             vardn = -self.dn[ibin]/self.norm[ibin]
