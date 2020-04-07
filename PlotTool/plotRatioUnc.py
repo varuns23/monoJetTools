@@ -33,8 +33,8 @@ def unc_style(up,dn,color):
         hs.SetLineWidth(2)
 def set_bounds(up,dn,ymin,ymax):
     for hs in (up,dn):
-        hs.SetMaximum(ymax*1.2)
-        hs.SetMinimum(ymin*1.2)
+        hs.SetMaximum(ymax*1.5)
+        hs.SetMinimum(ymin*1.5)
 def GetStat(nuisance,stat):
     from PlotTool import AddDiffNuisances
     up = stat.norm.Clone()
@@ -87,7 +87,7 @@ def plotUnc(name,num,den,sample):
         pad1.SetFrameBorderMode(0);
         pad1.SetBorderMode(0);
         # pad1.SetBottomMargin(0.);
-        pad1.SetGridy()
+        pad1.SetGrid()
         pad1.SetLeftMargin(0.15)
 
         hsmap = {}
@@ -118,7 +118,7 @@ def plotUnc(name,num,den,sample):
             up.Draw("hist same")
             dn.Draw("hist same")
             hsmap[name] = (up,dn)
-
+        pad1.RedrawAxis()
         binlist = []
         for hslist in hsmap.values():
             for hs in hslist: binlist += list(hs)[1:-1]
