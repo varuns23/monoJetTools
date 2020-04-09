@@ -2,7 +2,7 @@
 
 # Fetches the most recent Postfile paths in the hdfs path
 
-path=/hdfs/store/user/ekoenig/MonoJet/PostFiles
+path=/hdfs/store/user/ekoenig/MonoZprimeJet/PostFiles
 
 YEARS="2016 2017 2018"
 REGIONS="SignalRegion SingleEleCR SingleMuCR DoubleEleCR DoubleMuCR GammaCR"

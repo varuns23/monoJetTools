@@ -3,7 +3,7 @@ import os
 import datetime
 from argparse import ArgumentParser
 
-hdfs_base = '/hdfs/store/user/ekoenig/MonoJet/PostFiles/'
+hdfs_base = '/hdfs/store/user/ekoenig/MonoZprimeJet/PostFiles/'
 
 valid_years = ['2017','2018']
 valid_regions = ['SignalRegion','SingleEleCR','SingleMuCR','DoubleEleCR','DoubleMuCR','GammaCR']
