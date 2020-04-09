@@ -68,6 +68,7 @@ class SubProcess(object):
         elif self.scaling != 1: histo.Scale(self.scaling)
         if histo == self.histo: self.scaled_total = histo.Integral()
     def hasUnc(self,nuisance):
+        if nuisance not in self.variable.nuisances: return False
         isScale = self.variable.nuisances[nuisance] == 'scale'
         if isScale: return hasattr(self.treemap['norm'],nuisance+'Up')
         try:

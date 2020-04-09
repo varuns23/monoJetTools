@@ -82,14 +82,14 @@ class Nuisance(object):
         up = self.up.Clone(); dn = self.dn.Clone()
         nbins = self.norm.GetNbinsX()
         for ibin in range(1,nbins+1):
-            up[ibin] =  (self.norm + self.up[ibin])/self.norm[ibin]
-            dn[ibin] =  (self.norm - self.dn[ibin])/self.norm[ibin]
+            up[ibin] =  (self.norm[ibin] + self.up[ibin])/self.norm[ibin]
+            dn[ibin] =  (self.norm[ibin] - self.dn[ibin])/self.norm[ibin]
         return up,dn
     def __str__(self):
         varup,vardn = self.VarDiff()
         return '{0:<20}'.format('%s %s' % (self.name,self.process))+'%+.1e/%+.1e' % (varup,vardn)
     def printByBin(self):
-        string = '{0:<20}'.format('%s %s' % (self.name,self.process))
+        string = str(self)
         for ibin in range(1,self.norm.GetNbinsX()+1):
             varup = self.up[ibin]/self.norm[ibin]
             vardn = -self.dn[ibin]/self.norm[ibin]

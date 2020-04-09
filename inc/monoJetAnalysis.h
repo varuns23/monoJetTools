@@ -136,6 +136,7 @@ public:
       if (idx < _labels.size()) return _labels[idx];
       return "None";
     }
+    int getCut(std::string cut) { return labels[cut]; }
   };
   Cutflow *cutflow;
 
@@ -896,6 +897,7 @@ public:
   virtual void BookHistos(int nhist,string histname);
   virtual void fillHistos(int nhisto,float event_weight);
   virtual void fillEvent(int nhisto,float event_weight);
+  virtual void fillEvent(string cut,float event_weight);
 
   /* Event Weight Methods */
   virtual void SetBoson(int PID);

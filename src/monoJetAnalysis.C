@@ -240,6 +240,11 @@ void monoJetAnalysis::fillEvent(int nhist,float event_weight) {
   fillHistos(nhist,event_weight);
 }
 
+void monoJetAnalysis::fillEvent(string cut,float event_weight) {
+  cutflow->Fill(cut,event_weight);
+  fillHistos(cutflow->getCut(cut),event_weight);
+}
+
 bool monoJetAnalysis::getMetFilter(){                                                                                                    
   bool decision = true;
 
