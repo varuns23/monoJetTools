@@ -6,6 +6,13 @@
 #include <TList.h>
 #include <fstream>
 #include <algorithm>
+#include <iostream>
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <array>
 
 #include "Dataset.h"
 
@@ -31,12 +38,46 @@ const std::map<std::string,Type> Dataset::datamap = {
 
 Dataset::SubsetList Dataset::dataset_;
 
+void eraseAllSubStr(std::string & mainStr, const std::string & toErase) {
+  size_t pos = std::string::npos;
+  
+  // Search for the substring in string in a loop untill nothing is found
+  while ((pos  = mainStr.find(toErase) )!= std::string::npos) {
+    // If found then erase it from string
+    mainStr.erase(pos, toErase.length());
+  }
+}
+
+std::string exec(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    result.erase(std::remove(result.begin(), result.end(), '\n'), result.end());
+    return result;
+}
+
+string FindNtuples(string path="./",string repo=(string(getenv("CMSSW_BASE"))+"/src/monoJetTools")) {
+  string realpath = exec(("realpath "+path).c_str());
+  if ( isDir(realpath+"/ntuples/") ) return path+"ntuples/";
+  if ( isDir(realpath+"/datasets/ntuples/") ) return path+"datasets/ntuples/";
+  if ( realpath == repo ) return "";
+  if ( path == "./" ) path = "";
+  return FindNtuples("../"+path);
+}
+
+
 Dataset::SubsetList::SubsetList() {
-  string ntuples;
-  string ntuple_path1 = "ntuples/";
-  string ntuple_path2 = "../datasets/ntuples/";
-  if ( isDir(ntuple_path1) ) ntuples = ntuple_path1;
-  else if ( isDir(ntuple_path2) ) ntuples = ntuple_path2;
+  string ntuples = FindNtuples();
+  // string ntuple_path1 = "ntuples/";
+  // string ntuple_path2 = "../datasets/ntuples/";
+  // if ( isDir(ntuple_path1) ) ntuples = ntuple_path1;
+  // else if ( isDir(ntuple_path2) ) ntuples = ntuple_path2;
   cout << "Using path " << ntuples << " for datasets." << endl;
   TSystemDirectory dir(ntuples.c_str(),ntuples.c_str());
   TList* filelist = dir.GetListOfFiles();
