@@ -56,10 +56,10 @@ colmap = {
     "WJets-NLO" :kRed-10,
     "DYJets"    :kTeal-9,
     "DYJets-NLO":kTeal-9,
-    "GJets"     :kGray+2,  
+    "GJets"     :kGray,  
     "TTJets"    :kOrange-2,
     "DiBoson"   :kCyan-10, 
-    "QCD"       :kGray
+    "QCD"       :kGray+2
 }
 
 xsec = {
