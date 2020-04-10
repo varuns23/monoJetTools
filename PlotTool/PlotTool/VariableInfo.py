@@ -5,6 +5,7 @@ import numpy as np
 from utilities import *
 from Nuisance import *
 from Parser import parser
+from samplenames import samplenames
 
 parser.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
 parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
@@ -35,6 +36,29 @@ def FileTemplate(self,tfile,variable):
 
 def linspace(xmin,xmax,nx): return list(np.linspace(xmin,xmax,nx+1))
 
+def AddOverflow(hs):
+    nbins = hs.GetNbinsX()
+    overflow = hs.GetBinContent(nbins) + hs.GetBinContent(nbins+1)
+    hs.SetBinContent(nbins,overflow)
+    return
+
+def inclusiveBinning(self,arg):
+    nbins = int(arg.replace('incl',''))
+    template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,0,1)
+    template.post = AddOverflow
+    return template
+
+def inclusiveCutBinning(self,arg):
+    nbins = arg.replace('incu','')
+    cut = self.cut
+    hs = inclusiveBinning(self,nbins)
+    if '>' in cut:
+        lim = float(cut.split('>')[-1])
+        bmin = hs.GetXaxis().FindBin(lim); bmax = hs.GetNbinsX()
+
+    binlist = array('d',[ hs.GetXaxis().GetBinLowEdge(ibin) for ibin in range(bmin,bmax+2) ])
+    template= hs.Rebin(len(binlist)-1,self.base,binlist)
+    return template
 def rebin(self,arg):
     # bins = array('d',[250.,280.,310.,340.,370.,400.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.,1400.])
     nbins = int(arg.replace('rebin',''))
@@ -44,7 +68,9 @@ def rebin(self,arg):
     
 class VariableInfo:
     binningMap = {
-        "rebin":rebin
+        'rebin':rebin,
+        'incl':inclusiveBinning,
+        'incu':inclusiveCutBinning,
     }
     def __init__(self,tfile=None):
         self.initVariable()
@@ -120,11 +146,23 @@ class VariableInfo:
         self.dirname,ndir = GetDirname(variable,'trees')
     def getBinning(self,tfile,variable):
         self.file_template = FileTemplate(self,tfile,variable)
+        self.title = self.file_template.GetTitle()
+        self.xaxis_title = self.file_template.GetXaxis().GetTitle()
+        self.yaxis_title = self.file_template.GetYaxis().GetTitle()
         if parser.args.binning is None: return self.file_template
         for label,binning in self.binningMap.iteritems():
             if label in parser.args.binning:
                 if label is not 'fix': self.binfix = parser.args.binning
                 return binning(self,parser.args.binning)
-        
+    def setXaxisTitle(self):
+        self.name = None
+        for title in samplenames:
+            if title in self.variable:
+                self.name = samplenames[title];
+            key = self.variable.split("_")[-2]
+            if key == title:
+                self.name = samplenames[title];
+                break
+        if self.name == None: self.name = self.xaxis_title
 
  

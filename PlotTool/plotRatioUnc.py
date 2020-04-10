@@ -134,6 +134,14 @@ def plotUnc(name,num,den,sample):
         leg.Draw()
 
         store.append(vars())
+
+        varname = sample.varname
+        if len(varname.split("_")) == 2:
+            variable = varname.split("_")[0]
+            binning = '_'+varname.split("_")[1]
+        else:
+            variable = varname
+            binning = ''
         outname = "%s_%s" % (tf.name,subset)
         SaveAs(c,outname,year=sample.year,sub="TransferFactors/%s/Uncertainty/%s"%(sample.variable.base,tf.name))
     for nuisance in nuisances: plotTFUnc(tf,sample,nuisance)
