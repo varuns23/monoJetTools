@@ -62,15 +62,21 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("nlo_qcd_binned",&nlo_qcd_binned);
   tree->Branch("nnlo_qcd",&nnlo_qcd);
   tree->Branch("trigger_sf",&trigger_sf);
-  tree->Branch("recoil",&recoil,"Recoil (GeV)");
-  tree->Branch("ChNemPtFrac",&ChNemPtFrac,"Ch + NEM P_{T}^{123} Fraction");
+  tree->Branch("recoil",&recoil);
+  tree->Branch("j1etaWidth",&j1etaWidth);
+  tree->Branch("ChNemPtFrac",&ChNemPtFrac);
+  tree->Branch("OpsChCat",&OpsChCat);
+  tree->Branch("OpsChPtFrac",&OpsChPtFrac);
+  tree->Branch("OpsChGCat",&OpsChGCat);
+  tree->Branch("OpsChGPtFrac",&OpsChGPtFrac);
+  tree->Branch("NoOpsChGCat",&NoOpsChGCat);
   
-  // tree->Branch("j1pT",&j1pT,"Leading Jet P_{T} (GeV)");
-  // tree->Branch("j1Eta",&j1Eta,"Leading Jet Eta");
-  // tree->Branch("j1Phi",&j1Phi,"Leading Jet Phi");
-  // tree->Branch("nJets",&n_Jet,"Number of Jets");
-  tree->Branch("bosonPt",&bosonPt,"Boson Pt");
-  // tree->Branch("nVtx",&n_Vtx,"Number of Verticies");
+  // tree->Branch("j1pT",&j1pT);
+  // tree->Branch("j1Eta",&j1Eta);
+  // tree->Branch("j1Phi",&j1Phi);
+  // tree->Branch("nJets",&n_Jet);
+  tree->Branch("bosonPt",&bosonPt);
+  // tree->Branch("nVtx",&n_Vtx);
 }
 
 void monoJetAnalysis::BookHistos(int i,string histname) {
@@ -97,16 +103,16 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_bosonPt[i]        = MakeTH1F(new TH1F(Name("bosonPt").c_str()      ,"bosonPt; boson P_{T}"                                   ,nBosonPtBins,BosonPtBins));
     h_bosonPtwK[i]      = MakeTH1F(new TH1F(Name("bosonPtwK").c_str()    ,"bosonPtwK; kfactor boson P_{T}"                         ,nBosonPtBins,BosonPtBins));
     // MET Info
-    h_pfMETall[i]       = MakeTH1F(new TH1F(Name("pfMETall").c_str()     ,"pfMETall;E_{T}^{miss} (GeV)"                            ,nMetAllBins,MetAllBins)); 
-    h_pfMET[i]          = MakeTH1F(new TH1F(Name("pfMET").c_str()        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
+    h_pfMETall[i]       = MakeTH1F(new TH1F(Name("pfMETall").c_str()     ,"pfMETall;E_{T}^{miss} [GeV]"                            ,nMetAllBins,MetAllBins)); 
+    h_pfMET[i]          = MakeTH1F(new TH1F(Name("pfMET").c_str()        ,"pfMET;E_{T}^{miss} [GeV]"                               ,nMetBins,MetBins));
     h_pfMETPhi[i]       = MakeTH1F(new TH1F(Name("pfMETPhi").c_str()     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
-    h_recoilall[i]      = MakeTH1F(new TH1F(Name("recoilall").c_str()    ,"recoilall;Recoil (GeV)"                                 ,nMetAllBins,MetAllBins));
-    h_recoil[i]         = MakeTH1F(new TH1F(Name("recoil").c_str()       ,"recoil;Recoil (GeV)"                                    ,nMetBins,MetBins));
+    h_recoilall[i]      = MakeTH1F(new TH1F(Name("recoilall").c_str()    ,"recoilall;Recoil [GeV]"                                 ,nMetAllBins,MetAllBins));
+    h_recoil[i]         = MakeTH1F(new TH1F(Name("recoil").c_str()       ,"recoil;Recoil [GeV]"                                    ,nMetBins,MetBins));
     h_recoilPhi[i]      = MakeTH1F(new TH1F(Name("recoilPhi").c_str()    ,"recoilPhi;Recoil #phi"                                  ,nPhiBins,lPhi,uPhi));
     // Jet Info
     h_nJets[i]          = MakeTH1F(new TH1F(Name("nJets").c_str()        ,"nJets;Number of Jets"                                   ,21,-0.5,20.5));
-    h_j1pT[i]           = MakeTH1F(new TH1F(Name("j1pT").c_str()         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
-    h_j1pTall[i]        = MakeTH1F(new TH1F(Name("j1pTall").c_str()      ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nMetAllBins,MetAllBins));
+    h_j1pT[i]           = MakeTH1F(new TH1F(Name("j1pT").c_str()         ,"j1pT;p_{T} of Leading Jet [GeV]"                        ,nPtBins,PtBins));
+    h_j1pTall[i]        = MakeTH1F(new TH1F(Name("j1pTall").c_str()      ,"j1pT;p_{T} of Leading Jet [GeV]"                        ,nMetAllBins,MetAllBins));
     h_j1Eta[i]          = MakeTH1F(new TH1F(Name("j1Eta").c_str()        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
     h_j1Phi[i]          = MakeTH1F(new TH1F(Name("j1Phi").c_str()        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
     h_j1etaWidth[i]     = MakeTH1F(new TH1F(Name("j1etaWidth").c_str()   ,"j1etaWidth; #eta width of Leading Jet"                  ,50,0,0.25));
@@ -117,13 +123,17 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_j1NHFrounded[i]   = MakeTH1F(new TH1F(Name("j1NHFrounded").c_str() ,"j1NHF;Rounded Neutral Hadron Energy Fraction in Leading Jet"    ,50,0,1.1)); 
     h_j1ChMult[i]       = MakeTH1F(new TH1F(Name("j1ChMult").c_str()     ,"j1ChMult;Charged Multiplicity of Leading Jet"           ,25,0,50));
     h_j1NhMult[i]       = MakeTH1F(new TH1F(Name("j1NhMult").c_str()     ,"j1NhMult;Neutral Multiplicity of Leading Jet"           ,25,0,50)); 
-    h_j1Mt[i]           = MakeTH1F(new TH1F(Name("j1Mt").c_str()         ,"j1Mt;M_{T} of Leading Jet (GeV)"                        ,nMtBins,MtBins));
+    h_j1Mt[i]           = MakeTH1F(new TH1F(Name("j1Mt").c_str()         ,"j1Mt;M_{T} of Leading Jet [GeV]"                        ,nMtBins,MtBins));
     // PF Jet Info
     h_Pt123[i]          = MakeTH1F(new TH1F(Name("Pt123").c_str()        ,"Pt123;P_{T}^{123}"                                      ,nPt123Bins,Pt123Bins));
     h_Pt123Fraction[i]  = MakeTH1F(new TH1F(Name("Pt123Fraction").c_str(),"Pt123Fraction;P_{T}^{123} Fraction"                     ,50,0,1)); 
-    h_ChNemPt[i]        = MakeTH1F(new TH1F(Name("ChNemPt").c_str()      ,"ChNemPt;Ch + NEM Leading Jet P_{T} (GeV)"               ,nPt123Bins,Pt123Bins));
-    h_ChNemPt123[i]     = MakeTH1F(new TH1F(Name("ChNemPt123").c_str()   ,"ChNemPt123;Ch + NEM P^{123}_{T} (GeV)"                  ,nPt123Bins,Pt123Bins));
+    h_ChNemPt[i]        = MakeTH1F(new TH1F(Name("ChNemPt").c_str()      ,"ChNemPt;Ch + NEM Leading Jet P_{T} [GeV]"               ,nPt123Bins,Pt123Bins));
+    h_ChNemPt123[i]     = MakeTH1F(new TH1F(Name("ChNemPt123").c_str()   ,"ChNemPt123;Ch + NEM P^{123}_{T} [GeV]"                  ,nPt123Bins,Pt123Bins));
     h_ChNemPtFrac[i]    = MakeTH1F(new TH1F(Name("ChNemPtFrac").c_str()  ,"ChNemPtFrac;Ch + NEM P_{T}^{123} Fraction"              ,50,0,1.1));
+    h_OpsChPtFrac[i]    = MakeTH1F(new TH1F(Name("OpsChPtFrac").c_str()  ,"OpsChPtFrac;Leading #pi^{+}#pi^{-} P_{T} Fraction"      ,50,0,1.1));
+    h_OpsChPt[i]        = MakeTH1F(new TH1F(Name("OpsChPt").c_str()      ,"OpsChPt;Leading #pi^{+}#pi^{-} P_{T} [GeV]"             ,nPt123Bins,Pt123Bins));
+    h_OpsChGPtFrac[i]   = MakeTH1F(new TH1F(Name("OpsChGPtFrac").c_str() ,"OpsChGPtFrac;Leading #pi^{+}#pi^{-}#gamma P_{T} Fraction",50,0,1.1));
+    h_OpsChGPt[i]       = MakeTH1F(new TH1F(Name("OpsChGPt").c_str()     ,"OpsChGPt;Leading #pi^{+}#pi^{-}#gamma P_{T} [GeV]"       ,nPt123Bins,Pt123Bins));
     h_TotPFCands[i]     = MakeTH1F(new TH1F(Name("TotPFCands").c_str()   ,"TotPFCands;# of all PF candidates in Leading Jet"       ,nCandBins,lCand,uCand));
     // Charged Info
     h_ChPFCands[i]      = MakeTH1F(new TH1F(Name("ChPFCands").c_str()    ,"ChPFCands;# of PF charged hadrons in Leading Jet"       ,nCandBins,lCand,uCand));
@@ -211,6 +221,10 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_ChNemPt[nhist]      ->Fill(ChNemPt,event_weight);
     h_ChNemPt123[nhist]   ->Fill(ChNemPt123,event_weight);
     h_ChNemPtFrac[nhist]  ->Fill(ChNemPtFrac,event_weight);
+    h_OpsChPtFrac[nhist]  ->Fill(OpsChPtFrac,event_weight);
+    h_OpsChPt[nhist]      ->Fill(OpsChPt,event_weight);
+    h_OpsChGPtFrac[nhist] ->Fill(OpsChGPtFrac,event_weight);
+    h_OpsChGPt[nhist]     ->Fill(OpsChGPt,event_weight);
     h_TotPFCands[nhist]   ->Fill(TotalPFCands,event_weight);
     // PF Charged Info     ;
     h_ChPFCands[nhist]    ->Fill(ChargedPFCands,event_weight);
@@ -347,35 +361,70 @@ int monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jetNHFCut,f
 
 
 void monoJetAnalysis::SetPtFrac() {
-  Pt123Fraction=Pt123=ChNemPtFrac=ChNemPt=ChNemPt123=0.0;
+  Pt123Fraction=Pt123=ChNemPtFrac=ChNemPt=ChNemPt123=OpsChPtFrac=OpsChPt=OpsChGPtFrac=OpsChGPt=0.0;
   for (int i = 0; i < 4; i++){
     pfHadronPt[i] = 0.;
   }
   float first3_HadronPt[4] = {0,0,0,0};
 
+  // Pi+ , Pi-, G
+  bool FoundPlusPion = false;
+  bool FoundNegPion = false;
+  bool FoundPhoton = false;
+
   for (int i = 0; i < j1PFConsPID.size(); i++) {
-    int absPID = abs(j1PFConsPID[i]);
+    int PID = j1PFConsPID[i];
+    int absPID = abs(PID);
     float consPt = j1PFConsPt[i];
-    bool first3 = i < 3;
-    if (first3) Pt123 += consPt;
-    if ( absPID == Hadron::Charged ) {
-      if (first3) first3_HadronPt[0] += consPt;
-      pfHadronPt[0] += consPt;
-    } else if ( absPID == Hadron::Neutral ) {
-      if (first3) first3_HadronPt[1] += consPt;
-      pfHadronPt[1] += consPt;
-    } else if ( absPID == Hadron::Gamma ) {
-      if (first3) first3_HadronPt[2] += consPt;
-      pfHadronPt[2] += consPt;
-    } else {
-      if (first3) first3_HadronPt[3] += consPt;
-      pfHadronPt[3] += consPt;
+
+    if ( i < 3 ) {
+      Pt123 += consPt;
+      switch(absPID) {
+      case Hadron::Charged:
+	first3_HadronPt[0] += consPt;
+	if ( PID > 0 && !FoundPlusPion ) {
+	  // Leading Pi+
+	  FoundPlusPion = true;
+	  OpsChPt += consPt;
+	  OpsChGPt += consPt;
+	}
+	if ( PID < 0 && !FoundNegPion ) {
+	  // Leading Pi-
+	  FoundNegPion = true;
+	  OpsChPt += consPt;
+	  OpsChGPt += consPt;
+	}
+	break;
+      case Hadron::Neutral: first3_HadronPt[1] += consPt; break;
+      case Hadron::Gamma:
+	first3_HadronPt[2] += consPt;
+	if ( !FoundPhoton ) {
+	  // Leading Photon
+	  FoundPhoton = true;
+	  OpsChGPt += consPt;
+	}
+	break;
+      default:              first3_HadronPt[3] += consPt; break;
+      }
+    }
+    switch(absPID) {
+    case Hadron::Charged: pfHadronPt[0] += consPt; break;
+    case Hadron::Neutral: pfHadronPt[1] += consPt; break;
+    case Hadron::Gamma:   pfHadronPt[2] += consPt; break;
+    default:              pfHadronPt[3] += consPt; break;
     }
   }
   Pt123Fraction = Pt123/j1pT;
   ChNemPt = pfHadronPt[0] + pfHadronPt[2];
   ChNemPt123 = first3_HadronPt[0] + first3_HadronPt[2];
   ChNemPtFrac = ChNemPt123/ChNemPt;
+
+  OpsChPtFrac = OpsChPt/j1pT;
+  OpsChGPtFrac = OpsChGPt/j1pT;
+
+  OpsChCat = (int)(FoundPlusPion && FoundNegPion && !FoundPhoton);
+  OpsChGCat = (int)(FoundPlusPion && FoundNegPion && FoundPhoton);
+  NoOpsChGCat = (int)(!OpsChCat && !OpsChGCat);
 }
 
 void monoJetAnalysis::setJetCand(int jetCand) {
@@ -384,6 +433,7 @@ void monoJetAnalysis::setJetCand(int jetCand) {
   j1pT = jetPt->at(jetindex);
   j1Eta = jetEta->at(jetindex);
   j1Phi = jetPhi->at(jetindex);
+  j1etaWidth = jetetaWidth->at(jetindex);
   
   j1PFConsEt = jetConstEt->at(jetindex);
   j1PFConsPt = jetConstPt->at(jetindex);

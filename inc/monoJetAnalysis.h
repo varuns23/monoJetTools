@@ -158,9 +158,15 @@ public:
   vector<int>j1PFConsPID;
   vector<int> jetCandList;
 
-  float j1pT,j1Eta,j1Phi;
+  float j1pT,j1Eta,j1Phi,j1etaWidth;
   float Pt123Fraction,Pt123;
   float ChNemPtFrac,ChNemPt,ChNemPt123;
+  int OpsChCat;
+  float OpsChPtFrac,OpsChPt;
+  int OpsChGCat;
+  float OpsChGPtFrac,OpsChGPt;
+  int NoOpsChGCat;
+  
   float TotalPFCands,ChargedPFCands,NeutralPFCands,GammaPFCands,MiscPFCands;
   float pfHadronPt[4];
 
@@ -184,6 +190,7 @@ public:
   TH1F *h_j1CHFrounded[maxHisto],*h_j1NHFrounded[maxHisto];
   // PF Jet Info      
   TH1F *h_Pt123[maxHisto],*h_Pt123Fraction[maxHisto],*h_ChNemPt[maxHisto],*h_ChNemPt123[maxHisto],*h_ChNemPtFrac[maxHisto],*h_TotPFCands[maxHisto];
+  TH1F *h_OpsChPtFrac[maxHisto],*h_OpsChPt[maxHisto],*h_OpsChGPtFrac[maxHisto],*h_OpsChGPt[maxHisto];
   // Charged Info     
   TH1F *h_ChPFCands[maxHisto],*h_ChPercCons[maxHisto],*h_ChargedPFPt[maxHisto],*h_ChPercPFPt[maxHisto];
   // Neutral Info     
