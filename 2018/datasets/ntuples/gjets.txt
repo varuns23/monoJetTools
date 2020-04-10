@@ -1,19 +1,20 @@
 >>40to100
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/GJets/GJets_HT40-100/0000/
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/GJets/GJets_HT40-100/0001/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/GJets/GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT40-100/200327_142655/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/GJets/GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT40-100/200327_142655/0001/
 
 >>100to200
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/GJets/GJets_HT100-200/0000/
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/GJets/GJets_HT100-200/0001/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/GJets/GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT100-200/200327_142712/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/GJets/GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT100-200/200327_142712/0001/
 
 >>200to400
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/GJets/GJets_HT200-400/0000/
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/GJets/GJets_HT200-400/0001/
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/GJets/GJets_HT200-400/0002/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/GJets/GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT200-400/200327_142729/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/GJets/GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT200-400/200327_142729/0001/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/GJets/GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT200-400/200327_142729/0002/
 
 >>400to600
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/GJets/GJets_HT400-600/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/GJets/GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT400-600/200327_142746/0000/
 
 >>600toInf
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/GJets/GJets_HT600-Inf/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/GJets/GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT600-Inf/200327_142802/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/GJets/GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT600-Inf/200330_151211/0000/
 

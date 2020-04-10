@@ -1716,6 +1716,8 @@ void monoJetAnalysis::Init(TTree *tree)
     fChain->SetBranchAddress("mcStatus", &mcStatus, &b_mcStatus);
     fChain->SetBranchAddress("mcStatusFlag", &mcStatusFlag, &b_mcStatusFlag);
     fChain->SetBranchAddress("mcIndex", &mcIndex, &b_mcIndex);
+    if (YEAR == 2018 && isWZG())
+      fChain->SetBranchAddress("psWeight", &psWeight, &b_psWeight);
   }
 }
 
@@ -1805,37 +1807,36 @@ void monoJetAnalysis::PSWeights(float event_weight) {
 			  "fsr_G2GG_cNS","fsr_G2QQ_cNS","fsr_Q2QG_cNS","fsr_X2XG_cNS",
 			  "isr_G2GG_muR","isr_G2QQ_muR","isr_Q2QG_muR","isr_X2XG_muR",
 			  "isr_G2GG_cNS","isr_G2QQ_cNS","isr_Q2QG_cNS","isr_X2XG_cNS"  };
-  if ( !scaleUncs.contains("PSW_"+pswlist[0]) ) {
-    TFile* file = TFile::Open("RootFiles/theory/unc/PSW_2018_SF.root");
-    string prefix = "";
-    if (isWZG()) {
-      switch(type) {
-      case  WJets: prefix = "WJets"; break;
-      case  ZJets: prefix = "ZJets"; break;
-      case DYJets: prefix = "DYJets";break;
-      case  GJets: prefix = "ZJets"; break; // Need to calculate PSW for gjets sample
-      }
-    }
-    for (string psw : pswlist) {
-      scaleUncs.addUnc("PSW_"+psw,NULL);
-      if (isWZG()) {
-	string path = prefix+"/PSW_"+psw;
-	th1fmap[psw+"Up"] = (TH1F*)file->Get( (path+"Up").c_str() );
-	th1fmap[psw+"Down"] = (TH1F*)file->Get( (path+"Down").c_str() );
-      }
+  string uncname = "PSW_";
+  // Initializing
+  if ( !scaleUncs.contains(uncname+pswlist[0]) ) {
+    for (int i = 0; i < 22; i++) {
+      string name = uncname + pswlist[i];
+      scaleUncs.addUnc(name,NULL);
     }
   }
-
-  for (string psw : pswlist) {
+  
+  int nPS = 22;
+  for (int i = 0; i < nPS; i++) {
+    string name = uncname + pswlist[i];
     float weightUp = 1;
     float weightDn = 1;
-    if (isWZG()) {
-      float uncUp = th1fmap.getBin(psw+"Up",ChNemPtFrac);
-      float uncDn = th1fmap.getBin(psw+"Down",ChNemPtFrac);
-      weightUp = uncUp;
-      weightDn = uncDn;
+    if ( isWZG() ) {
+      if ( i < 2 ) {
+	weightUp *= psWeight->at(2 + i);
+	weightDn *= psWeight->at(2 + i + 2);
+      } else if ( i < 4 ) {
+	weightUp *= psWeight->at(2 + i + 2);
+	weightDn *= psWeight->at(2 + i + 4);
+      } else if ( i < 6 ) {
+	weightUp *= psWeight->at(2 + i + 4);
+	weightDn *= psWeight->at(2 + i + 6);
+      } else {
+	weightUp *= psWeight->at(2 + 2*i);
+	weightDn *= psWeight->at(2 + 2*i + 1);
+      }
     }
-    scaleUncs.setUnc("PSW_"+psw,weightUp,weightDn);
+    scaleUncs.setUnc(name,weightUp,weightDn);
   }
 }
 

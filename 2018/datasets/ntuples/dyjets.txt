@@ -1,28 +1,28 @@
 >>70to100
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT70-100/0000/
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT70-100/0001/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT70-100/200327_142444/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-70to100_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT70-100/200327_142444/0001/
 
 >>100to200
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT100-200/0000/
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT100-200/0001/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT100-200/200327_142502/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT100-200/200327_142502/0001/
 
 >>200to400
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT200-400/0000/
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT200-400/0001/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT200-400/200327_142518/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT200-400/200327_142518/0001/
 
 >>400to600
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT400-600/0000/
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT400-600/0001/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT400-600/200327_142534/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT400-600/200327_142534/0001/
 
 >>600to800
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT600-800/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT600-800/200327_142550/0000/
 
 >>800to1200
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT800-1200/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT800-1200/200327_142606/0000/
 
 >>1200to2500
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT1200-2500/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT1200-2500/200327_142622/0000/
 
 >>2500toInf
-/hdfs/store/user/varuns/NTuples/MC/MC2018_RunIIAutumn18_JECv19/DYJets/DYJetsToLL_HT2500-Inf/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/DYJets/DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT2500-Inf/200327_142639/0000/
 

@@ -22,6 +22,7 @@ def fullpath(path):
 class Query:
     def __init__(self,tag,mapping=None):
         self.tag = re.compile(tag)
+        if mapping is None: mapping = lambda s:s
         self.mapping = mapping
     def parse(self,sub):
         sub = self.tag.findall(sub)
@@ -36,9 +37,10 @@ def getSub(sub):
         mchi = re.findall('Mchi-\d+',string)[0].replace('Mchi-','Mchi')
         return '%s_%s' % (mchi,mphi)
     querylist = [
-        Query('\d+to\d+|\d+toInf|MLM|Incl|FXFX'),
+        Query('\d+to\d+|\d+toInf'),
         Query('\d+To\d+|\d+ToInf',lambda s:replace(s,'To','to')),
         Query('\d+-\d+|\d+-Inf',lambda s:replace(s,'-','to')),
+        Query('MLM|Incl|FXFX'),
         Query('2017\w',lambda s:replace(s,'2017','')),
         Query('2018\w',lambda s:replace(s,'2018','')),
         Query('Mphi-\d+_Mchi-\d+',lambda s:axial(s)),
@@ -61,7 +63,7 @@ def build_dataset(data,path):
         dirlist = fullpath(sub_path)
         if not any(dirlist): print "Nothing in %s" % sub_path; continue
         dataset[sub] = dirlist
-
+        
     sublist = dataset.keys()
     sort_nicely(sublist)
     with open("ntuples/%s.txt" % data,"w") as f:
