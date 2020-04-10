@@ -1,7 +1,10 @@
 #!/bin/sh
-
+set -e
 zprime="ChNemPtFrac -b incl40"
-nvariables='recoil pfMET recoilall pfMETall nJets j1pT j1Eta j1Phi nVtxNoW nVtxReW dphimin metcut'
+cat1="OpsChPtFrac -b incl40 -c OpsChCat"
+cat2="OpsChGPtFrac -b incl40 -c OpsChGCat"
+cat3="j1etaWidth -c NoOpsChGCat"
+nvariables='recoil pfMET recoilall pfMETall nJets j1pT j1Eta j1Phi j1etaWidth nVtxNoW nVtxReW dphimin metcut'
 singleleps='LeptonPt LeptonEta LeptonPhi lepMET_MT'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta leadingLeptonPhi subleadingLeptonEta subleadingLeptonPt subleadingLeptonPhi'
 gamma='photonPt photonEta photonPhi'
@@ -24,9 +27,12 @@ run() {
     pushd $1
     shift 1
     array="$nvariables $@"
-    plot $options --sub $subdir -a $array $uncertainty || exit 1
-    plot $options --sub $subdir -a $zprime || exit 1
-    plot $options --sub $subdir $n_cut || exit 1
+    plot $options --sub $subdir -a $array
+    plot $options --sub $subdir -a $zprime
+    plot $options --sub $subdir -a $cat1
+    plot $options --sub $subdir -a $cat2
+    plot $options --sub $subdir -a $cat3
+    plot $options --sub $subdir $n_cut
     popd
 }
 
@@ -34,26 +40,26 @@ run2() {
     region=$1
     shift 1
     array="$@ $nvariables"
-    plot --run2 $region $options $array || exit 1
-    plot --run2 $region $options $cutvars || exit 1
+    plot --run2 $region $options $array
+    plot --run2 $region $options $cutvars
 }
 
 region() {
-    run SignalRegion || exit 1
-    run SingleEleCR $singleleps  || exit 1
-    run SingleMuCR $singleleps || exit 1
-    run DoubleEleCR $doubleleps || exit 1
-    run DoubleMuCR $doubleleps || exit 1
-    run GammaCR $gamma || exit 1
+    run SignalRegion
+    run SingleEleCR $singleleps
+    run SingleMuCR $singleleps
+    run DoubleEleCR $doubleleps
+    run DoubleMuCR $doubleleps
+    run GammaCR $gamma
 }
 
 region2() {
-    run2 SignalRegion || exit 1
-    run2 SingleEleCR $singleleps || exit 1
-    run2 SingleMuCR $singleleps || exit 1
-    run2 DoubleEleCR $doubleleps || exit 1
-    run2 DoubleMuCR $doubleleps || exit 1
-    run GammaCR $gamma || exit 1
+    run2 SignalRegion
+    run2 SingleEleCR $singleleps
+    run2 SingleMuCR $singleleps
+    run2 DoubleEleCR $doubleleps
+    run2 DoubleMuCR $doubleleps
+    run GammaCR $gamma
 }
 
 YEARS="2017 2018"

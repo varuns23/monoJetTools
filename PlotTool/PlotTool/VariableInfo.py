@@ -5,6 +5,7 @@ import numpy as np
 from utilities import *
 from Nuisance import *
 from Parser import parser
+from samplenames import samplenames
 
 parser.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
 parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
@@ -43,7 +44,7 @@ def AddOverflow(hs):
 
 def inclusiveBinning(self,arg):
     nbins = int(arg.replace('incl',''))
-    template = TH1F(self.base,'',nbins,0,1)
+    template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,0,1)
     template.post = AddOverflow
     return template
 
@@ -145,11 +146,23 @@ class VariableInfo:
         self.dirname,ndir = GetDirname(variable,'trees')
     def getBinning(self,tfile,variable):
         self.file_template = FileTemplate(self,tfile,variable)
+        self.title = self.file_template.GetTitle()
+        self.xaxis_title = self.file_template.GetXaxis().GetTitle()
+        self.yaxis_title = self.file_template.GetYaxis().GetTitle()
         if parser.args.binning is None: return self.file_template
         for label,binning in self.binningMap.iteritems():
             if label in parser.args.binning:
                 if label is not 'fix': self.binfix = parser.args.binning
                 return binning(self,parser.args.binning)
-        
+    def setXaxisTitle(self):
+        self.name = None
+        for title in samplenames:
+            if title in self.variable:
+                self.name = samplenames[title];
+            key = self.variable.split("_")[-2]
+            if key == title:
+                self.name = samplenames[title];
+                break
+        if self.name == None: self.name = self.xaxis_title
 
  

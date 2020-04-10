@@ -224,7 +224,7 @@ class Region(object):
             if process.proctype == 'bkg':
                 self.total_bkg += process.scaled_total
         self.setMCOrder()
-        self.setXaxisTitle(variable)
+        self.name = variable.xaxis_title
         if self.isBlinded:
             self.setSumOfBkg()
             self.processes['Data'] = copy.deepcopy(self['SumOfBkg'])
@@ -260,20 +260,6 @@ class Region(object):
             if process.proctype == 'bkg':
                 sumofbkg.add(process)
         self.processes['SumOfBkg'] = sumofbkg
-    def setXaxisTitle(self,variable):
-        self.name = None
-        for title in samplenames:
-            if title in variable.variable:
-                self.name = samplenames[title];
-            key = variable.variable.split("_")[-2]
-            if key == title:
-                self.name = samplenames[title];
-                break
-        if self.name == None:
-            for process in self:
-                for subprocess in process:
-                    self.name = subprocess.histo.GetXaxis().GetTitle()
-                    break
     def addUnc(self,nuisance,show=False):
         for process in self: process.addUnc(nuisance,show)
     def fullUnc(self,unclist,show=False):
