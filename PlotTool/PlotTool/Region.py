@@ -260,6 +260,7 @@ class Region(object):
             if process.proctype == 'bkg':
                 sumofbkg.add(process)
         self.processes['SumOfBkg'] = sumofbkg
+        return self['SumOfBkg']
     def addUnc(self,nuisance,show=False):
         for process in self: process.addUnc(nuisance,show)
     def fullUnc(self,unclist,show=False):
