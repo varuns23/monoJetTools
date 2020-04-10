@@ -260,6 +260,7 @@ class Region(object):
             if process.proctype == 'bkg':
                 sumofbkg.add(process)
         self.processes['SumOfBkg'] = sumofbkg
+        return self['SumOfBkg']
     def setXaxisTitle(self,variable):
         self.name = None
         for title in samplenames:
