@@ -180,8 +180,8 @@ def plotTF(num_sample,den_sample):
         binning = ''
 
     tfproc = "%s%s%s%s" % (num_sample.num_boson,num_info['text'],den_sample.den_boson,den_info['text'])
-    outname = "%s_%s%s" % (tfproc,variable,binning)
-    SaveAs(c,outname,year=year,sub="TransferFactors/%s"%variable)
+    outname = "%s_%s" % (tfproc,num_sample.variable.base)
+    SaveAs(c,outname,year=year,sub="TransferFactors/%s"%num_sample.variable.base)
 def plotTF_datamc(num_sample,den_sample):
     lumi_label = '%s' % float('%.3g' % (num_sample.lumi/1000.)) + " fb^{-1}"
     year = num_sample.year
@@ -259,8 +259,8 @@ def plotTF_datamc(num_sample,den_sample):
         binning = ''
 
     tfproc = "%s%s%s%s" % (num_sample.num_boson,num_info['text'],den_sample.den_boson,den_info['text'])
-    outname = "%s_%s%s" % (tfproc,variable,binning)
-    SaveAs(c,outname,year=year,sub="TransferFactors/%s"%variable)
+    outname = "%s_%s" % (tfproc,num_sample.variable.base)
+    SaveAs(c,outname,year=year,sub="TransferFactors/%s"%num_sample.variable.base)
 def plotTransfer(variable,samplemap):
     global varmap
     if variable in rangemap: varmap = rangemap[variable]

@@ -103,23 +103,7 @@ class SubProcess(object):
             up = GetBranch('%sUp' % name,self.variable,self.treemap[treeup])
             dn = GetBranch('%sDown' % name,self.variable,self.treemap[treeup])
             return up,dn
-        def getPSW():
-            GetPSWFile()
-            tfile = nuisfiles["psw"]
-            up = self.histo.Clone("%sUp"%name)
-            dn = self.histo.Clone("%sDown"%name)
-            if not any(self.process == procs.GetName() for procs in tfile.GetListOfKeys()):
-                return up,dn
-            tdir = tfile.GetDirectory(self.process)
-            if not any(nuisance in nuis.GetName() for nuis in tdir.GetListOfKeys()):
-                return up,dn
-            upsf = tdir.Get(nuisance+"Up")
-            dnsf = tdir.Get(nuisance+"Down")
-            up.Multiply(upsf)
-            dn.Multiply(dnsf)
-            return up,dn
-        if "PSW" in nuisance: up,dn = getPSW()
-        elif isScale: up,dn = getScale()
+        if isScale: up,dn = getScale()
         else:       up,dn = getShape()
         self.scale(histo=up); self.scale(histo=dn)
         self.nuisances[nuisance] = Nuisance(self.subprocess,nuisance,up,dn,self.histo,type="abs")
@@ -188,9 +172,11 @@ class Process:
             else:                  self.histo.Add(subprocess.histo.Clone())
     def addUnc(self,nuisance,show=False):
         if self.proctype == 'data': return
+        if "PSW" in nuisance:
+            GetProcessPSW(self,nuisance)
+            return
         if nuisance in self.nuisances: return
         for subprocess in self: subprocess.addUnc(nuisance)
-
         nbins = self.histo.GetNbinsX()
         up = self.histo.Clone("%s_%s_%sUp" % (self.name,self.variable.base,nuisance)); up.Reset()
         dn = self.histo.Clone("%s_%s_%sDown" % (self.name,self.variable.base,nuisance)); dn.Reset()
