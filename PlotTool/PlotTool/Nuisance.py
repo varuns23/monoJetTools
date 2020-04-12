@@ -1,5 +1,12 @@
-from ROOT import TMath,gDirectory
+from ROOT import TMath,gDirectory,TFile
+from utilities import GetRootFiles
 
+nuisfiles = {}
+
+def GetPSWFile():
+    if "psw" in nuisfiles: return
+    rootdir = GetRootFiles()
+    nuisfiles["psw"] = TFile("%s/psw/PSW_SF.root"%rootdir)
 def MakeDiff(self):
     nbins = self.norm.GetNbinsX()
     for ibin in range(1,nbins+1):

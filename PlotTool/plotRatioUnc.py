@@ -21,7 +21,9 @@ correlation = {
     "PDF":True,
     "JES":True,
     "JER":True,
-    "Stat":False
+    "Stat":False,
+    "PSW_isrCon":True,
+    "PSW_fsrCon":False
 }
 
 showerror = ["JES","JER"]
@@ -44,7 +46,7 @@ def GetStat(nuisance,stat):
 def SetStat(var,stat):
     var.SetFillColor(33)
     for ibin in range(1,var.GetNbinsX()+1): var.SetBinError(ibin,abs(var[ibin]-stat[ibin]))
-nuisances = {}
+nuisances = {"PSW_isrCon":True,"PSW_fsrCon":True}
 store = []
 def plotUnc(name,num,den,sample):
     tf = Transfer(name,num,den)
@@ -163,7 +165,7 @@ if __name__ == "__main__":
     for variable in parser.args.argv:
         print "Fetching",variable
         for r in (sr,ga,we,wm,ze,zm): r.initiate(variable)
-        nuisances.update(sr.variable.nuisances)
+        # nuisances.update(sr.variable.nuisances)
         plotUnc("ZnnWln",sr["ZJets"],sr["WJets"],sr)
         plotUnc("ZnnG",sr["ZJets"],ga["GJets"],sr)
         plotUnc("WlnWen",sr["WJets"],we["WJets"],sr)

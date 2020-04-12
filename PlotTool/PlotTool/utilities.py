@@ -92,7 +92,7 @@ def GetRootFiles():
         return path
     repo_path = os.path.realpath( updirectory(wd,2) )
     def helper(path):
-        if any( directory == 'RootFiles' for directory in os.listdir(path) ): return os.path.realpath(path)
+        if any( directory == 'RootFiles' for directory in os.listdir(path) ): return os.path.realpath(path+"/RootFiles/")
         elif os.path.realpath(path) != repo_path: return helper( updirectory(path) )
     return helper('.')
 

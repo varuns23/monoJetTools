@@ -2,12 +2,12 @@ from ROOT import *
 import os
 from utilities import *
 from VariableInfo import *
-from Nuisance import Nuisance
+from Nuisance import *
 from Parser import parser
 
 class SubProcess(object):
-    def __init__(self,name,fname,xsec=None,year=None,region=None):
-        self.process = name; self.fname = fname; self.xsec = xsec; self.year = year; self.region = region
+    def __init__(self,process,name,fname,xsec=None,year=None,region=None):
+        self.process = process; self.subprocess = name; self.fname = fname; self.xsec = xsec; self.year = year; self.region = region
         self.name = GetProcessName(name,year,region)
         self.treemap = {}
         self.initVariable()
@@ -36,9 +36,9 @@ class SubProcess(object):
     def output(self,prompt="-- integral of %s: %s",ntemp="{0:<15}",itemp="{0:<8}",total_bkg=0):
         if total_bkg > 0:
             percent = ("%.4g%%" % (100*self.scaled_total/total_bkg))
-            print prompt % ( ntemp.format(self.process),itemp.format( '%.6g' % self.scaled_total ) ),'| %s' % (percent)
+            print prompt % ( ntemp.format(self.subprocess),itemp.format( '%.6g' % self.scaled_total ) ),'| %s' % (percent)
         else:
-            print prompt % ( ntemp.format(self.process),itemp.format( '%.6g' % self.scaled_total ) )
+            print prompt % ( ntemp.format(self.subprocess),itemp.format( '%.6g' % self.scaled_total ) )
     def setTree(self,dirname,treename):
         tree = None
         if treename not in self.treemap:
@@ -84,7 +84,7 @@ class SubProcess(object):
         for ibin in range(1,nbins+1):
             up[ibin] = self.histo.GetBinError(ibin)
             dn[ibin] = self.histo.GetBinError(ibin)
-        self.nuisances["Stat"] = Nuisance(self.process,"Stat",up,dn,self.histo)
+        self.nuisances["Stat"] = Nuisance(self.subprocess,"Stat",up,dn,self.histo)
     def addUnc(self,nuisance):
         self.tfile.cd()
         if nuisance == 'Stat': self.addStat()
@@ -103,10 +103,26 @@ class SubProcess(object):
             up = GetBranch('%sUp' % name,self.variable,self.treemap[treeup])
             dn = GetBranch('%sDown' % name,self.variable,self.treemap[treeup])
             return up,dn
-        if isScale: up,dn = getScale()
+        def getPSW():
+            GetPSWFile()
+            tfile = nuisfiles["psw"]
+            up = self.histo.Clone("%sUp"%name)
+            dn = self.histo.Clone("%sDown"%name)
+            if not any(self.process == procs.GetName() for procs in tfile.GetListOfKeys()):
+                return up,dn
+            tdir = tfile.GetDirectory(self.process)
+            if not any(nuisance in nuis.GetName() for nuis in tdir.GetListOfKeys()):
+                return up,dn
+            upsf = tdir.Get(nuisance+"Up")
+            dnsf = tdir.Get(nuisance+"Down")
+            up.Multiply(upsf)
+            dn.Multiply(dnsf)
+            return up,dn
+        if "PSW" in nuisance: up,dn = getPSW()
+        elif isScale: up,dn = getScale()
         else:       up,dn = getShape()
         self.scale(histo=up); self.scale(histo=dn)
-        self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo,type="abs")
+        self.nuisances[nuisance] = Nuisance(self.subprocess,nuisance,up,dn,self.histo,type="abs")
 class Process:
     def __init__(self,name=None,filenames=None,xsecs=None,proctype=None,year=None,region=None,leg=None,color=kGray+1):
         if name is None and filenames is None: return
@@ -122,7 +138,7 @@ class Process:
             name = filename.replace('post','')
             if self.proctype is 'data': xsec = None
             else: xsec = self.xsecs[sub]
-            self.subprocesses[sub] = SubProcess(name,filename,xsec,self.year,self.region)
+            self.subprocesses[sub] = SubProcess(self.process,name,filename,xsec,self.year,self.region)
         self.initVariable()
     def __len__(self): return len(self.sublist)
     def __getitem__(self,i):
