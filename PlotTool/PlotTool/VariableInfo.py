@@ -49,15 +49,13 @@ def inclusiveBinning(self,arg):
     return template
 
 def inclusiveCutBinning(self,arg):
-    nbins = arg.replace('incu','')
+    nbins = int(arg.replace('incu',''))
     cut = self.cut
-    hs = inclusiveBinning(self,nbins)
     if '>' in cut:
         lim = float(cut.split('>')[-1])
-        bmin = hs.GetXaxis().FindBin(lim); bmax = hs.GetNbinsX()
-
-    binlist = array('d',[ hs.GetXaxis().GetBinLowEdge(ibin) for ibin in range(bmin,bmax+2) ])
-    template= hs.Rebin(len(binlist)-1,self.base,binlist)
+        bmin = lim; bmax = 1
+    template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,bmin,bmax)
+    template.post = AddOverflow
     return template
 def rebin(self,arg):
     # bins = array('d',[250.,280.,310.,340.,370.,400.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.,1400.])
@@ -119,6 +117,10 @@ class VariableInfo:
         elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
         elif IsNhisto(variable,tfile): self.initNhisto(tfile,variable)
 
+        self.title = self.template.GetTitle()
+        self.xaxis_title = self.template.GetXaxis().GetTitle()
+        self.yaxis_title = self.template.GetYaxis().GetTitle()
+        
         if parser.args.no_width: self.scaleWidth = False
         else:
             self.scaleWidth = any( "%.3f" % self.template.GetBinWidth(ibin) != "%.3f" % self.template.GetBinWidth(ibin+1) for ibin in range(1,self.template.GetNbinsX()) )
