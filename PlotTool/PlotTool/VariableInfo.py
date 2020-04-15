@@ -5,6 +5,7 @@ import numpy as np
 from utilities import *
 from Nuisance import *
 from Parser import parser
+from samplenames import samplenames
 
 parser.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
 parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
@@ -28,20 +29,46 @@ def IsBranch(variable,tfile):
     tree = tdir.Get('norm')
     isBranch = tree.GetListOfBranches().Contains(b_variable)
     # tdir.Close()
-    if 'recoil' in variable or 'bosonPt' in variable:
-        return isBranch
-    return False
+    return isBranch
+def FileTemplate(self,tfile,variable):
+    dirname,ndir = GetDirname(variable)
+    return tfile.Get("%s/%s"%(dirname,variable)).Clone('template_%s'%self.base)
+
 def linspace(xmin,xmax,nx): return list(np.linspace(xmin,xmax,nx+1))
 
+def AddOverflow(hs):
+    nbins = hs.GetNbinsX()
+    overflow = hs.GetBinContent(nbins) + hs.GetBinContent(nbins+1)
+    hs.SetBinContent(nbins,overflow)
+    return
+
+def inclusiveBinning(self,arg):
+    nbins = int(arg.replace('incl',''))
+    template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,0,1)
+    template.post = AddOverflow
+    return template
+
+def inclusiveCutBinning(self,arg):
+    nbins = int(arg.replace('incu',''))
+    cut = self.cut
+    if '>' in cut:
+        lim = float(cut.split('>')[-1])
+        bmin = lim; bmax = 1
+    template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,bmin,bmax)
+    template.post = AddOverflow
+    return template
 def rebin(self,arg):
-    bins = array('d',[250.,280.,310.,340.,370.,400.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.,1400.])
-    histo = TH1F(self.base,'',len(bins)-1,bins)
-    histo.Rebin(2)
+    # bins = array('d',[250.,280.,310.,340.,370.,400.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.,1400.])
+    nbins = int(arg.replace('rebin',''))
+    histo = self.file_template
+    histo.Rebin(nbins)
     return histo
     
 class VariableInfo:
     binningMap = {
-        "rebin":rebin
+        'rebin':rebin,
+        'incl':inclusiveBinning,
+        'incu':inclusiveCutBinning,
     }
     def __init__(self,tfile=None):
         self.initVariable()
@@ -90,6 +117,10 @@ class VariableInfo:
         elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
         elif IsNhisto(variable,tfile): self.initNhisto(tfile,variable)
 
+        self.title = self.template.GetTitle()
+        self.xaxis_title = self.template.GetXaxis().GetTitle()
+        self.yaxis_title = self.template.GetYaxis().GetTitle()
+        
         if parser.args.no_width: self.scaleWidth = False
         else:
             self.scaleWidth = any( "%.3f" % self.template.GetBinWidth(ibin) != "%.3f" % self.template.GetBinWidth(ibin+1) for ibin in range(1,self.template.GetNbinsX()) )
@@ -116,13 +147,24 @@ class VariableInfo:
         self.template.Reset()
         self.dirname,ndir = GetDirname(variable,'trees')
     def getBinning(self,tfile,variable):
-        if parser.args.binning is None:
-            dirname,ndir = GetDirname(variable)
-            return tfile.Get("%s/%s"%(dirname,variable)).Clone('template_%s'%self.base)
+        self.file_template = FileTemplate(self,tfile,variable)
+        self.title = self.file_template.GetTitle()
+        self.xaxis_title = self.file_template.GetXaxis().GetTitle()
+        self.yaxis_title = self.file_template.GetYaxis().GetTitle()
+        if parser.args.binning is None: return self.file_template
         for label,binning in self.binningMap.iteritems():
             if label in parser.args.binning:
                 if label is not 'fix': self.binfix = parser.args.binning
                 return binning(self,parser.args.binning)
-        
+    def setXaxisTitle(self):
+        self.name = None
+        for title in samplenames:
+            if title in self.variable:
+                self.name = samplenames[title];
+            key = self.variable.split("_")[-2]
+            if key == title:
+                self.name = samplenames[title];
+                break
+        if self.name == None: self.name = self.xaxis_title
 
  

@@ -66,6 +66,7 @@ void monoJetGammaCR::setRecoil() {
   TLorentzVector photoMET_4vec = pho+met_4vec;
   recoil = fabs(photoMET_4vec.Pt());
   recoilPhi = photoMET_4vec.Phi();
+  dpfcalo = dPFCaloMET(recoil);
 }
 
 float monoJetGammaCR::getSF(int phoindex) {

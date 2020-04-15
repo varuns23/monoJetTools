@@ -2,7 +2,21 @@ from ROOT import *
 import os
 import sys
 from array import array
-            
+         
+debug_store=[]
+def debug_hslist(hslist):
+    binlist=[]
+    for hs in hslist: binlist += list(hs)[1:-1]
+    ymin=min(binlist)
+    ymax=max(binlist)
+    c=TCanvas("c%i"%len(debug_store),"c%i"%len(debug_store))
+    for hs in hslist:
+        hs.SetLineWidth(2)
+        hs.Draw("hist plc same")
+        hs.GetYaxis().SetRangeUser(ymin,ymax)
+    c.BuildLegend()
+    c.SaveAs("~/public_html/test/"+c.GetName()+".png")
+    debug_store.append(c)   
 def GetRatio(hs_num,hs_den):
     nbins = hs_num.GetNbinsX();
     ratio = hs_num.Clone()
@@ -92,7 +106,7 @@ def GetRootFiles():
         return path
     repo_path = os.path.realpath( updirectory(wd,2) )
     def helper(path):
-        if any( directory == 'RootFiles' for directory in os.listdir(path) ): return os.path.realpath(path)
+        if any( directory == 'RootFiles' for directory in os.listdir(path) ): return os.path.realpath(path+"/RootFiles/")
         elif os.path.realpath(path) != repo_path: return helper( updirectory(path) )
     return helper('.')
 

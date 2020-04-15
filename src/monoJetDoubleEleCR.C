@@ -100,6 +100,7 @@ void monoJetDoubleEleCR::setRecoil() {
   TLorentzVector leptoMET_4vec = ll+met_4vec;
   recoil = fabs(leptoMET_4vec.Pt());
   recoilPhi = leptoMET_4vec.Phi();
+  dpfcalo = dPFCaloMET(recoil);
 }
 
 float monoJetDoubleEleCR::getSF(int leading, int subleading) {

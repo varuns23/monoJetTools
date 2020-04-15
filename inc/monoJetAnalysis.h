@@ -106,8 +106,10 @@ public:
     TH1F *h_cutflowNoWt;
     TH1F *h_cutflowNoK;
     std::map<std::string,int> labels;
+    std::vector<std::string> _labels;
     Cutflow(monoJetAnalysis* analysis, std::vector<std::string> labels) {
       this->analysis = analysis;
+      this->_labels = labels;
       h_cutflow = new TH1F("h_cutflow","h_cutflow",labels.size(),0,labels.size());
       h_cutflowNoWt = new TH1F("h_cutflowNoWt","h_cutflowNoWt",labels.size(),0,labels.size());
       h_cutflowNoK = new TH1F("h_cutflowNoK","h_cutflowNoK",labels.size(),0,labels.size());
@@ -130,6 +132,11 @@ public:
       h_cutflowNoWt->Fill(idx,1.0);
       h_cutflowNoK->Fill(idx,analysis->weight_nok);
     }
+    string getLabel(std::size_t idx) {
+      if (idx < _labels.size()) return _labels[idx];
+      return "None";
+    }
+    int getCut(std::string cut) { return labels[cut]; }
   };
   Cutflow *cutflow;
 
@@ -151,10 +158,14 @@ public:
   /* CR Variables */
   float recoil,recoilPhi;
 
+  /* Cut Variables */
+  float dpfcalo,mindPhiJetMET;
+
   /* Histograms */
-  TH1F *h_metcut,*h_dphimin,*h_metfilters;
+  TH1F *h_metcutBefore,*h_dphiminBefore,*h_metfilters;
   // Event Info       
-  TH1F *h_nVtx[maxHisto],*h_eventWeight[maxHisto],*h_kfactor[maxHisto],*h_pileup[maxHisto],*h_genWeight[maxHisto],*h_sf[maxHisto];          
+  TH1F *h_nVtxNoW[maxHisto],*h_nVtxReW[maxHisto],*h_eventWeight[maxHisto],*h_kfactor[maxHisto],*h_pileup[maxHisto],*h_genWeight[maxHisto],*h_sf[maxHisto];
+  TH1F *h_metcut[maxHisto],*h_dphimin[maxHisto];
   // MC Info          
   TH1F *h_puTrueNoW[maxHisto],*h_puTrueReW[maxHisto],*h_genHT[maxHisto],*h_bosonPt[maxHisto],*h_bosonPtwK[maxHisto];      
   // MET Info         
@@ -867,6 +878,7 @@ public:
   virtual void BookHistos(int nhist,string histname);
   virtual void fillHistos(int nhisto,float event_weight);
   virtual void fillEvent(int nhisto,float event_weight);
+  virtual void fillEvent(string cut,float event_weight);
 
   /* Event Weight Methods */
   virtual void SetBoson(int PID);
@@ -891,6 +903,7 @@ public:
   virtual bool getElectronTrigger();
   virtual bool getPhotonTrigger();
   virtual float dPhiJetMETmin(vector<int> jetlist,float metPhi);
+  virtual float dPFCaloMET(float met);
   bool getJetHEMVeto(float jetPtCut=jetHEMVetoPtCut);
   bool getEleHEMVeto(float elePtCut=eleHEMVetoPtCut);
   

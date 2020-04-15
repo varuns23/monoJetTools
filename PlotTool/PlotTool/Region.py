@@ -49,6 +49,7 @@ parser.add_argument("--mc-solid",help="Make MC solid color",action="store_true",
 parser.add_argument("-d","--directory",help="Specify directory to get post files from",type=valid_directory)
 parser.add_argument("-e","--era",help="Specify the eras to use",type=lambda arg:sorted(arg.upper()),default=None)
 parser.add_argument("-a","--autovar",help="Specify to use the automatic basic nhist",action="store_true",default=False)
+parser.add_argument("--auto-order",help="Order MC Stack based on Integral",action="store_true",default=False)
 parser.add_argument("--normalize",help="Specify to normalize plots to unity",action="store_true",default=False)
 parser.add_argument("--nlo",help="Use all available NLO samples",action="store_true",default=False)
 parser.add_argument("--postpath",help="Force path to come from postpath.txt",action="store_true",default=False)
@@ -223,7 +224,7 @@ class Region(object):
             if process.proctype == 'bkg':
                 self.total_bkg += process.scaled_total
         self.setMCOrder()
-        self.setXaxisTitle(variable)
+        self.name = variable.xaxis_title
         if self.isBlinded:
             self.setSumOfBkg()
             self.processes['Data'] = copy.deepcopy(self['SumOfBkg'])
@@ -232,13 +233,13 @@ class Region(object):
         if os.getcwd() != self.cwd: os.chdir(self.cwd)
     def setMCOrder(self):
         def mcsort(process):
-            if 'cutflow' in variable.variable:
+            if 'cutflow' in self.variable.variable:
                 return self[process].histo.GetBinContent(self[process].histo.GetNbinsX())
             return self[process].scaled_total
-        if self.region not in MCOrderMap:
+        if self.region not in MCOrderMap or parser.args.auto_order:
             self.MCOrder = [ process.process for process in self if process.proctype == 'bkg']
             self.MCOrder.sort(key=mcsort,reverse=True)
-        else: self.MCOrder = MCOrderMap[self.region]
+        else: self.MCOrder = [ procname for procname in MCOrderMap[self.region] if procname in self ]
     def output(self):
         if self.scaleWidth: print "Bin Width Normalization"
         prompt = 'integral of %s: %s'
@@ -248,7 +249,9 @@ class Region(object):
         if hasattr(self,'SignalList'):
             for signal in self.SignalList: self[signal].output(verbose=verbose)
         print prompt % ( ntemp.format('SumOfBkg'),itemp.format( '%.6g' % self.total_bkg ) )
-        for sample in self.MCOrder: self[sample].output(verbose=verbose,total_bkg=self.total_bkg)
+        for sample in self.MCOrder:
+            if sample in self:
+                self[sample].output(verbose=verbose,total_bkg=self.total_bkg)
         ratio = ('%.6g' % (self.processes['Data'].scaled_total/self.total_bkg)) if self.total_bkg != 0 else 'Nan'
         print '            %s: %s' % (ntemp.format('data/mc'),itemp.format(ratio))
     def setSumOfBkg(self):
@@ -257,20 +260,7 @@ class Region(object):
             if process.proctype == 'bkg':
                 sumofbkg.add(process)
         self.processes['SumOfBkg'] = sumofbkg
-    def setXaxisTitle(self,variable):
-        self.name = None
-        for title in samplenames:
-            if title in variable.variable:
-                self.name = samplenames[title];
-            key = variable.variable.split("_")[-2]
-            if key == title:
-                self.name = samplenames[title];
-                break
-        if self.name == None:
-            for process in self:
-                for subprocess in process:
-                    self.name = subprocess.histo.GetXaxis().GetTitle()
-                    break
+        return self['SumOfBkg']
     def addUnc(self,nuisance,show=False):
         for process in self: process.addUnc(nuisance,show)
     def fullUnc(self,unclist,show=False):
