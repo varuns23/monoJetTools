@@ -6,7 +6,7 @@ nuisfiles = {}
 def GetPSWFile():
     if "psw" in nuisfiles: return
     rootdir = GetRootFiles()
-    nuisfiles["psw"] = TFile("%s/psw/PSW_SF.root"%rootdir)
+    nuisfiles["psw"] = TFile("%s/psw/PSW_SF_bin15.root"%rootdir)
 def GetProcessPSW(self,nuisance):
     GetPSWFile()
     def getPSW():

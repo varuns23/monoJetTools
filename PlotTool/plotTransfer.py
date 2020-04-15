@@ -214,11 +214,15 @@ def plotTF_datamc(num_sample,den_sample):
     
     SetBounds(tf_proc,num_sample,den_sample)
     tf_proc.histo.Draw("axis")
-    uncband = tf_proc.getUncBand()
-    UncBandStyle(uncband)
-    uncband.Draw("2same")
+    unc = tf_proc.histo.Clone()
+    unc.SetMarkerStyle(0)
+    unc.SetFillColor(33)
+    # uncband = tf_proc.getUncBand()
+    # UncBandStyle(uncband)
+    # uncband.Draw("2same")
+    unc.Draw("e2 same")
     tf_proc.histo.Draw("histsame")
-    tf_data.histo.Draw("pe0same")
+    tf_data.histo.Draw("hist p same")
 
     tfmc_style(tf_proc,xname=num_sample.name)
 
@@ -246,7 +250,7 @@ def plotTF_datamc(num_sample,den_sample):
     # rymin = 0.65; rymax = 1.35
     rymin = 0.5; rymax = 1.5
     RatioStyle(datamc,rymin,rymax,color=38,xname=num_sample.name)
-    datamc.Draw("pe0")
+    datamc.Draw("hist p")
     line = getRatioLine(datamc.GetXaxis().GetXmin(),datamc.GetXaxis().GetXmax())
     line.Draw("same");
     c.Update()

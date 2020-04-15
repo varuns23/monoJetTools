@@ -23,7 +23,9 @@ theorylist = [
     "NNLO_EWK",
     "NNLO_Sud",
     "NNLO_Miss",
-    "QCD_EWK_Mix" 
+    "QCD_EWK_Mix",
+    "PSW_isrCon",
+    "PSW_fsrCon"
 ]
 
 explist = [
@@ -41,7 +43,9 @@ correlation = {
     "QCD_EWK_Mix":True,
     "PDF":True,
     "JES":True,
-    "JER":True
+    "JER":True,
+    "PSW_isrCon":True,
+    "PSW_fsrCon":True
 }
 
 def AddNuisance(tf,nuisance,output):
@@ -70,17 +74,18 @@ def MakeSys(num,den,tfname):
     if tfname == "ZG": output = TFile("theory_sys/gz_unc.root","recreate")
     for nuisance in theorylist: AddNuisance(tf,nuisance,output)
     
-    if tfname == "ZW": output = TFile("theory_sys/wz_exp_unc.root","recreate")
-    if tfname == "ZG": output = TFile("theory_sys/gz_exp_unc.root","recreate")
-    for nuisance in explist: AddNuisance(tf,nuisance,output)
+    # if tfname == "ZW": output = TFile("theory_sys/wz_exp_unc.root","recreate")
+    # if tfname == "ZG": output = TFile("theory_sys/gz_exp_unc.root","recreate")
+    # for nuisance in explist: AddNuisance(tf,nuisance,output)
 
 if __name__ == "__main__":
+    from PlotTool import parser
     sr = Region(path="SignalRegion",autovar=True,show=False)
     sr.SampleList = ["ZJets","WJets"]
-    sr.initiate("recoil")
+    sr.initiate(parser.args.argv[0])
     MakeSys(sr["ZJets"],sr["WJets"],"ZW")
     
     ga = Region(path="GammaCR",autovar=True,show=False)
     ga.SampleList = ["GJets"]
-    ga.initiate("recoil")
+    ga.initiate(parser.args.argv[0])
     MakeSys(sr["ZJets"],ga["GJets"],"ZG")

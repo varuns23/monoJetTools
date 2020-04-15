@@ -11,7 +11,7 @@ gROOT.SetBatch(1)
 dirlist = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR","GammaCR"]
 dirmap = {"SignalRegion":"signal","DoubleEleCR":"Zee","DoubleMuCR":"Zmm","SingleEleCR":"Wen","SingleMuCR":"Wmn","GammaCR":"gjets"}
 procmap = {"Data":"data","ZJets":"zjets","WJets":"wjets","DYJets":"zll","GJets":"gjets","TTJets":"top","DiBoson":"diboson","QCD":"qcd"}
-signalmap = {"Axial":"axial"}
+signalmap = {"Axial":"axial","Zprime":"zprime"}
 if not path.isdir("Systematics"): mkdir("Systematics")
 
 def validHisto(hs,total=0,threshold=0.2):return hs.Integral() > threshold*total
