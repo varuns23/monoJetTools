@@ -117,6 +117,10 @@ class VariableInfo:
         elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
         elif IsNhisto(variable,tfile): self.initNhisto(tfile,variable)
 
+        self.title = self.template.GetTitle()
+        self.xaxis_title = self.template.GetXaxis().GetTitle()
+        self.yaxis_title = self.template.GetYaxis().GetTitle()
+        
         if parser.args.no_width: self.scaleWidth = False
         else:
             self.scaleWidth = any( "%.3f" % self.template.GetBinWidth(ibin) != "%.3f" % self.template.GetBinWidth(ibin+1) for ibin in range(1,self.template.GetNbinsX()) )

@@ -25,7 +25,10 @@ options = {
     'data':True,
     'mc':True,
     'signal':True,
+    'onlyData':False,
+    'onlyMC':False,
     'onlyWZG':False,
+    'onlySignal':False,
     'error':False,
     'verbose':False
 }
@@ -54,8 +57,14 @@ def submit(data,sub=None,label=None,split=-1,filelist=True,script='analyze'):
         warning('MC is disabled',data); return
     if not options['signal'] and data in signalist:
         warning('Signal is disabled',data); return
+    if options['onlyData'] and data not in datalist:
+        warning('Only submitting Data enabled',data); return
+    if options['onlyMC'] and data not in mclist:
+        warning('Only submitting MC enabled',data); return
     if options['onlyWZG'] and not any( wzg in data for wzg in ('wjets','zjets','dyjets','gjets')):
         warning('Only submitting WJets, ZJets, DYJets, or GJets enabled',data); return
+    if options['onlySignal'] and data not in signalist:
+        warning('Only submitting Signal enabled',data); return
     if any( options[sample] for sample in full_list ) and not options[data]:
         warning('Only submitting %s' % (', '.join([sample for sample in full_list if options[sample]]))); return
         
