@@ -91,7 +91,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
     if (i == bHisto) {
       auto treedir = dir->mkdir("trees");
       treedir->cd();
-      tree = new TTree("norm","norm");
+      tree = new TTree("tree","tree");
       initTree(tree);
       scaleUncs.setTree(tree);
       shapeUncs.setDir(treedir);
