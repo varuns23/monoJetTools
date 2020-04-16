@@ -107,12 +107,14 @@ def tf_style(tf,color=kBlack,xname=None):
     tf.histo.GetXaxis().SetTitleFont(42);
     tf.histo.GetXaxis().SetTitleOffset(1.1);
     tf.histo.GetXaxis().SetTickLength(0.05);
-def SetBounds(tf,num_sample,den_sample):
-    bins = list(tf.histo)[1:-1]
-    avg = sum( ibin for ibin in bins ) / len(bins)
-    maxdiff = max( abs(ibin - avg) for ibin in bins )
-    tf.histo.SetMinimum( avg - 5*maxdiff )
-    tf.histo.SetMaximum( avg + 5*maxdiff )
+def SetBounds(tflist,num_sample,den_sample):
+    binlist = []
+    for tf in tflist: binlist += list(tf.histo)[1:-1]
+    expand=0.2
+    ymin = min(binlist)*(1-expand)
+    ymax = max(binlist)*(1+expand)
+
+    for tf in tflist: tf.histo.GetYaxis().SetRangeUser(ymin,ymax)
     
     return
     if not any(varmap): return
@@ -149,7 +151,7 @@ def plotTF(num_sample,den_sample):
     pad1.SetLeftMargin(0.15)
     # pad1.SetBottomMargin(0.);
     
-    SetBounds(tf,num_sample,den_sample)
+    SetBounds([tf],num_sample,den_sample)
     tf.histo.Draw("axis")
 
     if (num_sample.region is 'SignalRegion' and (den_sample.region is 'SignalRegion' or den_sample.region is "GammaCR")):
@@ -212,7 +214,7 @@ def plotTF_datamc(num_sample,den_sample):
     pad1.SetBorderMode(0);
     pad1.SetBottomMargin(0.);
     
-    SetBounds(tf_proc,num_sample,den_sample)
+    SetBounds([tf_proc,tf_data],num_sample,den_sample)
     tf_proc.histo.Draw("axis")
     unc = tf_proc.histo.Clone()
     unc.SetMarkerStyle(0)
@@ -223,6 +225,7 @@ def plotTF_datamc(num_sample,den_sample):
     unc.Draw("e2 same")
     tf_proc.histo.Draw("histsame")
     tf_data.histo.Draw("hist p same")
+    pad1.RedrawAxis()
 
     tfmc_style(tf_proc,xname=num_sample.name)
 
@@ -249,7 +252,9 @@ def plotTF_datamc(num_sample,den_sample):
     datamc = GetRatio(tf_data.histo,tf_proc.histo)
     # rymin = 0.65; rymax = 1.35
     rymin = 0.5; rymax = 1.5
-    RatioStyle(datamc,rymin,rymax,color=38,xname=num_sample.name)
+    RatioStyle(datamc,rymin,rymax,color=12,xname=num_sample.name)
+    datamc.SetMarkerSize(1.5)
+    datamc.SetTitle("")
     datamc.Draw("hist p")
     line = getRatioLine(datamc.GetXaxis().GetXmin(),datamc.GetXaxis().GetXmax())
     line.Draw("same");

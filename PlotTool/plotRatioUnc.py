@@ -23,7 +23,8 @@ correlation = {
     "JER":True,
     "Stat":False,
     "PSW_isrCon":True,
-    "PSW_fsrCon":True
+    "PSW_fsrCon":True,
+    "PFU_ecal":True
 }
 
 showerror = ["JES","JER"]
