@@ -55,8 +55,8 @@ class SubProcess(object):
         self.scaleWidth = variable.scaleWidth
         if variable.isGlobal: self.histo = GetTObject(variable.variable,self.tfile)
         elif variable.isBranch:
-            self.setTree(variable.dirname,'norm')
-            self.histo = GetBranch('%s_%s' % (self.name,variable.base),variable,self.treemap['norm'])
+            self.setTree(variable.dirname,'tree')
+            self.histo = GetBranch('%s_%s' % (self.name,variable.base),variable,self.treemap['tree'])
         elif variable.isNhisto: self.histo = GetTObject("%s/%s"%(variable.dirname,variable.variable),self.tfile)
         self.raw_total = self.histo.Integral()
     def scale(self,lumi=None,histo=None):
@@ -70,7 +70,7 @@ class SubProcess(object):
     def hasUnc(self,nuisance):
         if nuisance not in self.variable.nuisances: return False
         isScale = self.variable.nuisances[nuisance] == 'scale'
-        if isScale: return hasattr(self.treemap['norm'],nuisance+'Up')
+        if isScale: return hasattr(self.treemap['tree'],nuisance+'Up')
         try:
             self.setTree(self.variable.dirname,nuisance+'Up')
             self.setTree(self.variable.dirname,nuisance+'Down')
@@ -94,8 +94,8 @@ class SubProcess(object):
         name = '%s_%s_%s' % (self.name,self.variable.base,nuisance)
         def getScale():
             scale_weight = GetScaleWeight(nuisance)
-            up = GetBranch('%sUp' % name,self.variable,self.treemap['norm'],"%s*%s" % (self.variable.weight,scale_weight%"Up"))
-            dn = GetBranch('%sDown' % name,self.variable,self.treemap['norm'],"%s*%s" % (self.variable.weight,scale_weight%"Down"))
+            up = GetBranch('%sUp' % name,self.variable,self.treemap['tree'],"%s*%s" % (self.variable.weight,scale_weight%"Up"))
+            dn = GetBranch('%sDown' % name,self.variable,self.treemap['tree'],"%s*%s" % (self.variable.weight,scale_weight%"Down"))
             return up,dn
         def getShape():
             treeup = '%sUp' % nuisance;   

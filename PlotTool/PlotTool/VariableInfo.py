@@ -26,7 +26,7 @@ def IsBranch(variable,tfile):
     tdir = tfile.GetDirectory(dirname)
     if tdir == None: return False
     b_variable = variable.replace('_%s' % ndir,'')
-    tree = tdir.Get('norm')
+    tree = tdir.Get('tree')
     isBranch = tree.GetListOfBranches().Contains(b_variable)
     # tdir.Close()
     return isBranch
