@@ -108,7 +108,7 @@ def getRatioLine(xmin,xmax):
     return line
 ###################################################################
 
-def StackStyle(hs_stack,yscale=5,scaleWidth=False):
+def StackStyle(hs_stack,yscale=6,scaleWidth=False):
     hs_stack.GetYaxis().SetTitle("Events" if not scaleWidth else "Events / GeV");
     hs_stack.GetYaxis().SetTitleOffset(1.5);
     hs_stack.SetTitle("");

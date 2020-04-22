@@ -41,7 +41,15 @@ def AddOverflow(hs):
     overflow = hs.GetBinContent(nbins) + hs.GetBinContent(nbins+1)
     hs.SetBinContent(nbins,overflow)
     return
-
+def PtFractionBinning(self,arg):
+    arg = arg.replace('res','')
+    bins = array('d',[0,0.3,0.5,0.7,0.8,0.9,1.0])
+    if arg == "2": bins = array('d',[0,0.25,0.4,0.55,0.7,0.85,1.0])
+    
+    nbins= len(bins)-1
+    template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,bins)
+    template.post = AddOverflow
+    return template
 def inclusiveBinning(self,arg):
     nbins = int(arg.replace('incl',''))
     template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,0,1)
@@ -69,6 +77,7 @@ class VariableInfo:
         'rebin':rebin,
         'incl':inclusiveBinning,
         'incu':inclusiveCutBinning,
+        'res':PtFractionBinning
     }
     def __init__(self,tfile=None):
         self.initVariable()

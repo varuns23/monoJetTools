@@ -1,12 +1,15 @@
 from ROOT import TMath,gDirectory,TFile,gROOT,TCanvas,gPad
 from utilities import GetRootFiles,debug_hslist
+from Parser import parser
+
+parser.add_argument("--psw-file",help="suffix for psw file to use when calculating psw uncertainty",default="bin20")
 
 nuisfiles = {}
 
 def GetPSWFile():
     if "psw" in nuisfiles: return
     rootdir = GetRootFiles()
-    nuisfiles["psw"] = TFile("%s/psw/PSW_SF_bin10.root"%rootdir)
+    nuisfiles["psw"] = TFile("%s/psw/PSW_SF_%s.root"%(rootdir,parser.args.psw_file))
 def GetProcessPSW(self,nuisance):
     GetPSWFile()
     def getPSW():

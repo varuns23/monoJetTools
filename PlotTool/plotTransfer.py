@@ -110,7 +110,7 @@ def tf_style(tf,color=kBlack,xname=None):
 def SetBounds(tflist,num_sample,den_sample):
     binlist = []
     for tf in tflist: binlist += list(tf.histo)[1:-1]
-    expand=0.2
+    expand=0.5
     ymin = min(binlist)*(1-expand)
     ymax = max(binlist)*(1+expand)
 
@@ -251,7 +251,7 @@ def plotTF_datamc(num_sample,den_sample):
         
     datamc = GetRatio(tf_data.histo,tf_proc.histo)
     # rymin = 0.65; rymax = 1.35
-    rymin = 0.5; rymax = 1.5
+    rymin = 0.35; rymax = 1.75
     RatioStyle(datamc,rymin,rymax,color=12,xname=num_sample.name)
     datamc.SetMarkerSize(1.5)
     datamc.SetTitle("")

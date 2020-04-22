@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-zprime="ChNemPtFrac -b incl40"
 cat1="OpsChPtFrac -b incl40 -c OpsChCat"
 cat2="OpsChGPtFrac -b incl40 -c OpsChGCat"
 cat3="j1etaWidth -c NoOpsChGCat"
@@ -27,12 +26,15 @@ run() {
     pushd $1
     shift 1
     array="$nvariables $@"
-    plot $options --sub $subdir -a $array
-    plot $options --sub $subdir -a $zprime
-    plot $options --sub $subdir -a $cat1
-    plot $options --sub $subdir -a $cat2
-    plot $options --sub $subdir -a $cat3
-    plot $options --sub $subdir $n_cut
+    # plot $options --sub $subdir -a $array
+    plot $options --sub $subdir -a ChNemPtFrac -b incl40
+    plot $options --sub $subdir -a ChNemPtFrac -b incl10
+    plot $options --sub $subdir -a ChNemPtFrac -b res1
+    plot $options --sub $subdir -a ChNemPtFrac -b res2
+    # plot $options --sub $subdir -a $cat1
+    # plot $options --sub $subdir -a $cat2
+    # plot $options --sub $subdir -a $cat3
+    # plot $options --sub $subdir $n_cut
     popd
 }
 
