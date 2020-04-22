@@ -65,7 +65,13 @@ public:
     float getBin(std::string name,float x) {
       TH1F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
-      return histo->GetBinContent( histo->GetXaxis()->FindBin(x) );
+      int xbin;
+      float xmax = histo->GetXaxis()->GetXmax(); float xmin = histo->GetXaxis()->GetXmin();
+      if ( x >= xmax )      xbin = histo->GetNbinsX();
+      else if ( x <= xmin ) xbin = 1;
+      else                  xbin = histo->GetXaxis()->FindBin(x);
+      
+      return histo->GetBinContent( xbin );
     }
   } th1fmap;
   

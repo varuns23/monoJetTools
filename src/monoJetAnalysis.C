@@ -823,9 +823,9 @@ void monoJetAnalysis::ApplyPrefiring(float &event_weight) {
 }
 
 void monoJetAnalysis::ApplyTriggerSF(float &event_weight) {
-  // event_weight *= trigger_sf;
-  // weight_nogen *= trigger_sf;
-  // weight_nopileup *= trigger_sf;
+  event_weight *= trigger_sf;
+  weight_nogen *= trigger_sf;
+  weight_nopileup *= trigger_sf;
 }
 
 void monoJetAnalysis::ApplyMET_TriggerSF(float &event_weight) {
