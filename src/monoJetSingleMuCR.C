@@ -1,5 +1,5 @@
-#ifndef monoJetCR_C
-#define monoJetCR_C
+#ifndef monoJet_WMCR_C
+#define monoJet_WMCR_C
 
 #include "monoJetSingleMuCR.h"
 #include "VariableBins.h"

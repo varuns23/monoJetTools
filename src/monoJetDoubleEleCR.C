@@ -1,5 +1,5 @@
-#ifndef monoJetCR_C
-#define monoJetCR_C
+#ifndef monoJet_ZECR_C
+#define monoJet_ZECR_C
 
 #include "monoJetDoubleEleCR.h"
 #include "VariableBins.h"
