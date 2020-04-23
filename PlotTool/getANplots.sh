@@ -18,23 +18,26 @@ plot() {
 
 run() {
     subdir="AN"
+    n_cut="$ncut"
     if [[ "$1" == "Single"* ]]; then
     	n_cut="$ncut h_lepMET_MT"
-    else
-    	n_cut="$ncut"
+    fi
+    run_options="$options"
+    if [[ "$1" == "SignalRegion" ]]; then
+	run_options="$options --blinded"
     fi
     pushd $1
     shift 1
     array="$nvariables $@"
-    # plot $options --sub $subdir -a $array
-    plot $options --sub $subdir -a ChNemPtFrac -b incl40
-    plot $options --sub $subdir -a ChNemPtFrac -b incl10
-    plot $options --sub $subdir -a ChNemPtFrac -b res1
-    plot $options --sub $subdir -a ChNemPtFrac -b res2
-    # plot $options --sub $subdir -a $cat1
-    # plot $options --sub $subdir -a $cat2
-    # plot $options --sub $subdir -a $cat3
-    # plot $options --sub $subdir $n_cut
+    # plot $run_options --sub $subdir -a $array
+    plot $run_options --sub $subdir -a ChNemPtFrac -b incl40
+    plot $run_options --sub $subdir -a ChNemPtFrac -b incl10
+    plot $run_options --sub $subdir -a ChNemPtFrac -b res1
+    plot $run_options --sub $subdir -a ChNemPtFrac -b res2
+    # plot $run_options --sub $subdir -a $cat1
+    # plot $run_options --sub $subdir -a $cat2
+    # plot $run_options --sub $subdir -a $cat3
+    # plot $run_options --sub $subdir $n_cut
     popd
 }
 

@@ -74,13 +74,14 @@ def GetRegion():
     region = checkdir(dirname)
     if region != None: return region
     
-    if not os.path.isfile('postpath.txt'): return
+    if not os.path.isfile('postpath.txt'): return "SignalRegion"
     
     with open('postpath.txt') as f: postpath = f.read().strip()
     cwd = os.getcwd(); os.chdir(postpath)
     dirname = os.path.realpath( os.getcwd() + '/../' )
     region = checkdir(dirname)
     if region != None: return region
+    return "SignalRegion"
 def GetMCxsec(filenames,xsecMap):
     return { fname:xsecMap[fname] for fname in filenames }
 

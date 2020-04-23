@@ -581,6 +581,24 @@ vector<int> monoJetAnalysis::getTightEle(vector<int> looselist,float elePtCut,fl
   return ele_cands;
 }
 
+float monoJetAnalysis::getLooseEleSF(int lepindex) {
+  float eta = eleSCEta->at(lepindex); float pt = eleCalibEt->at(lepindex);
+  float reco_sf = th2fmap.getBin("ele_reco",eta,pt);
+  float looseID_sf = th2fmap.getBin("ele_id_loose",eta,pt);
+  if ( YEAR == 2017 && pt < 20 )
+    reco_sf = th2fmap.getBin("ele_reco_pt_lt_20",eta,pt);
+  return reco_sf*looseID_sf;
+}
+
+float monoJetAnalysis::getTightEleSF(int lepindex) {
+  float eta = eleSCEta->at(lepindex); float pt = eleCalibEt->at(lepindex);
+  float reco_sf = th2fmap.getBin("ele_reco",eta,pt);
+  float tightID_sf = th2fmap.getBin("ele_id_tight",eta,pt);
+  if ( YEAR == 2017 && pt < 20 )
+    reco_sf = th2fmap.getBin("ele_reco_pt_lt_20",eta,pt);
+  return reco_sf*tightID_sf;
+}
+
 vector<int> monoJetAnalysis::getLooseMu(float muPtCut,float muEtaCut){
   vector<int> mu_cands;
   mu_cands.clear();
@@ -641,6 +659,24 @@ vector<int> monoJetAnalysis::getTightMu(vector<int> looselist,float muPtCut,floa
   }
 
   return mu_cands;
+}
+
+float monoJetAnalysis::getLooseMuSF(int lepindex) {
+  float pt = muPt->at(lepindex); float abseta = fabs(muEta->at(lepindex));
+  
+  float looseID_sf = th2fmap.getBin("muon_id_loose",pt,abseta);
+  float looseISO_sf = th2fmap.getBin("muon_iso_loose",pt,abseta);
+
+  return looseID_sf * looseISO_sf;
+}
+
+float monoJetAnalysis::getTightMuSF(int lepindex) {
+  float pt = muPt->at(lepindex); float abseta = fabs(muEta->at(lepindex));
+  
+  float tightID_sf = th2fmap.getBin("muon_id_tight",pt,abseta);
+  float tightISO_sf = th2fmap.getBin("muon_iso_tight",pt,abseta);
+
+  return tightID_sf * tightISO_sf;
 }
 
 vector<int> monoJetAnalysis::getLoosePho(float phoPtCut,float phoEtaCut){
@@ -747,6 +783,12 @@ vector<int> monoJetAnalysis::tau_veto_looseID(int jetindex,float tauPtCut,float 
     }
   }
   return tau_cand;
+}
+
+float monoJetAnalysis::getLooseTauSF(int lepindex) {
+  float pt = tau_Pt->at(lepindex);
+  float vloose_sf = th1fmap.getBin("tau_vloose",pt);
+  return vloose_sf;
 }
 
 void monoJetAnalysis::SetBoson(int PID) {

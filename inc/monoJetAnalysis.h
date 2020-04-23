@@ -956,6 +956,8 @@ public:
   virtual vector<int> electron_veto_looseID(int jetindex,float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
   virtual vector<int> getTightEle(float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
   virtual vector<int> getTightEle(vector<int> looselist,float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
+  virtual float getLooseEleSF(int lepindex);
+  virtual float getTightEleSF(int lepindex);
   
   virtual vector<int> getLoosePho(float phoPtCut=phoLoosePtCut,float phoEtaCut=phoLooseEtaCut);
   virtual vector<int> getLoosePho(vector<int> pholist,float phoPtCut=phoLoosePtCut,float phoEtaCut=phoLooseEtaCut);
@@ -967,9 +969,12 @@ public:
   virtual vector<int> muon_veto_looseID(int jetindex,float muPtCut=muLoosePtCut,float muEtaCut=muLooseEtaCut);
   virtual vector<int> getTightMu(float muPtCut=muTightPtCut,float muEtaCut=muTightEtaCut);
   virtual vector<int> getTightMu(vector<int> looselist,float muPtCut=muTightPtCut,float muEtaCut=muTightEtaCut);
+  virtual float getLooseMuSF(int lepindex);
+  virtual float getTightMuSF(int lepindex);
   
   virtual vector<int> getLooseTau(float tauPtCut=tauLoosePtCut,float tauEtaCut=tauLooseEtaCut);
   virtual vector<int> tau_veto_looseID(int jetindex,float tauPtCut=tauLoosePtCut,float tauEtaCut=tauLooseEtaCut);
+  virtual float getLooseTauSF(int lepindex);
   
   /* Systematic Uncertainty Methods */
   virtual void QCDVariations(float event_weight);

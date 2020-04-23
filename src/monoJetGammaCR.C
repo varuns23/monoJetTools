@@ -1,5 +1,5 @@
-#ifndef monoJetCR_C
-#define monoJetCR_C
+#ifndef monoJet_GACR_C
+#define monoJet_GACR_C
 
 #include "monoJetGammaCR.h"
 #include "VariableBins.h"

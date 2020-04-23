@@ -1,5 +1,5 @@
-#ifndef monoJetCR_H
-#define monoJetCR_H
+#ifndef monoJet_ZMCR_H
+#define monoJet_ZMCR_H
 
 #include "monoJetAnalysis.h"
 
