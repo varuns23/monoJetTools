@@ -63,20 +63,14 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("nnlo_qcd",&nnlo_qcd);
   tree->Branch("trigger_sf",&trigger_sf);
   tree->Branch("recoil",&recoil);
-  tree->Branch("j1etaWidth",&j1etaWidth);
   tree->Branch("ChNemPtFrac",&ChNemPtFrac);
-  tree->Branch("OpsChCat",&OpsChCat);
-  tree->Branch("OpsChPtFrac",&OpsChPtFrac);
-  tree->Branch("OpsChGCat",&OpsChGCat);
-  tree->Branch("OpsChGPtFrac",&OpsChGPtFrac);
-  tree->Branch("NoOpsChGCat",&NoOpsChGCat);
   
-  // tree->Branch("j1pT",&j1pT);
-  // tree->Branch("j1Eta",&j1Eta);
-  // tree->Branch("j1Phi",&j1Phi);
-  // tree->Branch("nJets",&n_Jet);
-  tree->Branch("bosonPt",&bosonPt);
-  // tree->Branch("nVtx",&n_Vtx);
+  // tree->Branch("j1pT",&j1pT,"Leading Jet P_{T} (GeV)");
+  // tree->Branch("j1Eta",&j1Eta,"Leading Jet Eta");
+  // tree->Branch("j1Phi",&j1Phi,"Leading Jet Phi");
+  // tree->Branch("nJets",&nJet,"Number of Jets");
+  tree->Branch("bosonPt",&bosonPt,"Boson Pt");
+  // tree->Branch("nVtx",&nVtx,"Number of Verticies");
 }
 
 void monoJetAnalysis::BookHistos(int i,string histname) {
@@ -110,9 +104,10 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_recoil[i]         = MakeTH1F(new TH1F(Name("recoil").c_str()       ,"recoil;Recoil [GeV]"                                    ,nMetBins,MetBins));
     h_recoilPhi[i]      = MakeTH1F(new TH1F(Name("recoilPhi").c_str()    ,"recoilPhi;Recoil #phi"                                  ,nPhiBins,lPhi,uPhi));
     // Jet Info
-    h_nJets[i]          = MakeTH1F(new TH1F(Name("nJets").c_str()        ,"nJets;Number of Jets"                                   ,21,-0.5,20.5));
-    h_j1pT[i]           = MakeTH1F(new TH1F(Name("j1pT").c_str()         ,"j1pT;p_{T} of Leading Jet [GeV]"                        ,nPtBins,PtBins));
-    h_j1pTall[i]        = MakeTH1F(new TH1F(Name("j1pTall").c_str()      ,"j1pT;p_{T} of Leading Jet [GeV]"                        ,nMetAllBins,MetAllBins));
+    h_nJets[i]          = MakeTH1F(new TH1F(Name("nJets").c_str()        ,"nJets;Number of Jets"                                   ,13,-0.5,12.5));
+    h_nJetsSkim[i]      = MakeTH1F(new TH1F(Name("nJetsSkim").c_str()    ,"nJetsSkim;Number of Jets"                               ,13,-0.5,12.5));
+    h_j1pT[i]           = MakeTH1F(new TH1F(Name("j1pT").c_str()         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
+    h_j1pTall[i]        = MakeTH1F(new TH1F(Name("j1pTall").c_str()      ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nMetAllBins,MetAllBins));
     h_j1Eta[i]          = MakeTH1F(new TH1F(Name("j1Eta").c_str()        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
     h_j1Phi[i]          = MakeTH1F(new TH1F(Name("j1Phi").c_str()        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
     h_j1etaWidth[i]     = MakeTH1F(new TH1F(Name("j1etaWidth").c_str()   ,"j1etaWidth; #eta width of Leading Jet"                  ,50,0,0.25));
@@ -199,6 +194,7 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
 
   // Jet Info         ;
   h_nJets[nhist]        ->Fill(nJet,event_weight);
+  h_nJetsSkim[nhist]    ->Fill(nJetSkim,event_weight);
   int jetCand = jetindex != -1 ? jetindex : 0;
   if ( nJet > 0 ) {
     h_j1pT[nhist]         ->Fill(jetPt->at(jetCand),event_weight);
@@ -987,10 +983,9 @@ void monoJetAnalysis::initVars() {
   bosonPt = j1pT = j1Eta = j1Phi = -99;
   recoil = pfMET;
   recoilPhi = pfMETPhi;
-  n_Vtx = nVtx;
-  n_Jet = nJet;
   setJetCandList();
   setJetCand(0);
+  nJetSkim = getLooseJet().size();
 
   dpfcalo = dPFCaloMET(pfMET);
   mindPhiJetMET = dPhiJetMETmin(getLooseJet(),pfMET);
