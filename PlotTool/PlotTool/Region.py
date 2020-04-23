@@ -54,6 +54,7 @@ parser.add_argument("--normalize",help="Specify to normalize plots to unity",act
 parser.add_argument("--nlo",help="Use all available NLO samples",action="store_true",default=False)
 parser.add_argument("--postpath",help="Force path to come from postpath.txt",action="store_true",default=False)
 parser.add_argument("--verbose",help="Specify verbose level",type=int,default=0)
+parser.add_argument("--blinded",help="Disable Data from being plotted",action="store_true",default=False)
 
 class Region(object):
     def __init__(self,year=None,region=None,lumi=None,path=None,config=None,autovar=False,useMaxLumi=False,show=True):
@@ -67,7 +68,7 @@ class Region(object):
         self.autovar = autovar
         if parser.args.autovar: self.autovar = True
 
-        self.isBlinded = False
+        self.isBlinded = parser.args.blinded
 
         self.MCList = []
         for mc in self.config.mclist:
@@ -185,13 +186,17 @@ class Region(object):
         for process in proclist:
             if not self[process].open(self.config):
                 if self[process].proctype == 'data':
-                    print 'Blinded: Setting data as SumOfBkg'
                     self.isBlinded = True
                 self.processes.pop(process)
                 if process in self.SampleList: self.SampleList.remove(process)
                 if process in self.MCList: self.MCList.remove(process)
                 if hasattr(self,'SignalList') and process in self.SignalList: self.SignalList.remove(process)
-        if self.isBlinded: self.setLumi(self.max_lumi)
+        if self.isBlinded:
+            print 'Blinded: Setting data as SumOfBkg'
+            if 'Data' in self.processes:
+                self.processes.pop('Data')
+                self.SampleList.remove('Data')
+            self.setLumi(self.max_lumi)
     def initVariable(self,variable,weight,cut):
         if not hasattr(self,'first_init'):
             self.first_init = True
