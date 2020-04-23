@@ -146,7 +146,6 @@ public:
   };
   Cutflow *cutflow;
 
-  float n_Vtx;
   /* Selected Boson Variables */
   float bosonPt;
 
@@ -155,7 +154,7 @@ public:
   vector<float>* jetUnCorrPt = new vector<float>();
 
   /* Selected Jet Variables */
-  float n_Jet;
+  int nJetSkim;
   int jetindex;
   vector<int> jetCandList;
 
@@ -178,6 +177,7 @@ public:
   TH1F *h_pfMETall[maxHisto],*h_pfMET[maxHisto],*h_pfMETPhi[maxHisto],*h_recoil[maxHisto],*h_recoilall[maxHisto],*h_recoilPhi[maxHisto];      
   // Jet Info         
   TH1F *h_nJets[maxHisto],*h_j1pT[maxHisto],*h_j1pTall[maxHisto],*h_j1Eta[maxHisto],*h_j1Phi[maxHisto],*h_j1etaWidth[maxHisto],*h_j1phiWidth[maxHisto],*h_j1CHF[maxHisto],*h_j1NHF[maxHisto],*h_j1ChMult[maxHisto],*h_j1NhMult[maxHisto],*h_j1Mt[maxHisto];
+  TH1F *h_nJetsSkim[maxHisto];
   TH1F *h_j1CHFrounded[maxHisto],*h_j1NHFrounded[maxHisto];
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
