@@ -15,16 +15,19 @@ plot() {
 
 run() {
     subdir="AN"
+    n_cut="$ncut"
     if [[ "$1" == "Single"* ]]; then
     	n_cut="$ncut h_lepMET_MT"
-    else
-    	n_cut="$ncut"
+    fi
+    run_options="$options"
+    if [[ "$1" == "SignalRegion" ]]; then
+	run_options="$options --blinded"
     fi
     pushd $1
     shift 1
     array="$nvariables $@"
-    plot $options --sub $subdir -a $array $uncertainty
-    plot $options --sub $subdir $n_cut
+    plot $run_options --sub $subdir -a $array $uncertainty
+    plot $run_options --sub $subdir $n_cut
     popd
 }
 
