@@ -60,25 +60,28 @@ def plotLeptonVeto(nominal,lepveto):
         pad1.Draw(); pad1.cd();
         pad1.SetFillColor(0); pad1.SetFrameBorderMode(0); pad1.SetBorderMode(0);
         pad1.SetLeftMargin(0.15)
+        pad1.SetGridy()
         # pad1.SetBottomMargin(0.35);
 
+        upcol=kBlack
+        dncol=kBlack
         DataStyle(sf_up);
-        sf_up.SetMarkerColor(kRed)
-        up_smooth.SetLineColor(kRed)
+        sf_up.SetMarkerColor(upcol)
+        up_smooth.SetLineColor(upcol)
         up_smooth.SetLineWidth(2)
         DataStyle(sf_dn);
-        sf_dn.SetMarkerColor(kBlue)
-        dn_smooth.SetLineColor(kBlue)
+        sf_dn.SetMarkerColor(dncol)
+        dn_smooth.SetLineColor(dncol)
         dn_smooth.SetLineWidth(2)
 
         binlist = list(sf_up)[1:-1]+list(sf_dn)[1:-1]
-        # ymin = min(binlist)
-        # ymax = max(binlist)
-        # diff = ymax - ymin
-        # ymax += diff
-        # ymin -= diff
-        ymin = 0.9
-        ymax = 1.1
+        ymin = min(binlist)
+        ymax = max(binlist)
+        diff = ymax - ymin
+        ymax += diff
+        ymin -= diff
+        # ymin = 0.9
+        # ymax = 1.1
         sf_up.Draw("hist p");
         sf_up.GetYaxis().SetRangeUser(ymin,ymax);
         sf_up.GetYaxis().SetTitle("Veto SF/Hard Veto")
@@ -87,10 +90,10 @@ def plotLeptonVeto(nominal,lepveto):
         up_smooth.Draw("hist l same")
         dn_smooth.Draw("hist l same")
 
-        # leg = getLegend()
-        # leg.AddEntry(nom,"Nominal Hard Veto","pl")
-        # leg.AddEntry(veto,"%s Veto SF"%lepveto.lep,"f")
-        # leg.Draw()
+        leg = getLegend(xmax=0.75,ymin=0.7,ymax=0.9,scale=0.8)
+        leg.AddEntry(sf_up,"Nominal Correction","p")
+        leg.AddEntry(up_smooth,"Smoothed","l")
+        leg.Draw()
         
         lumi_label = '%s' % float('%.3g' % (nominal.lumi/1000.)) + " fb^{-1}"
         if (parser.args.normalize): lumi_label="Normalized"
