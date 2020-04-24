@@ -1,9 +1,6 @@
 #!/bin/sh
 set -e
-cat1="OpsChPtFrac -b incl40 -c OpsChCat"
-cat2="OpsChGPtFrac -b incl40 -c OpsChGCat"
-cat3="j1etaWidth -c NoOpsChGCat"
-nvariables='recoil pfMET recoilall pfMETall nJets j1pT j1Eta j1Phi j1CHF j1NHF j1etaWidth nVtxNoW nVtxReW dphimin metcut'
+nvariables='recoil pfMET recoilall pfMETall nJetsSkim j1etaWidth j1pT j1Eta j1Phi j1CHF j1NHF nVtxNoW nVtxReW dphimin metcut'
 singleleps='LeptonPt LeptonEta LeptonPhi lepMET_MT'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta leadingLeptonPhi subleadingLeptonEta subleadingLeptonPt subleadingLeptonPhi'
 gamma='photonPt photonEta photonPhi'
@@ -29,15 +26,12 @@ run() {
     pushd $1
     shift 1
     array="$nvariables $@"
-    # plot $run_options --sub $subdir -a $array
-    plot $run_options --sub $subdir -a ChNemPtFrac -b incl40
-    plot $run_options --sub $subdir -a ChNemPtFrac -b incl10
-    plot $run_options --sub $subdir -a ChNemPtFrac -b res1
-    plot $run_options --sub $subdir -a ChNemPtFrac -b res2
+    plot $run_options --sub $subdir -a $array
+    plot $run_options --sub $subdir -a ChNemPtFrac -b res
     # plot $run_options --sub $subdir -a $cat1
     # plot $run_options --sub $subdir -a $cat2
     # plot $run_options --sub $subdir -a $cat3
-    # plot $run_options --sub $subdir $n_cut
+    plot $run_options --sub $subdir $n_cut
     popd
 }
 
