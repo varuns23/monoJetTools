@@ -42,6 +42,7 @@ class Stats(cul.CondorUserLogStats):
     def printOut(self,label,verbose=0):
         self.total_jobs = self.pending_jobs + self.good_jobs + self.bad_jobs
         verbose_map = {
+            "-3":self.total_jobs > 0 and self.pending_jobs > 0,
             "-2":self.total_jobs > 0 and self.pending_jobs == 0,
             "-1":self.total_jobs > 0 and self.pending_jobs < self.total_jobs,
             "0" :self.total_jobs > 0 and self.pending_jobs <= self.total_jobs,
@@ -101,7 +102,7 @@ def getargs():
     parser.add_argument("-y","--year",help="Group results by year",action="store_true",default=False)
     parser.add_argument("-a","--all",help="Group all results together",action="store_true",default=False)
     parser.add_argument("-v","--verbose",help="Verbosity level (-2 = finished jobs; -1 = finished, and running jobs;" +
-                        " 0 = finished, running, and pending jobs; 1 = finished, running, pending, and empty jobs)",action='store',choices=range(-2,2),type=int,default=0)
+                        " 0 = finished, running, and pending jobs; 1 = finished, running, pending, and empty jobs)",action='store',choices=range(-3,2),type=int,default=0)
     return parser.parse_args()
 
 if __name__ == "__main__":
