@@ -41,9 +41,9 @@ def plotLeptonVeto(nominal,lepveto):
         veto = lepveto[process].histo
         sf_up=GetRatio(veto,nom)
         sf_dn=sf_up.Clone(); sf_dn.Divide(sf_up); sf_dn.Divide(sf_up);
-        up_smooth = sf_up.Clone("%sveto"%lepmap[lepveto.lep])
+        up_smooth = sf_up.Clone("%sveto_%s"%(lepmap[lepveto.lep],nominal.year))
         up_smooth.Smooth()
-        dn_smooth = sf_dn.Clone("%sveto_Down"%lepmap[lepveto.lep])
+        dn_smooth = sf_dn.Clone("%sveto_%s_Down"%(lepmap[lepveto.lep],nominal.year))
         dn_smooth.Smooth()
 
         save_sys(up_smooth,dn_smooth)
