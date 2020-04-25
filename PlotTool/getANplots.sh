@@ -20,9 +20,9 @@ run() {
     	n_cut="$ncut h_lepMET_MT"
     fi
     run_options="$options"
-    if [[ "$1" == "SignalRegion" ]]; then
-	run_options="$options --blinded"
-    fi
+    # if [[ "$1" == "SignalRegion" ]]; then
+    # 	run_options="$options --blinded"
+    # fi
     pushd $1
     shift 1
     array="$nvariables $@"
