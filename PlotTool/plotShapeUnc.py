@@ -13,10 +13,7 @@ def plotCRUnc(sample,uncname):
     if 'Gamma' in sample.region: process = 'GJets'
 
     norm = sample.processes[process].histo.Clone('norm')
-    up,dn = sample.processes[process].nuisances[uncname].GetHistos()
-
-    r_up = up.Clone('ratio_up'); r_up.Divide(norm)
-    r_dn = dn.Clone('ratio_dn'); r_dn.Divide(norm)
+    r_up,r_dn = sample.processes[process].nuisances[uncname].GetScale()
 
     c = TCanvas("c", "canvas",800,800);
     gStyle.SetOptStat(0);
@@ -151,15 +148,16 @@ def runRegion(region,args):
     print 'Running for %s' % variable
     sample.initiate(variable)
     variations = sample.variable.nuisances.keys()
-    for uncname in variations:
-        for procname in processes:
-            sample[procname].addUnc(uncname,True)
-        
+    variations = ["JER"]
         
     if sample.region == 'SignalRegion':
-        for uncname in variations: plotSRUnc(sample,uncname)
+        for uncname in variations:
+            for procname in processes: sample[procname].addUnc(uncname,True)
+            plotSRUnc(sample,uncname)
     else:
-        for uncname in variations:  plotCRUnc(sample,uncname)
+        for uncname in variations:  
+            for procname in processes: sample[procname].addUnc(uncname,True)
+            plotCRUnc(sample,uncname)
 def runAll(args):
     runRegion('SignalRegion',args)
     # for region,nhist in config.regions.items():
