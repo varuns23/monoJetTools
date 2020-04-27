@@ -2,7 +2,7 @@ from ROOT import TMath,gDirectory,TFile,gROOT,TCanvas,gPad
 from utilities import GetRootFiles,debug_hslist
 from Parser import parser
 
-parser.add_argument("--psw-file",help="suffix for psw file to use when calculating psw uncertainty",default="bin20")
+parser.add_argument("--psw-file",help="suffix for psw file to use when calculating psw uncertainty",default="res")
 
 nuisfiles = {}
 
@@ -34,13 +34,15 @@ def MakeDiff(self):
     nbins = self.norm.GetNbinsX()
     for ibin in range(1,nbins+1):
         diffUp = self.up[ibin] - self.norm[ibin]; diffDn = self.dn[ibin] - self.norm[ibin]
-        self.up[ibin] = abs(max(diffUp,diffDn))
-        self.dn[ibin] = abs(min(diffUp,diffDn))
+        self.up[ibin] = diffUp
+        self.dn[ibin] = -diffDn
 def MakeSym(self,select=max):
     nbins = self.norm.GetNbinsX()
+    sign = lambda x : (1,-1)[x < 0]
     for ibin in range(1,nbins+1):
-        self.up[ibin] = select(self.up[ibin],self.dn[ibin])
-        self.dn[ibin] = select(self.up[ibin],self.dn[ibin])
+        val = select(self.up[ibin],self.dn[ibin])
+        self.up[ibin] = sign(self.up[ibin])*val
+        self.dn[ibin] = sign(self.dn[ibin])*val
 def AddLikeNuisances(nuisances,up,dn):
     nbins = up.GetNbinsX()
     for ibin in range(1,nbins+1):
@@ -82,6 +84,7 @@ class Nuisance(object):
         self.process = process
         self.name = name
         self.norm = norm
+        self.absup,self.absdn = up,dn
         self.up,self.dn = up,dn
         self.up.SetTitle("%s_%sUp"%(process,name))
         self.dn.SetTitle("%s_%sDown"%(process,name))

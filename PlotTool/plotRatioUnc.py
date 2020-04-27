@@ -35,9 +35,13 @@ def unc_style(up,dn,color):
         hs.SetLineColor(color)
         hs.SetLineWidth(2)
 def set_bounds(up,dn,ymin,ymax):
+    binlist = list(up)[1:-1]+list(dn)[1:-1]
+    ymax = max(binlist)
+    ymin = min(binlist)
+    diff = ymax - ymin
     for hs in (up,dn):
-        hs.SetMaximum(ymax*1.5)
-        hs.SetMinimum(ymin*1.5)
+        hs.SetMaximum(ymax+0.5*diff)
+        hs.SetMinimum(ymin-0.5*diff)
 def GetStat(nuisance,stat):
     from PlotTool import AddDiffNuisances
     up = stat.norm.Clone()
@@ -98,7 +102,7 @@ def plotUnc(name,num,den,sample):
             variation = variations[name]
             nuis = tf.nuisances[variation]
             print nuis
-            up,dn = tf.nuisances[variation].GetDiff()
+            up,dn = tf.nuisances[variation].GetScaleDiff()
             unc_style(up,dn,next(coliter))
 
 
@@ -109,7 +113,7 @@ def plotUnc(name,num,den,sample):
 
             if subset in showerror:
                 stat = GetStat(nuis,tf.nuisances['Stat'])
-                stup,stdn = stat.GetDiff()
+                stup,stdn = stat.GetScaleDiff()
                 erup = up.Clone()
                 erdn = dn.Clone()
                 SetStat(erup,stup)
