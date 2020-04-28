@@ -81,37 +81,37 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     JetEnergyScale(event_weight);
     JetEnergyResolution(event_weight);
 
-    if(!getJetHEMVeto())continue;                                                                                                                             
+    if (!electron_veto(phoindex)) continue;
     fillEvent(6,event_weight);
 
-    if (!electron_veto(phoindex)) continue;
+    if (!muon_veto(phoindex)) continue;
     fillEvent(7,event_weight);
 
-    if (!muon_veto(phoindex)) continue;
-    fillEvent(8,event_weight);
-
     if (!tau_veto(phoindex)) continue;
-    fillEvent(9,event_weight);
+    fillEvent(8,event_weight);
 
     if (!bjet_veto( bjetDeepCSVCut_2018)) continue;
     vector<int> jetlist = getLooseJet();
     mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
-    fillEvent(10,event_weight);
+    fillEvent(9,event_weight);
     
     if (mindPhiJetMET <= dPhiJetMETCut) continue;
-    fillEvent(11,event_weight);
+    fillEvent(10,event_weight);
 
     
     if (dpfcalo >= metRatioCut) continue;
-    fillEvent(12,event_weight);
+    fillEvent(11,event_weight);
 
     if (recoil <= recoilCut) continue;
-    fillEvent(13,event_weight);
+    fillEvent(12,event_weight);
 
     int jetCand = getJetCand();
     if (jetCand == -1) continue;
-    setJetCand(jetCand);
+    setJetCand(jetCand);                                                                                                                          
+    fillEvent(13,event_weight);
 
+    if(!getJetHEMVeto())continue;
+    
     QCDVariations(event_weight);
     fillEvent(14,event_weight);
   }
@@ -124,7 +124,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output->cd();
   
   cutflow = new Cutflow(this,{s_TotalEvents,s_Triggers,s_OneLoosePho,s_OneTightPho,s_PhoPt230, s_METFilters,
-	s_HEMVeto, s_ElectronVeto,s_MuonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_dPFCaloMET,s_Recoil,s_JetSelection});
+	s_ElectronVeto,s_MuonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_dPFCaloMET,s_Recoil,s_JetSelection,s_HEMVeto});
 
   BookHistos(-1,"");
   for(int i = 0; i<nHisto; i++) {
@@ -154,8 +154,6 @@ void monoJetClass::fillHistos(int nhist,float event_weight) {
 }
 
 bool monoJetClass::UncLoop(float &event_weight) {
-  if(!getJetHEMVeto())return false;      
-
   if (!electron_veto(phoindex)) return false;
 
   if (!muon_veto(phoindex)) return false;
@@ -176,6 +174,9 @@ bool monoJetClass::UncLoop(float &event_weight) {
   int jetCand = getJetCand();
   if (jetCand == -1) return false;
   setJetCand(jetCand);
+  
+  if(!getJetHEMVeto())return false;      
+
   return true;
 }
 void monoJetClass::JetEnergyScale(float start_weight) {
