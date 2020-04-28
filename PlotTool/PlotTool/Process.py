@@ -101,10 +101,11 @@ class SubProcess(object):
             treeup = '%sUp' % nuisance;   
             treedn = '%sDown' % nuisance; 
             up = GetBranch('%sUp' % name,self.variable,self.treemap[treeup])
-            dn = GetBranch('%sDown' % name,self.variable,self.treemap[treeup])
+            dn = GetBranch('%sDown' % name,self.variable,self.treemap[treedn])
             return up,dn
         if isScale: up,dn = getScale()
         else:       up,dn = getShape()
+
         self.scale(histo=up); self.scale(histo=dn)
         self.nuisances[nuisance] = Nuisance(self.subprocess,nuisance,up,dn,self.histo,type="abs")
 class Process:
