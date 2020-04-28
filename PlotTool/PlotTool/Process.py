@@ -5,6 +5,8 @@ from VariableInfo import *
 from Nuisance import *
 from Parser import parser
 
+gROOT.SetBatch(1)
+        
 class SubProcess(object):
     def __init__(self,process,name,fname,xsec=None,year=None,region=None):
         self.process = process; self.subprocess = name; self.fname = fname; self.xsec = xsec; self.year = year; self.region = region
@@ -82,9 +84,9 @@ class SubProcess(object):
         dn = self.histo.Clone('%s_%s_StatDown' % (self.name,self.variable.base)); up.Reset()
         nbins = self.histo.GetNbinsX()
         for ibin in range(1,nbins+1):
-            up[ibin] = self.histo.GetBinError(ibin)
-            dn[ibin] = self.histo.GetBinError(ibin)
-        self.nuisances["Stat"] = Nuisance(self.subprocess,"Stat",up,dn,self.histo)
+            up[ibin] = self.histo[ibin] + self.histo.GetBinError(ibin)
+            dn[ibin] = self.histo[ibin] - self.histo.GetBinError(ibin)
+        self.nuisances["Stat"] = Nuisance(self.subprocess,"Stat",up,dn,self.histo,type="abs")
     def addUnc(self,nuisance):
         self.tfile.cd()
         if nuisance == 'Stat': self.addStat()
@@ -101,10 +103,11 @@ class SubProcess(object):
             treeup = '%sUp' % nuisance;   
             treedn = '%sDown' % nuisance; 
             up = GetBranch('%sUp' % name,self.variable,self.treemap[treeup])
-            dn = GetBranch('%sDown' % name,self.variable,self.treemap[treeup])
+            dn = GetBranch('%sDown' % name,self.variable,self.treemap[treedn])
             return up,dn
         if isScale: up,dn = getScale()
         else:       up,dn = getShape()
+
         self.scale(histo=up); self.scale(histo=dn)
         self.nuisances[nuisance] = Nuisance(self.subprocess,nuisance,up,dn,self.histo,type="abs")
 class Process:
@@ -180,7 +183,7 @@ class Process:
         nbins = self.histo.GetNbinsX()
         up = self.histo.Clone("%s_%s_%sUp" % (self.name,self.variable.base,nuisance)); up.Reset()
         dn = self.histo.Clone("%s_%s_%sDown" % (self.name,self.variable.base,nuisance)); dn.Reset()
-        AddLikeNuisances([subprocess.nuisances[nuisance] for subprocess in self if nuisance in subprocess.nuisances],up,dn)
+        AddLikeNuisances([subprocess.nuisances[nuisance] for subprocess in self if nuisance in subprocess.nuisances],up,dn,self.histo)
         self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo)
         if show: print self.nuisances[nuisance]
     def fullUnc(self,unclist,show=True):

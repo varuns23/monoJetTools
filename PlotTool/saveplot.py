@@ -18,7 +18,7 @@ def validHisto(hs,total=0,threshold=0.2):return hs.Integral() > threshold*total
 def validShape(up,dn):return any( up[ibin] != dn[ibin] for ibin in range(1,up.GetNbinsX()+1) ) and validHisto(up) and validHisto(dn)
 
 def SaveRegion(region,save):
-    region = Region(path=region,show=False,autovar=True)
+    region = Region(path=region,show=False,autovar=True,blinded=region=="SignalRegion")
     region.initiate(variable)
     
     if save.tfile is None: save.tfile = TFile("Systematics/%s_%s.sys.root" % (region.varname,region.year),'recreate')
@@ -63,4 +63,5 @@ def SavePlot(variable):
 if __name__ == "__main__":
     from PlotTool import parser
     parser.parse_args()
+    parser.args.no_width = True
     for variable in parser.args.argv: SavePlot(variable)

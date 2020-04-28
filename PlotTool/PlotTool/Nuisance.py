@@ -1,12 +1,15 @@
 from ROOT import TMath,gDirectory,TFile,gROOT,TCanvas,gPad
 from utilities import GetRootFiles,debug_hslist
+from Parser import parser
+
+parser.add_argument("--psw-file",help="suffix for psw file to use when calculating psw uncertainty",default="res")
 
 nuisfiles = {}
 
 def GetPSWFile():
     if "psw" in nuisfiles: return
     rootdir = GetRootFiles()
-    nuisfiles["psw"] = TFile("%s/psw/PSW_SF_bin15.root"%rootdir)
+    nuisfiles["psw"] = TFile("%s/psw/PSW_SF_%s.root"%(rootdir,parser.args.psw_file))
 def GetProcessPSW(self,nuisance):
     GetPSWFile()
     def getPSW():
@@ -31,24 +34,45 @@ def MakeDiff(self):
     nbins = self.norm.GetNbinsX()
     for ibin in range(1,nbins+1):
         diffUp = self.up[ibin] - self.norm[ibin]; diffDn = self.dn[ibin] - self.norm[ibin]
-        self.up[ibin] = abs(max(diffUp,diffDn))
-        self.dn[ibin] = abs(min(diffUp,diffDn))
+        self.up[ibin] = diffUp
+        self.dn[ibin] = -diffDn
+def MakeScale(self):
+    self.up.Divide(self.norm)
+    self.dn.Divide(self.norm)
 def MakeSym(self,select=max):
     nbins = self.norm.GetNbinsX()
+    sign = lambda x : (1,-1)[x < 0]
     for ibin in range(1,nbins+1):
-        self.up[ibin] = select(self.up[ibin],self.dn[ibin])
-        self.dn[ibin] = select(self.up[ibin],self.dn[ibin])
-def AddLikeNuisances(nuisances,up,dn):
-    nbins = up.GetNbinsX()
-    for ibin in range(1,nbins+1):
-        up[ibin] = TMath.Sqrt( sum( nuisance.up[ibin]**2 for nuisance in nuisances ) )
-        dn[ibin] = TMath.Sqrt( sum( nuisance.dn[ibin]**2 for nuisance in nuisances ) )
+        val = select(self.up[ibin]-1,self.dn[ibin]-1)
+        signup = sign(self.up[ibin]-1)
+        signdn = sign(self.dn[ibin]-1)
+
+        if signdn == signup:
+            signdn = -signup
+        self.up[ibin] = signup*val+1
+        self.dn[ibin] = signdn*val+1
+def AddLikeNuisances(nuisances,up,dn,norm=None):
+    # nbins = up.GetNbinsX()
+    # for ibin in range(1,nbins+1):
+    #     up[ibin] = TMath.Sqrt( sum( nuisance.up[ibin]**2 for nuisance in nuisances ) )
+    #     dn[ibin] = TMath.Sqrt( sum( nuisance.dn[ibin]**2 for nuisance in nuisances ) )
+    hslist = []
+    for nuisance in nuisances:
+        u,d = nuisance.GetHistos()
+        n = nuisance.norm.Clone()
+        hslist.append( (u,d,n) )
+    up.Reset(); dn.Reset()
+    for hs in hslist:
+        u,d,n = hs
+        up.Add(u); dn.Add(d)
+    if norm is not None:
+        up.Divide(norm)
+        dn.Divide(norm)
 def AddDiffNuisances(nuisances,up,dn,norm):
     nbins = up.GetNbinsX()
     for ibin in range(1,nbins+1):
-        if norm[ibin] == 0: continue
-        up[ibin] = norm[ibin] * TMath.Sqrt( sum( (nuisance.up[ibin]/norm[ibin])**2 for nuisance in nuisances) )
-        dn[ibin] = norm[ibin] * TMath.Sqrt( sum( (nuisance.dn[ibin]/norm[ibin])**2 for nuisance in nuisances) )
+        up[ibin] = 1 + TMath.Sqrt( sum( ( (nuisance.up[ibin]*nuisance.norm[ibin] - nuisance.norm[ibin])/norm[ibin] )**2 for nuisance in nuisances) )
+        dn[ibin] = 1 - TMath.Sqrt( sum( ( (nuisance.dn[ibin]*nuisance.norm[ibin] - nuisance.norm[ibin])/norm[ibin] )**2 for nuisance in nuisances) )
 def GetNuisanceList(tfile,dirname):
     tfile.cd(dirname)
     shapelist = [ key.GetName().replace('Up','') for key in gDirectory.GetListOfKeys() if 'Up' in key.GetName() ]
@@ -75,19 +99,21 @@ def GetScaleWeight(nuisance):
     return nuisance+'%s'
         
 class Nuisance(object):
-    def __init__(self,process,name,up,dn,norm,type="diff",sym=True):
+    def __init__(self,process,name,up,dn,norm,type="scale",sym=True):
         self.process = process
         self.name = name
         self.norm = norm
         self.up,self.dn = up,dn
         self.up.SetTitle("%s_%sUp"%(process,name))
         self.dn.SetTitle("%s_%sDown"%(process,name))
-        if type == "abs": MakeDiff(self)
+        
+        if type == "abs": MakeScale(self)
         if sym: MakeSym(self)
     def Integral(self):
         nbins = self.norm.GetNbinsX()
-        intUp = sum( self.norm[ibin] + self.up[ibin] for ibin in range(1,nbins+1) )
-        intDn = sum( self.norm[ibin] - self.dn[ibin] for ibin in range(1,nbins+1) )
+        hsup,hsdn = self.GetHistos()
+        intUp = hsup.Integral()
+        intDn = hsdn.Integral()
         return intUp,intDn
     def VarDiff(self):
         norm = self.norm.Integral()
@@ -96,29 +122,39 @@ class Nuisance(object):
         vardn = (dn-norm)/norm
         return varup,vardn
     def GetHistos(self):
-        up = self.up.Clone(); dn = self.dn.Clone()
-        nbins = self.norm.GetNbinsX()
-        for ibin in range(1,nbins+1):
-            up[ibin] = self.norm[ibin] + self.up[ibin]
-            dn[ibin] = self.norm[ibin] - self.dn[ibin]
+        # up = self.up.Clone(); dn = self.dn.Clone()
+        # nbins = self.norm.GetNbinsX()
+        # for ibin in range(1,nbins+1):
+        #     up[ibin] = self.norm[ibin] + self.up[ibin]
+        #     dn[ibin] = self.norm[ibin] - self.dn[ibin]
+        # return up,dn
+        up = self.norm.Clone()
+        dn = self.norm.Clone()
+        up.Multiply(self.up)
+        dn.Multiply(self.dn)
         return up,dn
     def GetDiff(self):
         up = self.up.Clone(); dn = self.dn.Clone()
-        dn.Scale(-1)
+        nbins = self.norm.GetNbinsX()
+        for ibin in range(1,nbins+1):
+            up[ibin] = self.norm[ibin]*(self.up[ibin] - 1)
+            dn[ibin] = self.norm[ibin]*(self.dn[ibin] - 1)
         return up,dn
     def GetScale(self):
         up = self.up.Clone(); dn = self.dn.Clone()
-        nbins = self.norm.GetNbinsX()
-        for ibin in range(1,nbins+1):
-            up[ibin] =  (self.up[ibin])/self.norm[ibin]
-            dn[ibin] = -(self.dn[ibin])/self.norm[ibin]
+        # nbins = self.norm.GetNbinsX()
+        # for ibin in range(1,nbins+1):
+        #     up[ibin] =  (self.up[ibin])/self.norm[ibin]
+        #     dn[ibin] = -(self.dn[ibin])/self.norm[ibin]
         return up,dn
     def GetScaleDiff(self):
         up = self.up.Clone(); dn = self.dn.Clone()
         nbins = self.norm.GetNbinsX()
         for ibin in range(1,nbins+1):
-            up[ibin] =  (self.norm[ibin] + self.up[ibin])/self.norm[ibin]
-            dn[ibin] =  (self.norm[ibin] - self.dn[ibin])/self.norm[ibin]
+            # up[ibin] =  (self.norm[ibin] + self.up[ibin])/self.norm[ibin]
+            # dn[ibin] =  (self.norm[ibin] - self.dn[ibin])/self.norm[ibin]
+            up[ibin] =  self.up[ibin] - 1
+            dn[ibin] =  self.dn[ibin] - 1
         return up,dn
     def __str__(self):
         varup,vardn = self.VarDiff()
@@ -126,8 +162,8 @@ class Nuisance(object):
     def printByBin(self):
         string = str(self)
         for ibin in range(1,self.norm.GetNbinsX()+1):
-            varup = self.up[ibin]/self.norm[ibin]
-            vardn = -self.dn[ibin]/self.norm[ibin]
+            varup = self.up[ibin] - 1
+            vardn = self.dn[ibin] - 1
             string += '{0:<10}'.format('\n%i bin:' % ibin) + '%+.1e/%+.1e' % (varup,vardn)
         print string
     def copy(self,process=None):

@@ -51,15 +51,15 @@ def AddNuisance(tf,nuisance,output):
     output.cd()
     if not correlation[nuisance]:
         num,den = syst
-        numup,numdn = num.GetScaleDiff()
+        numup,numdn = num.GetScale()
         numup.Write("%s_%s1_met"%(tf.name,name))
         numdn.Write("%s_%s1_met_Down"%(tf.name,name))
 
-        denup,dendn = den.GetScaleDiff()
+        denup,dendn = den.GetScale()
         denup.Write("%s_%s2_met"%(tf.name,name))
         dendn.Write("%s_%s2_met_Down"%(tf.name,name))
     else:
-        up,dn = syst.GetScaleDiff()
+        up,dn = syst.GetScale()
         up.Write("%s_%s_met"%(tf.name,name))
         dn.Write("%s_%s_met_Down"%(tf.name,name))
     # exit()
