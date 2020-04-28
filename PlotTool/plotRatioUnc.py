@@ -97,8 +97,6 @@ def plotUnc(name,num,den,sample):
             up,dn = tf.nuisances[variation].GetScaleDiff()
             unc_style(up,dn,next(coliter))
 
-
-
             up.GetYaxis().SetTitle("%s %s Uncertainty" % (tfmap[tf.name],nuisance))
 
             up.Draw("axis same")
