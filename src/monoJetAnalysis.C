@@ -150,6 +150,8 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_MiscPercCons[i]   = MakeTH1F(new TH1F(Name("MiscPercCons").c_str() ,"MiscPercCons;Misc Constituent Percent"                  ,50,0,1.1));
     h_MiscPFPt[i]       = MakeTH1F(new TH1F(Name("MiscPFPt").c_str()     ,"MiscPFPt;Misc Constituent P_{T}"                        ,nPt123Bins,Pt123Bins));
     h_MiscPercPFPt[i]   = MakeTH1F(new TH1F(Name("MiscPercPFPt").c_str() ,"MiscPercPFPt; Misc Constituent P_{T} Percentage"        ,50,0,1.1));
+    
+    h_j1EtaPhi[i]       = new TH2F(Name("j1EtaPhi").c_str()              ,"j1EtaPhi; Leading Jet #eta; Leading Jet #phi"           ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
   }
 }
 
@@ -242,6 +244,8 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_MiscPercCons[nhist] ->Fill(MiscPFCands/(float)TotalPFCands,event_weight); 
     h_MiscPFPt[nhist]     ->Fill(pfHadronPt[3],event_weight);                      
     h_MiscPercPFPt[nhist] ->Fill(pfHadronPt[3]/j1pT,event_weight);
+
+    h_j1EtaPhi[nhist]     ->Fill(jetEta->at(jetCand),jetPhi->at(jetCand),event_weight);
   }
 }
 

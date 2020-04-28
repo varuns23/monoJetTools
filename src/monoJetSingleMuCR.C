@@ -32,6 +32,8 @@ void monoJetSingleMuCR::BookHistos(int i,string histname) {
     h_LeptonEta[i] = MakeTH1F(new TH1F(Name("LeptonEta").c_str(),"LeptonEta;Lepton #eta" ,nEtaBins,lEta,uEta));
     h_LeptonPhi[i] = MakeTH1F(new TH1F(Name("LeptonPhi").c_str(),"LeptonPhi;Lepton #phi" ,nPhiBins,lPhi,uPhi));
     h_lepMET_MT[i] = MakeTH1F(new TH1F(Name("lepMET_MT").c_str(),"lepMET_MT; transverse mass of the lepton-Emiss system",40,0,400));
+    
+    h_LeptonEtaPhi[i] = new TH2F(Name("LeptonEtaPhi").c_str(),"LeptonEtaPhi;Lepton #eta;Lepton #phi" ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
   }
 }
 
@@ -47,6 +49,8 @@ void monoJetSingleMuCR::fillHistos(int nhist,float event_weight) {
     h_LeptonEta[nhist]->Fill(lepton_eta,event_weight);
     h_LeptonPhi[nhist]->Fill(lepton_phi,event_weight);
     h_lepMET_MT[nhist]->Fill(lepMET_mt,event_weight);
+    
+    h_LeptonEtaPhi[nhist]->Fill(lepton_eta,lepton_phi,event_weight);
   }
 }
 

@@ -62,6 +62,8 @@ def SavePlot(variable):
 ################################################################################
 if __name__ == "__main__":
     from PlotTool import parser
+    import sys
+    if "--no-width" not in sys.argv: sys.argv.append("--no-width")
     parser.parse_args()
     parser.args.no_width = True
     for variable in parser.args.argv: SavePlot(variable)

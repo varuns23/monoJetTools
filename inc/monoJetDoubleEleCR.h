@@ -12,6 +12,8 @@ public:
   float subleadingLepton_pt,subleadingLepton_eta,subleadingLepton_phi;
   float e1reco_sf,e2reco_sf,looseID_sf,tightID_sf;
   TH1F *h_leadingLeptonPt[maxHisto], *h_leadingLeptonEta[maxHisto],*h_leadingLeptonPhi[maxHisto],*h_subleadingLeptonPt[maxHisto],*h_subleadingLeptonEta[maxHisto], *h_subleadingLeptonPhi[maxHisto],*h_dileptonPt[maxHisto],*h_dileptonM[maxHisto],*h_dileptonMall[maxHisto];
+
+  TH2F *h_leadingLeptonEtaPhi[maxHisto],*h_subleadingLeptonEtaPhi[maxHisto];
   
   virtual void BookHistos(int i,std::string histname);
   virtual void fillHistos(int nhist,float event_weight);

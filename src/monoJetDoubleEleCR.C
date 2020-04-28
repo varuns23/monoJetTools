@@ -48,6 +48,9 @@ void monoJetDoubleEleCR::BookHistos(int i,string histname) {
     h_dileptonPt[i]          = MakeTH1F(new TH1F(Name("dileptonPt").c_str()         ,"dileptonPt;Z P_{T} (GeV)"                         ,30,0.,1500.));              
     h_dileptonM[i]           = MakeTH1F(new TH1F(Name("dileptonM").c_str()          ,"dileptonM;Z Mass (GeV)"                           ,24,60.,120.));
     h_dileptonMall[i]        = MakeTH1F(new TH1F(Name("dileptonMall").c_str()       ,"dileptonM;Z Mass (GeV)"                           ,50,30.,200.));
+    
+    h_leadingLeptonEtaPhi[i] = new TH2F(Name("leadingLeptonEtaPhi").c_str()   ,"leadingLeptonEtaPhi;Leading Lepton #eta;Leading Lepton #phi"             ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);  
+    h_subleadingLeptonEtaPhi[i] = new TH2F(Name("subleadingLeptonEtaPhi").c_str()   ,"subleadingLeptonEtaPhi;Subleading Lepton #eta;Subleading Lepton #phi"             ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);  
   }
 }
 
@@ -63,6 +66,9 @@ void monoJetDoubleEleCR::fillHistos(int nhist,float event_weight) {
     h_dileptonPt[nhist]         ->Fill(dilepton_pt,event_weight);
     h_dileptonM[nhist]          ->Fill(dilepton_mass,event_weight);
     h_dileptonMall[nhist]       ->Fill(dilepton_mass,event_weight);
+    
+    h_leadingLeptonEtaPhi[nhist]   ->Fill(leadingLepton_eta,leadingLepton_phi,event_weight);
+    h_subleadingLeptonEtaPhi[nhist]   ->Fill(subleadingLepton_eta,subleadingLepton_phi,event_weight);
   }
 }
 

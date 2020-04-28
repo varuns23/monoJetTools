@@ -206,6 +206,8 @@ public:
   // Misc Info        
   TH1F *h_MiscPFCands[maxHisto],*h_MiscPercCons[maxHisto],*h_MiscPFPt[maxHisto],*h_MiscPercPFPt[maxHisto]; 
 
+  TH2F *h_j1EtaPhi[maxHisto];
+
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
   // Declaration of leaf types
