@@ -57,7 +57,7 @@ parser.add_argument("--verbose",help="Specify verbose level",type=int,default=0)
 parser.add_argument("--blinded",help="Disable Data from being plotted",action="store_true",default=False)
 
 class Region(object):
-    def __init__(self,year=None,region=None,lumi=None,path=None,config=None,autovar=False,useMaxLumi=False,show=True):
+    def __init__(self,year=None,region=None,lumi=None,path=None,config=None,autovar=False,useMaxLumi=False,show=True,blinded=None):
         parser.parse_args()
         self.year = year; self.region = region; self.show = show
         self.setPath(path)
@@ -68,7 +68,9 @@ class Region(object):
         self.autovar = autovar
         if parser.args.autovar: self.autovar = True
 
-        self.isBlinded = parser.args.blinded
+        self.isBlinded = blinded
+        if self.isBlinded is None:
+            self.isBlinded = parser.args.blinded
 
         self.MCList = []
         for mc in self.config.mclist:
