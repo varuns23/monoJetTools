@@ -13,6 +13,8 @@ public:
   float tightID_sf,csev_sf;
 
   TH1F *h_PhotonPt[maxHisto], *h_PhotonEta[maxHisto],*h_PhotonPhi[maxHisto],*h_PhotonSIeIe[maxHisto];
+
+  TH2F *h_PhotonEtaPhi[maxHisto];
   
   virtual void BookHistos(int i,std::string histname);
   virtual void fillHistos(int nhist,float event_weight);

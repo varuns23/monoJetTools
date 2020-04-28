@@ -12,6 +12,8 @@ public:
 
   TH1F *h_lepMET_MTBefore;
   TH1F *h_LeptonPt[maxHisto], *h_LeptonEta[maxHisto],*h_LeptonPhi[maxHisto],*h_lepMET_MT[maxHisto];
+
+  TH2F *h_LeptonEtaPhi[maxHisto];
   
   virtual void BookHistos(int i,std::string histname);
   virtual void fillHistos(int nhist,float event_weight);

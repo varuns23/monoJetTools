@@ -118,6 +118,7 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_j1NhMult[i]       = MakeTH1F(new TH1F(Name("j1NhMult").c_str()     ,"j1NhMult;Neutral Multiplicity of Leading Jet"           ,25,0,50)); 
     h_j1Mt[i]           = MakeTH1F(new TH1F(Name("j1Mt").c_str()         ,"j1Mt;M_{T} of Leading Jet (GeV)"                        ,nMtBins,MtBins));
     
+    h_j1EtaPhi[i]       = new TH2F(Name("j1EtaPhi").c_str()              ,"j1EtaPhi; Leading Jet #eta; Leading Jet #phi"           ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
   }
 }
 
@@ -178,6 +179,8 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_j1ChMult[nhist]     ->Fill(jetNChargedHad->at(jetCand),event_weight);
     h_j1NhMult[nhist]     ->Fill(jetNNeutralHad->at(jetCand),event_weight);
     h_j1Mt[nhist]         ->Fill(jetMt->at(jetCand),event_weight);
+
+    h_j1EtaPhi[nhist]     ->Fill(jetEta->at(jetCand),jetPhi->at(jetCand),event_weight);
   }
 }
 

@@ -33,6 +33,8 @@ void monoJetGammaCR::BookHistos(int i,string histname) {
     h_PhotonEta[i]   = MakeTH1F(new TH1F(Name("photonEta").c_str(),"PhotonEta;Photon #eta" ,nEtaBins,lEta,uEta));
     h_PhotonPhi[i]   = MakeTH1F(new TH1F(Name("photonPhi").c_str(),"PhotonPhi;Photon #phi" ,nPhiBins,lPhi,uPhi));
     h_PhotonSIeIe[i] = MakeTH1F(new TH1F(Name("photonSigmaIEtaIEta").c_str(),"PhotonSigmaIEtaIEta;Photon #sigma_{i#eta i#eta}",20,0,0.05));
+    
+    h_PhotonEtaPhi[i]   = new TH2F(Name("photonEtaPhi").c_str(),"PhotonEtaPhi;Photon #eta;Photon #phi" ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
   }
 }
 
@@ -43,6 +45,8 @@ void monoJetGammaCR::fillHistos(int nhist,float event_weight) {
     h_PhotonEta[nhist]->Fill(photon_eta,event_weight);
     h_PhotonPhi[nhist]->Fill(photon_phi,event_weight);
     h_PhotonSIeIe[nhist]->Fill(photon_sieie,event_weight);
+
+    h_PhotonEtaPhi[nhist]->Fill(photon_eta,photon_phi,event_weight);
   }
 }
 
