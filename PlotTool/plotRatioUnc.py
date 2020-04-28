@@ -34,15 +34,6 @@ def unc_style(up,dn,color):
         hs.SetTitle("")
         hs.SetLineColor(color)
         hs.SetLineWidth(2)
-def set_bounds(hslist):
-    binlist = []
-    for hs in hslist: binlist += list(hs)[1:-1]
-    ymax = max(binlist)
-    ymin = min(binlist)
-    diff = ymax - ymin
-    for hs in hslist:
-        hs.SetMaximum(ymax+0.5*diff)
-        hs.SetMinimum(ymin-0.5*diff)
 def GetStat(nuisance,stat):
     from PlotTool import AddDiffNuisances
     up = stat.norm.Clone()
@@ -128,7 +119,7 @@ def plotUnc(name,num,den,sample):
         
         histlist = []
         for hslist in hsmap.values(): histlist += hslist
-        set_bounds(hslist)
+        SetBounds(hslist)
 
         leg = getLegend(xmin=0.2,xmax=0.4,ymin=0.7,ymax=0.9)
         corr_label = " Correlated" if correlated else " Uncorrelated"

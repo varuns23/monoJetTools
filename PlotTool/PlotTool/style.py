@@ -153,3 +153,13 @@ def makeYaxis(ymin,ymax,xmin,ndiv,name=None):
     yaxis.CenterTitle()
     return yaxis
 ###################################################################
+
+def SetBounds(hslist,scale=0.1):
+    binlist = []
+    for hs in hslist: binlist += list(hs)[1:-1]
+    ymax = max(binlist)
+    ymin = min(binlist)
+    diff = ymax - ymin
+    for hs in hslist: hs.GetYaxis().SetRangeUser(ymin-scale*diff,ymax+scale*diff)
+    return ymin,ymax,diff
+###################################################################
