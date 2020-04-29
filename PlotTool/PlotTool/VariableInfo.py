@@ -129,9 +129,9 @@ class VariableInfo:
         self.title = self.template.GetTitle()
         self.xaxis_title = self.template.GetXaxis().GetTitle()
         self.yaxis_title = self.template.GetYaxis().GetTitle()
-        
-        if parser.args.no_width: self.scaleWidth = False
-        else:
+
+        self.scaleWidth = False
+        if not parser.args.no_width and self.template.ClassName() == "TH1":
             self.scaleWidth = any( "%.3f" % self.template.GetBinWidth(ibin) != "%.3f" % self.template.GetBinWidth(ibin+1) for ibin in range(1,self.template.GetNbinsX()) )
         
     def initGlobal(self,tfile,variable):

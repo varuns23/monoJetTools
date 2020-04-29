@@ -71,6 +71,9 @@ def AddLikeNuisances(nuisances,up,dn,norm=None):
 def AddDiffNuisances(nuisances,up,dn,norm):
     nbins = up.GetNbinsX()
     for ibin in range(1,nbins+1):
+        if norm[ibin] == 0:
+            up[ibin],dn[ibin] = 1,1
+            continue
         up[ibin] = 1 + TMath.Sqrt( sum( ( (nuisance.up[ibin]*nuisance.norm[ibin] - nuisance.norm[ibin])/norm[ibin] )**2 for nuisance in nuisances) )
         dn[ibin] = 1 - TMath.Sqrt( sum( ( (nuisance.dn[ibin]*nuisance.norm[ibin] - nuisance.norm[ibin])/norm[ibin] )**2 for nuisance in nuisances) )
 def GetNuisanceList(tfile,dirname):
