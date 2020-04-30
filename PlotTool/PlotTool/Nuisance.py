@@ -105,10 +105,8 @@ class Nuisance(object):
     def __init__(self,process,name,up,dn,norm,type="scale",sym=True):
         self.process = process
         self.name = name
-        self.norm = norm
-        self.up,self.dn = up,dn
-        self.up.SetTitle("%s_%sUp"%(process,name))
-        self.dn.SetTitle("%s_%sDown"%(process,name))
+        self.norm = norm.Clone()
+        self.up,self.dn = up.Clone("%s_%sUp"%(process,name)),dn.Clone("%s_%sDown"%(process,name))
         
         if type == "abs": MakeScale(self)
         if sym: MakeSym(self)
