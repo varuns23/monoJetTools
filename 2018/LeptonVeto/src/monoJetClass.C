@@ -67,14 +67,18 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     vector<int> elelist = getLooseEle();
     if (elelist.size() > 0) {
       eleveto_sf = 1 - getLooseEleSF(elelist[0]);
-      event_weight *= eleveto_sf;
+      eleveto_sfUp = 1 - getLooseEleSF(elelist[0],"up");
+      eleveto_sfDown = 1 - getLooseEleSF(elelist[0],"down");
+      // event_weight *= eleveto_sf;
     }
     fillEvent(3,event_weight);
     
     vector<int> mulist = getLooseMu();
     if (mulist.size() > 0) {
       muveto_sf = 1 - getLooseMuSF(mulist[0]);
-      event_weight *= muveto_sf;
+      muveto_sfUp = 1 - getLooseMuSF(mulist[0],"up");
+      muveto_sfDown = 1 - getLooseMuSF(mulist[0],"down");
+      // event_weight *= muveto_sf;
     }
     fillEvent(4,event_weight);
 
@@ -84,7 +88,9 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     vector<int> taulist = getLooseTau();
     if (taulist.size() > 0) {
       tauveto_sf = 1 - getLooseTauSF(taulist[0]);
-      event_weight *= tauveto_sf;
+      tauveto_sfUp = 1 - getLooseTauSF(taulist[0],"up");
+      tauveto_sfDown = 1 - getLooseTauSF(taulist[0],"down");
+      // event_weight *= tauveto_sf;
     }
     fillEvent(6,event_weight);
  

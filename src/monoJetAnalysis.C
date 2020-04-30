@@ -427,12 +427,27 @@ vector<int> monoJetAnalysis::getTightEle(vector<int> looselist,float elePtCut,fl
   return ele_cands;
 }
 
-float monoJetAnalysis::getLooseEleSF(int lepindex) {
+float monoJetAnalysis::getLooseEleSF(int lepindex,string variation) {
   float eta = eleSCEta->at(lepindex); float pt = eleCalibEt->at(lepindex);
   float reco_sf = th2fmap.getBin("ele_reco",eta,pt);
   float looseID_sf = th2fmap.getBin("ele_id_loose",eta,pt);
   if ( YEAR == 2017 && pt < 20 )
     reco_sf = th2fmap.getBin("ele_reco_pt_lt_20",eta,pt);
+
+  if ( variation == "up" ) {
+    looseID_sf += th2fmap.getBinError("ele_id_loose",eta,pt);
+    if ( YEAR == 2017 && pt < 20 )
+      reco_sf += th2fmap.getBinError("ele_reco_pt_lt_20",eta,pt);
+    else
+      reco_sf += th2fmap.getBinError("ele_reco",eta,pt);
+  } if ( variation == "down" ) {
+    looseID_sf -= th2fmap.getBinError("ele_id_loose",eta,pt);
+    if ( YEAR == 2017 && pt < 20 )
+      reco_sf -= th2fmap.getBinError("ele_reco_pt_lt_20",eta,pt);
+    else
+      reco_sf -= th2fmap.getBinError("ele_reco",eta,pt);
+  }
+  
   return reco_sf*looseID_sf;
 }
 
@@ -507,11 +522,19 @@ vector<int> monoJetAnalysis::getTightMu(vector<int> looselist,float muPtCut,floa
   return mu_cands;
 }
 
-float monoJetAnalysis::getLooseMuSF(int lepindex) {
+float monoJetAnalysis::getLooseMuSF(int lepindex,string variation) {
   float pt = muPt->at(lepindex); float abseta = fabs(muEta->at(lepindex));
   
   float looseID_sf = th2fmap.getBin("muon_id_loose",pt,abseta);
   float looseISO_sf = th2fmap.getBin("muon_iso_loose",pt,abseta);
+
+  if (variation == "up") {
+    looseID_sf  += th2fmap.getBinError("muon_id_loose",pt,abseta);
+    looseISO_sf += th2fmap.getBinError("muon_iso_loose",pt,abseta);
+  } else if (variation == "down") {
+    looseID_sf  -= th2fmap.getBinError("muon_id_loose",pt,abseta);
+    looseISO_sf -= th2fmap.getBinError("muon_iso_loose",pt,abseta);
+  }
 
   return looseID_sf * looseISO_sf;
 }
@@ -631,9 +654,16 @@ vector<int> monoJetAnalysis::tau_veto_looseID(int jetindex,float tauPtCut,float 
   return tau_cand;
 }
 
-float monoJetAnalysis::getLooseTauSF(int lepindex) {
+float monoJetAnalysis::getLooseTauSF(int lepindex,string variation) {
   float pt = tau_Pt->at(lepindex);
   float vloose_sf = th1fmap.getBin("tau_vloose",pt);
+
+  if (variation == "up") {
+    vloose_sf = th1fmap.getBin("tau_vloose_up",pt);
+  } else if (variation == "down") {
+    vloose_sf = th1fmap.getBin("tau_vloose_down",pt);
+  }
+  
   return vloose_sf;
 }
 

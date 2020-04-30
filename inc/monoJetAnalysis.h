@@ -62,7 +62,7 @@ public:
   // Dataset sample;
   
   struct TH1FCollection : public std::map<std::string,TH1F*> {
-    float getBin(std::string name,float x) {
+    int getBinN(std::string name,float x) {
       TH1F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin;
@@ -70,27 +70,56 @@ public:
       if ( x >= xmax )      xbin = histo->GetNbinsX();
       else if ( x <= xmin ) xbin = 1;
       else                  xbin = histo->GetXaxis()->FindBin(x);
-      
+      return xbin;
+    }
+    float getBin(std::string name,float x) {
+      TH1F* histo = (*this)[name];
+      if ( histo == NULL ) cout << name << " is null" << endl;
+      int xbin = getBinN(name,x);
       return histo->GetBinContent( xbin );
+    }
+    float getBinError(std::string name,float x) {
+      TH1F* histo = (*this)[name];
+      if ( histo == NULL ) cout << name << " is null" << endl;
+      int xbin = getBinN(name,x);
+      return histo->GetBinError(xbin);
     }
   } th1fmap;
   
   struct TH2FCollection : public std::map<std::string,TH2F*> {
-    float getBin(std::string name,float x,float y) {
+    int getBinX(std::string name,float x) {
       TH2F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
-      int xbin,ybin;
+      int xbin;
       float xmax = histo->GetXaxis()->GetXmax(); float xmin = histo->GetXaxis()->GetXmin();
-      float ymax = histo->GetYaxis()->GetXmax(); float ymin = histo->GetYaxis()->GetXmin();
       if ( x >= xmax )      xbin = histo->GetNbinsX();
       else if ( x <= xmin ) xbin = 1;
       else                  xbin = histo->GetXaxis()->FindBin(x);
-
+      return xbin;
+    }
+    int getBinY(std::string name,float y) {
+      TH2F* histo = (*this)[name];
+      if ( histo == NULL ) cout << name << " is null" << endl;
+      int ybin;
+      float ymax = histo->GetYaxis()->GetXmax(); float ymin = histo->GetYaxis()->GetXmin();
       if ( y >= ymax )      ybin = histo->GetNbinsY();
       else if ( y <= ymin ) ybin = 1;
       else                  ybin = histo->GetYaxis()->FindBin(y);
-      
+      return ybin;
+    }
+    float getBin(std::string name,float x,float y) {
+      TH2F* histo = (*this)[name];
+      if ( histo == NULL ) cout << name << " is null" << endl;
+      int xbin = getBinX(name,x);
+      int ybin = getBinY(name,y);
       return histo->GetBinContent( xbin,ybin );
+    }
+    float getBinError(std::string name,float x,float y) {
+      TH2F* histo = (*this)[name];
+      if ( histo == NULL ) cout << name << " is null" << endl;
+      int xbin = getBinX(name,x);
+      int ybin = getBinY(name,y);
+      return histo->GetBinError( xbin,ybin );
     }
     bool contains(std::string key) { return this->find(key) != this->end(); }
   } th2fmap;
@@ -930,7 +959,7 @@ public:
   virtual vector<int> electron_veto_looseID(int jetindex,float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
   virtual vector<int> getTightEle(float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
   virtual vector<int> getTightEle(vector<int> looselist,float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
-  virtual float getLooseEleSF(int lepindex);
+  virtual float getLooseEleSF(int lepindex,string variation="nominal");
   virtual float getTightEleSF(int lepindex);
   
   virtual vector<int> getLoosePho(float phoPtCut=phoLoosePtCut,float phoEtaCut=phoLooseEtaCut);
@@ -943,12 +972,12 @@ public:
   virtual vector<int> muon_veto_looseID(int jetindex,float muPtCut=muLoosePtCut,float muEtaCut=muLooseEtaCut);
   virtual vector<int> getTightMu(float muPtCut=muTightPtCut,float muEtaCut=muTightEtaCut);
   virtual vector<int> getTightMu(vector<int> looselist,float muPtCut=muTightPtCut,float muEtaCut=muTightEtaCut);
-  virtual float getLooseMuSF(int lepindex);
+  virtual float getLooseMuSF(int lepindex,string variation="nominal");
   virtual float getTightMuSF(int lepindex);
   
   virtual vector<int> getLooseTau(float tauPtCut=tauLoosePtCut,float tauEtaCut=tauLooseEtaCut);
   virtual vector<int> tau_veto_looseID(int jetindex,float tauPtCut=tauLoosePtCut,float tauEtaCut=tauLooseEtaCut);
-  virtual float getLooseTauSF(int lepindex);
+  virtual float getLooseTauSF(int lepindex,string variation="nominal");
   
   /* Systematic Uncertainty Methods */
   virtual void QCDVariations(float event_weight);

@@ -20,6 +20,8 @@ public :
   static const int bHisto = 11;
 
   float eleveto_sf,muveto_sf,tauveto_sf;
+  float eleveto_sfUp,muveto_sfUp,tauveto_sfUp;
+  float eleveto_sfDown,muveto_sfDown,tauveto_sfDown;
   
   monoJetClass(const char* file1,const char* file2,int nfiles) : monoJetAnalysis(file1,file2,nfiles) {
     BookHistos(file2); };
@@ -35,12 +37,20 @@ public :
   void initTree(TTree* tree) {
     monoJetYear::initTree(tree);
     tree->Branch("eleveto_sf",&eleveto_sf);
+    tree->Branch("eleveto_sfUp",&eleveto_sfUp);
+    tree->Branch("eleveto_sfDown",&eleveto_sfDown);
     tree->Branch("muveto_sf",&muveto_sf);
+    tree->Branch("muveto_sfUp",&muveto_sfUp);
+    tree->Branch("muveto_sfDown",&muveto_sfDown);
     tree->Branch("tauveto_sf",&tauveto_sf);
+    tree->Branch("tauveto_sfUp",&tauveto_sfUp);
+    tree->Branch("tauveto_sfDown",&tauveto_sfDown);
   }
   void initVars() {
     monoJetYear::initVars();
     eleveto_sf = muveto_sf = tauveto_sf = 1;
+    eleveto_sfUp = muveto_sfUp = tauveto_sfUp = 1;
+    eleveto_sfDown = muveto_sfDown = tauveto_sfDown = 1;
   }
 };
 

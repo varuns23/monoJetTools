@@ -66,5 +66,7 @@ void monoJetYear::SetScalingHistos() {
   // Tau SF
   TFile* f_tau_sf = TFile::Open("RootFiles/tau/tau_sf.root");
   th1fmap["tau_vloose"] = (TH1F*)f_tau_sf->Get("tau_sf_VLoose_2017_cent");
+  th1fmap["tau_vloose_up"] = (TH1F*)f_tau_sf->Get("tau_sf_VLoose_2017_up");
+  th1fmap["tau_vloose_down"] = (TH1F*)f_tau_sf->Get("tau_sf_VLoose_2017_down");
 }
 #endif
