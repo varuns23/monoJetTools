@@ -4,6 +4,7 @@ from ROOT import *
 from sys import argv
 from sys import path
 from PlotTool import *
+from PlotTool import parser
 import os
 
 """
@@ -17,8 +18,8 @@ gROOT.SetBatch(1)
 samples=Region()
 for variable in parser.args.argv:
     samples.initiate(variable)
-    bkgPlot = samples.getSumOfBkg().Clone("Sum of Background")
-    dataPlot = samples.histo['Data'].Clone("Data")
+    bkgPlot = samples.setSumOfBkg().histo.Clone("Sum of Background")
+    dataPlot = samples['Data'].histo.Clone("Data")
     ratioPlot = Get2DRatio(dataPlot,bkgPlot).Clone("Data/MC Ratio")
             
     histos = [bkgPlot,dataPlot,ratioPlot]
@@ -34,9 +35,8 @@ for variable in parser.args.argv:
         hs.GetZaxis().SetRangeUser(label[hs.GetName()]["zaxis"][0],label[hs.GetName()]["zaxis"][1])
         # canvas.SetLogz()
         hs.SetTitle(hs.GetName())
-        hs.GetXaxis().SetTitle(samples.name['x'])
+        hs.GetXaxis().SetTitle(samples.variable.xaxis_title)
         hs.GetXaxis().SetTitleOffset(1.7)
-        hs.GetYaxis().SetTitle(samples.name['y'])
-        canvas.Write()
+        hs.GetYaxis().SetTitle(samples.variable.yaxis_title)
         
         SaveAs(canvas,label[hs.GetName()]["pre"]+variable,year=samples.year,region=samples.region,sub="phase")

@@ -108,7 +108,7 @@ def getRatioLine(xmin,xmax):
     return line
 ###################################################################
 
-def StackStyle(hs_stack,yscale=5,scaleWidth=False):
+def StackStyle(hs_stack,yscale=6,scaleWidth=False):
     hs_stack.GetYaxis().SetTitle("Events" if not scaleWidth else "Events / GeV");
     hs_stack.GetYaxis().SetTitleOffset(1.5);
     hs_stack.SetTitle("");
@@ -152,4 +152,14 @@ def makeYaxis(ymin,ymax,xmin,ndiv,name=None):
     yaxis.SetNdivisions(4)
     yaxis.CenterTitle()
     return yaxis
+###################################################################
+
+def SetBounds(hslist,scale=0.1):
+    binlist = []
+    for hs in hslist: binlist += list(hs)[1:-1]
+    ymax = max(binlist)
+    ymin = min(binlist)
+    diff = ymax - ymin
+    for hs in hslist: hs.GetYaxis().SetRangeUser(ymin-scale*diff,ymax+scale*diff)
+    return ymin,ymax,diff
 ###################################################################

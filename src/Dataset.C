@@ -110,7 +110,7 @@ void Dataset::SubsetList::addDataset(string path,string filename) {
       subname = line.erase(0,2);
       subset[subname] = vector<string>();
     } else {
-      if ( isDir(line) ) {
+      if ( true ) {
 	subset[subname].push_back(line);
       }
     }

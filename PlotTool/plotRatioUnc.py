@@ -31,10 +31,6 @@ def unc_style(up,dn,color):
         hs.SetTitle("")
         hs.SetLineColor(color)
         hs.SetLineWidth(2)
-def set_bounds(up,dn,ymin,ymax):
-    for hs in (up,dn):
-        hs.SetMaximum(ymax*1.5)
-        hs.SetMinimum(ymin*1.5)
 def GetStat(nuisance,stat):
     from PlotTool import AddDiffNuisances
     up = stat.norm.Clone()
@@ -95,10 +91,8 @@ def plotUnc(name,num,den,sample):
             variation = variations[name]
             nuis = tf.nuisances[variation]
             print nuis
-            up,dn = tf.nuisances[variation].GetDiff()
+            up,dn = tf.nuisances[variation].GetScaleDiff()
             unc_style(up,dn,next(coliter))
-
-
 
             up.GetYaxis().SetTitle("%s %s Uncertainty" % (tfmap[tf.name],nuisance))
 
@@ -106,26 +100,23 @@ def plotUnc(name,num,den,sample):
 
             if subset in showerror:
                 stat = GetStat(nuis,tf.nuisances['Stat'])
-                stup,stdn = stat.GetDiff()
+                stup,stdn = stat.GetScaleDiff()
                 erup = up.Clone()
                 erdn = dn.Clone()
                 SetStat(erup,stup)
                 SetStat(erdn,stdn)
                 erup.Draw("E2 same")
                 erdn.Draw("E2 same")
-                hsmap[name+'_stat'] = (erup,erdn)
+                hsmap[name+'_stat'] = [erup,erdn]
             
             up.Draw("hist same")
             dn.Draw("hist same")
-            hsmap[name] = (up,dn)
+            hsmap[name] = [up,dn]
         pad1.RedrawAxis()
-        binlist = []
-        for hslist in hsmap.values():
-            for hs in hslist: binlist += list(hs)[1:-1]
-
-        ymax = max(binlist)
-        ymin = min(binlist)
-        for up,dn in hsmap.values(): set_bounds(up,dn,ymin,ymax)
+        
+        histlist = []
+        for hslist in hsmap.values(): histlist += hslist
+        SetBounds(hslist)
 
         leg = getLegend(xmin=0.2,xmax=0.4,ymin=0.7,ymax=0.9)
         corr_label = " Correlated" if correlated else " Uncorrelated"

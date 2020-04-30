@@ -180,6 +180,8 @@ public:
   TH1F *h_nJetsSkim[maxHisto];
   TH1F *h_j1CHFrounded[maxHisto],*h_j1NHFrounded[maxHisto];
 
+  TH2F *h_j1EtaPhi[maxHisto];
+
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
   // Declaration of leaf types

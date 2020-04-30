@@ -31,6 +31,7 @@ class Transfer:
 
         numup,numdn = numnuis.GetHistos()
         denup,dendn = dennuis.GetHistos()
+        
         if not correlated:
             tfnumup = GetRatio(numup,self.den.histo)
             tfnumdn = GetRatio(numdn,self.den.histo)
@@ -52,21 +53,7 @@ class Transfer:
             tfdn = GetRatio(numdn,dendn)
             
             self.nuisances[nuisance] = Nuisance(self.name,nuisance,tfup,tfdn,self.histo,type='abs')
-
-            # numerr = self.num.histo.Clone()
-            # for ibin in range(1,numerr.GetNbinsX()+1): numerr.SetBinError(ibin,abs(numerr[ibin] - numup[ibin]))
-            # denerr = self.den.histo.Clone()
-            # for ibin in range(1,denerr.GetNbinsX()+1): denerr.SetBinError(ibin,abs(denerr[ibin] - denup[ibin]))
-
-            # error = GetRatio(numerr,denerr)
-
-            # erup = error.Clone()
-            # erdn = error.Clone()
-            # for ibin in range(1,error.GetNbinsX()+1):
-            #     erup.SetBinContent(ibin,error.GetBinError(ibin))
-            #     erdn.SetBinContent(ibin,error.GetBinError(ibin))
-            # error = Nuisance(self.name,nuisance,erup,erdn,self.histo)
-            # self.nuisances[nuisance] = error
+            up,dn = self.nuisances[nuisance].GetScaleDiff()
             
             return self.nuisances[nuisance]
     def fullUnc(self,unclist):

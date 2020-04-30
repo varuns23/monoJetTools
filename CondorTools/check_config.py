@@ -4,6 +4,7 @@ import os
 
 def check_config(config):
     print "Checking",config
+    basepath = os.path.dirname(config)
     config = CondorConfig(config)
     inputfiles = set([ fname for fname in os.listdir(config['inputdir'].strip()) if '.root' in fname ])
     def check_input(args):
@@ -17,8 +18,9 @@ def check_config(config):
         return
     outputfiles = []
     def check_output(iarg,args):
-        output = '.output/%s_%s.root' % (config['outputfile'].strip(),iarg)
+        output = '%s/%s_%s.root' % (basepath,config['outputfile'].strip(),iarg)
         if not os.path.isfile(output): outputfiles.append(output)
+    for i,arg in enumerate(config['Arguments']): check_output(i,arg)
     if any(outputfiles):
         print "Missing %s Output Files" % len(outputfiles)
         for output in outputfiles: print output
