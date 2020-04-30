@@ -9,7 +9,7 @@ from CondorTools.SubmitDataset import submit,options,mclist,signalist
 options['year'] = '2017'
 options['region'] = 'SR'
 options['parallel'] = False
-options['batchsize'] = 150
+options['batchsize'] = 80
 # options['submit'] = False
 #----Submit---#
 # submit('met',sub='B',filelist=True)
