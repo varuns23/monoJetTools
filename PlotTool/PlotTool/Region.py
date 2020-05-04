@@ -30,10 +30,16 @@ MCOrderMap = {
     "SingleMuCR":[
         "WJets","TTJets","QCD","DYJets","DiBoson","GJets","ZJets"
     ],
+    "SingleLepCR":[
+        "WJets","TTJets","QCD","DYJets","DiBoson","GJets","ZJets"
+    ],
     "DoubleEleCR":[
         "DYJets","DiBoson","TTJets","WJets","QCD","GJets","ZJets"
     ],
     "DoubleMuCR":[
+        "DYJets","DiBoson","TTJets","WJets","QCD","GJets","ZJets"
+    ],
+    "DoubleLepCR":[
         "DYJets","DiBoson","TTJets","WJets","QCD","GJets","ZJets"
     ],
     "GammaCR":[
@@ -266,6 +272,8 @@ class Region(object):
         for process in self:
             if process.proctype == 'bkg':
                 sumofbkg.add(process)
+        sumofbkg.variable = self.variable
+        sumofbkg.process = MCOrderMap[self.region][0]
         self.processes['SumOfBkg'] = sumofbkg
         return self['SumOfBkg']
     def addUnc(self,nuisance,show=False):

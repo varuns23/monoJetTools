@@ -117,7 +117,7 @@ class Process:
         self.process = name; self.filenames = list(filenames); self.xsecs = xsecs; self.proctype = proctype
         self.year = year; self.region = region; self.leg = leg; self.color = color
         self.name = GetProcessName(name,year,region)
-        self.sublist = [ '%s_%s' % (self.process,filename.replace("post","")) for filename in self.filenames ]
+        self.sublist = [ '%s_%s' % (self.name,filename.replace("post","")) for filename in self.filenames ]
         self.xsecs = { sub:xsecs[filename] for sub,filename in zip(self.sublist,self.filenames) } if xsecs is not None else None
 
         self.subprocesses = {}
@@ -179,7 +179,8 @@ class Process:
             GetProcessPSW(self,nuisance)
             return
         if nuisance in self.nuisances: return
-        for subprocess in self: subprocess.addUnc(nuisance)
+        for subprocess in self:
+            subprocess.addUnc(nuisance)
         nbins = self.histo.GetNbinsX()
         up = self.histo.Clone("%s_%s_%sUp" % (self.name,self.variable.base,nuisance)); up.Reset()
         dn = self.histo.Clone("%s_%s_%sDown" % (self.name,self.variable.base,nuisance)); dn.Reset()
@@ -203,3 +204,17 @@ class Process:
         else: self.histo = other.histo.Clone(self.name)
         self.raw_total += other.raw_total
         self.scaled_total += other.scaled_total
+
+        self.sublist += other.sublist
+        self.subprocesses.update(other.subprocesses)
+
+        if any(self.nuisances): self.nuisances = {}
+
+            # for nuisance in other.nuisances:
+                # up = self.histo.Clone()
+                # dn = self.histo.Clone()
+                # if nuisance in self.nuisances:
+                    # AddLikeNuisances([self.nuisances[nuisance],other.nuisances[nuisance]],up,dn,self.histo)
+                    # self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo)
+                # else:
+                #     AddLikeNuisances([other.nuisances[nuisace]],up,dn,self.histo)

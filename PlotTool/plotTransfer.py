@@ -77,7 +77,7 @@ rangemap = {
 
 varmap = {}
 
-def tfmc_style(tf_proc,color=kBlue,xname=None):
+def tfmc_style(tf_proc,color=kRed,xname=None):
     tf_proc.histo.SetLineWidth(2)
     tf_proc.histo.SetLineColor(color);
     tf_proc.histo.SetTitle("")
@@ -154,24 +154,33 @@ def plotTF(num_sample,den_sample):
     SetBounds([tf],num_sample,den_sample)
     tf.histo.Draw("axis")
 
-    if (num_sample.region is 'SignalRegion' and (den_sample.region is 'SignalRegion' or den_sample.region is "GammaCR")):
-        fullband = tf.getUncBand()
-        tf.fullUnc(['Stat','QCD_Shape','QCD_Scale','QCD_Proc','QCD_EWK_Mix'])
-        midband = tf.getUncBand()
-        UncBandStyle(fullband,color=kGreen)
-        fullband.Draw("2same")
-        UncBandStyle(midband)
-        midband.Draw("2same")
-    else:
-        uncband = tf.getUncBand()
-        UncBandStyle(uncband)
-        uncband.Draw("2same")
-    tf.histo.Draw("pex0same")
+    bandlist = []
+    unclist = ["Stat"]
+    statband = tf.fullUnc(["Stat"]).GetBand()
+    statband.label = "stat"
+    UncBandStyle(statband)
+    bandlist.append(statband)
+    if num_sample.num_boson != den_sample.den_boson:
+        unclist = unclist + ["NNLO_EWK","NNLO_Sud","NNLO_Miss"] + ["QCD_Scale","QCD_Proc","QCD_Shape","QCD_EWK_Mix"]
+        theoryband = tf.fullUnc(unclist).GetBand()
+        theoryband.label = bandlist[-1].label + " #otimes theory"
+        UncBandStyle(theoryband,9)
+        bandlist.append(theoryband)
+    unclist = unclist + ["PSW_isrCon","PSW_fsrCon"]
+    pswband = tf.fullUnc(unclist).GetBand()
+    pswband.label = bandlist[-1].label + " #otimes psw"
+    UncBandStyle(pswband,37)
+    bandlist.append(pswband)
+    for band in reversed(bandlist): band.Draw("e2 same")
+        
     tf_style(tf,xname=num_sample.name)
+    tf.histo.Draw("hist p same")
+    pad1.RedrawAxis()
     
     texCMS,texLumi = getCMSText(lumi_label,year,scale=0.8)
-    leg = getLegend(xmin=0.45,xmax=0.85,ymin=0.6,scale=0.6)
-    leg.AddEntry(tf.histo,"Transfer Factor (Stat Uncert)","p")
+    leg = getLegend(xmin=0.5,xmax=0.85,ymin=0.7,scale=0.6)
+    leg.AddEntry(tf.histo,"Transfer Factor","p")
+    for band in bandlist: leg.AddEntry(band,band.label,"f")
     leg.Draw()
 
     if len(varname.split("_")) == 2:
@@ -188,6 +197,11 @@ def plotTF_datamc(num_sample,den_sample):
     lumi_label = '%s' % float('%.3g' % (num_sample.lumi/1000.)) + " fb^{-1}"
     year = num_sample.year
     varname = num_sample.varname
+
+    if "SumOfBkg" not in num_sample.processes:
+        num_sample.setSumOfBkg()
+    if "SumOfBkg" not in den_sample.processes:
+        den_sample.setSumOfBkg()
     
     num_info = processMap[num_sample.region][num_sample.num_boson]
     den_info = processMap[den_sample.region][den_sample.den_boson]
@@ -216,13 +230,26 @@ def plotTF_datamc(num_sample,den_sample):
     
     SetBounds([tf_proc,tf_data],num_sample,den_sample)
     tf_proc.histo.Draw("axis")
-    unc = tf_proc.histo.Clone()
-    unc.SetMarkerStyle(0)
-    unc.SetFillColor(33)
-    # uncband = tf_proc.getUncBand()
-    # UncBandStyle(uncband)
-    # uncband.Draw("2same")
-    unc.Draw("e2 same")
+
+    bandlist = []
+    unclist = ["Stat"]
+    statband = tf_proc.fullUnc(["Stat"]).GetBand()
+    statband.label = "stat"
+    UncBandStyle(statband)
+    bandlist.append(statband)
+    if num_sample.num_boson != den_sample.den_boson:
+        unclist = unclist + ["NNLO_EWK","NNLO_Sud","NNLO_Miss"] + ["QCD_Scale","QCD_Proc","QCD_Shape","QCD_EWK_Mix"]
+        theoryband = tf_proc.fullUnc(unclist).GetBand()
+        theoryband.label = bandlist[-1].label + " #otimes theory"
+        UncBandStyle(theoryband,9)
+        bandlist.append(theoryband)
+    unclist = unclist + ["PSW_isrCon","PSW_fsrCon"]
+    pswband = tf_proc.fullUnc(unclist).GetBand()
+    pswband.label = bandlist[-1].label + " #otimes psw"
+    UncBandStyle(pswband,37)
+    bandlist.append(pswband)
+    for band in reversed(bandlist): band.Draw("e2 same")
+        
     tf_proc.histo.Draw("histsame")
     tf_data.histo.Draw("hist p same")
     pad1.RedrawAxis()
@@ -239,6 +266,7 @@ def plotTF_datamc(num_sample,den_sample):
     leg = getLegend(ymin=0.7,scale=0.8)
     leg.AddEntry(tf_data.histo,"Data","lp")
     leg.AddEntry(tf_proc.histo,"Background","l")
+    for band in bandlist: leg.AddEntry(band,band.label,"f")
     leg.Draw()
 
     #######################################
@@ -276,7 +304,6 @@ def plotTransfer(variable,samplemap):
     for region in samplemap:
         print region
         samplemap[region].initiate(variable)
-        samplemap[region].fullUnc(['Stat'])
 
     for region in samplemap:
         if 'SignalRegion' in region: continue
@@ -295,7 +322,7 @@ def plotTransfer(variable,samplemap):
     samplemap["SignalRegion"].num_boson = "Z"
     samplemap["SignalRegion"].den_boson = "W"
     plotTF(samplemap["SignalRegion"],samplemap["SignalRegion"])
-
+    
     print "Z/G Linking"
     plotTF(samplemap["SignalRegion"],samplemap["GammaCR"])
     
@@ -327,9 +354,6 @@ def plotTransfer(variable,samplemap):
     print "Muon CR Z/W Linking"
     plotTF_datamc(samplemap["DoubleMuCR"],samplemap["SingleMuCR"])
 
-    for region in samplemap:
-        if 'CR' not in region: continue
-        samplemap[region].setSumOfBkg()
     doublelep = samplemap["DoubleEleCR"]; doublelep.add(samplemap["DoubleMuCR"])
     doublelep.region = "DoubleLepCR"; doublelep.num_boson = "Z"
     singlelep = samplemap["SingleEleCR"]; singlelep.add(samplemap["SingleMuCR"])
