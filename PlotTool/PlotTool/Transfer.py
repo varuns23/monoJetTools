@@ -3,6 +3,23 @@ from utilities import *
 from Nuisance import *
 import copy
 
+correlation = {
+    "QCD_Scale":True,
+    "QCD_Shape":True,
+    "QCD_Proc":True,
+    "NNLO_Sud":False,
+    "NNLO_Miss":False,
+    "NNLO_EWK":True,
+    "QCD_EWK_Mix":True,
+    "PDF":True,
+    "JES":True,
+    "JER":True,
+    "Stat":False,
+    "PSW_isrCon":True,
+    "PSW_fsrCon":True,
+    "PFU_ecal":True
+}
+
 class Transfer:
     zwunc = [
             "QCD_Scale",
@@ -59,11 +76,11 @@ class Transfer:
     def fullUnc(self,unclist):
         nuislist = []
         for unc in unclist:
-            for nuisance in self.nuisances.values():
-                if unc in nuisance.name: nuislist.append(nuisance)
+            if unc not in self.nuisances: self.addUnc(unc,correlation[unc] if unc in correlation else False)
+            if unc in self.nuisances: nuislist.append(self.nuisances[unc])
         up,dn = self.histo.Clone(),self.histo.Clone()
         AddDiffNuisances(nuislist,up,dn,self.histo)
-        self.nuisances['Total'] = Nuisance(self.name,'Total',up,dn,self.histo)
+        return Nuisance(self.name,'Total',up,dn,self.histo)
     def getUncBand(self,nuisance='Total'):
         if nuisance not in self.nuisances:
             if nuisance is 'Total': self.fullUnc(self.nuisances.keys())

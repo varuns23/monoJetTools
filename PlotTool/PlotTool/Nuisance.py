@@ -64,6 +64,8 @@ def AddLikeNuisances(nuisances,up,dn,norm=None):
     up.Reset(); dn.Reset()
     for hs in hslist:
         u,d,n = hs
+        if u.Integral() == 0: u = n
+        if d.Integral() == 0: d = n 
         up.Add(u); dn.Add(d)
     if norm is not None:
         up.Divide(norm)
@@ -74,8 +76,8 @@ def AddDiffNuisances(nuisances,up,dn,norm):
         if norm[ibin] == 0:
             up[ibin],dn[ibin] = 1,1
             continue
-        up[ibin] = 1 + TMath.Sqrt( sum( ( (nuisance.up[ibin]*nuisance.norm[ibin] - nuisance.norm[ibin])/norm[ibin] )**2 for nuisance in nuisances) )
-        dn[ibin] = 1 - TMath.Sqrt( sum( ( (nuisance.dn[ibin]*nuisance.norm[ibin] - nuisance.norm[ibin])/norm[ibin] )**2 for nuisance in nuisances) )
+        up[ibin] = 1 + TMath.Sqrt( sum( (nuisance.up[ibin]-1 )**2 for nuisance in nuisances) )
+        dn[ibin] = 1 - TMath.Sqrt( sum( (nuisance.dn[ibin]-1 )**2 for nuisance in nuisances) )
 def GetNuisanceList(tfile,dirname):
     tfile.cd(dirname)
     shapelist = [ key.GetName().replace('Up','') for key in gDirectory.GetListOfKeys() if 'Up' in key.GetName() ]
@@ -106,7 +108,13 @@ class Nuisance(object):
         self.process = process
         self.name = name
         self.norm = norm.Clone()
-        self.up,self.dn = up.Clone("%s_%sUp"%(process,name)),dn.Clone("%s_%sDown"%(process,name))
+        if up.Integral() == 0 and dn.Integral() == 0:
+            type = "abs"
+            self.up = norm.Clone("%s_%sUp"%(process,name))
+            self.dn = norm.Clone("%s_%sDown"%(process,name))
+        else:
+            self.up = up.Clone("%s_%sUp"%(process,name))
+            self.dn = dn.Clone("%s_%sDown"%(process,name))
         
         if type == "abs": MakeScale(self)
         if sym: MakeSym(self)
@@ -119,8 +127,8 @@ class Nuisance(object):
     def VarDiff(self):
         norm = self.norm.Integral()
         up,dn = self.Integral()
-	varup = (up-norm)/norm
-        vardn = (dn-norm)/norm
+	varup = (up-norm)/norm if norm > 0 else 0
+        vardn = (dn-norm)/norm if norm > 0 else 0
         return varup,vardn
     def GetHistos(self):
         # up = self.up.Clone(); dn = self.dn.Clone()
@@ -157,6 +165,14 @@ class Nuisance(object):
             up[ibin] =  self.up[ibin] - 1
             dn[ibin] =  self.dn[ibin] - 1
         return up,dn
+    def GetBand(self):
+        band = self.norm.Clone()
+        for ibin in range(1,band.GetNbinsX()+1):
+            valup = band[ibin]*self.up[ibin] - band[ibin]
+            valdn = band[ibin]*self.dn[ibin] - band[ibin]
+            val = max( abs(valup),abs(valdn) )
+            band.SetBinError(ibin,val)
+        return band
     def __str__(self):
         varup,vardn = self.VarDiff()
         return '{0:<20}'.format('%s %s' % (self.name,self.process))+'%+.1e/%+.1e' % (varup,vardn)
