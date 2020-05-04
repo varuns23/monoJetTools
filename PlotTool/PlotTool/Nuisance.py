@@ -64,6 +64,8 @@ def AddLikeNuisances(nuisances,up,dn,norm=None):
     up.Reset(); dn.Reset()
     for hs in hslist:
         u,d,n = hs
+        if u.Integral() == 0: u = n
+        if d.Integral() == 0: d = n 
         up.Add(u); dn.Add(d)
     if norm is not None:
         up.Divide(norm)
@@ -106,7 +108,13 @@ class Nuisance(object):
         self.process = process
         self.name = name
         self.norm = norm.Clone()
-        self.up,self.dn = up.Clone("%s_%sUp"%(process,name)),dn.Clone("%s_%sDown"%(process,name))
+        if up.Integral() == 0 and dn.Integral() == 0:
+            type = "abs"
+            self.up = norm.Clone("%s_%sUp"%(process,name))
+            self.dn = norm.Clone("%s_%sDown"%(process,name))
+        else:
+            self.up = up.Clone("%s_%sUp"%(process,name))
+            self.dn = dn.Clone("%s_%sDown"%(process,name))
         
         if type == "abs": MakeScale(self)
         if sym: MakeSym(self)
