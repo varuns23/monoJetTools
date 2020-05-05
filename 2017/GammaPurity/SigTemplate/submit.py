@@ -12,8 +12,5 @@ options['parallel'] = True
 options['batchsize'] = 25
 # options['submit'] = False
 #----Submit---#
-#submit('singlepho',label='dataPP_',filelist=True)
-submit('gjets',label='GJets',filelist=True)
-#submit('singlepho',sub='B',label='data_', filelist=True)
-#submit('singlepho',sub='test',label='data_', filelist=True)
-#for mc in mclist: submit(mc)
+submit('singlepho',label='Gamma_',filelist=True)
+submit('gjets',filelist=True)
