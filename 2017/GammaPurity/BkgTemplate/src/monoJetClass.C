@@ -99,6 +99,11 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     photon_phoiso = phoPFPhoIso_RhoCor(phoindex);
     
     fillHistos(10,event_weight);
+    
+    if ( !(photon_sieie > 0.02 && photon_sieie < 0.015)) continue;
+    cutflow->Fill(11,event_weight);
+    
+    fillHistos(11,event_weight);
   }
 }//Closing the Loop function
 
@@ -106,7 +111,8 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
   
-  vector<string> cutlist = {s_TotalEvents,s_Triggers,s_METFilters,"Photon Selection",s_ElectronVeto,s_MuonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_JetSelection,"MET60"};
+  vector<string> cutlist = {s_TotalEvents,s_Triggers,s_METFilters,"Photon Selection",s_ElectronVeto,s_MuonVeto,
+			    s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_JetSelection,"MET60","SigmaIEtaIEta Sideband"};
   cutflow = new Cutflow(this,cutlist);
 
   string bins[nPhoPtBins];
@@ -118,7 +124,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   }
 
   BookHistos(-1,"");
-  for(int i = bHisto; i<nHisto; i++) {
+  for(int i = bHisto-1; i<nHisto; i++) {
     char ptbins[100];
     sprintf(ptbins, "_%d", i);
     string histname(ptbins);

@@ -13,3 +13,4 @@ options['batchsize'] = 25
 # options['submit'] = False
 #----Submit---#
 submit('singlepho',label='Gamma_',filelist=True)
+submit('gjets')

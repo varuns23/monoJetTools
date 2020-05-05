@@ -46,7 +46,7 @@ bin:
 	mkdir -p $(ROOT)$(BIN)
 
 test: analyze
-	./analyze
+	./analyze /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho/SinglePho2017B/0000/ test_output.root -1 1000 1-9
 
 clean:
 	rm post*.root
