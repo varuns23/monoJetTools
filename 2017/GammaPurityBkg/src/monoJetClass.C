@@ -128,34 +128,36 @@ void monoJetClass::fillHistos(float event_weight) {
   h_phoSigmaIeIe->Fill(photon_sieie, event_weight);
   h_PhoPFiso_SigmaIeIe->Fill(photon_PhoIso, photon_sieie , event_weight);
 
-  if(photon_pt >= 230. && photon_pt < 250.){
-    h_phoPt_ptbins[0]     ->Fill(photon_pt, event_weight);
-    h_phoPFIso_ptbins[0]  ->Fill(photon_PhoIso, event_weight);
-  }
+  if( photon_sieie > 0.02 && photon_sieie < 0.015){ 
+    if(photon_pt >= 230. && photon_pt < 250.){
+      h_phoPt_ptbins[0]     ->Fill(photon_pt, event_weight);
+      h_phoPFIso_ptbins[0]  ->Fill(photon_PhoIso, event_weight);
+    }
 
-  if(photon_pt >= 250. && photon_pt < 280.){
-    h_phoPt_ptbins[1]     ->Fill(photon_pt, event_weight);
-    h_phoPFIso_ptbins[1]  ->Fill(photon_PhoIso, event_weight);
-  }
+    if(photon_pt >= 250. && photon_pt < 280.){
+      h_phoPt_ptbins[1]     ->Fill(photon_pt, event_weight);
+      h_phoPFIso_ptbins[1]  ->Fill(photon_PhoIso, event_weight);
+    }
 
-  if(photon_pt >= 280. && photon_pt < 320.){
-    h_phoPt_ptbins[2]     ->Fill(photon_pt, event_weight);
-    h_phoPFIso_ptbins[2]  ->Fill(photon_PhoIso, event_weight);
-  }
+    if(photon_pt >= 280. && photon_pt < 320.){
+      h_phoPt_ptbins[2]     ->Fill(photon_pt, event_weight);
+      h_phoPFIso_ptbins[2]  ->Fill(photon_PhoIso, event_weight);
+    }
 
-  if(photon_pt >= 320. && photon_pt < 375.){
-    h_phoPt_ptbins[3]     ->Fill(photon_pt, event_weight);
-    h_phoPFIso_ptbins[3]  ->Fill(photon_PhoIso, event_weight);
-  }
+    if(photon_pt >= 320. && photon_pt < 375.){
+      h_phoPt_ptbins[3]     ->Fill(photon_pt, event_weight);
+      h_phoPFIso_ptbins[3]  ->Fill(photon_PhoIso, event_weight);
+    }
 
-  if(photon_pt >= 375. && photon_pt < 425.){
-    h_phoPt_ptbins[4]     ->Fill(photon_pt, event_weight);
-    h_phoPFIso_ptbins[4]  ->Fill(photon_PhoIso, event_weight);
-  }
+    if(photon_pt >= 375. && photon_pt < 425.){
+      h_phoPt_ptbins[4]     ->Fill(photon_pt, event_weight);
+      h_phoPFIso_ptbins[4]  ->Fill(photon_PhoIso, event_weight);
+    }
 
-  if(photon_pt >= 425. && photon_pt < 475.){
-    h_phoPt_ptbins[5]     ->Fill(photon_pt, event_weight);
-    h_phoPFIso_ptbins[5]  ->Fill(photon_PhoIso, event_weight);
+    if(photon_pt >= 425. && photon_pt < 475.){
+      h_phoPt_ptbins[5]     ->Fill(photon_pt, event_weight);
+      h_phoPFIso_ptbins[5]  ->Fill(photon_PhoIso, event_weight);
+    }
   }
 
   if(photon_pt >= 475. && photon_pt < 550.){
@@ -197,10 +199,10 @@ void monoJetClass::BookHistos(){
   h_PhoPFiso_SigmaIeIe->Sumw2();
 
   h_CutFlow = new TH1F("h_CutFlow", "cut flow of selection", 11, 0, 11); 
-//  TString cutFlowLabel[11] = {"Total Events","Triggers","MET Filters","Photon Selection", "Ele veto", "Mu veto", "Tau veto", "bjet veto", "MinDPhi", "Jet Selection","MET60"};
-//  for( Int_t bin = 1; bin <= h_CutFlow->GetNbinsX(); ++bin){
-//    h_CutFlow->GetXaxis()->SetBinLabel(bin, cutFlowLabel[bin-1]);
-//  }
+  //  TString cutFlowLabel[11] = {"Total Events","Triggers","MET Filters","Photon Selection", "Ele veto", "Mu veto", "Tau veto", "bjet veto", "MinDPhi", "Jet Selection","MET60"};
+  //  for( Int_t bin = 1; bin <= h_CutFlow->GetNbinsX(); ++bin){
+  //    h_CutFlow->GetXaxis()->SetBinLabel(bin, cutFlowLabel[bin-1]);
+  //  }
 }
 
 int monoJetClass::getJetIndex(int phoindex) {
@@ -219,7 +221,7 @@ int monoJetClass::getJetIndex(int phoindex) {
 
 int monoJetClass::getPhoIndex() {
   for (int ipho = 0; ipho < nPho; ipho++) {
-    
+
     bool kinematics = ((phoCalibEt->at(ipho) > 230.0) && (fabs(phoSCEta->at(ipho)) < 1.4442));
     bool IdIso = CutBasedPFPhotonID_noPhoIso(ipho, "medium");
 
@@ -227,8 +229,8 @@ int monoJetClass::getPhoIndex() {
       return ipho;
   }
 
-//if (type == GJets && PFIso) return ipho;
-//else if (type == Data && !PFIso) return ipho;
+  //if (type == GJets && PFIso) return ipho;
+  //else if (type == Data && !PFIso) return ipho;
   return -1;
 }
 
@@ -240,8 +242,8 @@ bool monoJetClass::CutBasedPFPhotonID_noPhoIso(Int_t ipho, TString phoWP){
     if( fabs((*phoSCEta)[ipho]) < 1.4442){ // EB
       photonId = ( 
 	  ((*phoHoverE)[ipho]                <  0.02148 ) &&
-	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.00996 ) &&
-          ((*phoEleVeto)[ipho]                == 1) &&
+	  //	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.00996 ) &&
+	  ((*phoEleVeto)[ipho]                == 1) &&
 	  (TMath::Max(((*phoPFChIso)[ipho]  - rho*EAcharged((*phoSCEta)[ipho])), 0.0) < 0.65 )  &&
 	  (TMath::Max(((*phoPFNeuIso)[ipho] - rho*EAneutral((*phoSCEta)[ipho])), 0.0) < (0.317 + (0.01512 * (*phoEt)[ipho]) + (0.00002259 * pow((*phoEt)[ipho], 2.0))) )
 	  //                    (TMath::Max(((*phoPFPhoIso)[ipho] - rho*EAphoton( (*phoSCEta)[ipho])), 0.0) < (2.044 + (0.004017 * (*phoEt)[ipho])) )
@@ -250,8 +252,8 @@ bool monoJetClass::CutBasedPFPhotonID_noPhoIso(Int_t ipho, TString phoWP){
     if( fabs((*phoSCEta)[ipho]) > 1.4442){ // EE
       photonId = ( 
 	  ((*phoHoverE)[ipho]                <  0.0321 ) &&
-	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0271 ) &&
-          ((*phoEleVeto)[ipho]                == 1) &&
+	  //	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0271 ) &&
+	  ((*phoEleVeto)[ipho]                == 1) &&
 	  (TMath::Max(((*phoPFChIso)[ipho]  - rho*EAcharged((*phoSCEta)[ipho])), 0.0) < 0.517 )  &&
 	  (TMath::Max(((*phoPFNeuIso)[ipho] - rho*EAneutral((*phoSCEta)[ipho])), 0.0) < (2.716 + (0.01117 * (*phoEt)[ipho]) + (0.000023 * pow((*phoEt)[ipho], 2.0))) )
 	  //                    (TMath::Max(((*phoPFPhoIso)[ipho] - rho*EAphoton( (*phoSCEta)[ipho])), 0.0) < (3.032 + (0.0037 * (*phoEt)[ipho])) )
@@ -263,8 +265,8 @@ bool monoJetClass::CutBasedPFPhotonID_noPhoIso(Int_t ipho, TString phoWP){
     if( fabs((*phoSCEta)[ipho]) < 1.4442){ // EB
       photonId = ( 
 	  ((*phoHoverE)[ipho]                <  0.02197 ) &&
-	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.01015 ) &&
-          ((*phoEleVeto)[ipho]                == 1) &&
+	  //	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.01015 ) &&
+	  ((*phoEleVeto)[ipho]                == 1) &&
 	  (TMath::Max(((*phoPFChIso)[ipho]  - rho*EAcharged((*phoSCEta)[ipho])), 0.0) < 1.141 )  &&
 	  (TMath::Max(((*phoPFNeuIso)[ipho] - rho*EAneutral((*phoSCEta)[ipho])), 0.0) < (1.189 + (0.01512 * (*phoEt)[ipho]) + (0.00002259 * pow((*phoEt)[ipho], 2.0))) )
 	  //                    (TMath::Max(((*phoPFPhoIso)[ipho] - rho*EAphoton( (*phoSCEta)[ipho])), 0.0) < (2.08 + (0.004017 * (*phoEt)[ipho])) )
@@ -273,8 +275,8 @@ bool monoJetClass::CutBasedPFPhotonID_noPhoIso(Int_t ipho, TString phoWP){
     if( fabs((*phoSCEta)[ipho]) > 1.4442){ // EE
       photonId = ( 
 	  ((*phoHoverE)[ipho]                <  0.0326 ) &&
-	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0272 ) &&
-          ((*phoEleVeto)[ipho]                == 1) &&
+	  //	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0272 ) &&
+	  ((*phoEleVeto)[ipho]                == 1) &&
 	  (TMath::Max(((*phoPFChIso)[ipho]  - rho*EAcharged((*phoSCEta)[ipho])), 0.0) < 1.051 )  &&
 	  (TMath::Max(((*phoPFNeuIso)[ipho] - rho*EAneutral((*phoSCEta)[ipho])), 0.0) < (2.718 + (0.01117 * (*phoEt)[ipho]) + (0.000023 * pow((*phoEt)[ipho], 2.0))) )
 	  //                    (TMath::Max(((*phoPFPhoIso)[ipho] - rho*EAphoton( (*phoSCEta)[ipho])), 0.0) < (3.867 + (0.0037 * (*phoEt)[ipho])) )
@@ -286,8 +288,8 @@ bool monoJetClass::CutBasedPFPhotonID_noPhoIso(Int_t ipho, TString phoWP){
     if( fabs((*phoSCEta)[ipho]) < 1.4442){ // EB
       photonId = ( 
 	  ((*phoHoverE)[ipho]                <  0.04596 ) &&
-	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0106 ) &&
-          ((*phoEleVeto)[ipho]                == 1) &&
+	  //	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0106 ) &&
+	  ((*phoEleVeto)[ipho]                == 1) &&
 	  (TMath::Max(((*phoPFChIso)[ipho]  - rho*EAcharged((*phoSCEta)[ipho])), 0.0) < 1.694 )  &&
 	  (TMath::Max(((*phoPFNeuIso)[ipho] - rho*EAneutral((*phoSCEta)[ipho])), 0.0) < (24.032 + (0.01512 * (*phoEt)[ipho]) + (0.00002259 * pow((*phoEt)[ipho], 2.0))) )
 	  //                    (TMath::Max(((*phoPFPhoIso)[ipho] - rho*EAphoton( (*phoSCEta)[ipho])), 0.0) < (2.876 + (0.004017 * (*phoEt)[ipho])) )
@@ -296,8 +298,8 @@ bool monoJetClass::CutBasedPFPhotonID_noPhoIso(Int_t ipho, TString phoWP){
     if( fabs((*phoSCEta)[ipho]) > 1.4442){ // EE
       photonId = ( 
 	  ((*phoHoverE)[ipho]                <  0.0590 ) &&
-	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0272 ) &&
-          ((*phoEleVeto)[ipho]                == 1) &&
+	  //	  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0272 ) &&
+	  ((*phoEleVeto)[ipho]                == 1) &&
 	  (TMath::Max(((*phoPFChIso)[ipho]  - rho*EAcharged((*phoSCEta)[ipho])), 0.0) < 2.089 )  &&
 	  (TMath::Max(((*phoPFNeuIso)[ipho] - rho*EAneutral((*phoSCEta)[ipho])), 0.0) < (19.722 + (0.01117 * (*phoEt)[ipho]) + (0.000023 * pow((*phoEt)[ipho], 2.0))) )
 	  //                    (TMath::Max(((*phoPFPhoIso)[ipho] - rho*EAphoton( (*phoSCEta)[ipho])), 0.0) < (4.162 + (0.0037 * (*phoEt)[ipho])) )

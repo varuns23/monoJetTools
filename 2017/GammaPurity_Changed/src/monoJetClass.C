@@ -5,7 +5,6 @@
 ////$ ./rootcom monoJetClass analyze
 ////
 ////To run, assuming this is compiled to an executable named 'analyze':
-////$ ./analyze /hdfs/store/user/uhussain/monoJet_Ntuples/ /cms/uhussain/MonoJet/CMSSW_8_0_8/src/LightZPrimeAnalysis/JetAnalyzer/test/output.root -1 10000
 ////Runs over every event in the folder monoJet_Ntuples, reporting progress every 10000 events
 ////and storing the resulting histograms in the file output.root.
 ////
@@ -36,18 +35,13 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-    if (jentry%reportEvery == 0){
-      cout<<"Analyzing entry "<<jentry<<"/"<<(nentriesToCheck-1)<<endl;
-    }
-    
     initVars();
     
     float event_weight = 1.;
     if (isMC) {
       ApplyPileup(event_weight);
-      ApplyPrefiring(event_weight);
     }
-
+    
     h_CutFlow->Fill(0.5,event_weight);
 
     if (!getPhotonTrigger()) continue;
@@ -82,9 +76,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     jetindex = getJetIndex(phoindex);
     if (jetindex < 0) continue; 
     h_CutFlow->Fill(9.5,event_weight);
-   
-    setJetCand(jetindex);
-
+    
     if (pfMET >= 60) continue;
     h_CutFlow->Fill(10.5,event_weight);
 
@@ -93,35 +85,33 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     photon_phi = phoPhi->at(phoindex);
     photon_sieie = phoSigmaIEtaIEtaFull5x5->at(phoindex);
 
-    //fillEvent(0,event_weight);
-    fillHistos(event_weight);
-    cout<<"passed all--"<<std::endl;
+    fillHistos(1, event_weight);
 
+    if (jentry%reportEvery == 0){
+      cout<<"Finished entry "<<jentry<<"/"<<(nentriesToCheck-1)<<endl;
+    }
   }
-   
+
 }//Closing the Loop function
 
 void monoJetClass::BookHistos(const char* outputFilename) {
-  
+
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
-  
-  cutflow = new Cutflow(this,{"Final Events"});
 
-  BookHistos();
- 
+  BookHistos(1, "dummy");
+
+  output->Write();
+  output->Close();
 }
 
-void monoJetClass::fillHistos(int nhist,float event_weight) {
-//  monoJetYear::fillHistos(nhist,event_weight);
-//  monoJetGammaCR::fillHistos(nhist,event_weight);
-  weight = event_weight;
-  if (nhist == bHisto) tree->Fill();
-}
-
-void monoJetClass::fillHistos(float event_weight) {
+void monoJetClass::fillHistos(int, float event_weight) {
+  output->cd();
   
   double photon_PhoIso = TMath::Max(((*phoPFPhoIso)[phoindex] - rho*EAphoton( (*phoSCEta)[phoindex])), 0.0);
+
+  tree->Fill();
+
 
   h_phoPt-> Fill(photon_pt, event_weight);
   h_phoPFIso->Fill(photon_PhoIso, event_weight);
@@ -167,9 +157,10 @@ void monoJetClass::fillHistos(float event_weight) {
     h_phoPt_ptbins[7]     ->Fill(photon_pt, event_weight);
     h_phoPFIso_ptbins[7]  ->Fill(photon_PhoIso, event_weight);
   }
+
 }
 
-void monoJetClass::BookHistos(){
+void monoJetClass::BookHistos(int, string){
   char name[100];
 
   const int nPhoPtBins = 8;                
@@ -197,10 +188,10 @@ void monoJetClass::BookHistos(){
   h_PhoPFiso_SigmaIeIe->Sumw2();
 
   h_CutFlow = new TH1F("h_CutFlow", "cut flow of selection", 11, 0, 11); 
-//  TString cutFlowLabel[11] = {"Total Events","Triggers","MET Filters","Photon Selection", "Ele veto", "Mu veto", "Tau veto", "bjet veto", "MinDPhi", "Jet Selection","MET60"};
-//  for( Int_t bin = 1; bin <= h_CutFlow->GetNbinsX(); ++bin){
-//    h_CutFlow->GetXaxis()->SetBinLabel(bin, cutFlowLabel[bin-1]);
-//  }
+  TString cutFlowLabel[11] = {"Total Events","Triggers","MET Filters","Photon Selection", "Ele veto", "Mu veto", "Tau veto", "bjet veto", "MinDPhi", "Jet Selection","MET60"};
+  for( Int_t bin = 1; bin <= h_CutFlow->GetNbinsX(); ++bin){
+    h_CutFlow->GetXaxis()->SetBinLabel(bin, cutFlowLabel[bin-1]);
+  }
 }
 
 int monoJetClass::getJetIndex(int phoindex) {
