@@ -100,7 +100,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     
     fillHistos(10,event_weight);
     
-    if ( !(photon_sieie > 0.02 && photon_sieie < 0.015)) continue;
+    if (!(photon_sieie > 0.02 || photon_sieie < 0.015)) continue;
     cutflow->Fill(11,event_weight);
     
     fillHistos(11,event_weight);
