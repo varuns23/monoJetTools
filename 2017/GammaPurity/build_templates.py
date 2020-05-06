@@ -78,7 +78,7 @@ def PlotBkg(templates):
 
         leg.AddEntry(data,"Sideband Data","lp")
         leg.AddEntry(gjets,"Sideband GJets","l")
-    leg.AddEntry(sideband,"Sideband QCD","l")
+    leg.AddEntry(sideband,"QCD Fake Template","l")
     leg.Draw()
 
     SetBounds(hslist,scale=5,log=10)
@@ -99,7 +99,7 @@ def BkgTemplates(variable,output):
 
     bkg_template.processes["Sideband"] = sidebandproc
 
-    if parser.args.save: save_template(bkg_template["Sideband"].histo.Clone("sideband_qcd"),output)
+    if parser.args.save: save_template(bkg_template["Sideband"].histo.Clone("fake_qcd"),output)
     if parser.args.clean: bkg_template["Sideband"].histo.Add( bkg_template["GJets"].histo,-1 )
     if parser.args.plot: PlotBkg(bkg_template)
 
