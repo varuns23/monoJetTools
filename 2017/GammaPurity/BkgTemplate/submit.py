@@ -8,7 +8,6 @@ sys.path.append(repo)
 from CondorTools.SubmitDataset import submit,options,mclist
 options['year'] = '2017'
 options['region'] = 'GA'
-options['parallel'] = True
 options['batchsize'] = 25
 # options['submit'] = False
 #----Submit---#
