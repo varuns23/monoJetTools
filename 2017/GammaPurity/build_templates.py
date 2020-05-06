@@ -10,6 +10,11 @@ parser.add_argument("--plot",action="store_true")
 parser.add_argument("--clean",action="store_true",default=True)
 parser.add_argument("--save",action="store_true")
 
+if not os.path.isdir("templates"):
+    # Create directory to store templates and make git ignore it
+    os.mkdir("templates")
+    with open("templates/.gitignore","w") as f: f.write("*")
+    
 from ROOT import TCanvas,gStyle,kRed,kGreen
 
 sig_path = "SigTemplate"
