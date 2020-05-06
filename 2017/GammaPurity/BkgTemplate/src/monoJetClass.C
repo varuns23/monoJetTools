@@ -205,12 +205,74 @@ bool monoJetClass::CutBasedPFPhotonID_noPhoIso(Int_t ipho, TString phoWP){
 
   bool photonId = false;
 
-  if(phoWP == "tight") photonId = getTightPhoID(ipho);
+  if(phoWP == "tight"){  // Tight
+    if( fabs((*phoSCEta)[ipho]) < 1.4442){ // EB
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.02148 ) &&
+		  // ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.00996 ) &&
+		  ((*phoEleVeto)[ipho]                == 1) &&
+		  (phoPFChIso_RhoCor(ipho) < 0.65 )  &&
+		  (phoPFNeuIso_RhoCor(ipho) < (0.317 + (0.01512 * (*phoEt)[ipho]) + (0.00002259 * pow((*phoEt)[ipho], 2.0))) )
+		  //                    (phoPFPhoIso_RhoCor(ipho) < (2.044 + (0.004017 * (*phoEt)[ipho])) )
+		   ); 
+    }
+    if( fabs((*phoSCEta)[ipho]) > 1.4442){ // EE
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.0321 ) &&
+		  // ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0271 ) &&
+		  ((*phoEleVeto)[ipho]                == 1) &&
+		  (phoPFChIso_RhoCor(ipho) < 0.517 )  &&
+		  (phoPFNeuIso_RhoCor(ipho) < (2.716 + (0.01117 * (*phoEt)[ipho]) + (0.000023 * pow((*phoEt)[ipho], 2.0))) )
+		  //                    (phoPFPhoIso_RhoCor(ipho) < (3.032 + (0.0037 * (*phoEt)[ipho])) )
+		   );
+    }
+  }
 
-  if(phoWP == "medium") photonId = getMediumPhoID(ipho);
+  if(phoWP == "medium"){ // Medium
+    if( fabs((*phoSCEta)[ipho]) < 1.4442){ // EB
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.02197 ) &&
+		  // ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.01015 ) &&
+		  ((*phoEleVeto)[ipho]                == 1) &&
+		  (phoPFChIso_RhoCor(ipho) < 1.141 )  &&
+		  (phoPFNeuIso_RhoCor(ipho) < (1.189 + (0.01512 * (*phoEt)[ipho]) + (0.00002259 * pow((*phoEt)[ipho], 2.0))) )
+		  //                    (phoPFPhoIso_RhoCor(ipho) < (2.08 + (0.004017 * (*phoEt)[ipho])) )
+		   );
+    }
+    if( fabs((*phoSCEta)[ipho]) > 1.4442){ // EE
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.0326 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0272 ) &&
+		  ((*phoEleVeto)[ipho]                == 1) &&
+		  (phoPFChIso_RhoCor(ipho) < 1.051 )  &&
+		  (phoPFNeuIso_RhoCor(ipho) < (2.718 + (0.01117 * (*phoEt)[ipho]) + (0.000023 * pow((*phoEt)[ipho], 2.0))) )
+		  //                    (phoPFPhoIso_RhoCor(ipho) < (3.867 + (0.0037 * (*phoEt)[ipho])) )
+		   );
+    }
+  }
 
-  if(phoWP == "loose") photonId = getLoosePhoID(ipho);
-
+  if(phoWP == "loose"){ // Loose
+    if( fabs((*phoSCEta)[ipho]) < 1.4442){ // EB
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.04596 ) &&
+		  // ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0106 ) &&
+		  ((*phoEleVeto)[ipho]                == 1) &&
+		  (phoPFChIso_RhoCor(ipho) < 1.694 )  &&
+		  (phoPFNeuIso_RhoCor(ipho) < (24.032 + (0.01512 * (*phoEt)[ipho]) + (0.00002259 * pow((*phoEt)[ipho], 2.0))) )
+		  //                    (phoPFPhoIso_RhoCor(ipho) < (2.876 + (0.004017 * (*phoEt)[ipho])) )
+		   ); 
+    }
+    if( fabs((*phoSCEta)[ipho]) > 1.4442){ // EE
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.0590 ) &&
+		  // ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0272 ) &&
+		  ((*phoEleVeto)[ipho]                == 1) &&
+		  (phoPFChIso_RhoCor(ipho) < 2.089 )  &&
+		  (phoPFNeuIso_RhoCor(ipho) < (19.722 + (0.01117 * (*phoEt)[ipho]) + (0.000023 * pow((*phoEt)[ipho], 2.0))) )
+		  //                    (phoPFPhoIso_RhoCor(ipho) < (4.162 + (0.0037 * (*phoEt)[ipho])) )
+		   );
+    }
+  }
   return photonId; 
 }
 
