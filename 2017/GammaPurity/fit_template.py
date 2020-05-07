@@ -205,6 +205,7 @@ def fit_template(template,output,roovar=varmap["photonPFIso"]):
     # return fit_fraction(roovar,fakepdf,realpdf)
 if __name__ == "__main__":
     parser.parse_args()
+    output = None
     for template in parser.args.template:
         variable = template.GetName().replace("templates/template_","").replace(".root","")
         template.variable = variable
