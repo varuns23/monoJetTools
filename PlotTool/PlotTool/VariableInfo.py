@@ -123,7 +123,7 @@ class VariableInfo:
             else: self.cutfix = self.cut.replace('<','-').replace('>','+')
         
         if IsGlobal(variable,tfile): self.initGlobal(tfile,variable)
-        elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
+        #elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
         elif IsNhisto(variable,tfile): self.initNhisto(tfile,variable)
 
         self.title = self.template.GetTitle()
