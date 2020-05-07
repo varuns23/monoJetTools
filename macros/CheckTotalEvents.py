@@ -11,7 +11,9 @@ def compare(f1,f2,ibin=1):
     
     c_unknown = fn_unknown.Get("h_cutflow")[ibin]
     c_known = fn_known.Get("h_cutflow")[ibin]
-    ratio = c_unknown/c_known
+    if c_known == 0 and c_unknown == 0: ratio = 1.0
+    elif c_known == 0: ratio = "n/a"
+    else: ratio = c_unknown/c_known
     if ratio == 1: return
     print fn_unknown.GetName(),#c_unknown
     # print fn_known.GetName(),c_known
