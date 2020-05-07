@@ -674,11 +674,12 @@ void monoJetAnalysis::SetBoson(int PID) {
       bool status = mcStatus->at(i) == 62;
       // For some reason, photons only have status == 0
       // if ( PID == 22 ) status = (mcStatusFlag->at(i)>>2&1)==1;
-      if ( PID == 22 ) status = mcStatus->at(i)==1;
+      if ( PID == 22 ) status = (mcStatusFlag->at(i)>>1&1)==1;
       if (!status) continue;
       
       bosonPt = (*mcPt)[i];
       SetKFactors(bosonPt);
+      break;
     }
   }
 }
