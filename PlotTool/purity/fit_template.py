@@ -42,7 +42,7 @@ def estimates(model,data,realnum,fakenum,show=True):
         return realvalue,realerror,fakevalue,fakeerror
     realvalue,realerror,fakevalue,fakeerror = helper()
     if (realnum.getErrorHi() == 0 or realnum.getErrorLo() == 0 or fakenum.getErrorHi() == 0 or fakenum.getErrorLo() == 0):
-        modal.fitTo(data)
+        model.fitTo(data)
         realvalue,realerror,fakevalue,fakeerror = helper()
     return realvalue,realerror,fakevalue,fakeerror
 
@@ -79,11 +79,11 @@ def fit_style(hs,color=kBlue+2):
     hs.SetLineColor(color)
     hs.SetLineStyle(kSolid)
     hs.SetLineWidth(2)
-def PtRangeText(x=0.55,y=0.8,ptrange=(-1,-1)):
+def PtRangeText(x=0.55,y=0.8,ptrange=(-1,-1),scale=1):
     rangetext = TLatex(x,y,"%s < Photon P_{T} < %s"%(ptrange[0],ptrange[1]))
     rangetext.SetNDC()
     rangetext.SetTextFont(42)
-    rangetext.SetTextSize(0.035)
+    rangetext.SetTextSize(0.05*scale)
     rangetext.Draw()
     return rangetext
 def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,realvalue,fakevalue):
@@ -113,7 +113,7 @@ def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,realvalue,fakevalue):
     fit_style(postfit_fit,kBlue+2)
     DataStyle(postfit_data)
 
-    leg = getLegend(ymin=0.6,ymax=0.8)
+    leg = getLegend(xmax=0.7,ymin=0.55,ymax=0.75)
 
     postfit_gjet.Draw("hist")
 
@@ -130,18 +130,18 @@ def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,realvalue,fakevalue):
     
     leg.AddEntry(postfit_data,"Data","P E1")
     leg.AddEntry(postfit_gjet,"Real GJets","l")
-    leg.AddEntry(postfit_qcd,"Sideband QCD","l")
+    leg.AddEntry(postfit_qcd,"QCD Fake Template","l")
     leg.AddEntry(postfit_fit,"Fit","l")
 
     SetBounds(hslist,scale=5,log=10)
     leg.Draw()
     
     lumi_label = '%s' % float('%.3g' % (max(config.lumi.values())/1000.)) + " fb^{-1}"
-    texLumi,texCMS = getCMSText(lumi_label,config.year)
+    texLumi,texCMS = getCMSText(lumi_label,config.version)
 
     if re.search("(\d+to\d+|\d+toInf)",template.variable):
         ptrange = template.variable.split("_")[1].split("to")
-        rtext = PtRangeText(0.55,0.85,ptrange)
+        rtext = PtRangeText(ptrange=ptrange)
 
     
     c.cd();
@@ -159,7 +159,7 @@ def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,realvalue,fakevalue):
     line = getRatioLine(postfit_data.GetXaxis().GetXmin(),postfit_data.GetXaxis().GetXmax())
     line.Draw("same");
     
-    SaveAs(c,"fit_%s"%template.variable,year=str(config.year),sub="GammaPurity/Fit/")
+    SaveAs(c,"fit_%s"%template.variable,year=config.version,sub="GammaPurity/Fit/")
 def save_fit(hslist,output,fit):
     tdir = output.mkdir(fit)
     tdir.cd()

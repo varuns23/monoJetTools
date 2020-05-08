@@ -8,7 +8,6 @@ import re
 config.mclist = ["GJets"]
 
 parser.add_argument("--plot",action="store_true")
-parser.add_argument("--clean",action="store_true",default=True)
 parser.add_argument("--save",action="store_true")
 
 if not os.path.isdir("templates"):
@@ -36,14 +35,15 @@ def temp_style(hs,color):
     hs.SetLineWidth(2)
     hs.SetFillColor(0)
     hs.SetFillStyle(0)
-def PtRangeText(x=0.55,y=0.8,ptrange=(-1,-1)):
+def PtRangeText(x=0.55,y=0.8,ptrange=(-1,-1),scale=1):
     rangetext = TLatex(x,y,"%s < Photon P_{T} < %s"%(ptrange[0],ptrange[1]))
     rangetext.SetNDC()
     rangetext.SetTextFont(42)
-    rangetext.SetTextSize(0.035)
+    rangetext.SetTextSize(0.05*scale)
     rangetext.Draw()
     return rangetext
 def PlotBkg(templates):
+    print "Plotting Background Template"
     data = templates["Data"].histo.Clone()
     gjets = templates["GJets"].histo.Clone()
     sideband = templates["Sideband"].histo.Clone()
@@ -51,7 +51,7 @@ def PlotBkg(templates):
     c = TCanvas("c", "canvas",800,800);
     gStyle.SetOptStat(0);
     gStyle.SetLegendBorderSize(0);
-    c.SetLeftMargin(0.15);
+    # c.SetLeftMargin(0.15);
     c.SetLogy();
     #c.cd();
 
@@ -59,7 +59,7 @@ def PlotBkg(templates):
     temp_style(gjets,kGreen+2)
     DataStyle(data)
 
-    leg = getLegend(ymin=0.6,ymax=0.8)
+    leg = getLegend(xmax=0.7,ymin=0.55,ymax=0.75,scale=0.75)
 
     sideband.Draw("hist")
     hslist = [sideband]
@@ -71,13 +71,12 @@ def PlotBkg(templates):
         templates.variable.xaxis_title = next( (vartitle for var,vartitle in xaxismap.items() if var in templates.variable.variable) ,"" )
     sideband.GetXaxis().SetTitle(templates.variable.xaxis_title)
 
-    if parser.args.clean:
-        gjets.Draw("hist same")
-        data.Draw("pex0 same")
-        hslist = hslist + [gjets,data]
-
-        leg.AddEntry(data,"Sideband Data","lp")
-        leg.AddEntry(gjets,"Sideband GJets","l")
+    gjets.Draw("hist same")
+    data.Draw("pex0 same")
+    hslist = hslist + [gjets,data]
+    
+    leg.AddEntry(data,"Sideband Data","lp")
+    leg.AddEntry(gjets,"Sideband GJets","l")
     leg.AddEntry(sideband,"QCD Fake Template","l")
     leg.Draw()
 
@@ -88,23 +87,31 @@ def PlotBkg(templates):
 
     if re.search("(\d+to\d+|\d+toInf)",templates.variable.variable):
         ptrange = templates.variable.variable.split("_")[1].split("to")
-        rtext = PtRangeText(0.55,0.85,ptrange)
+        rtext = PtRangeText(ptrange=ptrange,scale=0.75)
     
     SaveAs(c,"sideband_template_%s"%templates.varname,year=templates.year,sub="GammaPurity")
 def BkgTemplates(variable,output):
+    print "Creating Background Template"
     bkg_template.initiate(variable)
 
     sidebandproc = Process("Sideband",[],{},"sideband",year=bkg_template.year,region=bkg_template.year)
     sidebandproc.add( bkg_template["Data"] )
 
     bkg_template.processes["Sideband"] = sidebandproc
+    
+    bkg_template["Sideband"].histo.Add( bkg_template["GJets"].histo,-1 )
+    
+    # If bin is negative, set it to zero
+    for ibin in range(1,bkg_template["Sideband"].histo.GetNbinsX()+1):
+        if bkg_template["Sideband"].histo[ibin] < 0:
+            bkg_template["Sideband"].histo.SetBinContent(ibin,0)
 
     if parser.args.save: save_template(bkg_template["Sideband"].histo.Clone("fake_qcd"),output)
-    if parser.args.clean: bkg_template["Sideband"].histo.Add( bkg_template["GJets"].histo,-1 )
     if parser.args.plot: PlotBkg(bkg_template)
 
     return bkg_template
 def PlotSig(templates,sideband_templates):
+    print "Plotting Signal Template"
     data = templates["Data"].histo.Clone()
     gjets = templates["GJets"].histo.Clone()
     sideband = sideband_templates["Sideband"].histo.Clone()
@@ -129,7 +136,7 @@ def PlotSig(templates,sideband_templates):
     temp_style(full,kBlue+2)
     DataStyle(data)
 
-    leg = getLegend(ymin=0.6,ymax=0.8)
+    leg = getLegend(xmax=0.7,ymin=0.55,ymax=0.75)
 
     gjets.Draw("hist")
 
@@ -147,7 +154,7 @@ def PlotSig(templates,sideband_templates):
     
     leg.AddEntry(data,"Data","lp")
     leg.AddEntry(gjets,"Real GJets","l")
-    leg.AddEntry(sideband,"Sideband QCD","l")
+    leg.AddEntry(sideband,"QCD Fake Template","l")
     leg.AddEntry(full,"Full","l")
 
     SetBounds(hslist,scale=5,log=10)
@@ -158,7 +165,7 @@ def PlotSig(templates,sideband_templates):
 
     if re.search("(\d+to\d+|\d+toInf)",templates.variable.variable):
         ptrange = templates.variable.variable.split("_")[1].split("to")
-        rtext = PtRangeText(0.55,0.85,ptrange)
+        rtext = PtRangeText(ptrange=ptrange)
 
     
     c.cd();
@@ -178,6 +185,7 @@ def PlotSig(templates,sideband_templates):
     
     SaveAs(c,"real_template_%s"%templates.varname,year=templates.year,sub="GammaPurity")
 def SigTemplates(variable,output,sideband_templates=None):
+    print "Creating Signal Template"
     sig_template.initiate(variable)
 
     if parser.args.save:
