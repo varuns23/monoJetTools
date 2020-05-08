@@ -673,9 +673,16 @@ float monoJetAnalysis::getLooseTauSF(int lepindex,string variation) {
 void monoJetAnalysis::SetBoson(int PID) {
   bosonPt = 0;
   for (int i = 0; i < nMC; i++){
-    if( abs((*mcPID)[i]) == PID && (*mcStatus)[i] == 62 ){
+    if( abs((*mcPID)[i]) == PID ){
+      bool status = mcStatus->at(i) == 62;
+      // For some reason, photons only have status == 0
+      // if ( PID == 22 ) status = (mcStatusFlag->at(i)>>2&1)==1;
+      if ( PID == 22 ) status = (mcStatusFlag->at(i)>>1&1)==1;
+      if (!status) continue;
+      
       bosonPt = (*mcPt)[i];
       SetKFactors(bosonPt);
+      break;
     }
   }
 }

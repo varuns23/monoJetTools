@@ -14,7 +14,7 @@ labelmap = {
 mclist = ['dyjets_nlo','dyjets','ewk','gjets','qcd','st','ttjets','wjets_nlo','wjets','zjets_nlo','zjets']
 datalist = ['met','egamma','singleele','singlepho']
 signalist = ['axial']
-full_list = mclist + datalist
+full_list = mclist + datalist + signalist
 
 options = {
     'year':"",
@@ -66,7 +66,7 @@ def submit(data,sub=None,label=None,split=-1,filelist=True,script='analyze'):
     if options['onlySignal'] and data not in signalist:
         warning('Only submitting Signal enabled',data); return
     if any( options[sample] for sample in full_list ) and not options[data]:
-        warning('Only submitting %s' % (', '.join([sample for sample in full_list if options[sample]]))); return
+        warning('Only submitting %s' % (', '.join([sample for sample in full_list if options[sample]])),data); return
         
     SubmitCondor.NFILE_PER_BATCH = options['batchsize']
     SubmitCondor.DoSubmit = options['submit']
