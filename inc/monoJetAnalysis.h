@@ -142,12 +142,13 @@ public:
     TH1F *h_cutflowNoK;
     std::map<std::string,int> labels;
     std::vector<std::string> _labels;
-    Cutflow(monoJetAnalysis* analysis, std::vector<std::string> labels) {
+    Cutflow(monoJetAnalysis* analysis, std::vector<std::string> labels,string tag="") {
       this->analysis = analysis;
       this->_labels = labels;
-      h_cutflow = new TH1F("h_cutflow","h_cutflow",labels.size(),0,labels.size());
-      h_cutflowNoWt = new TH1F("h_cutflowNoWt","h_cutflowNoWt",labels.size(),0,labels.size());
-      h_cutflowNoK = new TH1F("h_cutflowNoK","h_cutflowNoK",labels.size(),0,labels.size());
+      if (tag != "") tag = "_"+tag;
+      h_cutflow = new TH1F( ("h_cutflow"+tag).c_str(),"h_cutflow",labels.size(),0,labels.size());
+      h_cutflowNoWt = new TH1F( ("h_cutflowNoWt"+tag).c_str(),"h_cutflowNoWt",labels.size(),0,labels.size());
+      h_cutflowNoK = new TH1F( ("h_cutflowNoK"+tag).c_str(),"h_cutflowNoK",labels.size(),0,labels.size());
     
       for (int i = 0; i < labels.size(); i++) {
 	h_cutflow->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());

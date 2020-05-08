@@ -132,6 +132,7 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
         Ratio.Draw('pex0same')
         line = getRatioLine(data.histo.GetXaxis().GetXmin(),data.histo.GetXaxis().GetXmax())
         line.Draw("same");
+        pad2.RedrawAxis()
         
         c.Update();
     ######################################
