@@ -19,58 +19,6 @@ if not os.path.isdir("fits"):
 varmap = {
     "photonPFIso":RooRealVar("photonPFIso","Photon PF Isolation",0.,25.)
 }
-def make_pdf(histo,roovar,varnum,label,nrange):
-    template = RooDataHist("%s_template"%label,"%s template"%label,RooArgList(roovar),histo)
-    pdf = RooHistPdf("%s_pdf"%label,"%s pdf"%label,RooArgSet(roovar),template)    
-    extpdf = RooExtendPdf(label,"%s extend pdf"%label,pdf,varnum,nrange)
-    return template,pdf,extpdf
-def fix_zerobins(histo):
-    # RooFit doesnt like 0 bins
-    for ibin in range(1,histo.GetNbinsX()+1):
-        if histo[ibin] == 0: histo.SetBinContent(ibin,0.0001)
-def estimates(model,data,realnum,fakenum,show=True):
-    def helper():
-        realvalue = realnum.getValV()
-        realerror = max(abs(realnum.getErrorHi()),abs(realnum.getErrorLo()))
-        
-        fakevalue = fakenum.getValV()
-        fakeerror = max(abs(fakenum.getErrorHi()),abs(fakenum.getErrorLo()))
-        
-        if show:
-            print "realvalue = %d %+d/%+d"%(realvalue,realnum.getErrorHi(),realnum.getErrorLo())
-            print "fakevalue = %d %+d/%+d"%(fakevalue,fakenum.getErrorHi(),fakenum.getErrorLo())
-        return realvalue,realerror,fakevalue,fakeerror
-    realvalue,realerror,fakevalue,fakeerror = helper()
-    if (realnum.getErrorHi() == 0 or realnum.getErrorLo() == 0 or fakenum.getErrorHi() == 0 or fakenum.getErrorLo() == 0):
-        model.fitTo(data)
-        realvalue,realerror,fakevalue,fakeerror = helper()
-    return realvalue,realerror,fakevalue,fakeerror
-
-def fit_fraction(roovar,fakepdf,realpdf):
-    rooset = RooArgSet(roovar)
-    norset = RooArgSet(RooFit.NormSet(rooset))
-    
-    int_full_fakepdf = fakepdf.createIntegral(rooset,norset,"fullrange")
-    int_sgnl_fakepdf = fakepdf.createIntegral(rooset,norset,"signal")
-    frac_fakeInSig = int_sgnl_fakepdf.getVal()
-    fakeInSig = fakevalue*frac_fakeInSig
-    fakeInInSig_error = fakeerror*frac_fakeInSig
-    
-    int_full_realpdf = realpdf.createIntegral(rooset,norset,"fullrange")
-    int_sgnl_realpdf = realpdf.createIntegral(rooset,norset,"signal")
-    frac_realInSig = int_sgnl_realpdf.getVal()
-    realInSig = realvalue*frac_realInSig
-    realInInSig_error = realerror*frac_realInSig
-
-    totalInSig = realInSig + fakeInSig
-    totalInSig_error = TMath.Sqrt( realInSig_error**2 + fakeInSig_error**2 )
-
-    # Multiply the numerator observed in data by fakeFractionInNum to get the estimated numerator
-    # contribution coming from QCD fakes ( as opposed to real photons )
-    fakeFractionInNum = fakeInSig/(realInSig+fakeInSig)
-    fakeFraction_error = fakeFractionInNum*TMath.Sqrt( (fakeInSig_error/fakeInSig)**2 + (totalInSig_error/totalInSig)**2 )
-
-    return fakeFractionInNum,fakeFraction_error
 def hs_style(hs,color):
     hs.SetLineColor(color)
     hs.SetLineWidth(3)
@@ -86,7 +34,19 @@ def PtRangeText(x=0.55,y=0.8,ptrange=(-1,-1),scale=1):
     rangetext.SetTextSize(0.05*scale)
     rangetext.Draw()
     return rangetext
-def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,realvalue,fakevalue):
+def FakeFracText(x=0.55,y=0.5,fakeFrac=0,fakeFrac_error=0,scale=1):
+    btext = TLatex(x,y,"B/(S+B) = ")
+    btext.SetNDC()
+    btext.SetTextFont(42)
+    btext.SetTextSize(0.05*scale)
+    btext.Draw()
+    vtext = TLatex(x,y-0.05,"%f #pm %f"%(fakeFrac,fakeFrac_error))
+    vtext.SetNDC()
+    vtext.SetTextFont(42)
+    vtext.SetTextSize(0.05*scale)
+    vtext.Draw()
+    return vtext,btext
+def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,fakeFrac,fakeFrac_error):
     postfit_data = postfit_data.Clone()
     postfit_gjet =postfit_gjet.Clone()
     postfit_qcd = postfit_qcd.Clone()
@@ -143,6 +103,7 @@ def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,realvalue,fakevalue):
         ptrange = template.variable.split("_")[1].split("to")
         rtext = PtRangeText(ptrange=ptrange)
 
+    ftext = FakeFracText(fakeFrac=fakeFrac,fakeFrac_error=fakeFrac_error)
     
     c.cd();
     pad2 = TPad("pad2","pad2",0.01,0.01,0.99,0.25);
@@ -160,6 +121,62 @@ def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,realvalue,fakevalue):
     line.Draw("same");
     
     SaveAs(c,"fit_%s"%template.variable,year=config.version,sub="GammaPurity/Fit/")
+def make_pdf(histo,roovar,varnum,label,nrange):
+    template = RooDataHist("%s_template"%label,"%s template"%label,RooArgList(roovar),histo)
+    pdf = RooHistPdf("%s_pdf"%label,"%s pdf"%label,RooArgSet(roovar),template)    
+    extpdf = RooExtendPdf(label,"%s extend pdf"%label,pdf,varnum,nrange)
+    return template,pdf,extpdf
+def fix_zerobins(histo):
+    # RooFit doesnt like 0 bins
+    for ibin in range(1,histo.GetNbinsX()+1):
+        if histo[ibin] == 0: histo.SetBinContent(ibin,0.0001)
+def estimates(model,data,realnum,fakenum,show=True):
+    def helper():
+        realvalue = realnum.getValV()
+        realerror = max(abs(realnum.getErrorHi()),abs(realnum.getErrorLo()))
+        
+        fakevalue = fakenum.getValV()
+        fakeerror = max(abs(fakenum.getErrorHi()),abs(fakenum.getErrorLo()))
+        
+        if show:
+            print "realvalue = %d %+d/%+d"%(realvalue,realnum.getErrorHi(),realnum.getErrorLo())
+            print "fakevalue = %d %+d/%+d"%(fakevalue,fakenum.getErrorHi(),fakenum.getErrorLo())
+        return realvalue,realerror,fakevalue,fakeerror
+    realvalue,realerror,fakevalue,fakeerror = helper()
+    if (realnum.getErrorHi() == 0 or realnum.getErrorLo() == 0 or fakenum.getErrorHi() == 0 or fakenum.getErrorLo() == 0):
+        model.fitTo(data)
+        realvalue,realerror,fakevalue,fakeerror = helper()
+    return realvalue,realerror,fakevalue,fakeerror
+
+def fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror):
+    rooset = RooArgSet(roovar)
+    norset = RooFit.NormSet(rooset)
+    fullrange = RooFit.Range("fullrange")
+    signalrange = RooFit.Range("signal")
+    
+    int_full_fakepdf = fakepdf.createIntegral(rooset,norset,fullrange)
+    int_sgnl_fakepdf = fakepdf.createIntegral(rooset,norset,signalrange)
+    frac_fakeInSig = int_sgnl_fakepdf.getVal()
+    fakeInSig = fakevalue*frac_fakeInSig
+    fakeInSig_error = fakeerror*frac_fakeInSig
+    
+    int_full_realpdf = realpdf.createIntegral(rooset,norset,fullrange)
+    int_sgnl_realpdf = realpdf.createIntegral(rooset,norset,signalrange)
+    frac_realInSig = int_sgnl_realpdf.getVal()
+    realInSig = realvalue*frac_realInSig
+    realInSig_error = realerror*frac_realInSig
+
+    totalInSig = realInSig + fakeInSig
+    totalInSig_error = TMath.Sqrt( realInSig_error**2 + fakeInSig_error**2 )
+
+    # Multiply the numerator observed in data by fakeFractionInNum to get the estimated numerator
+    # contribution coming from QCD fakes ( as opposed to real photons )
+    fakeFractionInNum = fakeInSig/(realInSig+fakeInSig)
+    fakeFraction_error = fakeFractionInNum*TMath.Sqrt( (fakeInSig_error/fakeInSig)**2 + (totalInSig_error/totalInSig)**2 )
+
+    print "Fake Fraction: %f +/- %f"%(fakeFractionInNum,fakeFraction_error)
+
+    return fakeFractionInNum,fakeFraction_error
 def save_fit(hslist,output,fit):
     tdir = output.mkdir(fit)
     tdir.cd()
@@ -200,9 +217,8 @@ def fit_template(template,output,roovar=varmap["photonPFIso"]):
 
     roovar.setRange("signal",0.,10.)
     # Find fraction of fake/real pdfs in partial range, normalized to 1
-    if parser.args.plot: PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,realvalue,fakevalue)
-    
-    # return fit_fraction(roovar,fakepdf,realpdf)
+    fakeFrac,fakeFrac_error = fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
+    if parser.args.plot: PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,fakeFrac,fakeFrac_error)
 if __name__ == "__main__":
     parser.parse_args()
     output = None
