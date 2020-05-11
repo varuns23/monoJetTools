@@ -34,19 +34,19 @@ def PtRangeText(x=0.55,y=0.8,ptrange=(-1,-1),scale=1):
     rangetext.SetTextSize(0.05*scale)
     rangetext.Draw()
     return rangetext
-def FakeFracText(x=0.55,y=0.5,fakeFrac=0,fakeFrac_error=0,scale=1):
-    btext = TLatex(x,y,"B/(S+B) = ")
+def PurityText(x=0.55,y=0.5,purity=0,purity_error=0,scale=1):
+    btext = TLatex(x,y,"S/(S+B) = ")
     btext.SetNDC()
     btext.SetTextFont(42)
     btext.SetTextSize(0.05*scale)
     btext.Draw()
-    vtext = TLatex(x,y-0.05,"%f #pm %f"%(fakeFrac,fakeFrac_error))
+    vtext = TLatex(x,y-0.05,"%f #pm %f"%(purity,purity_error))
     vtext.SetNDC()
     vtext.SetTextFont(42)
     vtext.SetTextSize(0.05*scale)
     vtext.Draw()
     return vtext,btext
-def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,fakeFrac,fakeFrac_error):
+def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error):
     postfit_data = postfit_data.Clone()
     postfit_gjet =postfit_gjet.Clone()
     postfit_qcd = postfit_qcd.Clone()
@@ -103,7 +103,7 @@ def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,fakeFrac,fakeFrac_err
         ptrange = template.variable.split("_")[1].split("to")
         rtext = PtRangeText(ptrange=ptrange)
 
-    ftext = FakeFracText(fakeFrac=fakeFrac,fakeFrac_error=fakeFrac_error)
+    ftext = PurityText(purity=purity,purity_error=purity_error)
     
     c.cd();
     pad2 = TPad("pad2","pad2",0.01,0.01,0.99,0.25);
@@ -171,12 +171,13 @@ def fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
 
     # Multiply the numerator observed in data by fakeFractionInNum to get the estimated numerator
     # contribution coming from QCD fakes ( as opposed to real photons )
-    fakeFractionInNum = fakeInSig/(realInSig+fakeInSig)
-    fakeFraction_error = fakeFractionInNum*TMath.Sqrt( (fakeInSig_error/fakeInSig)**2 + (totalInSig_error/totalInSig)**2 )
+    # fakeFractionInNum = fakeInSig/(realInSig+fakeInSig)
+    purityInNum = realInSig/(realInSig + fakeInSig)
+    purity_error = purityInNum*TMath.Sqrt( (fakeInSig_error/fakeInSig)**2 + (totalInSig_error/totalInSig)**2 )
 
-    print "Fake Fraction: %f +/- %f"%(fakeFractionInNum,fakeFraction_error)
+    print "Purity: %f +/- %f"%(purityInNum,purity_error)
 
-    return fakeFractionInNum,fakeFraction_error
+    return purityInNum,purity_error
 def save_fit(hslist,output,fit):
     tdir = output.mkdir(fit)
     tdir.cd()
@@ -217,8 +218,8 @@ def fit_template(template,output,roovar=varmap["photonPFIso"]):
 
     roovar.setRange("signal",0.,10.)
     # Find fraction of fake/real pdfs in partial range, normalized to 1
-    fakeFrac,fakeFrac_error = fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
-    if parser.args.plot: PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,fakeFrac,fakeFrac_error)
+    purity,purity_error = fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
+    if parser.args.plot: PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error)
 if __name__ == "__main__":
     parser.parse_args()
     output = None
