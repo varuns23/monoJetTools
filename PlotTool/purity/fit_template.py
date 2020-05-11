@@ -214,11 +214,16 @@ def fit_template(template,output,roovar=varmap["photonPFIso"]):
     postfit_qcd = prefit_qcd.Clone()
     postfit_qcd.Scale(fakevalue/prefit_qcd.Integral())
 
-    if parser.args.save: save_fit([postfit_data,postfit_gjet,postfit_qcd],output,"postfit")
-
     roovar.setRange("signal",0.,10.)
     # Find fraction of fake/real pdfs in partial range, normalized to 1
     purity,purity_error = fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
+
+    h_purity = TH1F("purity","purity",1,0,1)
+    h_purity.SetBinContent(1,purity)
+    h_purity.SetBinError(1,purity_error)
+    
+    if parser.args.save: save_fit([postfit_data,postfit_gjet,postfit_qcd,h_purity],output,"postfit")
+    
     if parser.args.plot: PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error)
 if __name__ == "__main__":
     parser.parse_args()
