@@ -124,6 +124,19 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_j1Mt[i]           = MakeTH1F(new TH1F(Name("j1Mt").c_str()         ,"j1Mt;M_{T} of Leading Jet (GeV)"                        ,nMtBins,MtBins));
     
     h_j1EtaPhi[i]       = new TH2F(Name("j1EtaPhi").c_str()              ,"j1EtaPhi; Leading Jet #eta; Leading Jet #phi"           ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
+
+    // Split Jet Phi Histograms
+    h_pfMETPosj1Phi[i]    = MakeTH1F(new TH1F(Name("pfMETPosj1Phi").c_str()        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
+    h_pfMETPhiPosj1Phi[i] = MakeTH1F(new TH1F(Name("pfMETPhiPosj1Phi").c_str()     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
+    h_j1pTPosj1Phi[i]     = MakeTH1F(new TH1F(Name("j1pTPosj1Phi").c_str()         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
+    h_j1EtaPosj1Phi[i]    = MakeTH1F(new TH1F(Name("j1EtaPosj1Phi").c_str()        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
+    h_j1PhiPosj1Phi[i]    = MakeTH1F(new TH1F(Name("j1PhiPosj1Phi").c_str()        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
+    
+    h_pfMETNegj1Phi[i]    = MakeTH1F(new TH1F(Name("pfMETNegj1Phi").c_str()        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
+    h_pfMETPhiNegj1Phi[i] = MakeTH1F(new TH1F(Name("pfMETPhiNegj1Phi").c_str()     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
+    h_j1pTNegj1Phi[i]     = MakeTH1F(new TH1F(Name("j1pTNegj1Phi").c_str()         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
+    h_j1EtaNegj1Phi[i]    = MakeTH1F(new TH1F(Name("j1EtaNegj1Phi").c_str()        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
+    h_j1PhiNegj1Phi[i]    = MakeTH1F(new TH1F(Name("j1PhiNegj1Phi").c_str()        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
   }
 }
 
@@ -188,6 +201,21 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_j1Mt[nhist]         ->Fill(jetMt->at(jetCand),event_weight);
 
     h_j1EtaPhi[nhist]     ->Fill(jetEta->at(jetCand),jetPhi->at(jetCand),event_weight);
+
+    // Split Jet Phi Histograms
+    if ( jetPhi->at(jetCand) > 0 ) {
+      h_pfMETPosj1Phi[nhist]        ->Fill(pfMET,event_weight);
+      h_pfMETPhiPosj1Phi[nhist]     ->Fill(pfMETPhi,event_weight);
+      h_j1pTPosj1Phi[nhist]         ->Fill(jetPt->at(jetCand),event_weight);
+      h_j1EtaPosj1Phi[nhist]        ->Fill(jetEta->at(jetCand),event_weight);
+      h_j1PhiPosj1Phi[nhist]        ->Fill(jetPhi->at(jetCand),event_weight);
+    } else {
+      h_pfMETNegj1Phi[nhist]        ->Fill(pfMET,event_weight);
+      h_pfMETPhiNegj1Phi[nhist]     ->Fill(pfMETPhi,event_weight);
+      h_j1pTNegj1Phi[nhist]         ->Fill(jetPt->at(jetCand),event_weight);
+      h_j1EtaNegj1Phi[nhist]        ->Fill(jetEta->at(jetCand),event_weight);
+      h_j1PhiNegj1Phi[nhist]        ->Fill(jetPhi->at(jetCand),event_weight);
+    }
   }
 }
 

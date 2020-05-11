@@ -213,6 +213,10 @@ public:
 
   TH2F *h_j1EtaPhi[maxHisto];
 
+  // Split Jet Phi histograms
+  TH1F *h_pfMETPosj1Phi[maxHisto],*h_pfMETPhiPosj1Phi[maxHisto],*h_j1pTPosj1Phi[maxHisto],*h_j1EtaPosj1Phi[maxHisto],*h_j1PhiPosj1Phi[maxHisto];
+  TH1F *h_pfMETNegj1Phi[maxHisto],*h_pfMETPhiNegj1Phi[maxHisto],*h_j1pTNegj1Phi[maxHisto],*h_j1EtaNegj1Phi[maxHisto],*h_j1PhiNegj1Phi[maxHisto];
+
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
   // Declaration of leaf types
