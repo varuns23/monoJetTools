@@ -183,7 +183,7 @@ def save_fit(hslist,output,fit):
     tdir.cd()
     for hs in hslist: hs.Write()
 def fit_template(template,output,roovar=varmap["photonPFIso"]):
-    prefit_data = template.Get("data")
+    prefit_data = template.Get("total_data")
     fix_zerobins(prefit_data)
     prefit_gjet = template.Get("signal_gjets")
     fix_zerobins(prefit_gjet)

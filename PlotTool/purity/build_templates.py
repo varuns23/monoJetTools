@@ -189,7 +189,7 @@ def SigTemplates(variable,output,sideband_templates=None):
     sig_template.initiate(variable)
 
     if parser.args.save:
-        save_template(sig_template["Data"].histo.Clone("data"),output)
+        save_template(sig_template["Data"].histo.Clone("total_data"),output)
         save_template(sig_template["GJets"].histo.Clone("signal_gjets"),output)
     if parser.args.plot and sideband_templates: PlotSig(sig_template,sideband_templates)
 
