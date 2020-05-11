@@ -27,26 +27,26 @@ def PlotPurityRatio(ratio):
     c = TCanvas("c", "canvas",800,800);
     gStyle.SetOptStat(0);
     gStyle.SetLegendBorderSize(0);
+    c.SetGrid()
     # c.SetLeftMargin(0.15);
     # c.SetLogy();
     #c.cd();
     
     xaxis_title = "Photon P_{T} [GeV]"
 
-    leg = getLegend(xmin=0.5,scale=0.75)
+    leg = getLegend(xmin=0.5,ymin=0.7,scale=0.75)
 
     purity_style(ratio)
     ratio.SetTitle("")
     ratio.GetYaxis().SetTitle("QCD Purity Ratio")
     # ratio.GetYaxis().SetTitleOffset(0.5)
     ratio.GetXaxis().SetTitle(xaxis_title)
+    ratio.GetYaxis().SetRangeUser(0.75,1.2)
 
     ratio.Draw("p same")
     
     leg.AddEntry(ratio,"#frac{GJets_{Real}}{GJets_{Real} + QCD_{Fake}}","lp")
     leg.Draw()
-
-    SetBounds([ratio],scale=3)
 
     lumi_label = '%s' % float('%.3g' % (max(config.lumi.values())/1000.)) + " fb^{-1}"
     texLumi,texCMS = getCMSText(lumi_label,config.version,scale=0.8)
