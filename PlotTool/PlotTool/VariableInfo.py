@@ -86,10 +86,15 @@ class VariableInfo:
         if type(tfile) == str: tfile = TFile(tfile)
         finaldir = None
         finalnhs = None
+        self.dirlist = []
         for key in tfile.GetListOfKeys():
             if tfile.GetDirectory(key.GetName()):
-                finaldir = key.GetName()
-                finalnhs = finaldir.split('_')[1]
+                dirname = key.GetName()
+                ndir = dirname.split('_')[1]
+                self.dirlist.append(ndir)
+                if tfile.GetDirectory("%s/trees"%dirname):
+                    finaldir = dirname
+                    finalnhs = ndir
         self.nuisances = {'Stat':True}
         if tfile.GetDirectory('%s/trees'%finaldir ): self.nuisances = GetNuisanceList(tfile,'%s/trees'%finaldir)
         self.finaldir = finaldir
@@ -105,11 +110,14 @@ class VariableInfo:
         self.isGlobal = False
         self.isNhisto = False
         self.isBranch = False
-    def setVariable(self,variable,weight="weight",cut=None,autovar=False,tfile=None):
+    def setVariable(self,variable,weight="weight",cut=None,autovar=None,tfile=None):
         if tfile is not None: self.initFile(tfile)
         tfile = self.tfile
         self.initVariable()
-        if autovar: variable += '_'+self.finalnhs
+        if autovar is not None:
+            nh = str(int(self.finalnhs)+autovar)
+            if nh not in self.dirlist: nh = self.finalnhs
+            variable += '_'+nh
         self.variable = variable
 
         self.weight = weight
