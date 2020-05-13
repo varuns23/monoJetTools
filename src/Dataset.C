@@ -3,6 +3,8 @@
 
 #include <sys/stat.h>
 #include <TSystemDirectory.h>
+#include <TSystem.h>
+#include <TString.h>
 #include <TList.h>
 #include <fstream>
 #include <algorithm>
@@ -18,10 +20,11 @@
 
 using namespace std;
 
-bool isDir(const string &s)
+bool isDir(const string &dir)
 {
-  struct stat buffer;
-  return (stat (s.c_str(), &buffer) == 0);
+  return gSystem->OpenDirectory(dir.c_str()) != 0;
+  // struct stat buffer;
+  // return (stat (dir.c_str(), &buffer) == 0);
 }
 
 bool contains_substr(string str,string delim) {
@@ -48,22 +51,12 @@ void eraseAllSubStr(std::string & mainStr, const std::string & toErase) {
   }
 }
 
-std::string exec(const char* cmd) {
-    std::array<char, 128> buffer;
-    std::string result;
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-    if (!pipe) {
-        throw std::runtime_error("popen() failed!");
-    }
-    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
-        result += buffer.data();
-    }
-    result.erase(std::remove(result.begin(), result.end(), '\n'), result.end());
-    return result;
+std::string exec(std::string cmd) {
+  return (std::string)gSystem->GetFromPipe(cmd.c_str());
 }
 
 string FindNtuples(string path="./",string repo=(string(getenv("CMSSW_BASE"))+"/src/monoJetTools")) {
-  string realpath = exec(("realpath "+path).c_str());
+  string realpath = exec("realpath "+path);
   if ( isDir(realpath+"/ntuples/") ) return path+"ntuples/";
   if ( isDir(realpath+"/datasets/ntuples/") ) return path+"datasets/ntuples/";
   if ( realpath == repo ) return "";
@@ -86,6 +79,7 @@ Dataset::SubsetList::SubsetList() {
   while ( (file = (TSystemFile*)fileiter()) ) {
     string filename = (string)file->GetName();
     if ( contains_substr(filename,".txt") ) {
+      cout << "Adding to dataset: " << filename << endl;
       addDataset(ntuples,filename);
     }
   }

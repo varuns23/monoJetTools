@@ -130,7 +130,7 @@ public:
   /* Event Weight Variables */
   // made static so that the Cutflow class can access weights here
   float weight,weight_nogen,weight_nopileup,weight_nok;
-  float kfactor,nlo_ewk,nlo_qcd,nlo_qcd_binned,nnlo_qcd;
+  float kfactor,nlo_ewk,nlo_qcd,nnlo_qcd;
   float sf;
   float pileup;
   float trigger_sf;
@@ -204,13 +204,18 @@ public:
   // MC Info          
   TH1F *h_puTrueNoW[maxHisto],*h_puTrueReW[maxHisto],*h_genHT[maxHisto],*h_bosonPt[maxHisto],*h_bosonPtwK[maxHisto];      
   // MET Info         
-  TH1F *h_pfMETall[maxHisto],*h_pfMET[maxHisto],*h_pfMETPhi[maxHisto],*h_recoil[maxHisto],*h_recoilall[maxHisto],*h_recoilPhi[maxHisto];      
+  TH1F *h_pfMETall[maxHisto],*h_pfMET[maxHisto],*h_pfMETPhi[maxHisto],*h_recoil[maxHisto],*h_recoilall[maxHisto],*h_recoilPhi[maxHisto];
+  TH1F *h_caloMET[maxHisto],*h_caloMETPhi[maxHisto];
   // Jet Info         
   TH1F *h_nJets[maxHisto],*h_j1pT[maxHisto],*h_j1pTall[maxHisto],*h_j1Eta[maxHisto],*h_j1Phi[maxHisto],*h_j1etaWidth[maxHisto],*h_j1phiWidth[maxHisto],*h_j1CHF[maxHisto],*h_j1NHF[maxHisto],*h_j1ChMult[maxHisto],*h_j1NhMult[maxHisto],*h_j1Mt[maxHisto];
   TH1F *h_nJetsSkim[maxHisto];
   TH1F *h_j1CHFrounded[maxHisto],*h_j1NHFrounded[maxHisto];
 
   TH2F *h_j1EtaPhi[maxHisto];
+
+  // Split Jet Phi histograms
+  TH1F *h_pfMETPosj1Phi[maxHisto],*h_pfMETPhiPosj1Phi[maxHisto],*h_j1pTPosj1Phi[maxHisto],*h_j1EtaPosj1Phi[maxHisto],*h_j1PhiPosj1Phi[maxHisto];
+  TH1F *h_pfMETNegj1Phi[maxHisto],*h_pfMETPhiNegj1Phi[maxHisto],*h_j1pTNegj1Phi[maxHisto],*h_j1EtaNegj1Phi[maxHisto],*h_j1PhiNegj1Phi[maxHisto];
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
@@ -943,6 +948,8 @@ public:
   virtual float dPhiJetMETmin(vector<int> jetlist,float metPhi);
   virtual float dPFCaloMET(float met);
   bool getJetHEMVeto(float jetPtCut=jetHEMVetoPtCut);
+  bool getJetHEMVetoV2(float jetPtCut=jetHEMVetoPtCut);
+  bool getJetHEMVetoV3(float jetPtCut=jetHEMVetoPtCut);
   bool getEleHEMVeto(float elePtCut=eleHEMVetoPtCut);
   
   /* Object Selction Methods */
