@@ -13,7 +13,7 @@
 using namespace std;
 class monoJetClass : public monoJetYear, public monoJetGammaCR {
 public :
-  static const int nHisto = 12;
+  static const int nHisto = 14;
   static const int bHisto = 11;
 
   float photon_phoiso;
@@ -21,7 +21,7 @@ public :
   static const int nPhoPtBins = 8;                
   const float phoPtBins[nPhoPtBins+1] = {230., 250., 280., 320., 375., 425., 475., 550., 2000.};
 
-  TH1F *h_phoPFIso[nHisto],*h_phoPt_ptbins[nHisto][nPhoPtBins],*h_phoPFIso_ptbins[nHisto][nPhoPtBins];
+  TH1F *h_phoPFIso[nHisto],*h_phoPt_ptbins[nHisto][nPhoPtBins],*h_phoPFIso_ptbins[nHisto][nPhoPtBins],*h_phoSigmaIEtaIEta_ptbins[nHisto][nPhoPtBins];
   TH2F *h_phoPFIsoSigmaIEtaIEta[nHisto];
  
   monoJetClass(const char* file1,const char* file2,int nfiles) : monoJetAnalysis(file1,file2,nfiles) {
@@ -51,6 +51,9 @@ public :
     tree->Branch("photonSigmaIEtaIEta",&photon_sieie,"Photon #sigma_{i#eta i#eta}");
     tree->Branch("phoPFIso",&photon_phoiso);
   }
+
+  void nominal(float);
+  void met_variation(int,float);
 
   int getPhoIndex();
   int getJetIndex(int phoindex);

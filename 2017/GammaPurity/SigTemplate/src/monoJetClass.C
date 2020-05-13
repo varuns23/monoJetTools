@@ -89,18 +89,31 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
    
     setJetCand(jetindex);
 
-    if (pfMET >= 60) continue;
-    cutflow->Fill(10,event_weight);
-
     photon_pt = phoCalibEt->at(phoindex);
     photon_eta = phoEta->at(phoindex);
     photon_phi = phoPhi->at(phoindex);
     photon_sieie = phoSigmaIEtaIEtaFull5x5->at(phoindex);
     photon_phoiso = phoPFPhoIso_RhoCor(phoindex);
-    
-    fillHistos(10,event_weight);
+
+    nominal(event_weight);
+    met_variation(1,event_weight);
+    met_variation(-1,event_weight);
   }
 }//Closing the Loop function
+
+void monoJetClass::nominal(float event_weight) {
+    if (pfMET >= 60) return;
+    cutflow->Fill(10,event_weight);
+    fillHistos(10,event_weight);
+}
+
+void monoJetClass::met_variation(int var,float event_weight) {
+  if ( pfMET >= ( 60 * (1 + var*0.2) ) ) return;
+  switch(var) {
+  case 1: fillHistos(11,event_weight); break;
+  case -1:fillHistos(12,event_weight); break;
+  }
+}
 
 void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
@@ -144,6 +157,9 @@ void monoJetClass::BookHistos(const char* outputFilename) {
       
       sprintf(name, "photonPFIso_%s", bins[ibin].c_str());
       h_phoPFIso_ptbins[i][ibin] = MakeTH1F(new TH1F( Name(name).c_str(), "Photon PF Iso", 25, 0, 25));
+
+      sprintf(name, "photonSigmaIEtaIEta_%s",bins[ibin].c_str());
+      h_phoSigmaIEtaIEta_ptbins[i][ibin] = MakeTH1F(new TH1F( Name(name).c_str(),"Photon #sigma_#{i#eta i#eta}",25,0,0.025));
     }
     
     BookHistos(i,histname);
@@ -161,6 +177,7 @@ void monoJetClass::fillHistos(int nhist,float event_weight) {
     if (photon_pt >= phoPtBins[i] && photon_pt < phoPtBins[i+1]) {
       h_phoPt_ptbins[nhist][i]->Fill(photon_pt,event_weight);
       h_phoPFIso_ptbins[nhist][i]->Fill(photon_phoiso,event_weight);
+      h_phoSigmaIEtaIEta_ptbins[nhist][i]->Fill(photon_sieie,event_weight);
     }
   }
   if (nhist == bHisto) tree->Fill();

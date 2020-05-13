@@ -88,22 +88,36 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
    
     setJetCand(jetindex);
 
-    if (pfMET >= 60) continue;
-    cutflow->Fill(10,event_weight);
-
     photon_pt = phoCalibEt->at(phoindex);
     photon_eta = phoEta->at(phoindex);
     photon_phi = phoPhi->at(phoindex);
     photon_sieie = phoSigmaIEtaIEtaFull5x5->at(phoindex);
     photon_phoiso = phoPFPhoIso_RhoCor(phoindex);
-    
-    fillHistos(10,event_weight);
 
-    if (!getJetHEMVeto()) continue;
-    cutflow->Fill(11,event_weight);
-    fillHistos(11,event_weight);
+    nominal(event_weight);
+    met_variation(1,event_weight);
+    met_variation(-1,event_weight);
   }
 }//Closing the Loop function
+
+void monoJetClass::nominal(float event_weight) {
+    if (pfMET >= 60) return;
+    cutflow->Fill(10,event_weight);
+    fillHistos(10,event_weight);
+
+    if (!getJetHEMVeto()) return;
+    cutflow->Fill(11,event_weight);
+    fillHistos(11,event_weight);
+}
+
+void monoJetClass::met_variation(int var,float event_weight) {
+  if ( pfMET >= ( 60 * (1 + var*0.2) ) ) return;
+  if (!getJetHEMVeto()) return;
+  switch(var) {
+  case 1: fillHistos(12,event_weight); break;
+  case -1:fillHistos(13,event_weight); break;
+  }
+}
 
 void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");

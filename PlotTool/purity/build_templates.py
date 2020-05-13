@@ -9,6 +9,7 @@ config.mclist = ["GJets"]
 
 parser.add_argument("--plot",action="store_true")
 parser.add_argument("--save",action="store_true")
+parser.add_argument("--label",type=lambda a:"_"+a,default="")
 
 if not os.path.isdir("templates"):
     # Create directory to store templates and make git ignore it
@@ -208,7 +209,7 @@ if __name__ == "__main__":
     output = None
     for variable in parser.args.argv:
         if parser.args.save:
-            output = TFile("templates/template_%s.root"%variable,"recreate")
+            output = TFile("templates/template_%s%s.root"%(variable,parser.args.label),"recreate")
             print "Writing templates to",output.GetName()
         sideband = BkgTemplates(variable,output)
         real = SigTemplates(variable,output,sideband)
