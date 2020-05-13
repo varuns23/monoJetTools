@@ -31,11 +31,13 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
   int nTotal = nentriesToCheck;
   Long64_t nbytes = 0, nb = 0;
   cout<<"Running over "<<nTotal<<" events."<<endl;  
-  for (Long64_t jentry=0; jentry<nentriesToCheck; isMC ? jentry++ : jentry += 4) {
+  for (Long64_t jentry=0; jentry<nentriesToCheck; jentry++) {
     Long64_t ientry = LoadTree(jentry);
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
+    if (isData && event%5 != 0) continue;
+    
     if (jentry%reportEvery == 0){
       cout<<"Analyzing entry "<<jentry<<"/"<<(nentriesToCheck)<<endl;
     }

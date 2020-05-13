@@ -39,4 +39,4 @@ for variable in parser.args.argv:
         hs.GetXaxis().SetTitleOffset(1.7)
         hs.GetYaxis().SetTitle(samples.variable.yaxis_title)
         
-        SaveAs(canvas,label[hs.GetName()]["pre"]+variable,year=samples.year,region=samples.region,sub="phase")
+        SaveAs(canvas,label[hs.GetName()]["pre"]+variable,year=samples.year,region=samples.region)

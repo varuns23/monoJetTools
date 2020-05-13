@@ -33,8 +33,19 @@ void monoJetAnalysis::SetScalingHistos() {
       f_qcd_ewk = TFile::Open("RootFiles/theory/merged_kfactors_zjets.root");
       NLO_QCD_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_qcd_ewk");
       NLO_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_ewk");
-      NLO_QCD = (TH1F*)f_nlo_qcd->Get("dy_dress_monojet");
       NNLO_QCD = (TH1F*)f_nnlo_qcd->Get("eej");
+
+      switch(type) {
+      case ZJets:
+	f_nlo_qcd = TFile::Open("RootFiles/theory/kfac_znn_filter.root");
+	NLO_QCD = (TH1F*)f_nlo_qcd->Get("kfac_znn_filter");
+	break;
+      case DYJets:
+	f_nlo_qcd = TFile::Open("RootFiles/theory/kfac_dy_filter.root");
+	NLO_QCD = (TH1F*)f_nlo_qcd->Get("kfac_dy_filter");
+	break;
+      }
+      
     } else if ( type == GJets ) {
       f_qcd_ewk = TFile::Open("RootFiles/theory/merged_kfactors_gjets.root");
       NLO_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_ewk");
@@ -59,16 +70,20 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("kfactor",&kfactor);
   tree->Branch("nlo_ewk",&nlo_ewk);
   tree->Branch("nlo_qcd",&nlo_qcd);
-  tree->Branch("nlo_qcd_binned",&nlo_qcd_binned);
   tree->Branch("nnlo_qcd",&nnlo_qcd);
   tree->Branch("trigger_sf",&trigger_sf);
   tree->Branch("recoil",&recoil,"Recoil (GeV)");
-  // tree->Branch("j1pT",&j1pT,"Leading Jet P_{T} (GeV)");
-  // tree->Branch("j1Eta",&j1Eta,"Leading Jet Eta");
-  // tree->Branch("j1Phi",&j1Phi,"Leading Jet Phi");
-  // tree->Branch("nJets",&nJet,"Number of Jets");
   tree->Branch("bosonPt",&bosonPt,"Boson Pt");
-  // tree->Branch("nVtx",&nVtx,"Number of Verticies");
+
+  if (isMC) return;
+
+  tree->Branch("pfMET",&pfMET);
+  tree->Branch("pfMETPhi",&pfMETPhi);
+  tree->Branch("j1pT",&j1pT,"Leading Jet P_{T} (GeV)");
+  tree->Branch("j1Eta",&j1Eta,"Leading Jet Eta");
+  tree->Branch("j1Phi",&j1Phi,"Leading Jet Phi");
+  tree->Branch("nJets",&nJet,"Number of Jets");
+  tree->Branch("nVtx",&nVtx,"Number of Verticies");
 }
 
 void monoJetAnalysis::BookHistos(int i,string histname) {
@@ -101,6 +116,8 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_recoilall[i]      = MakeTH1F(new TH1F(Name("recoilall").c_str()    ,"recoilall;Recoil (GeV)"                                 ,nMetAllBins,MetAllBins));
     h_recoil[i]         = MakeTH1F(new TH1F(Name("recoil").c_str()       ,"recoil;Recoil (GeV)"                                    ,nMetBins,MetBins));
     h_recoilPhi[i]      = MakeTH1F(new TH1F(Name("recoilPhi").c_str()    ,"recoilPhi;Recoil #phi"                                  ,nPhiBins,lPhi,uPhi));
+    h_caloMET[i]        = MakeTH1F(new TH1F(Name("caloMET").c_str()      ,"caloMET;Calo E_{T}^{miss} (GeV)"                        ,nMetAllBins,MetAllBins)); 
+    h_caloMETPhi[i]     = MakeTH1F(new TH1F(Name("caloMETPhi").c_str()   ,"caloMETPhi;caloMET #phi"                                ,nPhiBins,lPhi,uPhi));
     // Jet Info
     h_nJets[i]          = MakeTH1F(new TH1F(Name("nJets").c_str()        ,"nJets;Number of Jets"                                   ,13,-0.5,12.5));
     h_nJetsSkim[i]      = MakeTH1F(new TH1F(Name("nJetsSkim").c_str()    ,"nJetsSkim;Number of Jets"                               ,13,-0.5,12.5));
@@ -119,6 +136,19 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
     h_j1Mt[i]           = MakeTH1F(new TH1F(Name("j1Mt").c_str()         ,"j1Mt;M_{T} of Leading Jet (GeV)"                        ,nMtBins,MtBins));
     
     h_j1EtaPhi[i]       = new TH2F(Name("j1EtaPhi").c_str()              ,"j1EtaPhi; Leading Jet #eta; Leading Jet #phi"           ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
+
+    // Split Jet Phi Histograms
+    h_pfMETPosj1Phi[i]    = MakeTH1F(new TH1F(Name("pfMETPosj1Phi").c_str()        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
+    h_pfMETPhiPosj1Phi[i] = MakeTH1F(new TH1F(Name("pfMETPhiPosj1Phi").c_str()     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
+    h_j1pTPosj1Phi[i]     = MakeTH1F(new TH1F(Name("j1pTPosj1Phi").c_str()         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
+    h_j1EtaPosj1Phi[i]    = MakeTH1F(new TH1F(Name("j1EtaPosj1Phi").c_str()        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
+    h_j1PhiPosj1Phi[i]    = MakeTH1F(new TH1F(Name("j1PhiPosj1Phi").c_str()        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
+    
+    h_pfMETNegj1Phi[i]    = MakeTH1F(new TH1F(Name("pfMETNegj1Phi").c_str()        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
+    h_pfMETPhiNegj1Phi[i] = MakeTH1F(new TH1F(Name("pfMETPhiNegj1Phi").c_str()     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
+    h_j1pTNegj1Phi[i]     = MakeTH1F(new TH1F(Name("j1pTNegj1Phi").c_str()         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
+    h_j1EtaNegj1Phi[i]    = MakeTH1F(new TH1F(Name("j1EtaNegj1Phi").c_str()        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
+    h_j1PhiNegj1Phi[i]    = MakeTH1F(new TH1F(Name("j1PhiNegj1Phi").c_str()        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
   }
 }
 
@@ -160,6 +190,8 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
   h_recoil[nhist]       ->Fill(recoil,event_weight);
   h_recoilall[nhist]    ->Fill(recoil,event_weight);
   h_recoilPhi[nhist]    ->Fill(recoilPhi,event_weight);
+  h_caloMET[nhist]        ->Fill(caloMET,event_weight);
+  h_caloMETPhi[nhist]     ->Fill(caloMETPhi,event_weight);
 
   // Jet Info         ;
   h_nJets[nhist]        ->Fill(nJet,event_weight);
@@ -174,13 +206,28 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_j1phiWidth[nhist]   ->Fill(jetphiWidth->at(jetCand),event_weight);
     h_j1CHF[nhist]        ->Fill(jetCHF->at(jetCand),event_weight);
     h_j1NHF[nhist]        ->Fill(jetNHF->at(jetCand),event_weight);
-    h_j1CHFrounded[nhist]        ->Fill(getRounded(getRounded(jetCHF->at(jetCand))),event_weight);
-    h_j1NHFrounded[nhist]        ->Fill(getRounded(getRounded(jetNHF->at(jetCand))),event_weight);
+    h_j1CHFrounded[nhist] ->Fill(getRounded(getRounded(jetCHF->at(jetCand))),event_weight);
+    h_j1NHFrounded[nhist] ->Fill(getRounded(getRounded(jetNHF->at(jetCand))),event_weight);
     h_j1ChMult[nhist]     ->Fill(jetNChargedHad->at(jetCand),event_weight);
     h_j1NhMult[nhist]     ->Fill(jetNNeutralHad->at(jetCand),event_weight);
     h_j1Mt[nhist]         ->Fill(jetMt->at(jetCand),event_weight);
 
     h_j1EtaPhi[nhist]     ->Fill(jetEta->at(jetCand),jetPhi->at(jetCand),event_weight);
+
+    // Split Jet Phi Histograms
+    if ( jetPhi->at(jetCand) > 0 ) {
+      h_pfMETPosj1Phi[nhist]        ->Fill(pfMET,event_weight);
+      h_pfMETPhiPosj1Phi[nhist]     ->Fill(pfMETPhi,event_weight);
+      h_j1pTPosj1Phi[nhist]         ->Fill(jetPt->at(jetCand),event_weight);
+      h_j1EtaPosj1Phi[nhist]        ->Fill(jetEta->at(jetCand),event_weight);
+      h_j1PhiPosj1Phi[nhist]        ->Fill(jetPhi->at(jetCand),event_weight);
+    } else {
+      h_pfMETNegj1Phi[nhist]        ->Fill(pfMET,event_weight);
+      h_pfMETPhiNegj1Phi[nhist]     ->Fill(pfMETPhi,event_weight);
+      h_j1pTNegj1Phi[nhist]         ->Fill(jetPt->at(jetCand),event_weight);
+      h_j1EtaNegj1Phi[nhist]        ->Fill(jetEta->at(jetCand),event_weight);
+      h_j1PhiNegj1Phi[nhist]        ->Fill(jetPhi->at(jetCand),event_weight);
+    }
   }
 }
 
@@ -686,14 +733,14 @@ void monoJetAnalysis::SetBoson(int PID) {
 
 float monoJetAnalysis::getKFactor(float bosonPt) {
   nlo_ewk = th1fmap.getBin("NLO_EWK",bosonPt);
-  nlo_qcd_binned = th1fmap.getBin("NLO_QCD",bosonPt);
   
   nlo_qcd = 1;
   if ( bosonPt > 0 ){
     if (type == WJets) {
       nlo_qcd = exponential(bosonPt,1.053, 3.163e-3, 0.746);
     } else if (type == ZJets || type == DYJets) {
-      nlo_qcd = exponential(bosonPt,1.434, 2.210e-3, 0.443);
+      // nlo_qcd = exponential(bosonPt,1.434, 2.210e-3, 0.443);
+      nlo_qcd = th1fmap.getBin("NLO_QCD",bosonPt);
     } else if (type == GJets) {
       nlo_qcd = exponential(bosonPt,1.159, 1.944e-3, 1.0);
     }
@@ -824,6 +871,36 @@ bool monoJetAnalysis::getJetHEMVeto(float jetPtCut){
   return pass;
 }
 
+bool monoJetAnalysis::getJetHEMVetoV2(float jetPtCut){
+  // -3.2<eta<-1.3 and -1.57<phi< -0.87
+  bool pass = true;
+  for(int p=0;p<nJet;p++)
+  {
+    bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.3 && (*jetEta)[p] > -3.2 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
+    bool tightJetID = false;
+    if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
+    if(kinematic) // not chekcing ID here.                                                                                                                                         
+      pass = false;
+  }
+
+  return pass;
+}
+
+bool monoJetAnalysis::getJetHEMVetoV3(float jetPtCut){
+  // -1.57<phi< -0.87 
+  bool pass = true;
+  for(int p=0;p<nJet;p++)
+  {
+    bool kinematic = (*jetPt)[p] > jetPtCut && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
+    bool tightJetID = false;
+    if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
+    if(kinematic) // not chekcing ID here.                                                                                                                                         
+      pass = false;
+  }
+
+  return pass;
+}
+
 bool monoJetAnalysis::getEleHEMVeto(float elePtCut){
 
   bool pass = true;
@@ -865,7 +942,7 @@ void monoJetAnalysis::initVars() {
   }
 
   weight = weight_nogen = weight_nopileup = weight_nok = kfactor = 1;
-  pileup = sf = nlo_ewk = nlo_qcd = nlo_qcd_binned = nnlo_qcd = trigger_sf = 1;
+  pileup = sf = nlo_ewk = nlo_qcd = nnlo_qcd = trigger_sf = 1;
 
   bosonPt = j1pT = j1Eta = j1Phi = -99;
   recoil = pfMET;
