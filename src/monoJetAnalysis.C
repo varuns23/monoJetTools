@@ -33,8 +33,19 @@ void monoJetAnalysis::SetScalingHistos() {
       f_qcd_ewk = TFile::Open("RootFiles/theory/merged_kfactors_zjets.root");
       NLO_QCD_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_qcd_ewk");
       NLO_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_ewk");
-      NLO_QCD = (TH1F*)f_nlo_qcd->Get("dy_dress_monojet");
       NNLO_QCD = (TH1F*)f_nnlo_qcd->Get("eej");
+
+      switch(type) {
+      case ZJets:
+	f_nlo_qcd = TFile::Open("RootFiles/theory/kfac_znn_filter.root");
+	NLO_QCD = (TH1F*)f_nlo_qcd->Get("kfac_znn_filter");
+	break;
+      case DYJets:
+	f_nlo_qcd = TFile::Open("RootFiles/theory/kfac_dy_filter.root");
+	NLO_QCD = (TH1F*)f_nlo_qcd->Get("kfac_dy_filter");
+	break;
+      }
+      
     } else if ( type == GJets ) {
       f_qcd_ewk = TFile::Open("RootFiles/theory/merged_kfactors_gjets.root");
       NLO_EWK = (TH1F*)f_qcd_ewk->Get("kfactor_monojet_ewk");
@@ -59,7 +70,6 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("kfactor",&kfactor);
   tree->Branch("nlo_ewk",&nlo_ewk);
   tree->Branch("nlo_qcd",&nlo_qcd);
-  tree->Branch("nlo_qcd_binned",&nlo_qcd_binned);
   tree->Branch("nnlo_qcd",&nnlo_qcd);
   tree->Branch("trigger_sf",&trigger_sf);
   tree->Branch("recoil",&recoil,"Recoil (GeV)");
@@ -723,14 +733,14 @@ void monoJetAnalysis::SetBoson(int PID) {
 
 float monoJetAnalysis::getKFactor(float bosonPt) {
   nlo_ewk = th1fmap.getBin("NLO_EWK",bosonPt);
-  nlo_qcd_binned = th1fmap.getBin("NLO_QCD",bosonPt);
   
   nlo_qcd = 1;
   if ( bosonPt > 0 ){
     if (type == WJets) {
       nlo_qcd = exponential(bosonPt,1.053, 3.163e-3, 0.746);
     } else if (type == ZJets || type == DYJets) {
-      nlo_qcd = exponential(bosonPt,1.434, 2.210e-3, 0.443);
+      // nlo_qcd = exponential(bosonPt,1.434, 2.210e-3, 0.443);
+      nlo_qcd = th1fmap.getBin("NLO_QCD",bosonPt);
     } else if (type == GJets) {
       nlo_qcd = exponential(bosonPt,1.159, 1.944e-3, 1.0);
     }
@@ -932,7 +942,7 @@ void monoJetAnalysis::initVars() {
   }
 
   weight = weight_nogen = weight_nopileup = weight_nok = kfactor = 1;
-  pileup = sf = nlo_ewk = nlo_qcd = nlo_qcd_binned = nnlo_qcd = trigger_sf = 1;
+  pileup = sf = nlo_ewk = nlo_qcd = nnlo_qcd = trigger_sf = 1;
 
   bosonPt = j1pT = j1Eta = j1Phi = -99;
   recoil = pfMET;

@@ -130,7 +130,7 @@ public:
   /* Event Weight Variables */
   // made static so that the Cutflow class can access weights here
   float weight,weight_nogen,weight_nopileup,weight_nok;
-  float kfactor,nlo_ewk,nlo_qcd,nlo_qcd_binned,nnlo_qcd;
+  float kfactor,nlo_ewk,nlo_qcd,nnlo_qcd;
   float sf;
   float pileup;
   float trigger_sf;
