@@ -13,5 +13,5 @@ PtBinNames will be created the first time BookHistos is called in the analysis c
 If a new histogram is to be added to the different photon pt binnings, follow the format of the *h_phoPt_ptbins[maxHisto][nPhoPtBins].
 Then in the source file (src/monoJetGammaPurity.C) initialize the new histogram along the other pt binned histograms in monoJetGammaPurity::BookHistos, and fill it with the others in monoJetGammaPurity::fillHistos
 
-The photon ID is split into the CutBasedPhotonIso and CutBasedPhotonId (no isolation requirement), both of which have a second version: CutBasedPhotonIso_noPhoIso (isolation without the photon PF Iso) and CutBasedPhotonIso_noSieie (id without the sieie cut). By using a combination of these, most of the photon IDs required for signal, background, and denomenator templates can be constructed.
+The photon ID is split into the CutBasedPhotonIso and CutBasedPhotonId (no isolation requirement), both of which have a second version: CutBasedPhotonIso_noPhoIso (isolation without the photon PF Iso) and CutBasedPhotonIso_noSieie (id without the sieie cut). By using a combination of these, most of the photon IDs required for signal, background, and denominator templates can be constructed.
 
