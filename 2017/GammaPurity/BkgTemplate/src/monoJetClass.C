@@ -269,7 +269,7 @@ bool monoJetClass::CutBasedPFPhotonID_noPhoIso(Int_t ipho, TString phoWP){
     if( fabs((*phoSCEta)[ipho]) > 1.4442){ // EE
       photonId = ( 
 		  ((*phoHoverE)[ipho]                <  0.0326 ) &&
-		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0272 ) &&
+		  // ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0272 ) &&
 		  ((*phoEleVeto)[ipho]                == 1) &&
 		  (phoPFChIso_RhoCor(ipho) < 1.051 )  &&
 		  (phoPFNeuIso_RhoCor(ipho) < (2.718 + (0.01117 * (*phoEt)[ipho]) + (0.000023 * pow((*phoEt)[ipho], 2.0))) )
