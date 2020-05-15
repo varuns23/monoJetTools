@@ -79,7 +79,6 @@ Dataset::SubsetList::SubsetList() {
   while ( (file = (TSystemFile*)fileiter()) ) {
     string filename = (string)file->GetName();
     if ( contains_substr(filename,".txt") ) {
-      cout << "Adding to dataset: " << filename << endl;
       addDataset(ntuples,filename);
     }
   }

@@ -13,8 +13,8 @@
 using namespace std;
 class monoJetClass : public monoJetYear, public monoJetGammaCR {
 public :
-  static const int nHisto = 17;
-  static const int bHisto = 12;
+  static const int nHisto = 16;
+  static const int bHisto = 11;
 
   float photon_phoiso;
   

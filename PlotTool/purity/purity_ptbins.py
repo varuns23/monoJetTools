@@ -113,7 +113,7 @@ def getFitRatio(fname):
     ratio_error = purity.GetBinError(1)
     return ratio,ratio_error
 def save_ratio(ratio):
-    output = TFile("purity/purity_ratio_%s%s.root"%(parser.args.variable,parser.args.label),"recreate")
+    output = TFile("purity/purity_ratio_%s.root"%(parser.args.variable),"recreate")
     ratio.Write()
     output.Close()
 

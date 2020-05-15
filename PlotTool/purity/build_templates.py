@@ -9,7 +9,7 @@ config.mclist = ["GJets"]
 
 parser.add_argument("--plot",action="store_true")
 parser.add_argument("--save",action="store_true")
-parser.add_argument("--label",type=lambda a:"_"+a,default="")
+parser.add_argument("--label",type=lambda a:"_"+a)
 
 if not os.path.isdir("templates"):
     # Create directory to store templates and make git ignore it
@@ -198,6 +198,7 @@ def SigTemplates(variable,output,sideband_templates=None):
 
 if __name__ == "__main__":
     parser.parse_args()
+    if parser.args.label is None: parser.args.label = ""
 
     ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
 

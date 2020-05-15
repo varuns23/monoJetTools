@@ -125,8 +125,8 @@ void monoJetClass::sideband_variation(int var,float event_weight) {
   if ( pfMET >= 60 ) return;
   if (!(photon_sieie > (0.02 * ( 1 + var*0.1 )) || photon_sieie < 0.015)) return;
   switch(var) {
-  case 1: fillHistos(12,event_weight); break;
-  case -1:fillHistos(13,event_weight); break;
+  case 1: fillHistos(14,event_weight); break;
+  case -1:fillHistos(15,event_weight); break;
   }
 }
 
