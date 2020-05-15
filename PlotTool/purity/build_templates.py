@@ -20,9 +20,11 @@ from ROOT import TCanvas,gStyle,kRed,kGreen,kBlue,TLatex,TPad
 
 sig_path = "SigTemplate"
 bkg_path = "BkgTemplate"
+den_path = "DenTemplate"
 
 sig_template = Region(path=sig_path,autovar=True,show=0)
 bkg_template = Region(path=bkg_path,autovar=True,show=0)
+den_template = Region(path=den_path,autovar=True,show=0)
 
 xaxismap = {
     "photonPFIso":"Photon PF Isolation [GeV]"
@@ -43,6 +45,74 @@ def PtRangeText(x=0.55,y=0.8,ptrange=(-1,-1),scale=1):
     rangetext.SetTextSize(0.05*scale)
     rangetext.Draw()
     return rangetext
+def PlotDen(templates):
+    print "Plotting Denominator Template"
+    data = templates["Data"].histo.Clone()
+    gjets = templates["GJets"].histo.Clone()
+    cleaned = templates["Cleaned"].histo.Clone()
+
+    c = TCanvas("c", "canvas",800,800);
+    gStyle.SetOptStat(0);
+    gStyle.SetLegendBorderSize(0);
+    # c.SetLeftMargin(0.15);
+    c.SetLogy();
+    #c.cd();
+
+    temp_style(cleaned,kRed)
+    temp_style(gjets,kGreen+2)
+    DataStyle(data)
+
+    leg = getLegend(xmax=0.7,ymin=0.55,ymax=0.75,scale=0.75)
+
+    cleaned.Draw("hist")
+    hslist = [cleaned]
+
+    cleaned.SetTitle("")
+    cleaned.GetYaxis().SetTitle("Events")
+
+    if templates.variable.xaxis_title == "":
+        templates.variable.xaxis_title = next( (vartitle for var,vartitle in xaxismap.items() if var in templates.variable.variable) ,"" )
+    cleaned.GetXaxis().SetTitle(templates.variable.xaxis_title)
+
+    gjets.Draw("hist same")
+    data.Draw("pex0 same")
+    hslist = hslist + [gjets,data]
+    
+    leg.AddEntry(data,"Data_{Non-ISO}","lp")
+    leg.AddEntry(gjets,"GJets_{Non-ISO}","l")
+    leg.AddEntry(cleaned,"Data_{Non-ISO} - GJets_{Non-ISO}","l")
+    leg.Draw()
+
+    SetBounds(hslist,scale=5,log=10)
+
+    lumi_label = '%s' % float('%.3g' % (templates.lumi/1000.)) + " fb^{-1}"
+    texLumi,texCMS = getCMSText(lumi_label,templates.year,scale=0.8)
+
+    if re.search("(\d+to\d+|\d+toInf)",templates.variable.variable):
+        ptrange = templates.variable.variable.split("_")[1].split("to")
+        rtext = PtRangeText(ptrange=ptrange,scale=0.75)
+    
+    SaveAs(c,"den_template_%s"%templates.varname,year=templates.year,sub="GammaPurity")
+def DenTemplates(variable,output):
+    print "Creating Denominator Template"
+    den_template.initiate(variable)
+
+    cleanedproc = Process("Cleaned",[],{},"cleaned",year=den_template.year,region=den_template.year)
+    cleanedproc.add( den_template["Data"] )
+
+    den_template.processes["Cleaned"] = cleanedproc
+    
+    den_template["Cleaned"].histo.Add( den_template["GJets"].histo,-1 )
+    
+    # If bin is negative, set it to zero
+    for ibin in range(1,den_template["Cleaned"].histo.GetNbinsX()+1):
+        if den_template["Cleaned"].histo[ibin] < 0:
+            den_template["Cleaned"].histo.SetBinContent(ibin,0)
+
+    if parser.args.save: save_template(den_template["Data"].histo.Clone("den_data"),output)
+    if parser.args.plot: PlotDen(den_template)
+
+    return den_template
 def PlotBkg(templates):
     print "Plotting Background Template"
     data = templates["Data"].histo.Clone()
@@ -214,3 +284,4 @@ if __name__ == "__main__":
             print "Writing templates to",output.GetName()
         sideband = BkgTemplates(variable,output)
         real = SigTemplates(variable,output,sideband)
+        den = DenTemplates(variable,output)
