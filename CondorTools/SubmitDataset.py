@@ -81,10 +81,10 @@ def submit(data,sub=None,label=None,split=-1,filelist=True,script='analyze'):
     else: sublist = sub
     for sub in sublist:
         if sub not in subset: print '%s not found in subset' % sub; continue
+        
         for i,input in enumerate(subset[sub]):
             clabel = '%s%s_%i' % (label,sub,i)
-            nlabel = '%s%s_%i' % (labelmap[data],sub,i)
-            command = [script,input,'post%s.root' % clabel,'-1','10000',nlabel,'split_%i' % split]
+            command = [script,input,'post%s.root' % clabel,'-1','10000',clabel,'split_%i' % split]
             if filelist: command = ['-f'] + command
             if any(options['region']): command = ['-r',options['region']] + command
             if any(options['year']): command = ['-y',options['year']] + command
