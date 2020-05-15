@@ -75,7 +75,7 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("recoil",&recoil,"Recoil (GeV)");
   tree->Branch("bosonPt",&bosonPt,"Boson Pt");
 
-  return;
+  // return;
   if (isMC) return;
 
   tree->Branch("pfMET",&pfMET);
@@ -730,6 +730,44 @@ void monoJetAnalysis::SetBoson(int PID) {
       break;
     }
   }
+  // Sometimes a boson isn't found for z->ll. Try finding gen dilepton instead
+  if (bosonPt == 0 && type == DYJets) GenDilepton();
+}
+
+void monoJetAnalysis::GenDilepton() {
+  // printf("Could not find Z boson, trying for dilepton\n");
+  
+  for (int i = 0; i < nMC; i++) {
+    if ( mcStatus->at(i) != 1 ) continue;
+    int pid1 = mcPID->at(i);
+    
+    bool object;
+    switch(CROBJECT) {
+    case Electron: object = abs(pid1) == 11; break;
+    case Muon:     object = abs(pid1) == 13; break;
+    default:       object = ( abs(pid1) == 11 || abs(pid1) == 13 ); break;
+    }
+    
+    if ( object ) {
+      for (int j = i; j < nMC; j++) {
+	if ( mcStatus->at(j) != 1 ) continue;
+	int pid2 = mcPID->at(j);
+	if ( abs(pid1) == abs(pid2) && pid1*pid2 < 0 ) {
+	  TLorentzVector l1,l2;
+	  l1.SetPtEtaPhiE(mcPt->at(i),mcEta->at(i),mcPhi->at(i),mcE->at(i));
+	  l2.SetPtEtaPhiE(mcPt->at(j),mcEta->at(j),mcPhi->at(j),mcE->at(j));
+	  TLorentzVector ll = l1 + l2;
+	  bosonPt = ll.Pt();
+	  SetKFactors(bosonPt);
+	  // printf("PID 1: %i PID 2: %i\n",pid1,pid2);
+	  // printf("Boson Pt: %f\n",bosonPt);
+	  // Exit all loops once dilepton is found
+	  goto found_dilepton;
+	}
+      }
+    }
+  }
+ found_dilepton: ;
 }
 
 float monoJetAnalysis::getKFactor(float bosonPt) {
@@ -827,7 +865,7 @@ void monoJetAnalysis::ApplyPhoton_TriggerSF(float &event_weight) {
     trigger turn-on with a sigmoid function in data and MC.
     The scale factor is then the ratio of the two sigmoid
     functions as a function of the photon pt.
-   */
+  */
   float max_phoPt = 0;
   for (int i = 0; i < nPho; i++) {
     if (max_phoPt < phoCalibEt->at(i)) {
@@ -861,13 +899,13 @@ bool monoJetAnalysis::getJetHEMVeto(float jetPtCut){
 
   bool pass = true;
   for(int p=0;p<nJet;p++)
-  {
-    bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.3 && (*jetEta)[p] > -3.0 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
-    bool tightJetID = false;
-    if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
-    if(kinematic) // not chekcing ID here.                                                                                                                                         
-      pass = false;
-  }
+    {
+      bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.3 && (*jetEta)[p] > -3.0 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
+      bool tightJetID = false;
+      if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
+      if(kinematic) // not chekcing ID here.                                                                                                                                         
+	pass = false;
+    }
 
   return pass;
 }
@@ -876,13 +914,13 @@ bool monoJetAnalysis::getJetHEMVetoV2(float jetPtCut){
   // -3.2<eta<-1.3 and -1.57<phi< -0.87
   bool pass = true;
   for(int p=0;p<nJet;p++)
-  {
-    bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.3 && (*jetEta)[p] > -3.2 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
-    bool tightJetID = false;
-    if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
-    if(kinematic) // not chekcing ID here.                                                                                                                                         
-      pass = false;
-  }
+    {
+      bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.3 && (*jetEta)[p] > -3.2 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
+      bool tightJetID = false;
+      if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
+      if(kinematic) // not chekcing ID here.                                                                                                                                         
+	pass = false;
+    }
 
   return pass;
 }
@@ -891,13 +929,13 @@ bool monoJetAnalysis::getJetHEMVetoV3(float jetPtCut){
   // -1.57<phi< -0.87 
   bool pass = true;
   for(int p=0;p<nJet;p++)
-  {
-    bool kinematic = (*jetPt)[p] > jetPtCut && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
-    bool tightJetID = false;
-    if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
-    if(kinematic) // not chekcing ID here.                                                                                                                                         
-      pass = false;
-  }
+    {
+      bool kinematic = (*jetPt)[p] > jetPtCut && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
+      bool tightJetID = false;
+      if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
+      if(kinematic) // not chekcing ID here.                                                                                                                                         
+	pass = false;
+    }
 
   return pass;
 }
@@ -906,11 +944,11 @@ bool monoJetAnalysis::getEleHEMVeto(float elePtCut){
 
   bool pass = true;
   for(int p=0;p<nEle;p++)
-  {
-    bool kinematic = (*elePt)[p] > elePtCut && (*eleEta)[p] < -1.4 && (*eleEta)[p] > -3.0 && (*elePhi)[p] > -1.57 && (*elePhi)[p] < -0.87 ;
-    if(kinematic) // not chekcing ID here.                                                                                                                                         
-      pass = false;
-  }
+    {
+      bool kinematic = (*elePt)[p] > elePtCut && (*eleEta)[p] < -1.4 && (*eleEta)[p] > -3.0 && (*elePhi)[p] > -1.57 && (*elePhi)[p] < -0.87 ;
+      if(kinematic) // not chekcing ID here.                                                                                                                                         
+	pass = false;
+    }
 
   return pass;
 }
@@ -963,23 +1001,23 @@ int monoJetAnalysis::getNfiles(TChain *chain,TString path,int nfiles) {
   TSystemFile* filename;
   int inFile=0;
   while ((filename = (TSystemFile*)nextlist()) && inFile < nfiles)
-  {
-    //Debug
-    if (debug) {
-      cout<<"file path found: "<<(path+filename->GetName())<<endl;
-      cout<<"name: "<<(filename->GetName())<<endl;
-      cout<<"fileNumber: "<<inFile<<endl;
+    {
+      //Debug
+      if (debug) {
+	cout<<"file path found: "<<(path+filename->GetName())<<endl;
+	cout<<"name: "<<(filename->GetName())<<endl;
+	cout<<"fileNumber: "<<inFile<<endl;
+      }
+
+      TString dataset = ".root";
+      TString  FullPathInputFile = (path+filename->GetName());
+      if ( !FullPathInputFile.EndsWith(dataset) ) continue;
+      if (debug)
+	cout<<"Adding FullPathInputFile to chain:"<<FullPathInputFile<<endl<<endl;
+      chain->Add(FullPathInputFile);
+      inFile++;
+
     }
-
-    TString dataset = ".root";
-    TString  FullPathInputFile = (path+filename->GetName());
-    if ( !FullPathInputFile.EndsWith(dataset) ) continue;
-    if (debug)
-      cout<<"Adding FullPathInputFile to chain:"<<FullPathInputFile<<endl<<endl;
-    chain->Add(FullPathInputFile);
-    inFile++;
-
-  }
   return inFile;
 }
 
@@ -992,32 +1030,32 @@ int monoJetAnalysis::getFilesByNumber(TChain *chain,TString path,const char* fil
   int maxFiles = -1;
   int inFile=0;
   while ((filename = (TSystemFile*)nextlist()) && fileNumber >  maxFiles)
-  {
-    //Debug
-    if (debug) {
-      cout<<"file path found: "<<(path+filename->GetName())<<endl;
-      cout<<"name: "<<(filename->GetName())<<endl;
-      cout<<"fileNumber: "<<fileNumber<<endl;
-    }
-
-    TString dataset = ".root";
-    TString  FullPathInputFile = (path+filename->GetName());
-    TString name = filename->GetName();
-    if (name.Contains(dataset))
     {
-      string fname = string(name);
-      fname.erase(fname.end()-5,fname.end());
-      bool isin = fileSelection(fname,string(fileRange));
-      if(isin)
-      {
-	if (debug)
-	  cout<<"Adding FullPathInputFile to chain:"<<FullPathInputFile<<endl<<endl;
-	chain->Add(FullPathInputFile);
-	inFile++;
+      //Debug
+      if (debug) {
+	cout<<"file path found: "<<(path+filename->GetName())<<endl;
+	cout<<"name: "<<(filename->GetName())<<endl;
+	cout<<"fileNumber: "<<fileNumber<<endl;
       }
+
+      TString dataset = ".root";
+      TString  FullPathInputFile = (path+filename->GetName());
+      TString name = filename->GetName();
+      if (name.Contains(dataset))
+	{
+	  string fname = string(name);
+	  fname.erase(fname.end()-5,fname.end());
+	  bool isin = fileSelection(fname,string(fileRange));
+	  if(isin)
+	    {
+	      if (debug)
+		cout<<"Adding FullPathInputFile to chain:"<<FullPathInputFile<<endl<<endl;
+	      chain->Add(FullPathInputFile);
+	      inFile++;
+	    }
+	}
+      fileNumber++;
     }
-    fileNumber++;
-  }
   return inFile;
 }
 
@@ -1749,7 +1787,7 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
      d2K_EW      25  26
      d3K_EW      27  28
      dK_NLO_mix  29  30 
-     */
+  */
   string uncnames[7] = {"QCD_Scale","QCD_Shape","QCD_Proc","NNLO_EWK","NNLO_Miss","NNLO_Sud","QCD_EWK_Mix"};
   // Initializing
   if ( !scaleUncs.contains(uncnames[0]) ) {
