@@ -3,6 +3,8 @@
 
 #include <TH1F.h>
 #include <iostream>
+#include <set>
+#include <map>
 
 float deltaPhi(float phi1, float phi2);
 
@@ -22,4 +24,12 @@ bool fileSelection(std::string filename,std::string fileRange);
 
 TH1F* MakeTH1F(TH1F* temp);
 
+struct EventMask {
+  std::map<int,std::map<int,std::set<Long64_t>>> mask;
+  
+  EventMask();
+  EventMask(std::string maskfile);
+  void setMask(std::string maskfile);
+  bool contains(int run,int lumis,Long64_t event);
+};
 #endif

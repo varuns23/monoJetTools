@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -86,4 +87,44 @@ TH1F* MakeTH1F(TH1F* temp) {
   return temp;
 }
 
+EventMask::EventMask(std::string maskfile) {
+  setMask(maskfile);
+}
+void EventMask::setMask(std::string maskfile) {
+  mask.clear();
+  std::string path = maskfile;
+  cout << "Mask: " << path << endl;
+  ifstream file(path.c_str());
+  if ( !file.is_open() ) {
+    cout << "Unable to read " << path << endl;
+    return;
+  }
+  std::string line;
+  int iline = 0;
+
+  int run,lumis;
+  Long64_t event;
+  while ( file >> line ){
+    switch(iline%3) {
+    case 0:
+      run = std::stoi(line);
+      if ( !mask.count(run) ) mask.insert( {run,std::map<int,std::set<Long64_t>>()} );
+      break;
+    case 1:
+      lumis = std::stoi(line);
+      if ( !mask[run].count(lumis) ) mask[run].insert( {lumis,std::set<Long64_t>()} );
+      break;
+    case 2:
+      event = std::stoll(line);
+      mask[run][lumis].insert(event);
+      break;
+    }
+    iline++;
+  }
+}
+bool EventMask::contains(int run,int lumis,Long64_t event) {
+  if ( !mask.count(run) ) return false;
+  if ( !mask[run].count(lumis) ) return false;
+  return mask[run][lumis].count(event) != 0;
+}
 #endif
