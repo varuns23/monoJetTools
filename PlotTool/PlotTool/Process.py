@@ -19,18 +19,20 @@ class SubProcess(object):
         self.histo = None
         self.raw_total = 0
         self.scaled_total = 0
-    def open(self,config=None):
+    def open(self,config=None,verbose=0):
         if hasattr(self,'isOpen'): return
         self.isOpen = True
         if not os.path.isfile(self.fname+'.root'):
-            print 'No file %s.root' % self.fname,
+            if verbose: print 'No file %s.root' % self.fname,
             if config is not None and self.fname in config.filevariants:
                 alt_fname = next( (fname for fname in config.filevariants[self.fname] if os.path.isfile(fname+'.root')),None )
                 if alt_fname is None: print 'skipping'; return False
                 self.fname = alt_fname
-                print 'using %s.root instead' % self.fname
+                if verbose: print 'using %s.root instead' % self.fname
                 if self.fname in config.xsec: self.xsec = config.xsec[self.fname]
-            else: print 'skippping'; return False
+            else:
+                if verbose: print 'skippping';
+                return False
         self.tfile = TFile.Open(self.fname+'.root')
         cutflow = GetTObject('h_cutflow',self.tfile)
         self.cutflow = cutflow.GetBinContent(1)
