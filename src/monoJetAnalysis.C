@@ -75,8 +75,7 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("recoil",&recoil,"Recoil (GeV)");
   tree->Branch("bosonPt",&bosonPt,"Boson Pt");
 
-  // return;
-  if (isMC) return;
+  if ( REGION != SR || isMC ) return;
 
   tree->Branch("pfMET",&pfMET);
   tree->Branch("pfMETPhi",&pfMETPhi);
