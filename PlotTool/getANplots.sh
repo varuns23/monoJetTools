@@ -14,7 +14,7 @@ plot() {
 }
 
 run() {
-    subdir="AN"
+    subdir="GenDilepton"
     n_cut="$ncut"
     if [[ "$1" == "Single"* ]]; then
     	n_cut="$ncut h_lepMET_MT"
@@ -26,7 +26,7 @@ run() {
     pushd $1
     shift 1
     array="$nvariables $@"
-    plot $run_options --sub $subdir -a $array $uncertainty
+    plot $run_options -a --sub $subdir $array $uncertainty
     plot $run_options --sub $subdir $n_cut
     popd
 }
