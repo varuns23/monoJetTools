@@ -7,8 +7,6 @@
 #ifndef monoJetClass_h
 #define monoJetClass_h
 
-// #include "monoJetYear.h"
-// #include "monoJetGammaCR.h"
 #include "monoJetGammaPurity.h"
 
 using namespace std;
@@ -30,7 +28,13 @@ public :
   void BookHistos(int i,string histname) {
     monoJetGammaPurity::BookHistos(i,histname);
   }
-  void fillHistos(int nhist,float event_weight);
+  void fillHistos(int nhist,float event_weight=1.0);
+  void initVars() {
+    monoJetGammaPurity::initVars();
+  }
+  void initTree(TTree* tree) {
+    monoJetGammaPurity::initTree(tree);
+  }
 
   void nominal(float);
   void met_variation(int,float);

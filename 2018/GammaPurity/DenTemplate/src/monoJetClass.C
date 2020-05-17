@@ -91,41 +91,25 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     setPhoton(phoindex);
 
     nominal(event_weight);
-    met_variation(1,event_weight);
-    met_variation(-1,event_weight);
-    sideband_variation(1,event_weight);
-    sideband_variation(-1,event_weight);
+    // met_variation(1,event_weight);
+    // met_variation(-1,event_weight);
   }
 }//Closing the Loop function
 
 void monoJetClass::nominal(float event_weight) {
     if (pfMET >= 60) return;
     cutflow->Fill(10,event_weight);
-    if (!(photon_sieie > 0.02 || photon_sieie < 0.015)) return;
-    cutflow->Fill(11,event_weight);
     if (!getJetHEMVeto()) return;
-    cutflow->Fill(12,event_weight);
-    fillHistos(12,event_weight);
+    cutflow->Fill(11,event_weight);
+    fillHistos(11,event_weight);
 }
 
 void monoJetClass::met_variation(int var,float event_weight) {
-  // Vary pfMET Cut by 20%
-  if ( pfMET >= (60 * ( 1 + var*0.2 )) ) return;
-  if (!(photon_sieie > 0.02 || photon_sieie < 0.015)) return;
+  if ( pfMET >= ( 60 * (1 + var*0.2) ) ) return;
   if (!getJetHEMVeto()) return;
   switch(var) {
-  case 1: fillHistos(13,event_weight); break;
-  case -1:fillHistos(14,event_weight); break;
-  }
-}
-
-void monoJetClass::sideband_variation(int var,float event_weight) {
-  if ( pfMET >= 60 ) return;
-  if (!(photon_sieie > (0.02 * ( 1 + var*0.1 )) || photon_sieie < 0.015)) return;
-    if (!getJetHEMVeto()) return;
-  switch(var) {
-  case 1: fillHistos(15,event_weight); break;
-  case -1:fillHistos(16,event_weight); break;
+  case 1: fillHistos(12,event_weight); break;
+  case -1:fillHistos(13,event_weight); break;
   }
 }
 
@@ -133,8 +117,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
   
-  vector<string> cutlist = {s_TotalEvents,s_Triggers,s_METFilters,"Photon Selection",s_ElectronVeto,s_MuonVeto,
-			    s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_JetSelection,"MET60","SigmaIEtaIEta Sideband",s_HEMVeto};
+  vector<string> cutlist = {s_TotalEvents,s_Triggers,s_METFilters,"Photon Selection",s_ElectronVeto,s_MuonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_JetSelection,"MET60"};
   cutflow = new Cutflow(this,cutlist);
 
   BookHistos(-1,"");
@@ -167,10 +150,11 @@ int monoJetClass::getPhoIndex() {
   for (int ipho = 0; ipho < nPho; ipho++) {
     
     bool kinematics = ((phoCalibEt->at(ipho) > 230.0) && (fabs(phoSCEta->at(ipho)) < 1.4442));
-    bool id = CutBasedPhotonID_noSieie(ipho, "medium");
-    bool iso= CutBasedPhotonIso_noPhoIso(ipho, "medium");
+    bool failIso = !CutBasedPhotonIso(ipho,"loose");
+    bool id = CutBasedPhotonID(ipho, "loose");
+    bool iso = CutBasedPhotonIso(ipho,"veryloose");
 
-    if(kinematics && id && iso)
+    if(kinematics && id && iso && failIso)
       return ipho;
   }
 
