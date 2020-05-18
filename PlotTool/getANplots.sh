@@ -14,7 +14,7 @@ plot() {
 }
 
 run() {
-    subdir="GenDilepton"
+    subdir="AN"
     n_cut="$ncut"
     if [[ "$1" == "Single"* ]]; then
     	n_cut="$ncut h_lepMET_MT"
