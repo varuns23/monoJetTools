@@ -198,6 +198,61 @@ bool monoJetGammaPurity::CutBasedPhotonID_noSieie(Int_t ipho, TString phoWP){
   return photonId; 
 }
 
+bool monoJetGammaPurity::CutBasedPhotonID_invSieie(Int_t ipho, TString phoWP){
+
+  bool photonId = false;
+  bool inBarrel = fabs((*phoSCEta)[ipho]) < 1.4442;
+
+  if(phoWP == "tight"){  // Tight
+    if( inBarrel ){ // EB
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.02148 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.00996 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   ); 
+    } else { // EE
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.0321 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.0271 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   );
+    }
+  }
+
+  if(phoWP == "medium"){ // Medium
+    if( inBarrel ){ // EB
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.02197 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.01015 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   );
+    } else { // EE
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.0326 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.0272 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   );
+    }
+  }
+
+  if(phoWP == "loose"){ // Loose
+    if( inBarrel ){ // EB
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.04596 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.0106 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   ); 
+    } else { // EE
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.0590 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.0272 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   );
+    }
+  }
+  return photonId; 
+}
+
 bool monoJetGammaPurity::CutBasedPhotonIso(Int_t ipho,TString phoWP) {
 
   bool photonIso = false;

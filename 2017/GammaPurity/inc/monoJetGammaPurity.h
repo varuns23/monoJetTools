@@ -27,6 +27,7 @@ public:
 
   bool CutBasedPhotonID(int ipho,TString phoWP);
   bool CutBasedPhotonID_noSieie(int ipho,TString phoWP);
+  bool CutBasedPhotonID_invSieie(int ipho,TString phoWP);
 
   bool CutBasedPhotonIso(int ipho,TString phoWP);
   bool CutBasedPhotonIso_noPhoIso(int ipho,TString phoWP);
