@@ -7,6 +7,16 @@ from PlotTool import *
 from ROOT import *
 import config
 
+ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
+iarg = 0
+for arg in list(sys.argv):
+    if "ptbins" in arg:
+        sys.argv.remove(arg)
+        for i in range(len(ptbins)-1):
+            sys.argv.insert(iarg,arg.replace("ptbins","%sto%s"%(ptbins[i],ptbins[i+1])))
+            iarg += 1
+    iarg += 1
+    
 parser.add_argument("-t","--template",help="Template file to fit",nargs="+",type=TFile,required=True)
 parser.add_argument("--plot",action="store_true")
 parser.add_argument("--save",action="store_true")
@@ -17,7 +27,16 @@ if not os.path.isdir("fits"):
     with open("fits/.gitignore","w") as f: f.write("*")
 
 varmap = {
-    "photonPFIso":RooRealVar("photonPFIso","Photon PF Isolation",0.,25.)
+    "photonPFIso":{
+        RooRealVar:RooRealVar("photonPFIso","Photon PF Isolation",0.,25.),
+        "fullrange":(0.,25.),
+        "signal":(0.,10.),
+    },
+    "photonSieie":{
+        RooRealVar:RooRealVar("photonSieie","Photon SigmaIEtaIEta",0.,0.025),
+        "fullrange":(0.,0.025),
+        "signal":(0.,0.0104)
+    }
 }
 def hs_style(hs,color):
     hs.SetLineColor(color)
@@ -93,7 +112,7 @@ def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error):
     leg.AddEntry(postfit_qcd,"QCD Fake Template","l")
     leg.AddEntry(postfit_fit,"Fit","l")
 
-    SetBounds(hslist,scale=5,log=10)
+    SetBounds(hslist,maxi=5,log=1)
     leg.Draw()
     
     lumi_label = '%s' % float('%.3g' % (max(config.lumi.values())/1000.)) + " fb^{-1}"
@@ -182,13 +201,15 @@ def save_fit(hslist,output,fit):
     tdir = output.mkdir(fit)
     tdir.cd()
     for hs in hslist: hs.Write()
-def fit_template(template,output,roovar=varmap["photonPFIso"]):
+def fit_template(template,output,varinfo):
     prefit_data = template.Get("total_data")
     fix_zerobins(prefit_data)
     prefit_gjet = template.Get("signal_gjets")
     fix_zerobins(prefit_gjet)
     prefit_qcd = template.Get("fake_qcd")
     fix_zerobins(prefit_qcd)
+
+    roovar = varinfo[RooRealVar]
 
     if parser.args.save: save_fit([prefit_data,prefit_gjet,prefit_qcd],output,"prefit")
 
@@ -197,7 +218,8 @@ def fit_template(template,output,roovar=varmap["photonPFIso"]):
     realnum = RooRealVar("realnum","realnum",0,ndata)
     fakenum = RooRealVar("fakenum","fakenum",0,ndata)
 
-    roovar.setRange("fullrange",0.,25.)
+    frange = varinfo["fullrange"]
+    roovar.setRange("fullrange",frange[0],frange[1])
     faketemplate,fakepdf,fakeextpdf = make_pdf(prefit_qcd,roovar,fakenum,"fake","fullrange")
     realtemplate,realpdf,realextpdf = make_pdf(prefit_gjet,roovar,realnum,"real","fullrange")
 
@@ -214,7 +236,8 @@ def fit_template(template,output,roovar=varmap["photonPFIso"]):
     postfit_qcd = prefit_qcd.Clone()
     postfit_qcd.Scale(fakevalue/prefit_qcd.Integral())
 
-    roovar.setRange("signal",0.,10.)
+    srange = varinfo["signal"]
+    roovar.setRange("signal",srange[0],srange[1])
     # Find fraction of fake/real pdfs in partial range, normalized to 1
     purity,purity_error = fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
 
@@ -227,6 +250,7 @@ def fit_template(template,output,roovar=varmap["photonPFIso"]):
     if parser.args.plot: PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error)
 if __name__ == "__main__":
     parser.parse_args()
+    
     output = None
     for template in parser.args.template:
         variable = template.GetName().replace("templates/template_","").replace(".root","")
@@ -234,4 +258,4 @@ if __name__ == "__main__":
         if parser.args.save:
             output = TFile("fits/fit_%s.root"%variable,"recreate")
             print "Writing fits to",output.GetName()
-        fit_template(template,output)
+        fit_template(template,output,next( varinfo for key,varinfo in varmap.items() if key in variable ))

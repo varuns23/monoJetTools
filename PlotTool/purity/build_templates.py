@@ -9,7 +9,7 @@ config.mclist = ["GJets"]
 
 parser.add_argument("--plot",action="store_true")
 parser.add_argument("--save",action="store_true")
-parser.add_argument("--label",type=lambda a:"_"+a)
+parser.add_argument("--label")
 
 if not os.path.isdir("templates"):
     # Create directory to store templates and make git ignore it
@@ -18,8 +18,10 @@ if not os.path.isdir("templates"):
     
 from ROOT import TCanvas,gStyle,kRed,kGreen,kBlue,TLatex,TPad
 
-sig_path = "SigTemplate"
-bkg_path = "BkgTemplate"
+sig_path = "SigTemplate/sieie_purity/"
+# sig_path = "SigTemplate/iso_purity/"
+bkg_path = "BkgTemplate/sieie_purity/"
+# bkg_path = "BkgTemplate/iso_purity/"
 den_path = "DenTemplate"
 
 sig_template = Region(path=sig_path,autovar=True,show=0)
@@ -27,7 +29,8 @@ bkg_template = Region(path=bkg_path,autovar=True,show=0)
 den_template = Region(path=den_path,autovar=True,show=0)
 
 xaxismap = {
-    "photonPFIso":"Photon PF Isolation [GeV]"
+    "photonPFIso":"Photon PF Isolation [GeV]",
+    "photonSieie":"Photon #sigma_{i#eta i#eta}"
 }
 
 def save_template(template,output):
@@ -83,7 +86,7 @@ def PlotDen(templates):
     leg.AddEntry(cleaned,"Data_{Non-ISO} - GJets_{Non-ISO}","l")
     leg.Draw()
 
-    SetBounds(hslist,scale=5,log=10)
+    SetBounds(hslist,maxi=5,log=10)
 
     lumi_label = '%s' % float('%.3g' % (templates.lumi/1000.)) + " fb^{-1}"
     texLumi,texCMS = getCMSText(lumi_label,templates.year,scale=0.8)
@@ -151,7 +154,7 @@ def PlotBkg(templates):
     leg.AddEntry(sideband,"QCD Fake Template","l")
     leg.Draw()
 
-    SetBounds(hslist,scale=5,log=10)
+    SetBounds(hslist,maxi=5,log=10)
 
     lumi_label = '%s' % float('%.3g' % (templates.lumi/1000.)) + " fb^{-1}"
     texLumi,texCMS = getCMSText(lumi_label,templates.year,scale=0.8)
@@ -228,7 +231,7 @@ def PlotSig(templates,sideband_templates):
     leg.AddEntry(sideband,"QCD Fake Template","l")
     leg.AddEntry(full,"Full","l")
 
-    SetBounds(hslist,scale=5,log=10)
+    SetBounds(hslist,maxi=5,log=10)
     leg.Draw()
     
     lumi_label = '%s' % float('%.3g' % (templates.lumi/1000.)) + " fb^{-1}"
@@ -268,7 +271,6 @@ def SigTemplates(variable,output,sideband_templates=None):
 
 if __name__ == "__main__":
     parser.parse_args()
-    if parser.args.label is None: parser.args.label = ""
 
     ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
 
@@ -276,11 +278,13 @@ if __name__ == "__main__":
         if "ptbins" in variable:
             parser.args.argv.remove(variable)
             for i in range(len(ptbins)-1): parser.args.argv.append(variable.replace("ptbins","%sto%s"%(ptbins[i],ptbins[i+1])))
-
     output = None
     for variable in parser.args.argv:
         if parser.args.save:
-            output = TFile("templates/template_%s%s.root"%(variable,parser.args.label),"recreate")
+            varout = variable
+            if parser.args.label: varout += "_"+parser.args.label
+            fname = "templates/template_%s.root"%(varout)
+            output = TFile(fname,"recreate")
             print "Writing templates to",output.GetName()
         sideband = BkgTemplates(variable,output)
         real = SigTemplates(variable,output,sideband)
