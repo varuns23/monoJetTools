@@ -19,14 +19,15 @@ if not os.path.isdir("fakeratio"):
     
 from ROOT import TCanvas,gStyle,kRed,kGreen,kBlue,TLatex,TPad
 
-num_path = "SigTemplate"
+num_path = "SigTemplate/sieie_purity/"
 den_path = "DenTemplate"
 
 num_template = Region(path=num_path,autovar=True,show=0)
 den_template = Region(path=den_path,autovar=True,show=0)
 
 xaxismap = {
-    "photonPFIso":"Photon PF Isolation [GeV]"
+    "photonPFIso":"Photon PF Isolation [GeV]",
+    "photonSieie":"Photon #sigma_{i#eta i#eta}"
 }
 def fake_style(ratio,color=kGreen+2):
     ratio.SetMarkerStyle(20)
@@ -56,7 +57,8 @@ def PlotFakeRatio(ratio):
     ratio.GetYaxis().SetTitle("Fake Ratio")
     # ratio.GetYaxis().SetTitleOffset(0.5)
     ratio.GetXaxis().SetTitle(xaxis_title)
-    ratio.GetYaxis().SetRangeUser(0.75,1.2)
+    # ratio.GetYaxis().SetRangeUser(0.75,1.2)
+    print SetBounds([ratio],scale=1)
 
     ratio.Draw("p same")
     
@@ -86,7 +88,7 @@ def get_fakeratio(ptbins):
         den_int = den.IntegralAndError(1,den.GetNbinsX(),den_err)
 
         val = (num_int/den_int)
-        err = val*TMath.Sqrt( (num_err/num_int)**2 + (den_err/den_int)**2 ) 
+        err = val*TMath.Sqrt( (num_err/num_int)**2 + (den_err/den_int)**2 )
         fakeratio.SetBinContent(ibin+1,val)
         fakeratio.SetBinError(ibin+1,err)
     return fakeratio

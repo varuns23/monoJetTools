@@ -86,7 +86,7 @@ def PlotDen(templates):
     leg.AddEntry(cleaned,"Data_{Non-ISO} - GJets_{Non-ISO}","l")
     leg.Draw()
 
-    SetBounds(hslist,maxi=5,log=10)
+    SetBounds(hslist,maxi=5,log=1)
 
     lumi_label = '%s' % float('%.3g' % (templates.lumi/1000.)) + " fb^{-1}"
     texLumi,texCMS = getCMSText(lumi_label,templates.year,scale=0.8)
@@ -96,9 +96,10 @@ def PlotDen(templates):
         rtext = PtRangeText(ptrange=ptrange,scale=0.75)
     
     SaveAs(c,"den_template_%s"%templates.varname,year=templates.year,sub="GammaPurity")
-def DenTemplates(variable,output):
+def DenTemplates(variable,output,real_templates):
     print "Creating Denominator Template"
     den_template.initiate(variable)
+    # den_template.processes["GJets"] = real_templates["GJets"]
 
     cleanedproc = Process("Cleaned",[],{},"cleaned",year=den_template.year,region=den_template.year)
     cleanedproc.add( den_template["Data"] )
@@ -154,7 +155,7 @@ def PlotBkg(templates):
     leg.AddEntry(sideband,"QCD Fake Template","l")
     leg.Draw()
 
-    SetBounds(hslist,maxi=5,log=10)
+    SetBounds(hslist,maxi=5,log=1)
 
     lumi_label = '%s' % float('%.3g' % (templates.lumi/1000.)) + " fb^{-1}"
     texLumi,texCMS = getCMSText(lumi_label,templates.year,scale=0.8)
@@ -231,7 +232,7 @@ def PlotSig(templates,sideband_templates):
     leg.AddEntry(sideband,"QCD Fake Template","l")
     leg.AddEntry(full,"Full","l")
 
-    SetBounds(hslist,maxi=5,log=10)
+    SetBounds(hslist,maxi=5,log=1)
     leg.Draw()
     
     lumi_label = '%s' % float('%.3g' % (templates.lumi/1000.)) + " fb^{-1}"
@@ -288,4 +289,4 @@ if __name__ == "__main__":
             print "Writing templates to",output.GetName()
         sideband = BkgTemplates(variable,output)
         real = SigTemplates(variable,output,sideband)
-        den = DenTemplates(variable,output)
+        den = DenTemplates(variable,output,real)
