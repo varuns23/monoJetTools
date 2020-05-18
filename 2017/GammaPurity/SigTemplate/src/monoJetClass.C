@@ -147,9 +147,16 @@ int monoJetClass::getPhoIndex() {
   for (int ipho = 0; ipho < nPho; ipho++) {
     
     bool kinematics = ((phoCalibEt->at(ipho) > 230.0) && (fabs(phoSCEta->at(ipho)) < 1.4442));
-    bool id = CutBasedPhotonID(ipho, "medium");
-    bool iso = CutBasedPhotonIso_noPhoIso(ipho,"medium");
-
+    bool id,iso;
+    if (runIsoPurity) {
+      // Isolation Purity Photon ID
+      id = CutBasedPhotonID(ipho, "medium");
+      iso = CutBasedPhotonIso_noPhoIso(ipho,"medium");
+    } else {
+      // Sieie Purity Photon ID
+      id = CutBasedPhotonID_noSieie(ipho,"medium");
+      iso = CutBasedPhotonIso(ipho,"medium");
+    }
     if(kinematics && id && iso)
       return ipho;
   }

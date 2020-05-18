@@ -54,6 +54,7 @@ void monoJetGammaPurity::fillHistos(int nhist,float event_weight) {
   monoJetAnalysis::fillHistos(nhist,event_weight);
   
   h_phoPFIso[nhist]->Fill(photon_phoiso, event_weight);
+  h_phoSieie[nhist]->Fill(photon_sieie, event_weight);
   h_phoPFIsoSieie[nhist]->Fill(photon_phoiso, photon_sieie , event_weight);
 
   for (int i = 0; i < nPhoPtBins; i++) {

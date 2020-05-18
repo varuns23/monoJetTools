@@ -6,6 +6,8 @@
 
 class monoJetGammaPurity : public virtual monoJetYear, public virtual monoJetGammaCR {
 public:
+  const bool runIsoPurity = true;
+  
   float photon_phoiso,photon_sieie;
   
   static const int nPhoPtBins = 8;                
