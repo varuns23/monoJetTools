@@ -17,33 +17,27 @@ void monoJetGammaPurity::initVars() {
   photon_phoiso = photon_sieie = -1;
 }
 
-void monoJetGammaPurity::BookHistos(int i,string histname) {
+void monoJetGammaPurity::BookHistos(int i,TString histname) {
   monoJetGammaCR::BookHistos(i,histname);
   if (i == -1) {
     for (int i = 0; i < nPhoPtBins; i++) {
-      string low = to_string( (int)phoPtBins[i] );
-      string high = to_string( (int)phoPtBins[i+1] );
+      TString low = to_string( (int)phoPtBins[i] );
+      TString high = to_string( (int)phoPtBins[i+1] );
       if ( i+1 == nPhoPtBins ) high = "Inf";
       PtBinNames[i] = low+"to"+high;
     }
     return;
   }
   
-  auto Name = [histname](string name) { return (name+histname); };
-  h_phoSieie[i] = MakeTH1F(new TH1F(Name("photonSieie").c_str(),"PhotonSieie;Photon #sigma_{i#eta i#eta}",25,0,0.025));
-  h_phoPFIso[i] = MakeTH1F(new TH1F( Name("photonPFIso").c_str(),"Photon PF Iso",25,0,25));
-  h_phoPFIsoSieie[i] = new TH2F( Name("photonPFIsoSieie").c_str(),"Photon Iso vs Sieie;Photon PF Iso;Photon #sigma_{i#eta i#eta}",25,0,25,25,0.0,0.025);
+  auto Name = [histname](TString name) { return (name+histname); };
+  h_phoSieie[i] = MakeTH1F(new TH1F(Name("photonSieie"),"PhotonSieie;Photon #sigma_{i#eta i#eta}",25,0,0.025));
+  h_phoPFIso[i] = MakeTH1F(new TH1F( Name("photonPFIso"),"Photon PF Iso",25,0,25));
+  h_phoPFIsoSieie[i] = new TH2F( Name("photonPFIsoSieie"),"Photon Iso vs Sieie;Photon PF Iso;Photon #sigma_{i#eta i#eta}",25,0,25,25,0.0,0.025);
 
-  char name[100];
   for (int ibin = 0; ibin < nPhoPtBins; ibin++) {
-    sprintf(name, "photonPt_%s", PtBinNames[ibin].c_str());
-    h_phoPt_ptbins[i][ibin]  = MakeTH1F(new TH1F( Name(name).c_str(),"photon p_{T}", nPhoPtBins, phoPtBins));  
-    
-    sprintf(name, "photonPFIso_%s", PtBinNames[ibin].c_str());
-    h_phoPFIso_ptbins[i][ibin] = MakeTH1F(new TH1F( Name(name).c_str(), "Photon PF Iso", 25, 0, 25));
-    
-    sprintf(name, "photonSieie_%s",PtBinNames[ibin].c_str());
-    h_phoSieie_ptbins[i][ibin] = MakeTH1F(new TH1F( Name(name).c_str(),"Photon #sigma_#{i#eta i#eta}",25,0,0.025));
+    h_phoPt_ptbins[i][ibin]    = MakeTH1F(new TH1F( Name("photonPt_"+PtBinNames[ibin]),    "photon p_{T}", nPhoPtBins, phoPtBins));  
+    h_phoPFIso_ptbins[i][ibin] = MakeTH1F(new TH1F( Name("photonPFIso_"+PtBinNames[ibin]), "Photon PF Iso", 25, 0, 25));
+    h_phoSieie_ptbins[i][ibin] = MakeTH1F(new TH1F( Name("photonSieie_"+PtBinNames[ibin]), "Photon #sigma_#{i#eta i#eta}",25,0,0.025));
   }
 }
 

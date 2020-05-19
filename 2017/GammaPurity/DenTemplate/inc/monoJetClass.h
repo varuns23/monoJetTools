@@ -26,7 +26,7 @@ public :
   }
   void     Loop(Long64_t maxEvents, int reportEvery);
   void BookHistos(const char* file2);
-  void BookHistos(int i,string histname) {
+  void BookHistos(int i,TString histname) {
     monoJetYear::BookHistos(i,histname);
     monoJetGammaPurity::BookHistos(i,histname);
   }

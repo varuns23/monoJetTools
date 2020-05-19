@@ -86,70 +86,70 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("nVtx",&nVtx,"Number of Verticies");
 }
 
-void monoJetAnalysis::BookHistos(int i,string histname) {
+void monoJetAnalysis::BookHistos(int i,TString histname) {
   if (i == -1) {
     h_metfilters = new TH1F("h_metfilters","metFilters",8,0.5,8.5); h_metfilters->Sumw2();
     h_metcutBefore  = MakeTH1F(new TH1F("h_metcut","h_metcut; |pfMET-caloMET|/pfMET", 50,0,1.2));
     h_dphiminBefore = MakeTH1F(new TH1F("h_dphimin","h_dphimin; Minimum dPhiJetMET",50,0,3.2));
-  } else {
-    auto Name = [histname](string name) { return name+histname; };
-    // Event Info
-    h_nVtxNoW[i]        = MakeTH1F(new TH1F(Name("nVtxNoW").c_str()      ,"nVtx Unweighted;unweighted nVtx"                        ,40,0,80));
-    h_nVtxReW[i]        = MakeTH1F(new TH1F(Name("nVtxReW").c_str()      ,"nVtx Reweighted;reweighted nVtx"                        ,40,0,80));
-    h_eventWeight[i]    = MakeTH1F(new TH1F(Name("eventWeight").c_str()  ,"eventWeight;Event Weight"                               ,50,0,2));
-    h_kfactor[i]        = MakeTH1F(new TH1F(Name("kfactor").c_str()      ,"kfactor;kfactor"                                        ,50,-2,2));
-    h_pileup[i]         = MakeTH1F(new TH1F(Name("pileup").c_str()       ,"pileup;pileup"                                          ,50,-2,2));
-    h_genWeight[i]      = MakeTH1F(new TH1F(Name("genWeight").c_str()    ,"genWeight;genWeight"                                    ,50,-2,2));
-    h_sf[i]             = MakeTH1F(new TH1F(Name("scaleFactor").c_str()  ,"scaleFactor;Scale Factor"                               ,50,-2,2));
-    h_metcut[i]         = MakeTH1F(new TH1F(Name("metcut").c_str()       ,"metcut; |pfMET-caloMET|/pfMET"                          ,50,0,1.2));
-    h_dphimin[i]        = MakeTH1F(new TH1F(Name("dphimin").c_str()      ,"dphimin; Minimum dPhiJetMET"                            ,50,0,3.2));
-    // MC Info
-    h_puTrueNoW[i]      = MakeTH1F(new TH1F(Name("puTrueNoW").c_str()    ,"puTrue Unweighted;unweighted true number of iteractions",100,0,100));
-    h_puTrueReW[i]      = MakeTH1F(new TH1F(Name("puTrueReW").c_str()    ,"puTrue Reweighted;reweighted true number of iteractions",100,0,100));
-    h_genHT[i]          = MakeTH1F(new TH1F(Name("genHT").c_str()        ,"genHT;genHT"                                            ,100,0,2500));
-    h_bosonPt[i]        = MakeTH1F(new TH1F(Name("bosonPt").c_str()      ,"bosonPt; boson P_{T}"                                   ,nBosonPtBins,BosonPtBins));
-    h_bosonPtwK[i]      = MakeTH1F(new TH1F(Name("bosonPtwK").c_str()    ,"bosonPtwK; kfactor boson P_{T}"                         ,nBosonPtBins,BosonPtBins));
-    // MET Info
-    h_pfMETall[i]       = MakeTH1F(new TH1F(Name("pfMETall").c_str()     ,"pfMETall;E_{T}^{miss} (GeV)"                            ,nMetAllBins,MetAllBins)); 
-    h_pfMET[i]          = MakeTH1F(new TH1F(Name("pfMET").c_str()        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
-    h_pfMETPhi[i]       = MakeTH1F(new TH1F(Name("pfMETPhi").c_str()     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
-    h_recoilall[i]      = MakeTH1F(new TH1F(Name("recoilall").c_str()    ,"recoilall;Recoil (GeV)"                                 ,nMetAllBins,MetAllBins));
-    h_recoil[i]         = MakeTH1F(new TH1F(Name("recoil").c_str()       ,"recoil;Recoil (GeV)"                                    ,nMetBins,MetBins));
-    h_recoilPhi[i]      = MakeTH1F(new TH1F(Name("recoilPhi").c_str()    ,"recoilPhi;Recoil #phi"                                  ,nPhiBins,lPhi,uPhi));
-    h_caloMET[i]        = MakeTH1F(new TH1F(Name("caloMET").c_str()      ,"caloMET;Calo E_{T}^{miss} (GeV)"                        ,nMetAllBins,MetAllBins)); 
-    h_caloMETPhi[i]     = MakeTH1F(new TH1F(Name("caloMETPhi").c_str()   ,"caloMETPhi;caloMET #phi"                                ,nPhiBins,lPhi,uPhi));
-    // Jet Info
-    h_nJets[i]          = MakeTH1F(new TH1F(Name("nJets").c_str()        ,"nJets;Number of Jets"                                   ,13,-0.5,12.5));
-    h_nJetsSkim[i]      = MakeTH1F(new TH1F(Name("nJetsSkim").c_str()    ,"nJetsSkim;Number of Jets"                               ,13,-0.5,12.5));
-    h_j1pT[i]           = MakeTH1F(new TH1F(Name("j1pT").c_str()         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
-    h_j1pTall[i]        = MakeTH1F(new TH1F(Name("j1pTall").c_str()      ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nMetAllBins,MetAllBins));
-    h_j1Eta[i]          = MakeTH1F(new TH1F(Name("j1Eta").c_str()        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
-    h_j1Phi[i]          = MakeTH1F(new TH1F(Name("j1Phi").c_str()        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
-    h_j1etaWidth[i]     = MakeTH1F(new TH1F(Name("j1etaWidth").c_str()   ,"j1etaWidth; #eta width of Leading Jet"                  ,50,0,0.25));
-    h_j1phiWidth[i]     = MakeTH1F(new TH1F(Name("j1phiWidth").c_str()   ,"j1phiWidth; #phi width of Leading Jet"                  ,50, 0,0.5));
-    h_j1CHF[i]          = MakeTH1F(new TH1F(Name("j1CHF").c_str()        ,"j1CHF;Charged Hadron Energy Fraction in Leading Jet"    ,50,0,1.1));
-    h_j1NHF[i]          = MakeTH1F(new TH1F(Name("j1NHF").c_str()        ,"j1NHF;Neutral Hadron Energy Fraction in Leading Jet"    ,50,0,1.1)); 
-    h_j1CHFrounded[i]   = MakeTH1F(new TH1F(Name("j1CHFrounded").c_str() ,"j1CHF;Rounded Charged Hadron Energy Fraction in Leading Jet"    ,50,0,1.1));
-    h_j1NHFrounded[i]   = MakeTH1F(new TH1F(Name("j1NHFrounded").c_str() ,"j1NHF;Rounded Neutral Hadron Energy Fraction in Leading Jet"    ,50,0,1.1)); 
-    h_j1ChMult[i]       = MakeTH1F(new TH1F(Name("j1ChMult").c_str()     ,"j1ChMult;Charged Multiplicity of Leading Jet"           ,25,0,50));
-    h_j1NhMult[i]       = MakeTH1F(new TH1F(Name("j1NhMult").c_str()     ,"j1NhMult;Neutral Multiplicity of Leading Jet"           ,25,0,50)); 
-    h_j1Mt[i]           = MakeTH1F(new TH1F(Name("j1Mt").c_str()         ,"j1Mt;M_{T} of Leading Jet (GeV)"                        ,nMtBins,MtBins));
-    
-    h_j1EtaPhi[i]       = new TH2F(Name("j1EtaPhi").c_str()              ,"j1EtaPhi; Leading Jet #eta; Leading Jet #phi"           ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
-
-    // Split Jet Phi Histograms
-    h_pfMETPosj1Phi[i]    = MakeTH1F(new TH1F(Name("pfMETPosj1Phi").c_str()        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
-    h_pfMETPhiPosj1Phi[i] = MakeTH1F(new TH1F(Name("pfMETPhiPosj1Phi").c_str()     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
-    h_j1pTPosj1Phi[i]     = MakeTH1F(new TH1F(Name("j1pTPosj1Phi").c_str()         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
-    h_j1EtaPosj1Phi[i]    = MakeTH1F(new TH1F(Name("j1EtaPosj1Phi").c_str()        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
-    h_j1PhiPosj1Phi[i]    = MakeTH1F(new TH1F(Name("j1PhiPosj1Phi").c_str()        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
-    
-    h_pfMETNegj1Phi[i]    = MakeTH1F(new TH1F(Name("pfMETNegj1Phi").c_str()        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
-    h_pfMETPhiNegj1Phi[i] = MakeTH1F(new TH1F(Name("pfMETPhiNegj1Phi").c_str()     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
-    h_j1pTNegj1Phi[i]     = MakeTH1F(new TH1F(Name("j1pTNegj1Phi").c_str()         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
-    h_j1EtaNegj1Phi[i]    = MakeTH1F(new TH1F(Name("j1EtaNegj1Phi").c_str()        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
-    h_j1PhiNegj1Phi[i]    = MakeTH1F(new TH1F(Name("j1PhiNegj1Phi").c_str()        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
+    return;
   }
+  auto Name = [histname](TString name) { return TString(name+histname); };
+  // Event Info
+  h_nVtxNoW[i]        = MakeTH1F(new TH1F(Name("nVtxNoW")      ,"nVtx Unweighted;unweighted nVtx"                        ,40,0,80));
+  h_nVtxReW[i]        = MakeTH1F(new TH1F(Name("nVtxReW")      ,"nVtx Reweighted;reweighted nVtx"                        ,40,0,80));
+  h_eventWeight[i]    = MakeTH1F(new TH1F(Name("eventWeight")  ,"eventWeight;Event Weight"                               ,50,0,2));
+  h_kfactor[i]        = MakeTH1F(new TH1F(Name("kfactor")      ,"kfactor;kfactor"                                        ,50,-2,2));
+  h_pileup[i]         = MakeTH1F(new TH1F(Name("pileup")       ,"pileup;pileup"                                          ,50,-2,2));
+  h_genWeight[i]      = MakeTH1F(new TH1F(Name("genWeight")    ,"genWeight;genWeight"                                    ,50,-2,2));
+  h_sf[i]             = MakeTH1F(new TH1F(Name("scaleFactor")  ,"scaleFactor;Scale Factor"                               ,50,-2,2));
+  h_metcut[i]         = MakeTH1F(new TH1F(Name("metcut")       ,"metcut; |pfMET-caloMET|/pfMET"                          ,50,0,1.2));
+  h_dphimin[i]        = MakeTH1F(new TH1F(Name("dphimin")      ,"dphimin; Minimum dPhiJetMET"                            ,50,0,3.2));
+  // MC Info
+  h_puTrueNoW[i]      = MakeTH1F(new TH1F(Name("puTrueNoW")    ,"puTrue Unweighted;unweighted true number of iteractions",100,0,100));
+  h_puTrueReW[i]      = MakeTH1F(new TH1F(Name("puTrueReW")    ,"puTrue Reweighted;reweighted true number of iteractions",100,0,100));
+  h_genHT[i]          = MakeTH1F(new TH1F(Name("genHT")        ,"genHT;genHT"                                            ,100,0,2500));
+  h_bosonPt[i]        = MakeTH1F(new TH1F(Name("bosonPt")      ,"bosonPt; boson P_{T}"                                   ,nBosonPtBins,BosonPtBins));
+  h_bosonPtwK[i]      = MakeTH1F(new TH1F(Name("bosonPtwK")    ,"bosonPtwK; kfactor boson P_{T}"                         ,nBosonPtBins,BosonPtBins));
+  // MET Info
+  h_pfMETall[i]       = MakeTH1F(new TH1F(Name("pfMETall")     ,"pfMETall;E_{T}^{miss} (GeV)"                            ,nMetAllBins,MetAllBins)); 
+  h_pfMET[i]          = MakeTH1F(new TH1F(Name("pfMET")        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
+  h_pfMETPhi[i]       = MakeTH1F(new TH1F(Name("pfMETPhi")     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
+  h_recoilall[i]      = MakeTH1F(new TH1F(Name("recoilall")    ,"recoilall;Recoil (GeV)"                                 ,nMetAllBins,MetAllBins));
+  h_recoil[i]         = MakeTH1F(new TH1F(Name("recoil")       ,"recoil;Recoil (GeV)"                                    ,nMetBins,MetBins));
+  h_recoilPhi[i]      = MakeTH1F(new TH1F(Name("recoilPhi")    ,"recoilPhi;Recoil #phi"                                  ,nPhiBins,lPhi,uPhi));
+  h_caloMET[i]        = MakeTH1F(new TH1F(Name("caloMET")      ,"caloMET;Calo E_{T}^{miss} (GeV)"                        ,nMetAllBins,MetAllBins)); 
+  h_caloMETPhi[i]     = MakeTH1F(new TH1F(Name("caloMETPhi")   ,"caloMETPhi;caloMET #phi"                                ,nPhiBins,lPhi,uPhi));
+  // Jet Info
+  h_nJets[i]          = MakeTH1F(new TH1F(Name("nJets")        ,"nJets;Number of Jets"                                   ,13,-0.5,12.5));
+  h_nJetsSkim[i]      = MakeTH1F(new TH1F(Name("nJetsSkim")    ,"nJetsSkim;Number of Jets"                               ,13,-0.5,12.5));
+  h_j1pT[i]           = MakeTH1F(new TH1F(Name("j1pT")         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
+  h_j1pTall[i]        = MakeTH1F(new TH1F(Name("j1pTall")      ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nMetAllBins,MetAllBins));
+  h_j1Eta[i]          = MakeTH1F(new TH1F(Name("j1Eta")        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
+  h_j1Phi[i]          = MakeTH1F(new TH1F(Name("j1Phi")        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
+  h_j1etaWidth[i]     = MakeTH1F(new TH1F(Name("j1etaWidth")   ,"j1etaWidth; #eta width of Leading Jet"                  ,50,0,0.25));
+  h_j1phiWidth[i]     = MakeTH1F(new TH1F(Name("j1phiWidth")   ,"j1phiWidth; #phi width of Leading Jet"                  ,50, 0,0.5));
+  h_j1CHF[i]          = MakeTH1F(new TH1F(Name("j1CHF")        ,"j1CHF;Charged Hadron Energy Fraction in Leading Jet"    ,50,0,1.1));
+  h_j1NHF[i]          = MakeTH1F(new TH1F(Name("j1NHF")        ,"j1NHF;Neutral Hadron Energy Fraction in Leading Jet"    ,50,0,1.1)); 
+  h_j1CHFrounded[i]   = MakeTH1F(new TH1F(Name("j1CHFrounded") ,"j1CHF;Rounded Charged Hadron Energy Fraction in Leading Jet"    ,50,0,1.1));
+  h_j1NHFrounded[i]   = MakeTH1F(new TH1F(Name("j1NHFrounded") ,"j1NHF;Rounded Neutral Hadron Energy Fraction in Leading Jet"    ,50,0,1.1)); 
+  h_j1ChMult[i]       = MakeTH1F(new TH1F(Name("j1ChMult")     ,"j1ChMult;Charged Multiplicity of Leading Jet"           ,25,0,50));
+  h_j1NhMult[i]       = MakeTH1F(new TH1F(Name("j1NhMult")     ,"j1NhMult;Neutral Multiplicity of Leading Jet"           ,25,0,50)); 
+  h_j1Mt[i]           = MakeTH1F(new TH1F(Name("j1Mt")         ,"j1Mt;M_{T} of Leading Jet (GeV)"                        ,nMtBins,MtBins));
+    
+  h_j1EtaPhi[i]       = new TH2F(Name("j1EtaPhi")              ,"j1EtaPhi; Leading Jet #eta; Leading Jet #phi"           ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
+
+  // Split Jet Phi Histograms
+  h_pfMETPosj1Phi[i]    = MakeTH1F(new TH1F(Name("pfMETPosj1Phi")        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
+  h_pfMETPhiPosj1Phi[i] = MakeTH1F(new TH1F(Name("pfMETPhiPosj1Phi")     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
+  h_j1pTPosj1Phi[i]     = MakeTH1F(new TH1F(Name("j1pTPosj1Phi")         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
+  h_j1EtaPosj1Phi[i]    = MakeTH1F(new TH1F(Name("j1EtaPosj1Phi")        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
+  h_j1PhiPosj1Phi[i]    = MakeTH1F(new TH1F(Name("j1PhiPosj1Phi")        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
+    
+  h_pfMETNegj1Phi[i]    = MakeTH1F(new TH1F(Name("pfMETNegj1Phi")        ,"pfMET;E_{T}^{miss} (GeV)"                               ,nMetBins,MetBins));
+  h_pfMETPhiNegj1Phi[i] = MakeTH1F(new TH1F(Name("pfMETPhiNegj1Phi")     ,"pfMETPhi;pfMET #phi"                                    ,nPhiBins,lPhi,uPhi));
+  h_j1pTNegj1Phi[i]     = MakeTH1F(new TH1F(Name("j1pTNegj1Phi")         ,"j1pT;p_{T} of Leading Jet (GeV)"                        ,nPtBins,PtBins));
+  h_j1EtaNegj1Phi[i]    = MakeTH1F(new TH1F(Name("j1EtaNegj1Phi")        ,"j1Eta; #eta of Leading Jet"                             ,nEtaBins,lEta,uEta));
+  h_j1PhiNegj1Phi[i]    = MakeTH1F(new TH1F(Name("j1PhiNegj1Phi")        ,"j1Phi; #phi of Leading Jet"                             ,nPhiBins,lPhi,uPhi));
 }
 
 void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
@@ -236,7 +236,7 @@ void monoJetAnalysis::fillEvent(int nhist,float event_weight) {
   fillHistos(nhist,event_weight);
 }
 
-void monoJetAnalysis::fillEvent(string cut,float event_weight) {
+void monoJetAnalysis::fillEvent(TString cut,float event_weight) {
   cutflow->Fill(cut,event_weight);
   fillHistos(cutflow->getCut(cut),event_weight);
 }
@@ -474,7 +474,7 @@ vector<int> monoJetAnalysis::getTightEle(vector<int> looselist,float elePtCut,fl
   return ele_cands;
 }
 
-float monoJetAnalysis::getLooseEleSF(int lepindex,string variation) {
+float monoJetAnalysis::getLooseEleSF(int lepindex,TString variation) {
   float eta = eleSCEta->at(lepindex); float pt = eleCalibEt->at(lepindex);
   float reco_sf = th2fmap.getBin("ele_reco",eta,pt);
   float looseID_sf = th2fmap.getBin("ele_id_loose",eta,pt);
@@ -569,7 +569,7 @@ vector<int> monoJetAnalysis::getTightMu(vector<int> looselist,float muPtCut,floa
   return mu_cands;
 }
 
-float monoJetAnalysis::getLooseMuSF(int lepindex,string variation) {
+float monoJetAnalysis::getLooseMuSF(int lepindex,TString variation) {
   float pt = muPt->at(lepindex); float abseta = fabs(muEta->at(lepindex));
   
   float looseID_sf = th2fmap.getBin("muon_id_loose",pt,abseta);
@@ -701,7 +701,7 @@ vector<int> monoJetAnalysis::tau_veto_looseID(int jetindex,float tauPtCut,float 
   return tau_cand;
 }
 
-float monoJetAnalysis::getLooseTauSF(int lepindex,string variation) {
+float monoJetAnalysis::getLooseTauSF(int lepindex,TString variation) {
   float pt = tau_Pt->at(lepindex);
   float vloose_sf = th1fmap.getBin("tau_vloose",pt);
 
@@ -1042,9 +1042,9 @@ int monoJetAnalysis::getFilesByNumber(TChain *chain,TString path,const char* fil
       TString name = filename->GetName();
       if (name.Contains(dataset))
 	{
-	  string fname = string(name);
-	  fname.erase(fname.end()-5,fname.end());
-	  bool isin = fileSelection(fname,string(fileRange));
+	  TString fname = TString(name);
+	  fname.Remove(fname.Length()-5,fname.Length());
+	  bool isin = fileSelection(fname,TString(fileRange));
 	  if(isin)
 	    {
 	      if (debug)
@@ -1080,7 +1080,7 @@ int monoJetAnalysis::getFilesByList(TChain *chain,TString path,vector<const char
 monoJetAnalysis::monoJetAnalysis(const char* inputFilename,const char* outputFilename,int nfiles) : monoJetAnalysis() {
   TChain *chain = new TChain("phoJetNtuplizer/eventTree");
   TString path = inputFilename;
-  setInfo(string(inputFilename));
+  setInfo(TString(inputFilename));
   int inFile = getNfiles(chain,path,nfiles);
   print();
   cout<<inFile<<" files added."<<endl;
@@ -1091,7 +1091,7 @@ monoJetAnalysis::monoJetAnalysis(const char* inputFilename,const char* outputFil
 monoJetAnalysis::monoJetAnalysis(const char* inputFilename,const char* outputFilename,vector<const char*> filelist) : monoJetAnalysis() {
   TChain *chain = new TChain("phoJetNtuplizer/eventTree");
   TString path = inputFilename;
-  setInfo(string(inputFilename));
+  setInfo(TString(inputFilename));
   int inFile = 0;
   if ( filelist.size() == 0 )
     inFile = getFilesByNumber(chain,path,"-1");
@@ -1107,7 +1107,7 @@ monoJetAnalysis::monoJetAnalysis(const char* inputFilename,const char* outputFil
 {
   TChain *chain = new TChain("phoJetNtuplizer/eventTree");
   TString path = inputFilename;
-  setInfo(string(inputFilename));
+  setInfo(TString(inputFilename));
   int inFile = getFilesByNumber(chain,path,fileRange);
   print();
   cout<<inFile<<" files added."<<endl;
@@ -1787,12 +1787,12 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
      d3K_EW      27  28
      dK_NLO_mix  29  30 
   */
-  string uncnames[7] = {"QCD_Scale","QCD_Shape","QCD_Proc","NNLO_EWK","NNLO_Miss","NNLO_Sud","QCD_EWK_Mix"};
+  TString uncnames[7] = {"QCD_Scale","QCD_Shape","QCD_Proc","NNLO_EWK","NNLO_Miss","NNLO_Sud","QCD_EWK_Mix"};
   // Initializing
   if ( !scaleUncs.contains(uncnames[0]) ) {
-    string hnames[7] = {"d1K_NLO","d2K_NLO","d3K_NLO","d1kappa_EW","d2kappa_EW","d3kappa_EW","dK_NLO_mix"};
+    TString hnames[7] = {"d1K_NLO","d2K_NLO","d3K_NLO","d1kappa_EW","d2kappa_EW","d3kappa_EW","dK_NLO_mix"};
     TFile* file = NULL;
-    string prefix = "";
+    TString prefix = "";
     if (isWZG()) {
       if (type == WJets) {
 	file = TFile::Open("RootFiles/theory/unc/WJets_NLO_EWK.root");
@@ -1810,26 +1810,26 @@ void monoJetAnalysis::QCDVariations(float event_weight) {
     }
 
     for (int i = 0; i < 7; i++) {
-      string name = uncnames[i];
+      TString name = uncnames[i];
       TH1F* histo = NULL;
-      if (isWZG()) histo = (TH1F*)file->Get( (prefix+hnames[i]).c_str() );
+      if (isWZG()) histo = (TH1F*)file->Get( (prefix+hnames[i]) );
       scaleUncs.addUnc(name,histo);
     }
   }
   for (int i = 0; i < 7; i++) {
-    string name = uncnames[i];
+    TString name = uncnames[i];
     float weightUp = 1;
     float weightDn = 1;
 
     if (isWZG()) {
       float unc = scaleUncs.getBin(name,bosonPt);
-      if ( name.find("Mix") != string::npos ) {
+      if ( name.Contains("Mix") ) {
 	weightUp = (kfactor + unc);
 	weightDn = (kfactor - unc);
-      } else if ( name.find("QCD") != string::npos ) {
+      } else if ( name.Contains("QCD") ) {
 	weightUp = ( (nlo_qcd + unc) * nlo_ewk );
 	weightDn = ( (nlo_qcd - unc) * nlo_ewk );
-      } else if ( name.find("NNLO") != string::npos ) {
+      } else if ( name.Contains("NNLO") ) {
 	weightUp = ( nlo_qcd * (nlo_ewk + unc) );
 	weightDn = ( nlo_qcd * (nlo_ewk - unc) );
       }

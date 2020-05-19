@@ -11,13 +11,13 @@ public:
   
   static const int nPhoPtBins = 8;                
   const float phoPtBins[nPhoPtBins+1] = {230., 250., 280., 320., 375., 425., 475., 550., 2000.};
-  string PtBinNames[nPhoPtBins];
+  TString PtBinNames[nPhoPtBins];
 
   TH1F *h_phoPFIso[maxHisto],*h_phoSieie[maxHisto];
   TH1F *h_phoPt_ptbins[maxHisto][nPhoPtBins],*h_phoPFIso_ptbins[maxHisto][nPhoPtBins],*h_phoSieie_ptbins[maxHisto][nPhoPtBins];
   TH2F *h_phoPFIsoSieie[maxHisto];
   
-  virtual void BookHistos(int i,string histname);
+  virtual void BookHistos(int i,TString histname);
   virtual void fillHistos(int nhist,float event_weight);
   virtual void initVars();
   virtual void initTree(TTree* tree);

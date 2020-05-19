@@ -34,24 +34,24 @@ void monoJetDoubleMuCR::initTree(TTree* tree) {
   tree->Branch("looseISO_sf",&looseISO_sf);
 }
 
-void monoJetDoubleMuCR::BookHistos(int i,string histname) {
+void monoJetDoubleMuCR::BookHistos(int i,TString histname) {
   if (i == -1) {
     
   } else {
-    auto Name = [histname](string name) { return (name + histname); };
+    auto Name = [histname](TString name) { return (name + histname); };
     
-    h_leadingLeptonPt[i]     = MakeTH1F(new TH1F(Name("leadingLeptonPt").c_str()    ,"leadingLeptonPt;Leading Lepton P_{T} (GeV)"       ,nLeadingLeptonPtBins,LeadingLeptonPtBins));   
-    h_leadingLeptonEta[i]    = MakeTH1F(new TH1F(Name("leadingLeptonEta").c_str()   ,"leadingLeptonEta;Leading Lepton #eta"             ,nEtaBins,lEta,uEta));              
-    h_leadingLeptonPhi[i]    = MakeTH1F(new TH1F(Name("leadingLeptonPhi").c_str()   ,"leadingLeptonPhi;Leading Lepton #phi"             ,nPhiBins,lPhi,uPhi));        
-    h_subleadingLeptonPt[i]  = MakeTH1F(new TH1F(Name("subleadingLeptonPt").c_str() ,"subleadingLeptonPt;Subleading Lepton P_{T} (GeV)" ,nSubLeadingLeptonPtBins,subLeadingLeptonPtBins));
-    h_subleadingLeptonEta[i] = MakeTH1F(new TH1F(Name("subleadingLeptonEta").c_str(),"subleadingLeptonEta;Subleading Lepton #eta"       ,nEtaBins,lEta,uEta));              
-    h_subleadingLeptonPhi[i] = MakeTH1F(new TH1F(Name("subleadingLeptonPhi").c_str(),"subleadingLeptonPhi;Subleading Lepton #phi"       ,nPhiBins,lPhi,uPhi));        
-    h_dileptonPt[i]          = MakeTH1F(new TH1F(Name("dileptonPt").c_str()         ,"dileptonPt;Z P_{T} (GeV)"                         ,30,0.,1500.));              
-    h_dileptonM[i]           = MakeTH1F(new TH1F(Name("dileptonM").c_str()          ,"dileptonM;Z Mass (GeV)"                           ,24,60.,120.));
-    h_dileptonMall[i]        = MakeTH1F(new TH1F(Name("dileptonMall").c_str()       ,"dileptonM;Z Mass (GeV)"                           ,50,30.,200.));  
+    h_leadingLeptonPt[i]     = MakeTH1F(new TH1F(Name("leadingLeptonPt")    ,"leadingLeptonPt;Leading Lepton P_{T} (GeV)"       ,nLeadingLeptonPtBins,LeadingLeptonPtBins));   
+    h_leadingLeptonEta[i]    = MakeTH1F(new TH1F(Name("leadingLeptonEta")   ,"leadingLeptonEta;Leading Lepton #eta"             ,nEtaBins,lEta,uEta));              
+    h_leadingLeptonPhi[i]    = MakeTH1F(new TH1F(Name("leadingLeptonPhi")   ,"leadingLeptonPhi;Leading Lepton #phi"             ,nPhiBins,lPhi,uPhi));        
+    h_subleadingLeptonPt[i]  = MakeTH1F(new TH1F(Name("subleadingLeptonPt") ,"subleadingLeptonPt;Subleading Lepton P_{T} (GeV)" ,nSubLeadingLeptonPtBins,subLeadingLeptonPtBins));
+    h_subleadingLeptonEta[i] = MakeTH1F(new TH1F(Name("subleadingLeptonEta"),"subleadingLeptonEta;Subleading Lepton #eta"       ,nEtaBins,lEta,uEta));              
+    h_subleadingLeptonPhi[i] = MakeTH1F(new TH1F(Name("subleadingLeptonPhi"),"subleadingLeptonPhi;Subleading Lepton #phi"       ,nPhiBins,lPhi,uPhi));        
+    h_dileptonPt[i]          = MakeTH1F(new TH1F(Name("dileptonPt")         ,"dileptonPt;Z P_{T} (GeV)"                         ,30,0.,1500.));              
+    h_dileptonM[i]           = MakeTH1F(new TH1F(Name("dileptonM")          ,"dileptonM;Z Mass (GeV)"                           ,24,60.,120.));
+    h_dileptonMall[i]        = MakeTH1F(new TH1F(Name("dileptonMall")       ,"dileptonM;Z Mass (GeV)"                           ,50,30.,200.));  
     
-    h_leadingLeptonEtaPhi[i] = new TH2F(Name("leadingLeptonEtaPhi").c_str()   ,"leadingLeptonEtaPhi;Leading Lepton #eta;Leading Lepton #phi"             ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);  
-    h_subleadingLeptonEtaPhi[i] = new TH2F(Name("subleadingLeptonEtaPhi").c_str()   ,"subleadingLeptonEtaPhi;Subleading Lepton #eta;Subleading Lepton #phi"             ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);      
+    h_leadingLeptonEtaPhi[i] = new TH2F(Name("leadingLeptonEtaPhi")   ,"leadingLeptonEtaPhi;Leading Lepton #eta;Leading Lepton #phi"             ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);  
+    h_subleadingLeptonEtaPhi[i] = new TH2F(Name("subleadingLeptonEtaPhi")   ,"subleadingLeptonEtaPhi;Subleading Lepton #eta;Subleading Lepton #phi"             ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);      
   }
 }
 

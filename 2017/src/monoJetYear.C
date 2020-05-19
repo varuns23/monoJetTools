@@ -6,7 +6,7 @@
 using namespace std;
 
 int monoJetAnalysis::YEAR = 2017;
-const string monoJetYear::SRDATA = "B";
+const TString monoJetYear::SRDATA = "B";
 
 void monoJetYear::initTree(TTree* tree) {
   monoJetAnalysis::initTree(tree);
@@ -19,7 +19,7 @@ void monoJetYear::initVars() {
   monoJetAnalysis::initVars();
 }
 
-void monoJetYear::BookHistos(int i,string histname) {
+void monoJetYear::BookHistos(int i,TString histname) {
   monoJetAnalysis::BookHistos(i,histname);
 }
 

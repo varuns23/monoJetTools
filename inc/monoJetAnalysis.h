@@ -29,7 +29,7 @@
 #include <TSystemDirectory.h>
 #include <TLorentzVector.h>
 #include "TIterator.h"
-#include "string"
+#include "TString.h"
 // Header file for the classes stored in the TTree if any.
 #include "vector"
 #include "vector"
@@ -61,8 +61,8 @@ public:
 
   // Dataset sample;
   
-  struct TH1FCollection : public std::map<std::string,TH1F*> {
-    int getBinN(std::string name,float x) {
+  struct TH1FCollection : public std::map<TString,TH1F*> {
+    int getBinN(TString name,float x) {
       TH1F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin;
@@ -72,13 +72,13 @@ public:
       else                  xbin = histo->GetXaxis()->FindBin(x);
       return xbin;
     }
-    float getBin(std::string name,float x) {
+    float getBin(TString name,float x) {
       TH1F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin = getBinN(name,x);
       return histo->GetBinContent( xbin );
     }
-    float getBinError(std::string name,float x) {
+    float getBinError(TString name,float x) {
       TH1F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin = getBinN(name,x);
@@ -86,8 +86,8 @@ public:
     }
   } th1fmap;
   
-  struct TH2FCollection : public std::map<std::string,TH2F*> {
-    int getBinX(std::string name,float x) {
+  struct TH2FCollection : public std::map<TString,TH2F*> {
+    int getBinX(TString name,float x) {
       TH2F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin;
@@ -97,7 +97,7 @@ public:
       else                  xbin = histo->GetXaxis()->FindBin(x);
       return xbin;
     }
-    int getBinY(std::string name,float y) {
+    int getBinY(TString name,float y) {
       TH2F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int ybin;
@@ -107,21 +107,21 @@ public:
       else                  ybin = histo->GetYaxis()->FindBin(y);
       return ybin;
     }
-    float getBin(std::string name,float x,float y) {
+    float getBin(TString name,float x,float y) {
       TH2F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin = getBinX(name,x);
       int ybin = getBinY(name,y);
       return histo->GetBinContent( xbin,ybin );
     }
-    float getBinError(std::string name,float x,float y) {
+    float getBinError(TString name,float x,float y) {
       TH2F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin = getBinX(name,x);
       int ybin = getBinY(name,y);
       return histo->GetBinError( xbin,ybin );
     }
-    bool contains(std::string key) { return this->find(key) != this->end(); }
+    bool contains(TString key) { return this->find(key) != this->end(); }
   } th2fmap;
   ScaleUncCollection scaleUncs;
   ShapeUncCollection shapeUncs;
@@ -140,27 +140,27 @@ public:
     TH1F *h_cutflow;
     TH1F *h_cutflowNoWt;
     TH1F *h_cutflowNoK;
-    std::map<std::string,int> labels;
-    std::vector<std::string> _labels;
-    Cutflow(monoJetAnalysis* analysis, std::vector<std::string> labels,string tag="") {
+    std::map<TString,int> labels;
+    std::vector<TString> _labels;
+    Cutflow(monoJetAnalysis* analysis, std::vector<TString> labels,TString tag="") {
       this->analysis = analysis;
       this->_labels = labels;
       if (tag != "") tag = "_"+tag;
-      h_cutflow = new TH1F( ("h_cutflow"+tag).c_str(),"h_cutflow",labels.size(),0,labels.size());
-      h_cutflowNoWt = new TH1F( ("h_cutflowNoWt"+tag).c_str(),"h_cutflowNoWt",labels.size(),0,labels.size());
-      h_cutflowNoK = new TH1F( ("h_cutflowNoK"+tag).c_str(),"h_cutflowNoK",labels.size(),0,labels.size());
+      h_cutflow = new TH1F( ("h_cutflow"+tag),"h_cutflow",labels.size(),0,labels.size());
+      h_cutflowNoWt = new TH1F( ("h_cutflowNoWt"+tag),"h_cutflowNoWt",labels.size(),0,labels.size());
+      h_cutflowNoK = new TH1F( ("h_cutflowNoK"+tag),"h_cutflowNoK",labels.size(),0,labels.size());
     
       for (int i = 0; i < labels.size(); i++) {
-	h_cutflow->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
-	h_cutflowNoWt->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
-	h_cutflowNoK->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
+	h_cutflow->GetXaxis()->SetBinLabel(i+1,labels[i]);
+	h_cutflowNoWt->GetXaxis()->SetBinLabel(i+1,labels[i]);
+	h_cutflowNoK->GetXaxis()->SetBinLabel(i+1,labels[i]);
 	this->labels[labels[i]] = i;
       }
       h_cutflow->Sumw2();
       h_cutflowNoWt->Sumw2();
       h_cutflowNoK->Sumw2();
     }
-    void Fill(std::string label,float weight=1) {
+    void Fill(TString label,float weight=1) {
       this->Fill( labels[label],weight );
     }
     void Fill(std::size_t idx,float weight=1) {
@@ -168,11 +168,11 @@ public:
       h_cutflowNoWt->Fill(idx,1.0);
       h_cutflowNoK->Fill(idx,analysis->weight_nok);
     }
-    string getLabel(std::size_t idx) {
+    TString getLabel(std::size_t idx) {
       if (idx < _labels.size()) return _labels[idx];
       return "None";
     }
-    int getCut(std::string cut) { return labels[cut]; }
+    int getCut(TString cut) { return labels[cut]; }
   };
   Cutflow *cutflow;
 
@@ -918,10 +918,10 @@ public:
   virtual void initVars();
 
   /* Histograms Methods */
-  virtual void BookHistos(int nhist,string histname);
+  virtual void BookHistos(int nhist,TString histname);
   virtual void fillHistos(int nhisto,float event_weight);
   virtual void fillEvent(int nhisto,float event_weight);
-  virtual void fillEvent(string cut,float event_weight);
+  virtual void fillEvent(TString cut,float event_weight);
 
   /* Event Weight Methods */
   virtual void SetBoson(int PID);
@@ -968,7 +968,7 @@ public:
   virtual vector<int> electron_veto_looseID(int jetindex,float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
   virtual vector<int> getTightEle(float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
   virtual vector<int> getTightEle(vector<int> looselist,float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
-  virtual float getLooseEleSF(int lepindex,string variation="nominal");
+  virtual float getLooseEleSF(int lepindex,TString variation="nominal");
   virtual float getTightEleSF(int lepindex);
   
   virtual vector<int> getLoosePho(float phoPtCut=phoLoosePtCut,float phoEtaCut=phoLooseEtaCut);
@@ -981,12 +981,12 @@ public:
   virtual vector<int> muon_veto_looseID(int jetindex,float muPtCut=muLoosePtCut,float muEtaCut=muLooseEtaCut);
   virtual vector<int> getTightMu(float muPtCut=muTightPtCut,float muEtaCut=muTightEtaCut);
   virtual vector<int> getTightMu(vector<int> looselist,float muPtCut=muTightPtCut,float muEtaCut=muTightEtaCut);
-  virtual float getLooseMuSF(int lepindex,string variation="nominal");
+  virtual float getLooseMuSF(int lepindex,TString variation="nominal");
   virtual float getTightMuSF(int lepindex);
   
   virtual vector<int> getLooseTau(float tauPtCut=tauLoosePtCut,float tauEtaCut=tauLooseEtaCut);
   virtual vector<int> tau_veto_looseID(int jetindex,float tauPtCut=tauLoosePtCut,float tauEtaCut=tauLooseEtaCut);
-  virtual float getLooseTauSF(int lepindex,string variation="nominal");
+  virtual float getLooseTauSF(int lepindex,TString variation="nominal");
   
   /* Systematic Uncertainty Methods */
   virtual void QCDVariations(float event_weight);

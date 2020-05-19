@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
-#include <string>
+#include "TString.h"
 #include <vector>
 
 #include "Utilities.h"
@@ -47,35 +47,31 @@ float getRounded(float x) {
   return f;
 }
 
-vector<string> split(string str,string delim) {
-  vector<string> splitString;
-  char strChar[str.size() + 1];
-  strcpy(strChar,str.c_str());
-  char *token = strtok(strChar,delim.c_str());
-  while (token != NULL) {
-    splitString.push_back(string(token));
-    token = strtok(NULL,delim.c_str());
-  }
-  return splitString;
+vector<TString> split(TString str,TString delim) {
+  vector<TString> splitTString;
+  TString token;
+  int idx = 0;
+  while ( str.Tokenize(token,idx,delim) ) splitTString.push_back(token);
+  return splitTString;
 }
 
-bool fileSelection(string filename,string fileRange)
+bool fileSelection(TString filename,TString fileRange)
 {
   if (fileRange == "-1") return true;
   int numPos;
-  for (int i = filename.size(); i > 0; --i) {
+  for (int i = filename.Length(); i > 0; --i) {
     if (filename[i] == '_') {
       numPos = i+1;
       break;
     }
   }
-  filename.erase(filename.begin(),filename.begin()+numPos);
-  int fileNum = atoi(filename.c_str());
+  filename.Remove(0,numPos);
+  int fileNum = filename.Atoi();
   //1-100/200-250/300-300
-  vector<string> rangeOfFiles = split(fileRange,"/");
+  vector<TString> rangeOfFiles = split(fileRange,"/");
   for (unsigned int i = 0; i < rangeOfFiles.size(); i++) {
-    vector<string> range = split(rangeOfFiles[i],"-");
-    if (atoi(range[0].c_str()) <= fileNum && fileNum <= atoi(range[1].c_str())) {
+    vector<TString> range = split(rangeOfFiles[i],"-");
+    if (range[0].Atoi() <= fileNum && fileNum <= range[1].Atoi()) {
       return true;
     }
   }
@@ -87,19 +83,19 @@ TH1F* MakeTH1F(TH1F* temp) {
   return temp;
 }
 
-EventMask::EventMask(std::string maskfile) {
+EventMask::EventMask(TString maskfile) {
   setMask(maskfile);
 }
-void EventMask::setMask(std::string maskfile) {
+void EventMask::setMask(TString maskfile) {
   mask.clear();
-  std::string path = maskfile;
+  TString path = maskfile;
   cout << "Mask: " << path << endl;
-  ifstream file(path.c_str());
+  ifstream file(path);
   if ( !file.is_open() ) {
     cout << "Unable to read " << path << endl;
     return;
   }
-  std::string line;
+  TString line;
   int iline = 0;
 
   int run,lumis;
@@ -107,15 +103,15 @@ void EventMask::setMask(std::string maskfile) {
   while ( file >> line ){
     switch(iline%3) {
     case 0:
-      run = std::stoi(line);
+      run = line.Atoi();
       if ( !mask.count(run) ) mask.insert( {run,std::map<int,std::set<Long64_t>>()} );
       break;
     case 1:
-      lumis = std::stoi(line);
+      lumis = line.Atoi();
       if ( !mask[run].count(lumis) ) mask[run].insert( {lumis,std::set<Long64_t>()} );
       break;
     case 2:
-      event = std::stoll(line);
+      event = line.Atoll();
       mask[run][lumis].insert(event);
       break;
     }

@@ -6,13 +6,13 @@
 using namespace std;
 
 int monoJetAnalysis::YEAR = 2018;
-const string monoJetYear::SRDATA = "A";
+const TString monoJetYear::SRDATA = "A";
 
 void monoJetYear::initVars() {
   monoJetAnalysis::initVars();
 }
 
-void monoJetYear::BookHistos(int i,string histname) {
+void monoJetYear::BookHistos(int i,TString histname) {
   monoJetAnalysis::BookHistos(i,histname);
 }
 

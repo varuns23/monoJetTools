@@ -23,16 +23,16 @@ void monoJetGammaCR::initTree(TTree* tree) {
   tree->Branch("csev_sf",&csev_sf);
 }
 
-void monoJetGammaCR::BookHistos(int i,string histname) {
+void monoJetGammaCR::BookHistos(int i,TString histname) {
   if (i == -1) {
     
   } else {
-    auto Name = [histname](string name) { return (name+histname); };
-    h_PhotonPt[i]  = MakeTH1F(new TH1F(Name("photonPt").c_str() ,"PhotonPt;Photon P_{T}" ,nLeadingLeptonPtBins,LeadingLeptonPtBins));
-    h_PhotonEta[i]   = MakeTH1F(new TH1F(Name("photonEta").c_str(),"PhotonEta;Photon #eta" ,nEtaBins,lEta,uEta));
-    h_PhotonPhi[i]   = MakeTH1F(new TH1F(Name("photonPhi").c_str(),"PhotonPhi;Photon #phi" ,nPhiBins,lPhi,uPhi));
+    auto Name = [histname](TString name) { return (name+histname); };
+    h_PhotonPt[i]  = MakeTH1F(new TH1F(Name("photonPt") ,"PhotonPt;Photon P_{T}" ,nLeadingLeptonPtBins,LeadingLeptonPtBins));
+    h_PhotonEta[i]   = MakeTH1F(new TH1F(Name("photonEta"),"PhotonEta;Photon #eta" ,nEtaBins,lEta,uEta));
+    h_PhotonPhi[i]   = MakeTH1F(new TH1F(Name("photonPhi"),"PhotonPhi;Photon #phi" ,nPhiBins,lPhi,uPhi));
     
-    h_PhotonEtaPhi[i]   = new TH2F(Name("photonEtaPhi").c_str(),"PhotonEtaPhi;Photon #eta;Photon #phi" ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
+    h_PhotonEtaPhi[i]   = new TH2F(Name("photonEtaPhi"),"PhotonEtaPhi;Photon #eta;Photon #phi" ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
   }
 }
 

@@ -18,9 +18,9 @@ float exponential(float x,float a,float b,float c);
 
 float getRounded(float x);
 
-std::vector<std::string> split(std::string str,std::string delim);
+std::vector<TString> split(TString str,TString delim);
 
-bool fileSelection(std::string filename,std::string fileRange);
+bool fileSelection(TString filename,TString fileRange);
 
 TH1F* MakeTH1F(TH1F* temp);
 
@@ -28,8 +28,8 @@ struct EventMask {
   std::map<int,std::map<int,std::set<Long64_t>>> mask;
   
   EventMask();
-  EventMask(std::string maskfile);
-  void setMask(std::string maskfile);
+  EventMask(TString maskfile);
+  void setMask(TString maskfile);
   bool contains(int run,int lumis,Long64_t event);
 };
 #endif

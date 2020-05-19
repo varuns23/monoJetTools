@@ -136,7 +136,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
   
-  vector<string> cutlist = {s_TotalEvents,s_Triggers,s_METFilters,"Photon Selection",s_ElectronVeto,s_MuonVeto,
+  vector<TString> cutlist = {s_TotalEvents,s_Triggers,s_METFilters,"Photon Selection",s_ElectronVeto,s_MuonVeto,
 			    s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_JetSelection,"MET60","SigmaIEtaIEta Sideband",s_HEMVeto};
   cutflow = new Cutflow(this,cutlist);
 
@@ -144,8 +144,8 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   for(int i = bHisto; i<nHisto; i++) {
     char ptbins[100];
     sprintf(ptbins, "_%d", i);
-    string histname(ptbins);
-    auto dir = output->mkdir( ("monoJet"+histname).c_str() );
+    TString histname(ptbins);
+    auto dir = output->mkdir( ("monoJet"+histname) );
     dir->cd();
     if (i == bHisto) {
       auto treedir = dir->mkdir("trees");
