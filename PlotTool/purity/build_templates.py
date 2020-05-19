@@ -18,10 +18,10 @@ if not os.path.isdir("templates"):
     
 from ROOT import TCanvas,gStyle,kRed,kGreen,kBlue,TLatex,TPad
 
-sig_path = "SigTemplate/sieie_purity/"
-# sig_path = "SigTemplate/iso_purity/"
-bkg_path = "BkgTemplate/sieie_purity/"
-# bkg_path = "BkgTemplate/iso_purity/"
+# sig_path = "SigTemplate/sieie_purity/"
+sig_path = "SigTemplate/iso_purity/"
+# bkg_path = "BkgTemplate/sieie_purity/"
+bkg_path = "BkgTemplate/iso_purity/"
 den_path = "DenTemplate"
 
 sig_template = Region(path=sig_path,autovar=True,show=0)
@@ -48,6 +48,11 @@ def PtRangeText(x=0.55,y=0.8,ptrange=(-1,-1),scale=1):
     rangetext.SetTextSize(0.05*scale)
     rangetext.Draw()
     return rangetext
+def VarBounds(variable,hslist):
+    if "photonPFIso" in variable:
+        SetBounds(hslist,scale=5,log=10)
+    elif "photonSieie" in variable:
+        SetBounds(hslist,maxi=5,log=1)
 def PlotDen(templates):
     print "Plotting Denominator Template"
     data = templates["Data"].histo.Clone()
@@ -86,7 +91,7 @@ def PlotDen(templates):
     leg.AddEntry(cleaned,"Data_{Non-ISO} - GJets_{Non-ISO}","l")
     leg.Draw()
 
-    SetBounds(hslist,maxi=5,log=1)
+    VarBounds(templates.variable.variable,hslist)
 
     lumi_label = '%s' % float('%.3g' % (templates.lumi/1000.)) + " fb^{-1}"
     texLumi,texCMS = getCMSText(lumi_label,templates.year,scale=0.8)
@@ -155,7 +160,7 @@ def PlotBkg(templates):
     leg.AddEntry(sideband,"QCD Fake Template","l")
     leg.Draw()
 
-    SetBounds(hslist,maxi=5,log=1)
+    VarBounds(templates.variable.variable,hslist)
 
     lumi_label = '%s' % float('%.3g' % (templates.lumi/1000.)) + " fb^{-1}"
     texLumi,texCMS = getCMSText(lumi_label,templates.year,scale=0.8)
@@ -232,7 +237,7 @@ def PlotSig(templates,sideband_templates):
     leg.AddEntry(sideband,"QCD Fake Template","l")
     leg.AddEntry(full,"Full","l")
 
-    SetBounds(hslist,maxi=5,log=1)
+    VarBounds(templates.variable.variable,hslist)
     leg.Draw()
     
     lumi_label = '%s' % float('%.3g' % (templates.lumi/1000.)) + " fb^{-1}"

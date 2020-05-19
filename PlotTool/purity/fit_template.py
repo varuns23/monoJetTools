@@ -65,6 +65,11 @@ def PurityText(x=0.55,y=0.5,purity=0,purity_error=0,scale=1):
     vtext.SetTextSize(0.05*scale)
     vtext.Draw()
     return vtext,btext
+def VarBounds(variable,hslist):
+    if "photonPFIso" in variable:
+        SetBounds(hslist,scale=5,log=10)
+    elif "photonSieie" in variable:
+        SetBounds(hslist,maxi=5,log=1)
 def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error):
     postfit_data = postfit_data.Clone()
     postfit_gjet =postfit_gjet.Clone()
@@ -112,7 +117,7 @@ def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error):
     leg.AddEntry(postfit_qcd,"QCD Fake Template","l")
     leg.AddEntry(postfit_fit,"Fit","l")
 
-    SetBounds(hslist,maxi=5,log=1)
+    VarBounds(template.variable,hslist)
     leg.Draw()
     
     lumi_label = '%s' % float('%.3g' % (max(config.lumi.values())/1000.)) + " fb^{-1}"
