@@ -6,7 +6,6 @@
 using namespace std;
 
 void monoJetGammaPurity::initTree(TTree* tree) {
-  monoJetYear::initTree(tree);
   monoJetGammaCR::initTree(tree);
   tree->Branch("photonPt",&photon_pt);
   tree->Branch("photonSieie",&photon_sieie);
@@ -14,13 +13,11 @@ void monoJetGammaPurity::initTree(TTree* tree) {
 }
 
 void monoJetGammaPurity::initVars() {
-  monoJetYear::initVars();
   monoJetGammaCR::initVars();
   photon_phoiso = photon_sieie = -1;
 }
 
 void monoJetGammaPurity::BookHistos(int i,string histname) {
-  monoJetYear::BookHistos(i,histname);
   monoJetGammaCR::BookHistos(i,histname);
   if (i == -1) {
     for (int i = 0; i < nPhoPtBins; i++) {
@@ -51,9 +48,9 @@ void monoJetGammaPurity::BookHistos(int i,string histname) {
 }
 
 void monoJetGammaPurity::fillHistos(int nhist,float event_weight) {
-  monoJetAnalysis::fillHistos(nhist,event_weight);
-  
+  monoJetGammaCR::fillHistos(nhist,event_weight);
   h_phoPFIso[nhist]->Fill(photon_phoiso, event_weight);
+  h_phoSieie[nhist]->Fill(photon_sieie, event_weight);
   h_phoPFIsoSieie[nhist]->Fill(photon_phoiso, photon_sieie , event_weight);
 
   for (int i = 0; i < nPhoPtBins; i++) {
@@ -190,6 +187,61 @@ bool monoJetGammaPurity::CutBasedPhotonID_noSieie(Int_t ipho, TString phoWP){
       photonId = ( 
 		  ((*phoHoverE)[ipho]                <  0.0590 ) &&
 		  // ((*phoSigmaIEtaIEtaFull5x5)[ipho]  <  0.0272 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   );
+    }
+  }
+  return photonId; 
+}
+
+bool monoJetGammaPurity::CutBasedPhotonID_invSieie(Int_t ipho, TString phoWP){
+
+  bool photonId = false;
+  bool inBarrel = fabs((*phoSCEta)[ipho]) < 1.4442;
+
+  if(phoWP == "tight"){  // Tight
+    if( inBarrel ){ // EB
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.02148 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.00996 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   ); 
+    } else { // EE
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.0321 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.0271 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   );
+    }
+  }
+
+  if(phoWP == "medium"){ // Medium
+    if( inBarrel ){ // EB
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.02197 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.01015 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   );
+    } else { // EE
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.0326 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.0272 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   );
+    }
+  }
+
+  if(phoWP == "loose"){ // Loose
+    if( inBarrel ){ // EB
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.04596 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.0106 ) &&
+		  ((*phoEleVeto)[ipho]                == 1)
+		   ); 
+    } else { // EE
+      photonId = ( 
+		  ((*phoHoverE)[ipho]                <  0.0590 ) &&
+		  ((*phoSigmaIEtaIEtaFull5x5)[ipho]  >  0.0272 ) &&
 		  ((*phoEleVeto)[ipho]                == 1)
 		   );
     }

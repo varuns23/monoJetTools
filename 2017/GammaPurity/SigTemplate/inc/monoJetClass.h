@@ -7,12 +7,11 @@
 #ifndef monoJetClass_h
 #define monoJetClass_h
 
-// #include "monoJetYear.h"
-// #include "monoJetGammaCR.h"
+#include "monoJetYear.h"
 #include "monoJetGammaPurity.h"
 
 using namespace std;
-class monoJetClass : public monoJetGammaPurity {
+class monoJetClass : virtual public monoJetYear, virtual public monoJetGammaPurity {
 public :
   static const int nHisto = 13;
   static const int bHisto = 10;
@@ -28,9 +27,18 @@ public :
   void     Loop(Long64_t maxEvents, int reportEvery);
   void BookHistos(const char* file2);
   void BookHistos(int i,string histname) {
+    monoJetYear::BookHistos(i,histname);
     monoJetGammaPurity::BookHistos(i,histname);
   }
   void fillHistos(int nhist,float event_weight);
+  void initVars() {
+    monoJetYear::initVars();
+    monoJetGammaPurity::initVars();
+  }
+  void initTree(TTree* tree) {
+    monoJetYear::initTree(tree);
+    monoJetGammaPurity::initTree(tree);
+  }
 
   void nominal(float);
   void met_variation(int,float);

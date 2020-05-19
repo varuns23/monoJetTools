@@ -3,7 +3,6 @@ RFLAGS:=-g -I$ROOTSYS/include -L$ROOTSYS/lib `root-config --cflags` `root-config
 
 ROOT:=../../../
 YEAR:=../../
-PURITY:=../
 SRC:=src/
 INC:=inc/
 BIN:=bin/
@@ -13,7 +12,7 @@ CR:=monoJetGammaCR
 
 LIBRARY:=$(addprefix $(ROOT)$(BIN),ScaleUncCollection.o ShapeUncCollection.o Utilities.o Dataset.o)
 INCLUDE:=$(addprefix $(ROOT)$(INC),monoJetCutConfig.h Dataset.h VariableBins.h ScaleUncCollection.h ShapeUncCollection.h Utilities.h)
-OBJECTS:=$(BIN)monoJetClass.o $(PURITY)$(BIN)monoJetGammaPurity.o $(YEAR)$(BIN)monoJetYear.o $(ROOT)$(BIN)$(CR).o $(ROOT)$(BIN)monoJetAnalysis.o $(LIBRARY)
+OBJECTS:=$(BIN)monoJetClass.o $(ROOT)$(BIN)monoJetGammaPurity.o $(YEAR)$(BIN)monoJetYear.o $(ROOT)$(BIN)$(CR).o $(ROOT)$(BIN)monoJetAnalysis.o $(LIBRARY)
 SOURCES:=$(subst $(BIN),$(SRC),$(OBJECTS:.o=.C))
 
 .PHONY:test clean condor_clean hadd bin
@@ -21,13 +20,13 @@ SOURCES:=$(subst $(BIN),$(SRC),$(OBJECTS:.o=.C))
 analyze: $(ROOT)$(SCRIPTS)analyze.C $(OBJECTS)
 	@if [ ! -d RootFiles ]; then ln -s $(YEAR)RootFiles/; fi
 	@if [ ! -d PlotTool ]; then ln -s $(ROOT)PlotTool/; fi
-	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(PURITY)$(INC) -I$(INC) $(RFLAGS) $(WARNINGS) $< $(OBJECTS) -o $@
+	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(ROOT)$(INC) -I$(INC) $(RFLAGS) $(WARNINGS) $< $(OBJECTS) -o $@
 
-$(BIN)monoJetClass.o: $(SRC)monoJetClass.C $(INC)monoJetClass.h $(PURITY)$(INC)monoJetGammaPurity.h $(YEAR)$(INC)monoJetYear.h $(ROOT)$(INC)monoJetAnalysis.h $(INCLUDE)
-	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(PURITY)$(INC) -I$(INC) $(RFLAGS) -c $< -o $@
+$(BIN)monoJetClass.o: $(SRC)monoJetClass.C $(INC)monoJetClass.h $(ROOT)$(INC)monoJetGammaPurity.h $(YEAR)$(INC)monoJetYear.h $(ROOT)$(INC)monoJetAnalysis.h $(INCLUDE)
+	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(ROOT)$(INC) -I$(INC) $(RFLAGS) -c $< -o $@
 
-$(PURITY)$(BIN)monoJetGammaPurity.o: $(PURITY)$(SRC)monoJetGammaPurity.C $(YEAR)$(INC)monoJetYear.h $(ROOT)$(INC)monoJetAnalysis.h $(INCLUDE)
-	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(PURITY)$(INC) $(RFLAGS) -c $< -o $@
+$(ROOT)$(BIN)monoJetGammaPurity.o: $(ROOT)$(SRC)monoJetGammaPurity.C $(YEAR)$(INC)monoJetYear.h $(ROOT)$(INC)monoJetAnalysis.h $(INCLUDE)
+	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(ROOT)$(INC) $(RFLAGS) -c $< -o $@
 
 $(YEAR)$(BIN)monoJetYear.o: $(YEAR)$(SRC)monoJetYear.C $(YEAR)$(INC)monoJetYear.h $(ROOT)$(INC)monoJetAnalysis.h $(INCLUDE)
 	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) $(RFLAGS) -c $< -o $@
@@ -46,7 +45,7 @@ profiler: $(ROOT)$(SCRIPTS)profiler.C $(OBJECTS)
 
 bin:
 	mkdir -p $(BIN)
-	mkdir -p $(PURITY)$(BIN)		
+	mkdir -p $(ROOT)$(BIN)		
 	mkdir -p $(YEAR)$(BIN)
 	mkdir -p $(ROOT)$(BIN)
 

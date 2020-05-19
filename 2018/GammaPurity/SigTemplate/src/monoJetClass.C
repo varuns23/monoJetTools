@@ -142,6 +142,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
 }
 
 void monoJetClass::fillHistos(int nhist,float event_weight) {
+  monoJetYear::fillHistos(nhist,event_weight);
   monoJetGammaPurity::fillHistos(nhist,event_weight);
   weight = event_weight;
   if (nhist == bHisto) tree->Fill();

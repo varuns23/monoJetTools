@@ -1,11 +1,12 @@
 #ifndef monoJetGammaPurity_h
 #define monoJetGammaPrutiy_h
 
-#include "monoJetYear.h"
 #include "monoJetGammaCR.h"
 
-class monoJetGammaPurity : public virtual monoJetYear, public virtual monoJetGammaCR {
+class monoJetGammaPurity : public virtual monoJetGammaCR {
 public:
+  const bool runIsoPurity = true;
+  
   float photon_phoiso,photon_sieie;
   
   static const int nPhoPtBins = 8;                
@@ -25,6 +26,7 @@ public:
 
   bool CutBasedPhotonID(int ipho,TString phoWP);
   bool CutBasedPhotonID_noSieie(int ipho,TString phoWP);
+  bool CutBasedPhotonID_invSieie(int ipho,TString phoWP);
 
   bool CutBasedPhotonIso(int ipho,TString phoWP);
   bool CutBasedPhotonIso_noPhoIso(int ipho,TString phoWP);
