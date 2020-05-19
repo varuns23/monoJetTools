@@ -101,7 +101,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 void monoJetClass::nominal(float event_weight) {
     if (pfMET >= 60) return;
     cutflow->Fill(10,event_weight);
-    if (!(photon_sieie > 0.02 || photon_sieie < 0.015)) return;
+    if (runIsoPurity)
+      if (!(photon_sieie > 0.02 || photon_sieie < 0.015)) return;
     cutflow->Fill(11,event_weight);
     if (!getJetHEMVeto()) return;
     cutflow->Fill(12,event_weight);
@@ -111,7 +112,8 @@ void monoJetClass::nominal(float event_weight) {
 void monoJetClass::met_variation(int var,float event_weight) {
   // Vary pfMET Cut by 20%
   if ( pfMET >= (60 * ( 1 + var*0.2 )) ) return;
-  if (!(photon_sieie > 0.02 || photon_sieie < 0.015)) return;
+  if (runIsoPurity)
+    if (!(photon_sieie > 0.02 || photon_sieie < 0.015)) return;
   if (!getJetHEMVeto()) return;
   switch(var) {
   case 1: fillHistos(13,event_weight); break;
@@ -121,8 +123,9 @@ void monoJetClass::met_variation(int var,float event_weight) {
 
 void monoJetClass::sideband_variation(int var,float event_weight) {
   if ( pfMET >= 60 ) return;
-  if (!(photon_sieie > (0.02 * ( 1 + var*0.1 )) || photon_sieie < 0.015)) return;
-    if (!getJetHEMVeto()) return;
+  if (runIsoPurity)
+    if (!(photon_sieie > (0.02 * ( 1 + var*0.1 )) || photon_sieie < 0.015)) return;
+  if (!getJetHEMVeto()) return;
   switch(var) {
   case 1: fillHistos(15,event_weight); break;
   case -1:fillHistos(16,event_weight); break;
@@ -168,8 +171,16 @@ int monoJetClass::getPhoIndex() {
   for (int ipho = 0; ipho < nPho; ipho++) {
     
     bool kinematics = ((phoCalibEt->at(ipho) > 230.0) && (fabs(phoSCEta->at(ipho)) < 1.4442));
-    bool id = CutBasedPhotonID_noSieie(ipho, "medium");
-    bool iso= CutBasedPhotonIso_noPhoIso(ipho, "medium");
+    bool id,iso;
+    if (runIsoPurity) {
+      // Isolation Purity Photon ID
+      id = CutBasedPhotonID_noSieie(ipho, "medium");
+      iso= CutBasedPhotonIso_noPhoIso(ipho, "medium");
+    } else {
+      // Sieie Purity Photon ID
+      id = CutBasedPhotonID_noSieie(ipho, "medium");
+      iso= !CutBasedPhotonIso(ipho, "medium");
+    }
 
     if(kinematics && id && iso)
       return ipho;
