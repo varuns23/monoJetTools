@@ -5,7 +5,7 @@
 
 class monoJetGammaPurity : public virtual monoJetGammaCR {
 public:
-  const bool runIsoPurity = true;
+  bool runIsoPurity = true;
   
   float photon_phoiso,photon_sieie;
   
