@@ -242,8 +242,6 @@ class Region(object):
         for process in self:
             if self.isBlinded and process.proctype == 'data': continue
             process.setVariable(variable,self.lumi)
-            if process.process == "QCDFake":
-                print process.raw_total,process.scaled_total
             if process.proctype == 'bkg':
                 self.total_bkg += process.scaled_total
         self.setMCOrder()
