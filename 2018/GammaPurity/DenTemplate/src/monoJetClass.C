@@ -152,7 +152,7 @@ int monoJetClass::getPhoIndex() {
     
     bool kinematics = ((phoCalibEt->at(ipho) > 230.0) && (fabs(phoSCEta->at(ipho)) < 1.4442));
     bool failIso = !CutBasedPhotonIso(ipho,"loose");
-    bool id = CutBasedPhotonID(ipho, "loose");
+    bool id = CutBasedPhotonID_invSieie(ipho, "loose");
     bool iso = CutBasedPhotonIso(ipho,"veryloose");
 
     if(kinematics && id && iso && failIso)
