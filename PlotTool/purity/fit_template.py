@@ -196,12 +196,16 @@ def fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
     # Multiply the numerator observed in data by fakeFractionInNum to get the estimated numerator
     # contribution coming from QCD fakes ( as opposed to real photons )
     # fakeFractionInNum = fakeInSig/(realInSig+fakeInSig)
-    purityInNum = realInSig/(realInSig + fakeInSig)
-    purity_error = purityInNum*TMath.Sqrt( (fakeInSig_error/fakeInSig)**2 + (totalInSig_error/totalInSig)**2 )
+    purityInNum = realInSig/totalInSig
+    purity_error = purityInNum*TMath.Sqrt( (realInSig_error/realInSig)**2 + (totalInSig_error/totalInSig)**2 )
 
-    print "Purity: %f +/- %f"%(purityInNum,purity_error)
+    impurityInNum = fakeInSig/totalInSig
+    impurity_error = impurityInNum*TMath.Sqrt( (fakeInSig_error/fakeInSig)**2 + (totalInSig_error/totalInSig)**2 )
 
-    return purityInNum,purity_error
+    print "Purity:   %f +/- %f"%(purityInNum,purity_error)
+    print "Impurity: %f +/- %f"%(impurityInNum,impurity_error)
+
+    return purityInNum,purity_error,impurityInNum,impurity_error
 def save_fit(hslist,output,fit):
     tdir = output.mkdir(fit)
     tdir.cd()
@@ -244,13 +248,17 @@ def fit_template(template,output,varinfo):
     srange = varinfo["signal"]
     roovar.setRange("signal",srange[0],srange[1])
     # Find fraction of fake/real pdfs in partial range, normalized to 1
-    purity,purity_error = fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
+    purity,purity_error,impurity,impurity_error = fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
 
     h_purity = TH1F("purity","purity",1,0,1)
     h_purity.SetBinContent(1,purity)
     h_purity.SetBinError(1,purity_error)
+
+    h_impurity = TH1F("impurity","impurity",1,0,1)
+    h_impurity.SetBinContent(1,impurity)
+    h_impurity.SetBinError(1,impurity_error)
     
-    if parser.args.save: save_fit([postfit_data,postfit_gjet,postfit_qcd,h_purity],output,"postfit")
+    if parser.args.save: save_fit([postfit_data,postfit_gjet,postfit_qcd,h_purity,h_impurity],output,"postfit")
     
     if parser.args.plot: PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error)
 if __name__ == "__main__":
