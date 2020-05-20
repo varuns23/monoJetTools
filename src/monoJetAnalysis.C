@@ -153,8 +153,7 @@ void monoJetAnalysis::BookHistos(int i,string histname) {
 }
 
 void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
-  if (isData) event_weight = 1;
-  else {
+  if (isMC) {
     // MC Info          ;
     h_puTrueNoW[nhist]  ->Fill(puTrue->at(0),weight_nopileup);
     h_puTrueReW[nhist]  ->Fill(puTrue->at(0),event_weight);
