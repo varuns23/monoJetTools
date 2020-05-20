@@ -61,6 +61,7 @@ parser.add_argument("--nlo",help="Use all available NLO samples",action="store_t
 parser.add_argument("--postpath",help="Force path to come from postpath.txt",action="store_true",default=False)
 parser.add_argument("--verbose",help="Specify verbose level",type=int,default=0)
 parser.add_argument("--blinded",help="Disable Data from being plotted",action="store_true",default=False)
+parser.add_argument("--use-ga-qcd",help="Use QCD from GammaCR instead of QCD Fake Template",action="store_true",default=False)
 
 class Region(object):
     def __init__(self,year=None,region=None,lumi=None,path=None,config=None,autovar=None,useMaxLumi=False,show=True,blinded=None):
@@ -95,8 +96,14 @@ class Region(object):
         else:
             datalist = [ '%s_%s' % (datafile,era) for era in sorted(self.lumimap.keys()) ]
         self.processes["Data"] =    Process("Data",datalist,None,'data',year=self.year,region=self.region)
-        for mc in self.MCList: self.processes[mc] = Process(mc,self.config.filemap[mc],GetMCxsec(self.config.filemap[mc],self.config.xsec),'bkg',
-                                                            leg=self.config.legmap[mc],color=self.config.colmap[mc],year=self.year,region=self.region)
+        for mc in self.MCList:
+            if self.region == "GammaCR" and mc == "QCD" and not parser.args.use_ga_qcd:
+                fakefiles = [ datafile.replace("Gamma","QCDFake") for datafile in datalist ]
+                self.processes[mc] = Process("QCDFake",fakefiles,None,'bkg',
+                                         leg=self.config.legmap[mc],color=self.config.colmap[mc],year=self.year,region=self.region)
+                continue
+            self.processes[mc] = Process(mc,self.config.filemap[mc],GetMCxsec(self.config.filemap[mc],self.config.xsec),'bkg',
+                                         leg=self.config.legmap[mc],color=self.config.colmap[mc],year=self.year,region=self.region)
         if self.region == "SignalRegion" and any(parser.args.signal):
             self.setSignalInfo()
         self.haddFiles()
@@ -235,6 +242,8 @@ class Region(object):
         for process in self:
             if self.isBlinded and process.proctype == 'data': continue
             process.setVariable(variable,self.lumi)
+            if process.process == "QCDFake":
+                print process.raw_total,process.scaled_total
             if process.proctype == 'bkg':
                 self.total_bkg += process.scaled_total
         self.setMCOrder()

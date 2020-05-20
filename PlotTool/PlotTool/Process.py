@@ -125,7 +125,7 @@ class Process:
         self.subprocesses = {}
         for sub,filename in zip(self.sublist,self.filenames):
             name = filename.replace('post','')
-            if self.proctype is 'data': xsec = None
+            if self.proctype is 'data' or xsecs is None: xsec = None
             else: xsec = self.xsecs[sub]
             self.subprocesses[sub] = SubProcess(self.process,name,filename,xsec,self.year,self.region)
         self.initVariable()
