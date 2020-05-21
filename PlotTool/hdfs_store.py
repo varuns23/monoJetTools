@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 import os
+import sys
 import datetime
 from argparse import ArgumentParser
 
+repo_path = os.path.dirname(os.path.realpath(__file__)).replace("/PlotTool","")
 hdfs_base = '/hdfs/store/user/ekoenig/MonoJet/PostFiles/'
 
 valid_years = ['2017','2018']
@@ -67,6 +69,18 @@ def autodirectory(args):
     directory.append(label)
     directory = '/'.join(directory)
     args.directory = valid_hdfs(directory)
+def autorecursive(args,repo=repo_path):
+    from datetime import datetime
+    directory = []
+    date,time = str(datetime.now()).split()
+    args.date = date.replace('-','')
+
+    if repo not in os.getcwd(): return
+    directory = os.getcwd().replace(repo+"/","").split("/")
+    label = '%s_%s' % (args.date,args.label)
+    directory.append(label)
+    directory = '/'.join(directory)
+    args.directory = valid_hdfs(directory)
 def getargs():
     parser = ArgumentParser()
     parser.add_argument("-d","--directory",help="Specify directory in %s to save files" % hdfs_base,type=valid_hdfs)
@@ -75,8 +89,10 @@ def getargs():
     parser.add_argument("-l","--label",help="Specify extra information to be used in autodirectory",type=str,default='postFiles')
     parser.add_argument("-f","--files",help="Specify the files to move to specified hdfs area",nargs='+',type=valid_files,default=[ fname for fname in os.listdir('.') if valid_file(fname) is not None ])
     args = parser.parse_args()
+    if not any(args.files): sys.exit("No postfiles were found.")
+    if args.directory is None: autorecursive(args)
     if args.directory is None: autodirectory(args)
-    if not valid_directory(args.directory): exit()
+    if not valid_directory(args.directory): sys.exit("%s: Not a valid directory."%args.directory)
     return args
 
 def move_file(fname,directory):
