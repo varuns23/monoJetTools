@@ -61,7 +61,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!CRSelection(tightlist,looselist)) continue;
     if(photon_pt <= phoTightPtCut) continue;
     // Get impurity of data from exponential fit
-    float impurity = exponential(photon_pt,8.83526e+00,7.60330e-03,8.11888e-01)/100.;
+    float impurity = getImpurityWeight(photon_pt);
     event_weight *= impurity;
     
     fillEvent(4,event_weight);

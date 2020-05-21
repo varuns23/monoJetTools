@@ -1,4 +1,4 @@
-TEMPLATES=SigTemplate BkgTemplate DenTemplate
+TEMPLATES=SigTemplate BkgTemplate
 
 .PHONY: $(TEMPLATES) all
 
