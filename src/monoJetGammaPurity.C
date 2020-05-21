@@ -17,10 +17,10 @@ float monoJetGammaPurity::getImpurityWeight(float photon_pt) {
   }
   if (YEAR == 2018){
     // BU Values
-    impurity = exponential(photon_pt,11.92,8.28e-3,1.55);
+    // impurity = exponential(photon_pt,11.92,8.28e-3,1.55);
 
-    // UW 2017 Values
-    // impurity = exponential(photon_pt,8.83526e+00,7.60330e-03,8.11888e-01);
+    // UW Values
+    impurity = exponential(photon_pt,1.14815e+01,1.03044e-02,1.27317e+00);
   }
   // impurity is given as a percentage, so divide by 100;
   return impurity * 0.01;
