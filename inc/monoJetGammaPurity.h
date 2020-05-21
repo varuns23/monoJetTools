@@ -6,11 +6,15 @@
 class monoJetGammaPurity : public virtual monoJetGammaCR {
 public:
   bool runIsoPurity = true;
+  // bool runIsoPurity = false;
   
   float photon_phoiso,photon_sieie;
   
-  static const int nPhoPtBins = 8;                
-  const float phoPtBins[nPhoPtBins+1] = {230., 250., 280., 320., 375., 425., 475., 550., 2000.};
+  // static const int nPhoPtBins = 8;                
+  // const float phoPtBins[nPhoPtBins+1] = {230., 250., 280., 320., 375., 425., 475., 550., 2000.};
+
+  static const int nPhoPtBins = 6;
+  const float phoPtBins[nPhoPtBins+1] = {200.,250.,300.,400.,500.,600.,1000.};
   TString PtBinNames[nPhoPtBins];
 
   TH1F *h_phoPFIso[maxHisto],*h_phoSieie[maxHisto];
@@ -23,6 +27,8 @@ public:
   virtual void initTree(TTree* tree);
   virtual void setPhoton(int ipho);
   virtual int getJetIndex(int ipho);
+
+  float getImpurityWeight(float photon_pt);
 
   bool CutBasedPhotonID(int ipho,TString phoWP);
   bool CutBasedPhotonID_noSieie(int ipho,TString phoWP);

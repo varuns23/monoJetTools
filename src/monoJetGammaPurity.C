@@ -5,6 +5,27 @@
 
 using namespace std;
 
+float monoJetGammaPurity::getImpurityWeight(float photon_pt) {
+  // Get impurity of data from exponential fit
+  float impurity = 1;
+  if (YEAR == 2017){
+    // BU Values
+    // impurity = exponential(photon_pt,6.35,4.61e-3,1.05);
+
+    // UW Values
+    impurity = exponential(photon_pt,5.73596e+00,5.83903e-03,7.26336e-01);
+  }
+  if (YEAR == 2018){
+    // BU Values
+    impurity = exponential(photon_pt,11.92,8.28e-3,1.55);
+
+    // UW 2017 Values
+    // impurity = exponential(photon_pt,8.83526e+00,7.60330e-03,8.11888e-01);
+  }
+  // impurity is given as a percentage, so divide by 100;
+  return impurity * 0.01;
+}
+
 void monoJetGammaPurity::initTree(TTree* tree) {
   monoJetGammaCR::initTree(tree);
   tree->Branch("photonPt",&photon_pt);
@@ -30,14 +51,14 @@ void monoJetGammaPurity::BookHistos(int i,TString histname) {
   }
   
   auto Name = [histname](TString name) { return (name+histname); };
-  h_phoSieie[i] = MakeTH1F(new TH1F(Name("photonSieie"),"PhotonSieie;Photon #sigma_{i#eta i#eta}",25,0,0.025));
+  h_phoSieie[i] = MakeTH1F(new TH1F(Name("photonSieie"),"PhotonSieie;Photon #sigma_{i#eta i#eta}",100,0.,0.02));
   h_phoPFIso[i] = MakeTH1F(new TH1F( Name("photonPFIso"),"Photon PF Iso",25,0,25));
   h_phoPFIsoSieie[i] = new TH2F( Name("photonPFIsoSieie"),"Photon Iso vs Sieie;Photon PF Iso;Photon #sigma_{i#eta i#eta}",25,0,25,25,0.0,0.025);
 
   for (int ibin = 0; ibin < nPhoPtBins; ibin++) {
     h_phoPt_ptbins[i][ibin]    = MakeTH1F(new TH1F( Name("photonPt_"+PtBinNames[ibin]),    "photon p_{T}", nPhoPtBins, phoPtBins));  
     h_phoPFIso_ptbins[i][ibin] = MakeTH1F(new TH1F( Name("photonPFIso_"+PtBinNames[ibin]), "Photon PF Iso", 25, 0, 25));
-    h_phoSieie_ptbins[i][ibin] = MakeTH1F(new TH1F( Name("photonSieie_"+PtBinNames[ibin]), "Photon #sigma_#{i#eta i#eta}",25,0,0.025));
+    h_phoSieie_ptbins[i][ibin] = MakeTH1F(new TH1F( Name("photonSieie_"+PtBinNames[ibin]), "Photon #sigma_#{i#eta i#eta}",100,0.,0.02));
   }
 }
 

@@ -154,11 +154,12 @@ def compute_impurity_ratio(ptbins):
     ratio.Fit("impurity_fit")
     if parser.args.plot:
         PlotImpurityRatio(ratio)
-        # PlotImpuritySys(ratio,ptbins)
+        PlotImpuritySys(ratio,ptbins)
     if parser.args.save: save_obj([ratio,func])
     
 if __name__ == "__main__":
     parser.parse_args()
-    ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
+    # ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
+    ptbins = [200,250,300,400,500,600,"Inf"]
     compute_impurity_ratio(ptbins)
     

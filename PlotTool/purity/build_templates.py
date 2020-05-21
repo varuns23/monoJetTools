@@ -18,15 +18,15 @@ if not os.path.isdir("templates"):
     
 from ROOT import TCanvas,gStyle,kRed,kGreen,kBlue,TLatex,TPad
 
-# sig_path = "SigTemplate/sieie_purity/"
-sig_path = "SigTemplate/iso_purity/"
-# bkg_path = "BkgTemplate/sieie_purity/"
-bkg_path = "BkgTemplate/iso_purity/"
+sig_path = "SigTemplate/sieie_purity/"
+# sig_path = "SigTemplate/iso_purity/"
+bkg_path = "BkgTemplate/sieie_purity/"
+# bkg_path = "BkgTemplate/iso_purity/"
 den_path = "DenTemplate"
 
 sig_template = Region(path=sig_path,autovar=True,show=0)
 bkg_template = Region(path=bkg_path,autovar=True,show=0)
-den_template = Region(path=den_path,autovar=True,show=0)
+# den_template = Region(path=den_path,autovar=True,show=0)
 
 xaxismap = {
     "photonPFIso":"Photon PF Isolation [GeV]",
@@ -278,7 +278,8 @@ def SigTemplates(variable,output,sideband_templates=None):
 if __name__ == "__main__":
     parser.parse_args()
 
-    ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
+    # ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
+    ptbins = [200,250,300,400,500,600,"Inf"]
 
     for variable in list(parser.args.argv):
         if "ptbins" in variable:
@@ -294,4 +295,4 @@ if __name__ == "__main__":
             print "Writing templates to",output.GetName()
         sideband = BkgTemplates(variable,output)
         real = SigTemplates(variable,output,sideband)
-        den = DenTemplates(variable,output,real)
+        # den = DenTemplates(variable,output,real)

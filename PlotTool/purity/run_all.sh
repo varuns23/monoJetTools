@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# var="photonPFIso"
+# dir="phoiso"
+rebin=""
+
+var="photonSieie"
+dir="sieie"
+rebin="--rebin 5"
+
+./PlotTool/purity/build_templates.py --save --plot --sub ${dir} ${var}{"",_ptbins} ${rebin}
+./PlotTool/purity/build_templates.py --save ${var}{"",_ptbins} -a +1 --label metup ${rebin}
+./PlotTool/purity/build_templates.py --save ${var}{"",_ptbins} -a +2 --label metdn ${rebin}
+
+if [[ $var == "photonPFIso" ]]; then
+    ./PlotTool/purity/build_templates.py --save ${var}{"",_ptbins} -a +3 --label sbup ${rebin}
+    ./PlotTool/purity/build_templates.py --save ${var}{"",_ptbins} -a +4 --label sbdn ${rebin}
+fi
+
+./PlotTool/purity/fit_template.py --save --plot --sub ${dir} -t templates/template_${var}{"",_ptbins}.root 
+./PlotTool/purity/fit_template.py --save -t templates/template_${var}*
+
+
+if [[ $var == "photonPFIso" ]]; then
+    ./PlotTool/purity/purity_ptbins.py -f fits/ -v ${var} --plot --sub ${dir}
+elif [[ $var == "photonSieie" ]]; then
+    ./PlotTool/purity/impurity_ptbins.py -f fits/ -v ${var} --plot --sub ${dir} --sys met
+fi
