@@ -62,6 +62,9 @@ class SubProcess(object):
             self.setTree(variable.dirname,'tree')
             self.histo = GetBranch('%s_%s' % (self.name,variable.base),variable,self.treemap['tree'])
         elif variable.isNhisto: self.histo = GetTObject("%s/%s"%(variable.dirname,variable.variable),self.tfile)
+        
+        if self.variable.rebin is not None:
+            self.histo = self.histo.Rebin(self.variable.rebin)
         self.raw_total = self.histo.Integral()
     def scale(self,lumi=None,histo=None):
         if histo is None and lumi is not None:
@@ -109,6 +112,10 @@ class SubProcess(object):
             return up,dn
         if isScale: up,dn = getScale()
         else:       up,dn = getShape()
+
+        if self.variable.rebin is not None:
+            up = up.Rebin(self.variable.rebin)
+            dn = dn.Rebin(self.variable.rebin)
 
         self.scale(histo=up); self.scale(histo=dn)
         self.nuisances[nuisance] = Nuisance(self.subprocess,nuisance,up,dn,self.histo,type="abs")

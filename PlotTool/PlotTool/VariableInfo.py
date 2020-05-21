@@ -8,6 +8,7 @@ from Parser import parser
 from samplenames import samplenames
 
 parser.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
+parser.add_argument("--rebin",help="Specify number of bins to merge using TH1::Rebin()",type=int)
 parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
 parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
 parser.add_argument("--no-width",help="Disable bin width scaling",action="store_true",default=False)
@@ -65,16 +66,9 @@ def inclusiveCutBinning(self,arg):
     template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,bmin,bmax)
     template.post = AddOverflow
     return template
-def rebin(self,arg):
-    # bins = array('d',[250.,280.,310.,340.,370.,400.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.,1400.])
-    nbins = int(arg.replace('rebin',''))
-    histo = self.file_template
-    histo.Rebin(nbins)
-    return histo
     
 class VariableInfo:
     binningMap = {
-        'rebin':rebin,
         'incl':inclusiveBinning,
         'incu':inclusiveCutBinning,
         'res':PtFractionBinning
@@ -137,6 +131,8 @@ class VariableInfo:
         self.title = self.template.GetTitle()
         self.xaxis_title = self.template.GetXaxis().GetTitle()
         self.yaxis_title = self.template.GetYaxis().GetTitle()
+
+        self.rebin = parser.args.rebin
 
         self.scaleWidth = True
         if parser.args.no_width: self.scaleWidth = False
