@@ -9,10 +9,15 @@ import config
 from array import array
 
 parser.add_argument("-f","--fit",help="Post fit directory",required=True)
-parser.add_argument("-v","--variable",help="Variable used for fits",default="photonPFIso")
-parser.add_argument("--sys",nargs="+",default=["met","sb"])
+parser.add_argument("-v","--variable",help="Variable used for fits",default="photonSieie")
+parser.add_argument("--sys",nargs="+",default=["met"])
 parser.add_argument("--plot",action="store_true")
 parser.add_argument("--save",action="store_true")
+
+bufunc = {
+    "2017":TF1("bu_2017","6.35*exp(-4.61e-03*x)+1.05",200.,1000.),
+    "2018":TF1("bu_2018","11.92*exp(-8.28e-03*x)+1.55",200,1000.)
+}
 
 if not os.path.isdir("impurity"):
     # Create directory to store fits and make git ignore it
@@ -23,38 +28,55 @@ def impurity_style(ratio,color=kBlue+2):
     ratio.SetMarkerColor(kBlack)
     ratio.SetLineWidth(3)
     ratio.SetLineColor(color)
-def PlotImpurityRatio(ratio):
+def fit_style(fit,color):
+    fit.SetTitle("")
+    fit.SetLineColor(color)
+    fit.SetLineWidth(3)
+def PlotImpurityRatio(impurity):
 
+    
     c = TCanvas("c", "canvas",800,800);
     gStyle.SetOptStat(0);
     gStyle.SetLegendBorderSize(0);
-    c.SetGrid()
     # c.SetLeftMargin(0.15);
     # c.SetLogy();
     #c.cd();
+
+    pad1 = TPad("pad1","pad1",0.01,0.25,0.99,0.99);
+    pad1.SetBottomMargin(0.);
+    pad1.Draw(); pad1.cd();
+    pad1.SetGrid()
+    pad1.SetFillColor(0); pad1.SetFrameBorderMode(0); pad1.SetBorderMode(0);
     
     xaxis_title = "Photon P_{T} [GeV]"
 
     leg = getLegend(xmin=0.5,ymin=0.7,scale=0.75)
 
-    impurity_style(ratio)
-    ratio.SetTitle("")
-    ratio.GetYaxis().SetTitle("QCD Impurity (%)")
-    # ratio.GetYaxis().SetTitleOffset(0.5)
-    ratio.GetXaxis().SetTitle(xaxis_title)
-    SetBounds([ratio],scale=0.5)
+    impurity_style(impurity)
+    impurity.SetTitle("")
+    impurity.GetYaxis().SetTitle("QCD Impurity (%)")
+    # impurity.GetYaxis().SetTitleOffset(0.5)
+    impurity.GetXaxis().SetTitle(xaxis_title)
+    impurity.GetYaxis().SetRangeUser(0,6)
+    # SetBounds([impurity],scale=0.5)
 
-    ratio.Draw("p same")
-    fit = ratio.GetFunction("impurity_fit")
+    impurity.Draw("p same")
+    fit = impurity.GetFunction("impurity_fit")
+    fit_style(fit,kRed)
+    
+    bu_fit = bufunc[config.version]
+    fit_style(bu_fit,kGreen+2)
+    bu_fit.Draw("same")
     # fit.Draw("same")
     
-    leg.AddEntry(ratio,"#frac{QCD_{Fake}}{GJets_{Real} + QCD_{Fake}}","lp")
-    leg.AddEntry(fit,"Fit","l")
+    leg.AddEntry(impurity,"#frac{QCD_{Fake}}{GJets_{Real} + QCD_{Fake}}","lp")
+    leg.AddEntry(fit,"UW Fit","l")
+    leg.AddEntry(bu_fit,"BU Fit","l")
     leg.Draw()
 
     equation = str(fit.GetExpFormula())
     p0 = "%.3f"%fit.GetParameter("p0");
-    p1 = "%.3f"%fit.GetParameter("p1");
+    p1 = "%.3e"%fit.GetParameter("p1");
     p2 = "%.3f"%fit.GetParameter("p2");
     equation = equation.replace("[p0]",p0).replace("[p1]",p1).replace("[p2]",p2)
     etext = TLatex(0.35,0.55,"f(x) = %s"%equation)
@@ -64,7 +86,23 @@ def PlotImpurityRatio(ratio):
     etext.Draw()
     
     lumi_label = '%s' % float('%.3g' % (max(config.lumi.values())/1000.)) + " fb^{-1}"
-    texLumi,texCMS = getCMSText(lumi_label,config.version,scale=0.8)
+    texLumi,texCMS = getCMSText(lumi_label,config.version)
+
+    c.cd();
+    pad2 = TPad("pad2","pad2",0.01,0.01,0.99,0.25);
+    pad2.SetGridy()
+    pad2.Draw(); pad2.cd();
+    pad2.SetFillColor(0); pad2.SetFrameBorderMode(0); pad2.SetBorderMode(0);
+    pad2.SetTopMargin(0);
+    pad2.SetBottomMargin(0.35);
+    
+    ratio = TF1("ratio","%s/%s"%(bu_fit.GetName(),fit.GetName()),200.,1000.)
+    RatioStyle(ratio,rymin=-0.25,rymax=2.25,xname=xaxis_title,yname="BU/UW Fit")
+    fit_style(ratio,kBlack)
+    ratio.Draw()
+    
+    line = getRatioLine(200.,1000.)
+    line.Draw("same");
     
     SaveAs(c,"impurity_ratio_%s"%parser.args.variable,year=config.version,sub="GammaPurity/ImpurityRatio/")
 def PlotImpuritySys(nominal,ptbins):
@@ -149,7 +187,7 @@ def get_impurity_ratio(pattern,ptbins,name="impurity_ratio"):
     return ratio
 def compute_impurity_ratio(ptbins):
     ratio = get_impurity_ratio("{fitdir}/fit_{variable}_{ptbin}.root",ptbins)
-    func = TF1("impurity_fit","[0]*exp(-[1]*x)+[2]",230.,1000.)
+    func = TF1("impurity_fit","[0]*exp(-[1]*x)+[2]",200.,1000.)
     func.SetParameters(6,0.001,1)
     ratio.Fit("impurity_fit")
     if parser.args.plot:

@@ -75,7 +75,7 @@ def getCMSText(lumi_label,year,scale=1):
 ###################################################################
 
 def RatioStyle(ratio,rymin=0.3,rymax=1.7,color=kBlack,xname=None,yname='Data/Bkg'):
-    ratio.SetStats(0);
+    if ratio.ClassName() == "TH1": ratio.SetStats(0);
     ratio.SetMarkerColor(color)
     ratio.SetLineColor(color)
     ratio.SetLineWidth(1)
