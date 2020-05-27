@@ -29,19 +29,5 @@ bool monoJetSignalRegion::tau_veto(){
   vector<int> tau_cands = getLooseTau();
   return tau_cands.size() == 0;
 }  
-   
-bool monoJetSignalRegion::bjet_veto(float cutValue){
-  vector<int> bjet_cands;
-  bjet_cands.clear();
-  
-  for(int i = 0; i < nJet; i++){
-    bool kinematic = (jetPt->at(i) > bjetVetoPtCut && fabs(jetEta->at(i)) < bjetVetoEtaCut);
-    float bjetTag = jetDeepCSVTags_b->at(i) + jetDeepCSVTags_bb->at(i);
-    bool btagged = bjetTag > cutValue;
-    if(kinematic && btagged )
-      bjet_cands.push_back(i);
-  }
-  return bjet_cands.size() == 0;
-}  
 
 #endif

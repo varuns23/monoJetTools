@@ -10,7 +10,6 @@ public:
   virtual bool muon_veto();
   virtual bool photon_veto();
   virtual bool tau_veto();
-  virtual bool bjet_veto(float cutValue);
 };
 
 #endif

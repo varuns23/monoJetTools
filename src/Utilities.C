@@ -123,4 +123,43 @@ bool EventMask::contains(int run,int lumis,Long64_t event) {
   if ( !mask[run].count(lumis) ) return false;
   return mask[run][lumis].count(event) != 0;
 }
+
+BTagCSV::BTagSF::BTagSF(TString csvline) {
+  vector<TString> values = split(csvline,",");
+  op = values[0].Atoi();
+  measurement = values[1].ReplaceAll(" ","");
+  sys = values[2].ReplaceAll(" ","");
+  jetFlavor = values[3].Atoi();
+  etaMin = values[4].Atof();
+  etaMax = values[5].Atof();
+  ptMin = values[6].Atof();
+  ptMax = values[7].Atof();
+  discrMin = values[8].Atoi();
+  discrMax = values[9].Atoi();
+  TF1(GetName(),values[10].ReplaceAll(" ","").ReplaceAll("\"",""),ptMin,ptMax);
+}
+
+float BTagCSV::BTagSF::EvalSF(float pt,float eta) {
+  if ( fabs(eta) < etaMin || fabs(eta) > etaMax ) return 1;
+  return Eval(pt);
+}
+
+BTagCSV::BTagCSV(TString csvname) {
+  ifstream csvfile(csvname);
+  if ( !csvfile.is_open() ) {
+    cout << "Unable to read " << csvname << endl;
+    return;
+  }
+  std::string csvline;
+  std::getline(csvfile,csvline);
+  while ( std::getline(csvfile,csvline) ) {
+    BTagSF btagsf(csvline);
+    sfmap[btagsf.GetName()] = &btagsf;
+  }
+}
+
+BTagCSV::BTagSF* BTagCSV::getBTagSF(int op, TString measurement, TString sys, int jetFlavor) {
+  TString sfname = TString( std::to_string(op) )+"_"+measurement+"_"+sys+"_"+TString( std::to_string(jetFlavor) );
+  return sfmap[sfname];
+}
 #endif

@@ -21,11 +21,17 @@ const int nBosonPtBins = 24;
 const float BosonPtBins[nBosonPtBins+1] = {150,170,200,230,260,290,320,350,390,430,470,510,550,590,640,690,740,790,840,900,960,1020,1090,1160,1250};
 
 const int nLeadingLeptonPtBins = 24;
-const float LeadingLeptonPtBins[25+1] = {20.,40.,60.,80.,100.,120.,140.,160.,180.,200.,250.,300.,350.,400.,500.,600.,700.,800.,900.,1000.,1100.,1200.,1300.,1400.,1500.};
+const float LeadingLeptonPtBins[nLeadingLeptonPtBins+1] = {20.,40.,60.,80.,100.,120.,140.,160.,180.,200.,250.,300.,350.,400.,500.,600.,700.,800.,900.,1000.,1100.,1200.,1300.,1400.,1500.};
 
 const int nSubLeadingLeptonPtBins = 25;
 const float subLeadingLeptonPtBins[nSubLeadingLeptonPtBins+1] = {10.,20.,40.,60.,80.,100.,120.,140.,160.,180.,200.,250.,300.,350.,
 								 400.,500.,600.,700.,800.,900.,1000.,1100.,1200.,1300.,1400.,1500.};
+
+const int nPhiVarBins = 30;
+const float PhiVarBins[nPhiVarBins+1] = {-3.1416,-2.93216,-2.72272,-2.51328,-2.30384,-2.0944,-1.88496,-1.67552,
+					 -1.46608,-1.25664,-1.0472,-0.83776,-0.62832,-0.41888,-0.20944,0,
+					 0.20944,0.41888,0.62832,0.83776,1.0472,1.25664,1.46608,1.67552,1.88496,
+					 2.0944,2.30384,2.51328,2.72272,2.93216,3.1416};
 
 const int nEtaBins = 30;  const float lEta = -3.0;    const float uEta = 3.0;
 const int nPhiBins = 30;  const float lPhi = -3.1416; const float uPhi = 3.1416;

@@ -49,9 +49,11 @@ void monoJetYear::SetScalingHistos() {
   th2fmap["muon_iso_tight"]= (TH2F*)f_muon_iso->Get("NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta");
     
   // Photon SF
-  TFile* f_photon_id_tight = TFile::Open("RootFiles/egamma/2018_PhotonsMedium_capped.root");
+  TFile* f_photon_id_tight_2d = TFile::Open("RootFiles/egamma/2018_PhotonsMedium_capped.root");
+  TFile* f_photon_id_tight_1d = TFile::Open("RootFiles/egamma/photon_medium_id_sf_v0.root");
   TFile* f_photon_csev = TFile::Open("RootFiles/egamma/CSEV_2018.root");
-  th2fmap["photon_id_tight"] = (TH2F*)f_photon_id_tight->Get("EGamma_SF2D");
+  th2fmap["photon_id_tight"] = (TH2F*)f_photon_id_tight_2d->Get("EGamma_SF2D");
+  th1fmap["photon_id_tight"] = (TH1F*)f_photon_id_tight_1d->Get("photon_medium_id_sf_2018");
   th2fmap["photon_csev"] = (TH2F*)f_photon_csev->Get("eleVeto_SF");
 
   // Tau SF
@@ -59,5 +61,7 @@ void monoJetYear::SetScalingHistos() {
   th1fmap["tau_vloose"] = (TH1F*)f_tau_sf->Get("tau_sf_VLoose_2018_cent");
   th1fmap["tau_vloose_up"] = (TH1F*)f_tau_sf->Get("tau_sf_VLoose_2018_up");
   th1fmap["tau_vloose_down"] = (TH1F*)f_tau_sf->Get("tau_sf_VLoose_2018_down");
+
+  btag_csv = new BTagCSV("RootFiles/btag/DeepCSV_102XSF_WP_V1.csv");
 }
 #endif

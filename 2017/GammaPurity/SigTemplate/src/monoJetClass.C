@@ -72,7 +72,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!tau_veto(phoindex)) continue;
     cutflow->Fill(6,event_weight);
 
-    if (!bjet_veto( bjetDeepCSVCut_2017)) continue;
+    if (!bjet_weights(bjetDeepCSVCut_2017,event_weight)) continue;
     cutflow->Fill(7,event_weight);
 
     pho.SetPtEtaPhiE(phoCalibEt->at(phoindex),phoEta->at(phoindex),phoPhi->at(phoindex),phoCalibE->at(phoindex));

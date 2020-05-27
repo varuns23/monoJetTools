@@ -37,6 +37,7 @@
 #include "vector"
 
 #include "Dataset.h"
+#include "Utilities.h"
 #include "ScaleUncCollection.h"
 #include "ShapeUncCollection.h"
 #include "monoJetCutConfig.h"
@@ -58,8 +59,6 @@ public:
 
   static const bool debug = false;
   static const bool apply_correction = true;
-
-  // Dataset sample;
   
   struct TH1FCollection : public std::map<TString,TH1F*> {
     int getBinN(TString name,float x) {
@@ -125,7 +124,7 @@ public:
   } th2fmap;
   ScaleUncCollection scaleUncs;
   ShapeUncCollection shapeUncs;
-
+  BTagCSV* btag_csv;
 
   /* Event Weight Variables */
   // made static so that the Cutflow class can access weights here
@@ -134,6 +133,7 @@ public:
   float sf;
   float pileup;
   float trigger_sf;
+  float btag_sf,btag_sfUp,btag_sfDown;
   
   struct Cutflow {
     monoJetAnalysis* analysis;
@@ -211,7 +211,7 @@ public:
   TH1F *h_nJetsSkim[maxHisto];
   TH1F *h_j1CHFrounded[maxHisto],*h_j1NHFrounded[maxHisto];
 
-  TH2F *h_j1EtaPhi[maxHisto];
+  TH2F *h_j1EtaPhi[maxHisto],*h_pfMETvPhi[maxHisto];
 
   // Split Jet Phi histograms
   TH1F *h_pfMETPosj1Phi[maxHisto],*h_pfMETPhiPosj1Phi[maxHisto],*h_j1pTPosj1Phi[maxHisto],*h_j1EtaPosj1Phi[maxHisto],*h_j1PhiPosj1Phi[maxHisto];
@@ -960,8 +960,10 @@ public:
   virtual vector<int> getLooseJet(float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual bool getJetID(int ijet);
-  
-  virtual bool bjet_veto(float bjetCutValue,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
+
+  virtual vector<int> getLooseBJets(float bjetCutValue,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
+  virtual bool bjet_veto(float bjetCutValue);
+  virtual bool bjet_weights(float bjetCutValue,float &event_weight);
   
   virtual vector<int> getLooseEle(float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
   virtual vector<int> electron_veto_looseID(int jetindex,float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);

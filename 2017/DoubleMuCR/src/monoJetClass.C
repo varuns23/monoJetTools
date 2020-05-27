@@ -93,7 +93,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     JetEnergyScale(event_weight);
     JetEnergyResolution(event_weight);
 
-    if (!bjet_veto( bjetDeepCSVCut_2017)) continue;
+    if (!bjet_weights(bjetDeepCSVCut_2017,event_weight)) continue;
     vector<int> jetlist = getLooseJet();
     mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
     fillEvent(10, event_weight);
@@ -153,7 +153,7 @@ void monoJetClass::fillHistos(int nhist,float event_weight) {
 }
 
 bool monoJetClass::UncLoop(float &event_weight) {
-  if (!bjet_veto( bjetDeepCSVCut_2017)) return false;
+  if (!bjet_weights(bjetDeepCSVCut_2017,event_weight)) return false;
 
   vector<int> jetlist = getLooseJet();
   mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);

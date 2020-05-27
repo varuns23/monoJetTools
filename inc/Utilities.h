@@ -2,7 +2,10 @@
 #define Utilities_h
 
 #include <TH1F.h>
+#include <TString.h>
+#include <TF1.h>
 #include <iostream>
+#include <string>
 #include <set>
 #include <map>
 
@@ -31,5 +34,25 @@ struct EventMask {
   EventMask(TString maskfile);
   void setMask(TString maskfile);
   bool contains(int run,int lumis,Long64_t event);
+};
+
+struct BTagCSV {
+  struct BTagSF : public TF1 {
+    int op;
+    TString measurement;
+    TString sys;
+    int jetFlavor;
+    float etaMin,etaMax,ptMin,ptMax,discrMin,discrMax;
+    BTagSF(TString csvline);
+    inline TString GetName() { return TString( std::to_string(op) )+"_"+measurement+"_"+sys+"_"+TString( std::to_string(jetFlavor) ); }
+    float EvalSF(float pt, float eta);
+  };
+  std::map<TString,BTagSF*> sfmap;
+  
+  BTagCSV(TString csvname);
+  BTagCSV::BTagSF* getBTagSF(int op=1, TString measurement="comb", TString sys="central", int jetFlavor=0);
+  inline float EvalSF(int op, TString measurement, TString sys, int jetFlavor, float pt, float eta) {
+    return getBTagSF(op,measurement,sys,jetFlavor)->EvalSF(pt,eta);
+  }
 };
 #endif

@@ -94,7 +94,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!tau_veto(lepindex)) continue;
     fillEvent(9,event_weight);
 
-    if (!bjet_veto( bjetDeepCSVCut_2018)) continue;
+    if (!bjet_weights(bjetDeepCSVCut_2018,event_weight)) continue;
     vector<int> jetlist = getLooseJet();
     mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
     fillEvent(10,event_weight);
@@ -113,7 +113,6 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     setJetCand(jetCand);                                                                                                                          
     fillEvent(14,event_weight);
 	      
-    if(!getPhiHEMVeto())continue;
     if(!getEleHEMVeto())continue;
 
     QCDVariations(event_weight);
@@ -170,7 +169,7 @@ bool monoJetClass::UncLoop(float &event_weight) {
 
   if (!tau_veto(lepindex)) return false;
 
-  if (!bjet_veto( bjetDeepCSVCut_2018)) return false;
+  if (!bjet_weights(bjetDeepCSVCut_2018,event_weight)) return false;
       
   vector<int> jetlist = getLooseJet();
   mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
@@ -184,7 +183,6 @@ bool monoJetClass::UncLoop(float &event_weight) {
   if (jetCand == -1) return false;
   setJetCand(jetCand);
 	      
-  if(!getPhiHEMVeto())return false;
   if(!getEleHEMVeto())return false;
   
   return true;
