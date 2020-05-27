@@ -71,7 +71,8 @@ void monoJetGammaCR::setRecoil() {
 
 float monoJetGammaCR::getSF(int phoindex) {
   float eta = phoSCEta->at(phoindex); float pt = phoCalibEt->at(phoindex);
-  tightID_sf = th2fmap.getBin("photon_id_tight",eta,pt);
+  // tightID_sf = th2fmap.getBin("photon_id_tight",eta,pt);
+  tightID_sf = th1fmap.getBin("photon_id_tight",fabs(eta));
   if ( YEAR == 2017 ) {
     float r9 = phoR9Full5x5->at(phoindex);
     // From bucoffea
