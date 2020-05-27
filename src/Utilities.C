@@ -136,12 +136,12 @@ BTagCSV::BTagSF::BTagSF(TString csvline) {
   ptMax = values[7].Atof();
   discrMin = values[8].Atoi();
   discrMax = values[9].Atoi();
-  TF1(GetName(),values[10].ReplaceAll(" ","").ReplaceAll("\"",""),ptMin,ptMax);
+  formula = TF1(GetName(),values[10].ReplaceAll(" ","").ReplaceAll("\"",""),ptMin,ptMax);
 }
 
 float BTagCSV::BTagSF::EvalSF(float pt,float eta) {
   if ( fabs(eta) < etaMin || fabs(eta) > etaMax ) return 1;
-  return Eval(pt);
+  return formula.Eval(pt);
 }
 
 BTagCSV::BTagCSV(TString csvname) {
@@ -153,13 +153,17 @@ BTagCSV::BTagCSV(TString csvname) {
   std::string csvline;
   std::getline(csvfile,csvline);
   while ( std::getline(csvfile,csvline) ) {
-    BTagSF btagsf(csvline);
-    sfmap[btagsf.GetName()] = &btagsf;
+    BTagSF* btagsf = new BTagSF(csvline);
+    sfmap[btagsf->GetName()] = btagsf;
   }
 }
 
 BTagCSV::BTagSF* BTagCSV::getBTagSF(int op, TString measurement, TString sys, int jetFlavor) {
   TString sfname = TString( std::to_string(op) )+"_"+measurement+"_"+sys+"_"+TString( std::to_string(jetFlavor) );
   return sfmap[sfname];
+}
+
+float BTagCSV::EvalSF(int op, TString measurement, TString sys, int jetFlavor, float pt, float eta) {
+  return getBTagSF(op,measurement,sys,jetFlavor)->EvalSF(pt,eta);
 }
 #endif

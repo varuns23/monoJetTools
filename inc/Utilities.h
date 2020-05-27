@@ -37,12 +37,13 @@ struct EventMask {
 };
 
 struct BTagCSV {
-  struct BTagSF : public TF1 {
+  struct BTagSF {
     int op;
     TString measurement;
     TString sys;
     int jetFlavor;
     float etaMin,etaMax,ptMin,ptMax,discrMin,discrMax;
+    TF1 formula;
     BTagSF(TString csvline);
     inline TString GetName() { return TString( std::to_string(op) )+"_"+measurement+"_"+sys+"_"+TString( std::to_string(jetFlavor) ); }
     float EvalSF(float pt, float eta);
@@ -51,8 +52,6 @@ struct BTagCSV {
   
   BTagCSV(TString csvname);
   BTagCSV::BTagSF* getBTagSF(int op=1, TString measurement="comb", TString sys="central", int jetFlavor=0);
-  inline float EvalSF(int op, TString measurement, TString sys, int jetFlavor, float pt, float eta) {
-    return getBTagSF(op,measurement,sys,jetFlavor)->EvalSF(pt,eta);
-  }
+  float EvalSF(int op, TString measurement, TString sys, int jetFlavor, float pt, float eta);
 };
 #endif
