@@ -66,16 +66,16 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!getMetFilter()) continue;
     fillEvent(2,event_weight);
 
-    if (!electron_veto()) continue;
+    if (!eleveto_weights(event_weight)) continue;
     fillEvent(3,event_weight);
 
-    if (!muon_veto()) continue;
+    if (!muveto_weights(event_weight)) continue;
     fillEvent(4,event_weight);
 
     if (!photon_veto()) continue;
     fillEvent(5,event_weight);
 
-    if (!tau_veto()) continue;
+    if (!tauveto_weights(event_weight)) continue;
     fillEvent(6,event_weight);
     
     JetEnergyScale(event_weight);
