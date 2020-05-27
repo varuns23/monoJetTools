@@ -111,8 +111,11 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     int jetCand = getJetCand();
     if (jetCand == -1) continue;
     setJetCand(jetCand);
-
     fillEvent(11,event_weight);
+
+    if (!getPhiHEMVeto()) continue;
+
+    fillEvent(12,event_weight);
   }
 
 }//Closing the Loop function
@@ -123,7 +126,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output->cd();
 
   cutflow = new Cutflow(this,{s_TotalEvents,s_Triggers,s_METFilters,s_ElectronVeto,s_MuonVeto,
-	s_PhotonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_dPFCaloMET,s_Recoil,s_JetSelection});
+	s_PhotonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_dPFCaloMET,s_Recoil,s_JetSelection,s_HEMVeto});
 
   monoJetYear::BookHistos(-1,"");
   for(int i = 0; i<nHisto; i++) {

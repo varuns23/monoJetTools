@@ -62,7 +62,7 @@ const float Iso4Cut = 0.4;
 const float Iso5Cut = 0.5;
 
 /* HEM Veto Pt Cuts */
-const float eleHEMVetoPtCut = 40.;
+const float eleHEMVetoPtCut = 0.; //40.;
 const float jetHEMVetoPtCut = 30.;
 
 /* Lepton Veto Floating Cuts */

@@ -16,8 +16,8 @@
 using namespace std;
 class monoJetClass : public monoJetYear, public monoJetSignalRegion {
 public :
-  static const int nHisto = 12;
-  static const int bHisto = 11;
+  static const int nHisto = 13;
+  static const int bHisto = 12;
 
   float eleveto_sf,muveto_sf,tauveto_sf;
   float eleveto_sfUp,muveto_sfUp,tauveto_sfUp;

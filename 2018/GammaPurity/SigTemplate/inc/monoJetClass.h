@@ -13,8 +13,8 @@
 using namespace std;
 class monoJetClass : virtual public monoJetYear, virtual public monoJetGammaPurity {
 public :
-  static const int nHisto = 14;
-  static const int bHisto = 11;
+  static const int nHisto = 13;
+  static const int bHisto = 10;
  
   monoJetClass(const char* file1,const char* file2,int nfiles) : monoJetAnalysis(file1,file2,nfiles) {
     BookHistos(file2); };
