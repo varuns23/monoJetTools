@@ -79,7 +79,7 @@ def PlotImpurityRatio(impurity):
     p1 = "%.3e"%fit.GetParameter("p1");
     p2 = "%.3f"%fit.GetParameter("p2");
     equation = equation.replace("[p0]",p0).replace("[p1]",p1).replace("[p2]",p2)
-    etext = TLatex(0.35,0.55,"f(x) = %s"%equation)
+    etext = TLatex(0.45,0.65,"f(x) = %s"%equation)
     etext.SetNDC();
     etext.SetTextFont(42);
     etext.SetTextSize(0.048*0.8);

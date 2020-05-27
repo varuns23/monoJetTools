@@ -1,12 +1,14 @@
 #!/bin/sh
 
-# var="photonPFIso"
-# dir="phoiso"
-rebin=""
-
-var="photonSieie"
-dir="sieie"
-rebin="--rebin 5"
+if [[ "$1" == "phoiso" ]]; then
+    var="photonPFIso"
+    dir="phoiso"
+    rebin=""
+elif [[ "$1" == "sieie" ]]; then
+    var="photonSieie"
+    dir="sieie"
+    rebin="--rebin 5"
+fi
 
 ./PlotTool/purity/build_templates.py --save --plot --sub ${dir} ${var}{"",_ptbins} ${rebin}
 ./PlotTool/purity/build_templates.py --save ${var}{"",_ptbins} -a +1 --label metup ${rebin}

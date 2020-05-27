@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-
+import re
 import os
 sys.path.append("PlotTool")
 from PlotTool import *
@@ -29,14 +29,14 @@ if not os.path.isdir("fits"):
 
 varmap = {
     "photonPFIso":{
-        RooRealVar:RooRealVar("photonPFIso","Photon PF Isolation",0.,25.),
+        RooRealVar:RooRealVar("photonPFIso","Photon PF Isolation [GeV]",0.,25.),
         "fullrange":(0.,25.),
-        "signal":(0.,10.),
+        "signal":(0.,lambda pt:2.08 + 0.004017 * pt),
     },
     "photonSieie":{
-        RooRealVar:RooRealVar("photonSieie","Photon SigmaIEtaIEta",0.,0.025),
+        RooRealVar:RooRealVar("photonSieie","Photon #sigma_{i#eta i#eta}",0.,0.025),
         "fullrange":(0.,0.025),
-        "signal":(0.,0.0104)
+        "signal":(0.,lambda pt:0.01015)
     }
 }
 def hs_style(hs,color):
@@ -71,7 +71,7 @@ def VarBounds(variable,hslist):
         SetBounds(hslist,scale=5,log=10)
     elif "photonSieie" in variable:
         SetBounds(hslist,maxi=5,log=1)
-def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error):
+def PlotFit(template,roovar,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error):
     postfit_data = postfit_data.Clone()
     postfit_gjet =postfit_gjet.Clone()
     postfit_qcd = postfit_qcd.Clone()
@@ -102,7 +102,7 @@ def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error):
 
     postfit_gjet.Draw("hist")
 
-    xaxis_title = "Photon PF Isolation [GeV]"
+    xaxis_title = roovar.GetTitle()
     
     postfit_gjet.SetTitle("")
     postfit_gjet.GetYaxis().SetTitle("Events")
@@ -141,6 +141,7 @@ def PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error):
     ratio = GetRatio(postfit_data,postfit_fit)
     
     RatioStyle(ratio,rymin=-0.25,rymax=2.25,xname=xaxis_title,yname="Data/Fit")
+    ratio.GetXaxis().SetLabelSize(0.135)
     ratio.Draw("pex0");
     line = getRatioLine(postfit_data.GetXaxis().GetXmin(),postfit_data.GetXaxis().GetXmax())
     line.Draw("same");
@@ -173,7 +174,7 @@ def estimates(model,data,realnum,fakenum,show=True):
         realvalue,realerror,fakevalue,fakeerror = helper()
     return realvalue,realerror,fakevalue,fakeerror
 
-def fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror):
+def fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror,data):
     rooset = RooArgSet(roovar)
     norset = RooFit.NormSet(rooset)
     fullrange = RooFit.Range("fullrange")
@@ -190,6 +191,10 @@ def fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
     frac_realInSig = int_sgnl_realpdf.getVal()
     realInSig = realvalue*frac_realInSig
     realInSig_error = realerror*frac_realInSig
+
+    # int_full_data = data.createIntegral(rooset,norset,fullrange)
+    # int_sgnl_data = data.createIntegral(rooset,norset,signalrange)
+    # frac_dataInSig = int_sgnl_data.getVal()
 
     totalInSig = realInSig + fakeInSig
     totalInSig_error = TMath.Sqrt( realInSig_error**2 + fakeInSig_error**2 )
@@ -211,6 +216,12 @@ def save_fit(hslist,output,fit):
     tdir = output.mkdir(fit)
     tdir.cd()
     for hs in hslist: hs.Write()
+def GetPhotonPt(fname):
+    ptbin = re.findall("(\d+to\d+|\d+toInf)",fname)
+    if not any(ptbin): return 600
+    to_pt = lambda pt: int(pt) if pt != "Inf" else 1000
+    ptlo,pthi = [ to_pt(pt) for pt in ptbin[0].split("to") ]
+    return (pthi+ptlo)/2
 def fit_template(template,output,varinfo):
     prefit_data = template.Get("total_data")
     fix_zerobins(prefit_data)
@@ -246,10 +257,11 @@ def fit_template(template,output,varinfo):
     postfit_qcd = prefit_qcd.Clone()
     postfit_qcd.Scale(fakevalue/prefit_qcd.Integral())
 
+    pt = GetPhotonPt(template.GetName())
     srange = varinfo["signal"]
-    roovar.setRange("signal",srange[0],srange[1])
+    roovar.setRange("signal",srange[0],srange[1](pt))
     # Find fraction of fake/real pdfs in partial range, normalized to 1
-    purity,purity_error,impurity,impurity_error = fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror)
+    purity,purity_error,impurity,impurity_error = fit_fraction(roovar,realpdf,realvalue,realerror,fakepdf,fakevalue,fakeerror,data)
 
     h_purity = TH1F("purity","purity",1,0,1)
     h_purity.SetBinContent(1,purity)
@@ -261,7 +273,7 @@ def fit_template(template,output,varinfo):
     
     if parser.args.save: save_fit([postfit_data,postfit_gjet,postfit_qcd,h_purity,h_impurity],output,"postfit")
     
-    if parser.args.plot: PlotFit(template,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error)
+    if parser.args.plot: PlotFit(template,roovar,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error)
 if __name__ == "__main__":
     parser.parse_args()
     
