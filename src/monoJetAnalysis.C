@@ -811,7 +811,8 @@ float monoJetAnalysis::getKFactor(float bosonPt) {
       // nlo_qcd = exponential(bosonPt,1.434, 2.210e-3, 0.443);
       nlo_qcd = th1fmap.getBin("NLO_QCD",bosonPt);
     } else if (type == GJets) {
-      nlo_qcd = exponential(bosonPt,1.159, 1.944e-3, 1.0);
+      // nlo_qcd = exponential(bosonPt,1.159, 1.944e-3, 1.0);
+      nlo_qcd = th1fmap.getBin("NLO_QCD",bosonPt);
     }
   }
   nnlo_qcd = th1fmap.getBin("NNLO_QCD",bosonPt);
