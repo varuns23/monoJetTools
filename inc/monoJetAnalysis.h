@@ -951,6 +951,8 @@ public:
   bool getPhiHEMVeto();
   bool getMetHEMVeto();
   bool getJetHEMVeto(float jetPtCut=jetHEMVetoPtCut);
+  bool getJetHEMVetoV2(float jetPtCut=jetHEMVetoPtCut);
+  bool getJetHEMVetoV3(float jetPtCut=jetHEMVetoPtCut);
   bool getEleHEMVeto(float elePtCut=eleHEMVetoPtCut);
   
   /* Object Selction Methods */

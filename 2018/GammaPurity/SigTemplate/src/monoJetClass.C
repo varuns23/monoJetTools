@@ -105,14 +105,17 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 void monoJetClass::nominal(float event_weight) {
     if (pfMET >= 60) return;
     cutflow->Fill(10,event_weight);
-    fillHistos(10,event_weight);
+    if (!getJetHEMVeto()) return;
+    cutflow->Fill(11,event_weight);
+    fillHistos(11,event_weight);
 }
 
 void monoJetClass::met_variation(int var,float event_weight) {
   if ( pfMET >= ( 60 * (1 + var*0.2) ) ) return;
+  if (!getJetHEMVeto()) return;
   switch(var) {
-  case 1: fillHistos(11,event_weight); break;
-  case -1:fillHistos(12,event_weight); break;
+  case 1: fillHistos(12,event_weight); break;
+  case -1:fillHistos(13,event_weight); break;
   }
 }
 
@@ -121,7 +124,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output->cd();
   
   vector<TString> cutlist = {s_TotalEvents,s_Triggers,s_METFilters,"Photon Selection",s_ElectronVeto,
-			    s_MuonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_JetSelection,"MET60"};
+			    s_MuonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_JetSelection,"MET60",s_HEMVeto};
   cutflow = new Cutflow(this,cutlist);
 
   BookHistos(-1,"");

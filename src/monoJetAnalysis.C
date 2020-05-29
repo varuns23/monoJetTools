@@ -951,13 +951,43 @@ bool monoJetAnalysis::getJetHEMVeto(float jetPtCut){
   return pass;
 }
 
+bool monoJetAnalysis::getJetHEMVetoV2(float jetPtCut){
+  // -3.2<eta<-1.3 and -1.57<phi< -0.87
+  bool pass = true;
+  for(int p=0;p<nJet;p++)
+    {
+      bool kinematic = (*jetPt)[p] > jetPtCut && (*jetEta)[p] < -1.3 && (*jetEta)[p] > -3.2 && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
+      bool tightJetID = false;
+      if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
+      if(kinematic) // not chekcing ID here.                                                                                                                                         
+	pass = false;
+    }
+
+  return pass;
+}
+
+bool monoJetAnalysis::getJetHEMVetoV3(float jetPtCut){
+  // -1.57<phi< -0.87 
+  bool pass = true;
+  for(int p=0;p<nJet;p++)
+    {
+      bool kinematic = (*jetPt)[p] > jetPtCut && (*jetPhi)[p] > -1.57 && (*jetPhi)[p] < -0.87 ;
+      bool tightJetID = false;
+      if ((*jetID)[p]>>0&1 == 1) tightJetID = true;
+      if(kinematic) // not chekcing ID here.                                                                                                                                         
+	pass = false;
+    }
+
+  return pass;
+}
+
 bool monoJetAnalysis::getEleHEMVeto(float elePtCut){
 
   bool pass = true;
   for(int p=0;p<nEle;p++)
     {
       bool kinematic = (*elePt)[p] > elePtCut && (*eleEta)[p] < -1.4 && (*eleEta)[p] > -3.0 && (*elePhi)[p] > -1.57 && (*elePhi)[p] < -0.87 ;
-      if(kinematic) // not checking ID here.                                                                                                                                         
+      if(kinematic) // not chekcing ID here.                                                                                                                                         
 	pass = false;
     }
 

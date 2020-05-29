@@ -108,10 +108,13 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
     int jetCand = getJetCand();
     if (jetCand == -1) continue; 
-    setJetCand(jetCand);        
+    setJetCand(jetCand);                                                                                                                          
+    fillEvent(13,event_weight);
+
+    if(!getJetHEMVeto())continue;
 
     QCDVariations(event_weight);
-    fillEvent(13,event_weight);
+    fillEvent(14,event_weight);
   }
 
 }//Closing the Loop function
@@ -122,7 +125,7 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output->cd();
 
   cutflow = new Cutflow(this,{s_TotalEvents,s_Triggers,s_OneLooseMu,s_OneTightMu,s_MuMET_MT,s_METFilters,
-	s_ElectronVeto,s_PhotonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_dPFCaloMET,s_Recoil,s_JetSelection});
+	s_ElectronVeto,s_PhotonVeto,s_TauVeto,s_BJetVeto,s_minDPhiJetMET,s_dPFCaloMET,s_Recoil,s_JetSelection,s_HEMVeto});
 
   BookHistos(-1,"");
   for(int i = 0; i<nHisto; i++) {
@@ -177,6 +180,7 @@ bool monoJetClass::UncLoop(float &event_weight) {
   if (jetCand == -1) return false; 
   setJetCand(jetCand);
 
+  if(!getJetHEMVeto())return false;  
   return true;
 }
 void monoJetClass::JetEnergyScale(float start_weight) {
