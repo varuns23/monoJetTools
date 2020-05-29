@@ -927,7 +927,13 @@ bool monoJetAnalysis::inclusiveCut() {
 }
 
 bool monoJetAnalysis::getPhiHEMVeto() {
-  return pfMETPhi > -1.57 && pfMETPhi < -0.87;
+  return ! (pfMETPhi > -1.57 && pfMETPhi < -0.87);
+}
+
+bool monoJetAnalysis::getMetHEMVeto() {
+  return ! (pfMET < 470 &&
+	    -1.62 < pfMETPhi && pfMETPhi < -0.62
+	    );
 }
 
 bool monoJetAnalysis::getJetHEMVeto(float jetPtCut){

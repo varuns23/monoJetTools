@@ -949,6 +949,7 @@ public:
   virtual float dPhiJetMETmin(vector<int> jetlist,float metPhi);
   virtual float dPFCaloMET(float met);
   bool getPhiHEMVeto();
+  bool getMetHEMVeto();
   bool getJetHEMVeto(float jetPtCut=jetHEMVetoPtCut);
   bool getEleHEMVeto(float elePtCut=eleHEMVetoPtCut);
   
