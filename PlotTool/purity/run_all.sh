@@ -24,7 +24,7 @@ fi
 
 
 if [[ $var == "photonPFIso" ]]; then
-    ./PlotTool/purity/purity_ptbins.py -f fits/ -v ${var} --plot --sub ${dir}
+    ./PlotTool/purity/purity_ptbins.py -v ${var} --plot --sub ${dir}
 elif [[ $var == "photonSieie" ]]; then
-    ./PlotTool/purity/impurity_ptbins.py -f fits/ -v ${var} --plot --sub ${dir} --sys met
+    ./PlotTool/purity/impurity_ptbins.py -v ${var} --plot --sub ${dir} --sys met
 fi

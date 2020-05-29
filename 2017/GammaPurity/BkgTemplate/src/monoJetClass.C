@@ -61,6 +61,12 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
     phoindex = getPhoIndex();
     if(phoindex < 0) continue;
+    if (isMC) {
+      SetSF( getSF(phoindex) );
+      ApplySF(event_weight);
+      ApplyPhoton_TriggerSF(event_weight);
+    }
+    
     cutflow->Fill(3,event_weight);
 
     if (!electron_veto(phoindex)) continue;

@@ -8,7 +8,7 @@ from ROOT import *
 import config
 from array import array
 
-parser.add_argument("-f","--fit",help="Post fit directory",required=True)
+parser.add_argument("-f","--fit",help="Post fit directory",default="fits/")
 parser.add_argument("-v","--variable",help="Variable used for fits",default="photonPFIso")
 parser.add_argument("--sys",nargs="+",default=["met","sb"])
 parser.add_argument("--plot",action="store_true")

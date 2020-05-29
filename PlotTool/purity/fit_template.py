@@ -68,7 +68,7 @@ def PurityText(x=0.55,y=0.5,purity=0,purity_error=0,scale=1):
     return vtext,btext
 def VarBounds(variable,hslist):
     if "photonPFIso" in variable:
-        SetBounds(hslist,scale=5,log=10)
+        SetBounds(hslist,scale=5,log=1)
     elif "photonSieie" in variable:
         SetBounds(hslist,maxi=5,log=1)
 def PlotFit(template,roovar,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error):

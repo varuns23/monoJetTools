@@ -63,6 +63,10 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     // Currently using 2017 values
     float impurity = getImpurityWeight(photon_pt);
     event_weight *= impurity;
+    weight = event_weight;
+    weight_nogen = event_weight;
+    weight_nopileup = event_weight;
+    weight_nok = event_weight;
     
     fillEvent(4,event_weight);
 

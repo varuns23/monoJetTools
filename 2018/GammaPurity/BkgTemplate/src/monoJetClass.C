@@ -61,6 +61,12 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 
     phoindex = getPhoIndex();
     if(phoindex < 0) continue;
+    if (isMC) {
+      SetSF( getSF(phoindex) );
+      ApplySF(event_weight);
+      ApplyPhoton_TriggerSF(event_weight);
+    }
+    
     cutflow->Fill(3,event_weight);
 
     if (!electron_veto(phoindex)) continue;
@@ -72,7 +78,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!tau_veto(phoindex)) continue;
     cutflow->Fill(6,event_weight);
 
-    if (!bjet_weights( bjetDeepCSVCut_2017)) continue;
+    if (!bjet_weights(bjetDeepCSVCut_2018,event_weight)) continue;
     cutflow->Fill(7,event_weight);
 
     pho.SetPtEtaPhiE(phoCalibEt->at(phoindex),phoEta->at(phoindex),phoPhi->at(phoindex),phoCalibE->at(phoindex));

@@ -18,15 +18,13 @@ if not os.path.isdir("templates"):
     
 from ROOT import TCanvas,gStyle,kRed,kGreen,kBlue,TLatex,TPad
 
-sig_path = "SigTemplate/sieie_purity/"
-# sig_path = "SigTemplate/iso_purity/"
-bkg_path = "BkgTemplate/sieie_purity/"
-# bkg_path = "BkgTemplate/iso_purity/"
-den_path = "DenTemplate"
+# sig_path = "SigTemplate/sieie_purity/"
+sig_path = "SigTemplate/iso_purity/"
+# bkg_path = "BkgTemplate/sieie_purity/"
+bkg_path = "BkgTemplate/iso_purity/"
 
 sig_template = Region(path=sig_path,autovar=True,show=0)
 bkg_template = Region(path=bkg_path,autovar=True,show=0)
-# den_template = Region(path=den_path,autovar=True,show=0)
 
 xaxismap = {
     "photonPFIso":"Photon PF Isolation [GeV]",
@@ -50,7 +48,7 @@ def PtRangeText(x=0.55,y=0.8,ptrange=(-1,-1),scale=1):
     return rangetext
 def VarBounds(variable,hslist):
     if "photonPFIso" in variable:
-        SetBounds(hslist,scale=5,log=10)
+        SetBounds(hslist,scale=5,log=1)
     elif "photonSieie" in variable:
         SetBounds(hslist,maxi=5,log=1)
 def PlotDen(templates):
