@@ -99,7 +99,8 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     setJetCand(jetCand);                                                                                           
     fillEvent(11,event_weight);
 
-    if(!getJetHEMVeto())continue;  
+    if(!getJetHEMVeto())continue;
+    if(!getMetHEMVeto())continue;
     
     QCDVariations(event_weight);
     fillEvent(12,event_weight);
@@ -165,7 +166,8 @@ bool monoJetClass::UncLoop(float &event_weight) {
   if (jetCand == -1) return false;
   setJetCand(jetCand);
   
-  if(!getJetHEMVeto())return false; 
+  if(!getJetHEMVeto())return false;
+  if(!getMetHEMVeto())return false;
   
   return true;
 }
