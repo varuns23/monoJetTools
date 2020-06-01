@@ -65,6 +65,9 @@ class SubProcess(object):
         
         if self.variable.rebin is not None:
             self.histo = self.histo.Rebin(self.variable.rebin)
+        if self.variable.overflow:
+            AddOverflow(self.histo)
+            
         self.raw_total = self.histo.Integral()
     def scale(self,lumi=None,histo=None):
         if histo is None and lumi is not None:
@@ -116,6 +119,9 @@ class SubProcess(object):
         if self.variable.rebin is not None:
             up = up.Rebin(self.variable.rebin)
             dn = dn.Rebin(self.variable.rebin)
+        if self.variable.overflow:
+            AddOverflow(up)
+            AddOverflow(dn)
 
         self.scale(histo=up); self.scale(histo=dn)
         self.nuisances[nuisance] = Nuisance(self.subprocess,nuisance,up,dn,self.histo,type="abs")

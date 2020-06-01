@@ -12,6 +12,7 @@ parser.add_argument("--rebin",help="Specify number of bins to merge using TH1::R
 parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
 parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
 parser.add_argument("--no-width",help="Disable bin width scaling",action="store_true",default=False)
+parser.add_argument("--add-overflow",help="Add overflow bin to last bin",action="store_true",default=False)
 
 def IsGlobal(variable,tfile):
     return tfile.GetListOfKeys().Contains(variable)
@@ -40,21 +41,26 @@ def linspace(xmin,xmax,nx): return list(np.linspace(xmin,xmax,nx+1))
 def AddOverflow(hs):
     nbins = hs.GetNbinsX()
     overflow = hs.GetBinContent(nbins) + hs.GetBinContent(nbins+1)
+    sqr_error = hs.GetBinError(nbins)**2 + hs.GetBinError(nbins+1)**2
     hs.SetBinContent(nbins,overflow)
+    hs.SetBinError(nbins,TMath.Sqrt(sqr_error))
+
+    hs.SetBinContent(nbins+1,0)
+    hs.SetBinError(nbins+1,0)
+    
     return
 def PtFractionBinning(self,arg):
     arg = arg.replace('res','')
     bins = array('d',[0,0.3,0.5,0.7,0.8,0.9,1.0])
     if arg == "2": bins = array('d',[0,0.25,0.4,0.55,0.7,0.85,1.0])
-    
+    self.overflow = True
     nbins= len(bins)-1
     template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,bins)
-    template.post = AddOverflow
     return template
 def inclusiveBinning(self,arg):
     nbins = int(arg.replace('incl',''))
     template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,0,1)
-    template.post = AddOverflow
+    self.overflow = True
     return template
 
 def inclusiveCutBinning(self,arg):
@@ -64,7 +70,7 @@ def inclusiveCutBinning(self,arg):
         lim = float(cut.split('>')[-1])
         bmin = lim; bmax = 1
     template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,bmin,bmax)
-    template.post = AddOverflow
+    self.overflow = True
     return template
     
 class VariableInfo:
@@ -133,6 +139,10 @@ class VariableInfo:
         self.yaxis_title = self.template.GetYaxis().GetTitle()
 
         self.rebin = parser.args.rebin
+        self.overflow = parser.args.add_overflow
+
+        if "recoil" in variable:
+            self.overflow = True
 
         self.scaleWidth = True
         if parser.args.no_width: self.scaleWidth = False
