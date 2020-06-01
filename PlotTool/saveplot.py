@@ -10,7 +10,7 @@ gROOT.SetBatch(1)
 
 dirlist = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR","GammaCR"]
 dirmap = {"SignalRegion":"signal","DoubleEleCR":"Zee","DoubleMuCR":"Zmm","SingleEleCR":"Wen","SingleMuCR":"Wmn","GammaCR":"gjets"}
-procmap = {"Data":"data","ZJets":"zjets","WJets":"wjets","DYJets":"zll","GJets":"gjets","TTJets":"top","DiBoson":"diboson","QCD":"qcd"}
+procmap = {"Data":"data","ZJets":"zjets","WJets":"wjets","DYJets":"zll","GJets":"gjets","TTJets":"top","DiBoson":"diboson","QCD":"qcd","QCDFake":"qcd"}
 signalmap = {"Axial":"axial","Zprime":"zprime"}
 if not path.isdir("Systematics"): mkdir("Systematics")
 
@@ -33,6 +33,14 @@ def SaveRegion(region,save):
         data.SetName(name)
         data.SetTitle(name)
         data.Write()
+        
+    region.setSumOfBkg()
+    sumofbkg = region["SumOfBkg"].histo
+    export = "%s_sumofbkg"% dirmap[region.region]
+    sumofbkg.SetName(export)
+    sumofbkg.SetTitle(export)
+    sumofbkg.Write()
+    
     for process in region:
         print "--Writing %s Histogram" % process.name
         
