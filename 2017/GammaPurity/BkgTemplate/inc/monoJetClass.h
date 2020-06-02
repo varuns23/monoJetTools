@@ -40,9 +40,11 @@ public :
     monoJetGammaPurity::initTree(tree);
   }
 
-  void nominal(float);
-  void met_variation(int,float);
-  void sideband_variation(int,float);
+  bool getSideband(int variation=0,int type=1);
+
+  void nominal(float event_weight);
+  void met_variation(int variation,float event_weight);
+  void sideband_variation(int variation,float event_weight);
 
   int getPhoIndex();
 };

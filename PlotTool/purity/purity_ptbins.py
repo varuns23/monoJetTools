@@ -14,10 +14,6 @@ parser.add_argument("--sys",nargs="+",default=["met","sb"])
 parser.add_argument("--plot",action="store_true")
 parser.add_argument("--save",action="store_true")
 
-if not os.path.isdir("purity"):
-    # Create directory to store fits and make git ignore it
-    os.mkdir("purity")
-    with open("purity/.gitignore","w") as f: f.write("*")
 def purity_style(ratio,color=kBlue+2):
     ratio.SetMarkerStyle(20)
     ratio.SetMarkerColor(kBlack)
@@ -140,6 +136,12 @@ def compute_purity_ratio(ptbins):
     
 if __name__ == "__main__":
     parser.parse_args()
+    
+    if not os.path.isdir("purity") and parser.args.save:
+        # Create directory to store fits and make git ignore it
+        os.mkdir("purity")
+        with open("purity/.gitignore","w") as f: f.write("*")
+    
     # ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
     ptbins = [200,250,300,400,500,600,"Inf"]
     compute_purity_ratio(ptbins)

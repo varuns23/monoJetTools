@@ -107,8 +107,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
 void monoJetClass::nominal(float event_weight) {
     if (pfMET >= 60) return;
     cutflow->Fill(10,event_weight);
-    if (runIsoPurity)
-      if (!(photon_sieie > 0.02 || photon_sieie < 0.015)) return;
+    if (!getSideband()) return;
     cutflow->Fill(11,event_weight);
     fillHistos(11,event_weight);
 }
@@ -116,8 +115,7 @@ void monoJetClass::nominal(float event_weight) {
 void monoJetClass::met_variation(int var,float event_weight) {
   // Vary pfMET Cut by 20%
   if ( pfMET >= (60 * ( 1 + var*0.2 )) ) return;
-  if (runIsoPurity)
-    if (!(photon_sieie > 0.02 || photon_sieie < 0.015)) return;
+  if (!getSideband()) return;
   switch(var) {
   case 1: fillHistos(12,event_weight); break;
   case -1:fillHistos(13,event_weight); break;
@@ -126,12 +124,27 @@ void monoJetClass::met_variation(int var,float event_weight) {
 
 void monoJetClass::sideband_variation(int var,float event_weight) {
   if ( pfMET >= 60 ) return;
-  if (runIsoPurity)
-    if (!(photon_sieie > (0.02 * ( 1 + var*0.1 )) || photon_sieie < 0.015)) return;
+  if (!getSideband(var)) return;
   switch(var) {
   case 1: fillHistos(14,event_weight); break;
   case -1:fillHistos(15,event_weight); break;
   }
+}
+
+bool monoJetClass::getSideband(int var,int type) {
+  if (runIsoPurity){
+    switch(type){
+      // outside (0.015,0.02)
+    case 0: return (photon_sieie > (0.02 * ( 1 + var*0.1 )) || photon_sieie < 0.015);
+      
+      // (0.01015,0.015)
+    case 1: return 0.01015 < photon_sieie && photon_sieie < (0.015 * ( 1 + var*0.2 ));
+      
+      // (0.01015,0.02)
+    case 2: return 0.01015 < photon_sieie && photon_sieie < (0.02 * ( 1 + var*0.2 ));
+    }
+  }
+  return true;
 }
 
 void monoJetClass::BookHistos(const char* outputFilename) {

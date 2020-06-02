@@ -22,11 +22,6 @@ parser.add_argument("-t","--template",help="Template file to fit",nargs="+",type
 parser.add_argument("--plot",action="store_true")
 parser.add_argument("--save",action="store_true")
 
-if not os.path.isdir("fits"):
-    # Create directory to store fits and make git ignore it
-    os.mkdir("fits")
-    with open("fits/.gitignore","w") as f: f.write("*")
-
 varmap = {
     "photonPFIso":{
         RooRealVar:RooRealVar("photonPFIso","Photon PF Isolation [GeV]",0.,25.),
@@ -276,6 +271,11 @@ def fit_template(template,output,varinfo):
     if parser.args.plot: PlotFit(template,roovar,postfit_data,postfit_gjet,postfit_qcd,purity,purity_error)
 if __name__ == "__main__":
     parser.parse_args()
+
+    if not os.path.isdir("fits") and parser.args.save:
+        # Create directory to store fits and make git ignore it
+        os.mkdir("fits")
+        with open("fits/.gitignore","w") as f: f.write("*")
     
     output = None
     for template in parser.args.template:

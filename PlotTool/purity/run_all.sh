@@ -1,8 +1,9 @@
 #!/bin/sh
+set -e
 
 if [[ "$1" == "phoiso" ]]; then
     var="photonPFIso"
-    dir="phoiso"
+    dir="phoisoV2"
     rebin=""
 elif [[ "$1" == "sieie" ]]; then
     var="photonSieie"

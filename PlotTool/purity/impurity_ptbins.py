@@ -19,10 +19,6 @@ bufunc = {
     "2018":TF1("bu_2018","11.92*exp(-8.28e-03*x)+1.55",200,1000.)
 }
 
-if not os.path.isdir("impurity"):
-    # Create directory to store fits and make git ignore it
-    os.mkdir("impurity")
-    with open("impurity/.gitignore","w") as f: f.write("*")
 def impurity_style(ratio,color=kBlue+2):
     ratio.SetMarkerStyle(20)
     ratio.SetMarkerColor(kBlack)
@@ -197,6 +193,12 @@ def compute_impurity_ratio(ptbins):
     
 if __name__ == "__main__":
     parser.parse_args()
+    
+    if not os.path.isdir("impurity") and parser.args.save:
+        # Create directory to store fits and make git ignore it
+        os.mkdir("impurity")
+        with open("impurity/.gitignore","w") as f: f.write("*")
+        
     # ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
     ptbins = [200,250,300,400,500,600,"Inf"]
     compute_impurity_ratio(ptbins)

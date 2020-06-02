@@ -40,6 +40,8 @@ public :
     monoJetGammaPurity::initTree(tree);
   }
 
+  bool getSideband(int variation=0,int type=1);
+
   void nominal(float);
   void met_variation(int,float);
   void sideband_variation(int,float);

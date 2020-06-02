@@ -10,18 +10,17 @@ config.mclist = ["GJets"]
 parser.add_argument("--plot",action="store_true")
 parser.add_argument("--save",action="store_true")
 parser.add_argument("--label")
-
-if not os.path.isdir("templates"):
-    # Create directory to store templates and make git ignore it
-    os.mkdir("templates")
-    with open("templates/.gitignore","w") as f: f.write("*")
     
 from ROOT import TCanvas,gStyle,kRed,kGreen,kBlue,TLatex,TPad
 
-# sig_path = "SigTemplate/sieie_purity/"
-sig_path = "SigTemplate/iso_purity/"
-# bkg_path = "BkgTemplate/sieie_purity/"
-bkg_path = "BkgTemplate/iso_purity/"
+version="V2"
+if any( "photonPFIso" in arg for arg in sys.argv ):
+    purity_path = "iso%s_purity"%version
+if any( "photonSieie" in arg for arg in sys.argv ):
+    purity_path = "sieie_purity"
+
+sig_path = "SigTemplate/{purity_path}/".format(purity_path=purity_path.replace(version,""))
+bkg_path = "BkgTemplate/{purity_path}/".format(purity_path=purity_path)
 
 sig_template = Region(path=sig_path,autovar=True,show=0)
 bkg_template = Region(path=bkg_path,autovar=True,show=0)
@@ -276,6 +275,11 @@ def SigTemplates(variable,output,sideband_templates=None):
 if __name__ == "__main__":
     parser.parse_args()
 
+    if not os.path.isdir("templates") and parser.args.save:
+        # Create directory to store templates and make git ignore it
+        os.mkdir("templates")
+        with open("templates/.gitignore","w") as f: f.write("*")
+    
     # ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
     ptbins = [200,250,300,400,500,600,"Inf"]
 
