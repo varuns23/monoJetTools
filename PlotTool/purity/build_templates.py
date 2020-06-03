@@ -13,13 +13,12 @@ parser.add_argument("--label")
     
 from ROOT import TCanvas,gStyle,kRed,kGreen,kBlue,TLatex,TPad
 
-version="V2"
 if any( "photonPFIso" in arg for arg in sys.argv ):
-    purity_path = "iso%s_purity"%version
+    purity_path = "iso_purity"
 if any( "photonSieie" in arg for arg in sys.argv ):
     purity_path = "sieie_purity"
 
-sig_path = "SigTemplate/{purity_path}/".format(purity_path=purity_path.replace(version,""))
+sig_path = "SigTemplate/{purity_path}/".format(purity_path=purity_path)
 bkg_path = "BkgTemplate/{purity_path}/".format(purity_path=purity_path)
 
 sig_template = Region(path=sig_path,autovar=True,show=0)

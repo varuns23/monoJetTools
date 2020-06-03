@@ -28,7 +28,7 @@ def fit_style(fit,color):
     fit.SetTitle("")
     fit.SetLineColor(color)
     fit.SetLineWidth(3)
-def PlotImpurityRatio(impurity):
+def PlotImpurityRatio(impurity,sys_tot=None):
 
     
     c = TCanvas("c", "canvas",800,800);
@@ -46,7 +46,7 @@ def PlotImpurityRatio(impurity):
     
     xaxis_title = "Photon P_{T} [GeV]"
 
-    leg = getLegend(xmin=0.5,ymin=0.7,scale=0.75)
+    leg = getLegend(xmin=0.5,ymin=0.6,scale=0.75)
 
     impurity_style(impurity)
     impurity.SetTitle("")
@@ -57,6 +57,13 @@ def PlotImpurityRatio(impurity):
     # SetBounds([impurity],scale=0.5)
 
     impurity.Draw("p same")
+    
+    if sys_tot is not None:
+        sysband = sys_tot.GetBand()
+        UncBandStyle(sysband)
+        sysband.Draw("E2 same")
+        impurity.Draw("p same")
+        
     fit = impurity.GetFunction("impurity_fit")
     fit_style(fit,kRed)
     
@@ -68,6 +75,9 @@ def PlotImpurityRatio(impurity):
     leg.AddEntry(impurity,"#frac{QCD_{Fake}}{GJets_{Real} + QCD_{Fake}}","lp")
     leg.AddEntry(fit,"UW Fit","l")
     leg.AddEntry(bu_fit,"BU Fit","l")
+
+    if sys_tot is not None: leg.AddEntry(sysband,"systematics","f")
+        
     leg.Draw()
 
     equation = str(fit.GetExpFormula())
@@ -75,7 +85,7 @@ def PlotImpurityRatio(impurity):
     p1 = "%.3e"%fit.GetParameter("p1");
     p2 = "%.3f"%fit.GetParameter("p2");
     equation = equation.replace("[p0]",p0).replace("[p1]",p1).replace("[p2]",p2)
-    etext = TLatex(0.45,0.65,"f(x) = %s"%equation)
+    etext = TLatex(0.45,0.55,"f(x) = %s"%equation)
     etext.SetNDC();
     etext.SetTextFont(42);
     etext.SetTextSize(0.048*0.8);
@@ -101,13 +111,8 @@ def PlotImpurityRatio(impurity):
     line.Draw("same");
     
     SaveAs(c,"impurity_ratio_%s"%parser.args.variable,year=config.version,sub="GammaPurity/ImpurityRatio/")
-def PlotImpuritySys(nominal,ptbins):
-    if not any(parser.args.sys): return
-    sysmap = {}
-    for sys in parser.args.sys:
-        up = get_impurity_ratio("{fitdir}/fit_{variable}_{ptbin}_%sup.root"%sys,ptbins,"impurity_ratio_%sup"%sys)
-        dn = get_impurity_ratio("{fitdir}/fit_{variable}_{ptbin}_%sdn.root"%sys,ptbins,"impurity_ratio_%sdn"%sys)
-        sysmap[sys] = Nuisance("impurity",sys,up,dn,nominal,type="abs")
+def PlotImpuritySys(nominal,sysmap):
+    if not any(sysmap): return
     colors = [kRed,kBlue,kGreen]
     
 
@@ -126,6 +131,8 @@ def PlotImpuritySys(nominal,ptbins):
     def sys_style(hs,color):
         hs.SetLineColor(color)
         hs.SetLineWidth(2)
+        hs.SetMarkerColor(color)
+        hs.SetMarkerSize(2)
         hs.SetFillColor(0)
     coliter = iter(colors)
     hslist = []
@@ -133,15 +140,18 @@ def PlotImpuritySys(nominal,ptbins):
         sys = sysmap[sysname]
         up,dn = sys.GetScale()
         color = next(coliter)
+        up.SetMarkerStyle(22)
+        dn.SetMarkerStyle(23)
         for hs in (up,dn):
             sys_style(hs,color)
+            hs.Draw("p hist same")
             hs.Draw("hist same")
             hs.SetTitle("")
             hs.GetYaxis().SetTitle("Impurity Systematics")
             hs.GetXaxis().SetTitle(xaxis_title)
             hslist.append(hs)
         leg.AddEntry(up,sysname,"l")
-    SetBounds(hslist)
+    SetBounds(hslist,scale=0.8)
     leg.Draw()
 
     lumi_label = '%s' % float('%.3g' % (max(config.lumi.values())/1000.)) + " fb^{-1}"
@@ -165,6 +175,13 @@ def save_obj(objlist):
     for obj in objlist: obj.Write()
     output.Close()
 
+def compute_sys(nominal,ptbins):
+    sysmap = {}
+    for sys in parser.args.sys:
+        up = get_impurity_ratio("{fitdir}/fit_{variable}_{ptbin}_%sup.root"%sys,ptbins,"impurity_ratio_%sup"%sys)
+        dn = get_impurity_ratio("{fitdir}/fit_{variable}_{ptbin}_%sdn.root"%sys,ptbins,"impurity_ratio_%sdn"%sys)
+        sysmap[sys] = Nuisance("impurity",sys,up,dn,nominal,type="abs")
+    return sysmap
 def get_impurity_ratio(pattern,ptbins,name="impurity_ratio"):
     hbins = map(lambda x:x if x is not "Inf" else 1000,ptbins)
     ratio = TH1F(name,"",len(hbins)-1,array('d',hbins))
@@ -187,8 +204,16 @@ def compute_impurity_ratio(ptbins):
     func.SetParameters(6,0.001,1)
     ratio.Fit("impurity_fit")
     if parser.args.plot:
-        PlotImpurityRatio(ratio)
-        PlotImpuritySys(ratio,ptbins)
+        sysmap = compute_sys(ratio,ptbins)
+
+        sys_tot = None
+        if any(sysmap):
+            sysup = ratio.Clone(); sysup.Reset()
+            sysdn = ratio.Clone(); sysdn.Reset()
+            AddDiffNuisances(sysmap.values(),sysup,sysdn,ratio)
+            sys_tot = Nuisance("purity","sys_tot",sysup,sysdn,ratio)
+        PlotImpurityRatio(ratio,sys_tot)
+        PlotImpuritySys(ratio,sysmap)
     if parser.args.save: save_obj([ratio,func])
     
 if __name__ == "__main__":
