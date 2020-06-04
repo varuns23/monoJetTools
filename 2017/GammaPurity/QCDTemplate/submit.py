@@ -7,13 +7,10 @@ sys.path.append(repo)
 
 from CondorTools.SubmitDataset import submit,options,mclist
 options['year'] = '2017'
-options['region'] = 'ZM'
-options['parallel'] = True
-options['batchsize'] = 100
+options['region'] = 'GA'
+options['parallel'] = False
+options['batchsize'] = 25
 # options['submit'] = False
-
 #----Submit---#
-#submit('met',sub='B',label='DoubleMu_',filelist=True)
-submit('met_farmout',sub='B',label='DoubleMu_',filelist=True)
-# submit('met',label='DoubleMu_',filelist=True)
+submit('singlepho',label='QCDFake_')
 # for mc in mclist: submit(mc)

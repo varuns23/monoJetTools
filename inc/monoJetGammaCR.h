@@ -9,14 +9,14 @@ public:
   static const CRobject CROBJECT = Photon;
   int phoindex;
   TLorentzVector pho;
-  float photon_pt,photon_eta,photon_phi,photon_sieie;
+  float photon_pt,photon_eta,photon_phi;
   float tightID_sf,csev_sf;
 
-  TH1F *h_PhotonPt[maxHisto], *h_PhotonEta[maxHisto],*h_PhotonPhi[maxHisto],*h_PhotonSIeIe[maxHisto];
+  TH1F *h_PhotonPt[maxHisto], *h_PhotonEta[maxHisto],*h_PhotonPhi[maxHisto];
 
   TH2F *h_PhotonEtaPhi[maxHisto];
   
-  virtual void BookHistos(int i,std::string histname);
+  virtual void BookHistos(int i,TString histname);
   virtual void fillHistos(int nhist,float event_weight);
   virtual void initVars();
   virtual void initTree(TTree* tree);

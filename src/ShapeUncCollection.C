@@ -6,16 +6,16 @@
 using namespace std;
 
 void ShapeUncCollection::setDir(TDirectory* dir) { this->dir = dir; }
-void ShapeUncCollection::addUnc(string name) {
+void ShapeUncCollection::addUnc(TString name) {
   dir->cd();
-  TTree* treeUp = new TTree( (name+"Up").c_str(), (name+"Up").c_str());
-  TTree* treeDn = new TTree( (name+"Down").c_str(), (name+"Down").c_str());
+  TTree* treeUp = new TTree( (name+"Up"), (name+"Up"));
+  TTree* treeDn = new TTree( (name+"Down"), (name+"Down"));
   uncmap[name] = new ShapeUnc(name,treeUp,treeDn);
 }
-TTree* ShapeUncCollection::getTreeUp(string name) { return uncmap[name]->treeUp; }
-TTree* ShapeUncCollection::getTreeDn(string name) { return uncmap[name]->treeDn; }
-void ShapeUncCollection::fillUp(string name) { uncmap[name]->fillUp(); }
-void ShapeUncCollection::fillDn(string name) { uncmap[name]->fillDn(); }
-bool ShapeUncCollection::contains(string name) { return uncmap.find(name) != uncmap.end(); }
+TTree* ShapeUncCollection::getTreeUp(TString name) { return uncmap[name]->treeUp; }
+TTree* ShapeUncCollection::getTreeDn(TString name) { return uncmap[name]->treeDn; }
+void ShapeUncCollection::fillUp(TString name) { uncmap[name]->fillUp(); }
+void ShapeUncCollection::fillDn(TString name) { uncmap[name]->fillDn(); }
+bool ShapeUncCollection::contains(TString name) { return uncmap.find(name) != uncmap.end(); }
 
 #endif

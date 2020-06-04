@@ -23,17 +23,17 @@ void monoJetSingleMuCR::initTree(TTree* tree) {
   tree->Branch("tightISO_sf",&tightISO_sf);
 }
 
-void monoJetSingleMuCR::BookHistos(int i,string histname) {
+void monoJetSingleMuCR::BookHistos(int i,TString histname) {
   if (i == -1) {
     h_lepMET_MTBefore = MakeTH1F(new TH1F("h_lepMET_MT","h_lepMET_MT; transverse mass of the lepton-Emiss system",40,0,400));
   } else {
-    auto Name = [histname](string name) { return (name+histname); };
-    h_LeptonPt[i]  = MakeTH1F(new TH1F(Name("LeptonPt").c_str() ,"LeptonPt;Lepton P_{T}" ,nLeadingLeptonPtBins,LeadingLeptonPtBins));
-    h_LeptonEta[i] = MakeTH1F(new TH1F(Name("LeptonEta").c_str(),"LeptonEta;Lepton #eta" ,nEtaBins,lEta,uEta));
-    h_LeptonPhi[i] = MakeTH1F(new TH1F(Name("LeptonPhi").c_str(),"LeptonPhi;Lepton #phi" ,nPhiBins,lPhi,uPhi));
-    h_lepMET_MT[i] = MakeTH1F(new TH1F(Name("lepMET_MT").c_str(),"lepMET_MT; transverse mass of the lepton-Emiss system",40,0,400));
+    auto Name = [histname](TString name) { return (name+histname); };
+    h_LeptonPt[i]  = MakeTH1F(new TH1F(Name("LeptonPt") ,"LeptonPt;Lepton P_{T}" ,nLeadingLeptonPtBins,LeadingLeptonPtBins));
+    h_LeptonEta[i] = MakeTH1F(new TH1F(Name("LeptonEta"),"LeptonEta;Lepton #eta" ,nEtaBins,lEta,uEta));
+    h_LeptonPhi[i] = MakeTH1F(new TH1F(Name("LeptonPhi"),"LeptonPhi;Lepton #phi" ,nPhiBins,lPhi,uPhi));
+    h_lepMET_MT[i] = MakeTH1F(new TH1F(Name("lepMET_MT"),"lepMET_MT; transverse mass of the lepton-Emiss system",40,0,400));
     
-    h_LeptonEtaPhi[i] = new TH2F(Name("LeptonEtaPhi").c_str(),"LeptonEtaPhi;Lepton #eta;Lepton #phi" ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
+    h_LeptonEtaPhi[i] = new TH2F(Name("LeptonEtaPhi"),"LeptonEtaPhi;Lepton #eta;Lepton #phi" ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);
   }
 }
 

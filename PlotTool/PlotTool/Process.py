@@ -19,18 +19,20 @@ class SubProcess(object):
         self.histo = None
         self.raw_total = 0
         self.scaled_total = 0
-    def open(self,config=None):
+    def open(self,config=None,verbose=0):
         if hasattr(self,'isOpen'): return
         self.isOpen = True
         if not os.path.isfile(self.fname+'.root'):
-            print 'No file %s.root' % self.fname,
+            if verbose: print 'No file %s.root' % self.fname,
             if config is not None and self.fname in config.filevariants:
                 alt_fname = next( (fname for fname in config.filevariants[self.fname] if os.path.isfile(fname+'.root')),None )
                 if alt_fname is None: print 'skipping'; return False
                 self.fname = alt_fname
-                print 'using %s.root instead' % self.fname
+                if verbose: print 'using %s.root instead' % self.fname
                 if self.fname in config.xsec: self.xsec = config.xsec[self.fname]
-            else: print 'skippping'; return False
+            else:
+                if verbose: print 'skippping';
+                return False
         self.tfile = TFile.Open(self.fname+'.root')
         cutflow = GetTObject('h_cutflow',self.tfile)
         self.cutflow = cutflow.GetBinContent(1)
@@ -60,6 +62,12 @@ class SubProcess(object):
             self.setTree(variable.dirname,'tree')
             self.histo = GetBranch('%s_%s' % (self.name,variable.base),variable,self.treemap['tree'])
         elif variable.isNhisto: self.histo = GetTObject("%s/%s"%(variable.dirname,variable.variable),self.tfile)
+        
+        if self.variable.rebin is not None:
+            self.histo = self.histo.Rebin(self.variable.rebin)
+        if self.variable.overflow:
+            AddOverflow(self.histo)
+            
         self.raw_total = self.histo.Integral()
     def scale(self,lumi=None,histo=None):
         if histo is None and lumi is not None:
@@ -108,6 +116,13 @@ class SubProcess(object):
         if isScale: up,dn = getScale()
         else:       up,dn = getShape()
 
+        if self.variable.rebin is not None:
+            up = up.Rebin(self.variable.rebin)
+            dn = dn.Rebin(self.variable.rebin)
+        if self.variable.overflow:
+            AddOverflow(up)
+            AddOverflow(dn)
+
         self.scale(histo=up); self.scale(histo=dn)
         self.nuisances[nuisance] = Nuisance(self.subprocess,nuisance,up,dn,self.histo,type="abs")
 class Process:
@@ -123,7 +138,7 @@ class Process:
         self.subprocesses = {}
         for sub,filename in zip(self.sublist,self.filenames):
             name = filename.replace('post','')
-            if self.proctype is 'data': xsec = None
+            if self.proctype is 'data' or xsecs is None: xsec = None
             else: xsec = self.xsecs[sub]
             self.subprocesses[sub] = SubProcess(self.process,name,filename,xsec,self.year,self.region)
         self.initVariable()

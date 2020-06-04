@@ -27,6 +27,18 @@ public :
   }
   void     Loop(Long64_t maxEvents, int reportEvery);
   void BookHistos(const char* file2);
+  // void BookHistos(int i,TString histname) {
+  //   monoJetYear::BookHistos(i,histname);
+  //   monoJetSignalRegion::BookHistos(i,histname);
+  // }
+  void initVars() {
+    monoJetYear::initVars();
+    monoJetSignalRegion::initVars();
+  }
+  void initTree(TTree* tree) {
+    monoJetYear::initTree(tree);
+    monoJetSignalRegion::initTree(tree);
+  }
   void fillHistos(int nhist,float event_weight=1.0);
   
   bool UncLoop(float &event_weight);

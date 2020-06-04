@@ -6,7 +6,7 @@ THStack* getBkgStack(TDirectory* tdir) {
   for (const char* name : names) proclist.Add( getHisto(tdir,name) );
   proclist.Sort();
 
-  const char* stack_name = ( string(tdir->GetName())+"_stack" ).c_str();
+  const char* stack_name = ( TString(tdir->GetName())+"_stack" );
   auto stack = new THStack(stack_name,stack_name);
   for (auto hs : proclist) stack->Add( (TH1F*)hs,"PFC" );
   return stack;
@@ -17,7 +17,7 @@ TRatioPlot* getDataMC(TDirectory* tdir) {
   auto data = getHisto(tdir,"data_obs");
   data->SetMarkerStyle(20);
   data->SetMarkerSize(1);
-  const char* name = ( string(tdir->GetName())+"_datamc" ).c_str();
+  const char* name = ( TString(tdir->GetName())+"_datamc" );
   auto ratio = new TRatioPlot(stack,data);
   ratio->SetH1DrawOpt("HIST PFC");
   ratio->SetH2DrawOpt("PEX0");

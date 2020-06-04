@@ -4,40 +4,40 @@
 #include <iostream>
 
 /* Cutflow Names */
-const std::string s_TotalEvents = "Total Events";
-const std::string s_Triggers = "Triggers";
-const std::string s_METFilters = "MET Filters";
-const std::string s_HEMVeto = "HEM Veto";
-const std::string s_ElectronVeto = "Electron Veto";
-const std::string s_MuonVeto = "Muon Veto";
-const std::string s_PhotonVeto = "Photon Veto";
-const std::string s_TauVeto = "Tau Veto";
-const std::string s_BJetVeto = "BJet Veto";
-const std::string s_minDPhiJetMET = "minDPhiJetMET";
-const std::string s_dPFCaloMET = "dPFCaloMET";
-const std::string s_Recoil = "Recoil";
-const std::string s_JetSelection = "Jet Selection";
+const TString s_TotalEvents = "Total Events";
+const TString s_Triggers = "Triggers";
+const TString s_METFilters = "MET Filters";
+const TString s_HEMVeto = "HEM Veto";
+const TString s_ElectronVeto = "Electron Veto";
+const TString s_MuonVeto = "Muon Veto";
+const TString s_PhotonVeto = "Photon Veto";
+const TString s_TauVeto = "Tau Veto";
+const TString s_BJetVeto = "BJet Veto";
+const TString s_minDPhiJetMET = "minDPhiJetMET";
+const TString s_dPFCaloMET = "dPFCaloMET";
+const TString s_Recoil = "Recoil";
+const TString s_JetSelection = "Jet Selection";
 
 /* SingleLepCR Cutfow Names */
-const std::string s_OneLooseEle = "One Loose Electron";
-const std::string s_OneTightEle = "One Tight Electron";
-const std::string s_pfMET50 = "pfMET50";
-const std::string s_EleMET_MT = "Electron MET M_{T}";
+const TString s_OneLooseEle = "One Loose Electron";
+const TString s_OneTightEle = "One Tight Electron";
+const TString s_pfMET50 = "pfMET50";
+const TString s_EleMET_MT = "Electron MET M_{T}";
 
-const std::string s_OneLooseMu = "One Loose Muon";
-const std::string s_OneTightMu = "One Tight Muon";
-const std::string s_MuMET_MT = "Muon MET M_{T}";
+const TString s_OneLooseMu = "One Loose Muon";
+const TString s_OneTightMu = "One Tight Muon";
+const TString s_MuMET_MT = "Muon MET M_{T}";
 
 /* DoubleLepCR Cutflow Names */
-const std::string s_TwoLooseEle = "Two Loose Electron";
-const std::string s_TwoLooseMu = "Two Loose Muon";
-const std::string s_OppCharge = "Opp Charge";
-const std::string s_ZMass = "ZMass";
+const TString s_TwoLooseEle = "Two Loose Electron";
+const TString s_TwoLooseMu = "Two Loose Muon";
+const TString s_OppCharge = "Opp Charge";
+const TString s_ZMass = "ZMass";
 
 /* GammaCR Cutflow Names */
-const std::string s_OneLoosePho = "One Loose Photon";
-const std::string s_OneTightPho = "One Tight Photon";
-const std::string s_PhoPt230 = "Pho P_{T} > 230.0";
+const TString s_OneLoosePho = "One Loose Photon";
+const TString s_OneTightPho = "One Tight Photon";
+const TString s_PhoPt230 = "Pho P_{T} > 230.0";
 
 /* Jet Selection Floating Cuts */
 const float jetCandPtCut = 200.;

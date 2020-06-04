@@ -6,14 +6,18 @@ lumi = {"SingleEleCR":59699,
         "SingleMuCR":59699,
         "DoubleMuCR":59699,
         "GammaCR":59699,
-        "SignalRegion":3506}
+        "SignalRegion":59699/5.
+        # "SignalRegion":3506
+}
 
 lumi_by_era = {"SingleEleCR":{"A":14024,"B":7061,"C":6895,"D":31720},
                "DoubleEleCR":{"A":14024,"B":7061,"C":6895,"D":31720},
                "SingleMuCR":{"A":14024,"B":7061,"C":6895,"D":31720},
                "DoubleMuCR":{"A":14024,"B":7061,"C":6895,"D":31720},
                "GammaCR":{"A":14024,"B":7061,"C":6895,"D":31720},
-               "SignalRegion":{"A":3506}}
+               "SignalRegion":{"A":14024/5.,"B":7061/5.,"C":6895/5.,"D":31720/5.},
+               # "SignalRegion":{"A":3506}
+}
 
 region_masks = {}
 

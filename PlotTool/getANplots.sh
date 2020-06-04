@@ -26,11 +26,11 @@ run() {
     pushd $1
     shift 1
     array="$nvariables $@"
-    plot $run_options --sub $subdir -a $array
-    plot $run_options --sub $subdir -a ChNemPtFrac -b res
-    # plot $run_options --sub $subdir -a $cat1
-    # plot $run_options --sub $subdir -a $cat2
-    # plot $run_options --sub $subdir -a $cat3
+    plot $run_options -a  --sub $subdirChNemPtFrac -b res
+    # plot $run_options -a --sub $subdir $cat1
+    # plot $run_options -a --sub $subdir $cat2
+    # plot $run_options -a --sub $subdir $cat3
+    plot $run_options -a --sub $subdir $array $uncertainty
     plot $run_options --sub $subdir $n_cut
     popd
 }

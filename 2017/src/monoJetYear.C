@@ -6,7 +6,7 @@
 using namespace std;
 
 int monoJetAnalysis::YEAR = 2017;
-const string monoJetYear::SRDATA = "B";
+const TString monoJetYear::SRDATA = "B";
 
 void monoJetYear::initTree(TTree* tree) {
   monoJetAnalysis::initTree(tree);
@@ -19,7 +19,7 @@ void monoJetYear::initVars() {
   monoJetAnalysis::initVars();
 }
 
-void monoJetYear::BookHistos(int i,string histname) {
+void monoJetYear::BookHistos(int i,TString histname) {
   monoJetAnalysis::BookHistos(i,histname);
 }
 
@@ -58,9 +58,11 @@ void monoJetYear::SetScalingHistos() {
   th2fmap["muon_iso_tight"]= (TH2F*)f_muon_iso->Get("NUM_TightRelIso_DEN_TightIDandIPCut_pt_abseta");
   
   // Photon SF
-  TFile* f_photon_id_tight = TFile::Open("RootFiles/egamma/2017_PhotonsMedium_capped.root");
+  TFile* f_photon_id_tight_2d = TFile::Open("RootFiles/egamma/2017_PhotonsMedium_capped.root");
+  TFile* f_photon_id_tight_1d = TFile::Open("RootFiles/egamma/photon_medium_id_sf_v0.root");
   TFile* f_photon_csev = TFile::Open("RootFiles/egamma/CSEV_ScaleFactors_2017.root");
-  th2fmap["photon_id_tight"] = (TH2F*)f_photon_id_tight->Get("EGamma_SF2D");
+  th2fmap["photon_id_tight"] = (TH2F*)f_photon_id_tight_2d->Get("EGamma_SF2D");
+  th1fmap["photon_id_tight"] = (TH1F*)f_photon_id_tight_1d->Get("photon_medium_id_sf_2017");
   th1fmap["photon_csev"] = (TH1F*)f_photon_csev->Get("Medium_ID");
 
   // Tau SF
@@ -68,5 +70,8 @@ void monoJetYear::SetScalingHistos() {
   th1fmap["tau_vloose"] = (TH1F*)f_tau_sf->Get("tau_sf_VLoose_2017_cent");
   th1fmap["tau_vloose_up"] = (TH1F*)f_tau_sf->Get("tau_sf_VLoose_2017_up");
   th1fmap["tau_vloose_down"] = (TH1F*)f_tau_sf->Get("tau_sf_VLoose_2017_down");
+
+  // BTag SF
+  btag_csv = new BTagCSV("RootFiles/btag/DeepCSV_94XSF_WP_V4_B_F.csv");
 }
 #endif

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
-#include <string>
+#include "TString.h"
 
 #include "Dataset.h"
 #include "monoJetClass.h"
@@ -33,7 +33,7 @@ int run(int argc,const char* argv[]) {
       cout<<"Please enter a valid value for reportEvery (parameter 4)."<<endl;
       return 1;
     }
-  if ( !gSystem->AccessPathName( (string(inputFilename) + string(argv[5])).c_str() ) ) {
+  if ( !gSystem->AccessPathName( (TString(inputFilename) + TString(argv[5])) ) ) {
     vector<const char*>filelist;
     for (int i = 5; i < argc; i++) filelist.push_back( argv[i] );
     monoJetClass t(inputFilename,outputFilename,filelist); t.Loop(maxEvents,reportEvery);
@@ -47,9 +47,9 @@ int run(int argc,const char* argv[]) {
   return 0;
 }
 
-int run_mc_test(string inputdir,const char* argv[]) {
+int run_mc_test(TString inputdir,const char* argv[]) {
   cout << "Running MC test in: " << inputdir << endl;
-  argv[1] = inputdir.c_str();
+  argv[1] = inputdir;
   argv[2] = "test_mc.root";
   argv[3] = "5000";
   argv[4] = "100";
@@ -57,9 +57,9 @@ int run_mc_test(string inputdir,const char* argv[]) {
   return run(6,argv);
 }
 
-int run_data_test(string inputdir,const char* argv[]) {
+int run_data_test(TString inputdir,const char* argv[]) {
   cout << "Running Data test in: " << inputdir << endl;
-  argv[1] = inputdir.c_str();
+  argv[1] = inputdir;
   argv[2] = "test_data.root";
   argv[3] = "5000";
   argv[4] = "100";
@@ -67,9 +67,9 @@ int run_data_test(string inputdir,const char* argv[]) {
   return run(6,argv);
 }
 
-int run_signal_test(string inputdir,const char* argv[]) {
+int run_signal_test(TString inputdir,const char* argv[]) {
   cout << "Running Signal test in: " << inputdir << endl;
-  argv[1] = inputdir.c_str();
+  argv[1] = inputdir;
   argv[2] = "test_signal.root";
   argv[3] = "5000";
   argv[4] = "100";
@@ -80,8 +80,8 @@ int run_signal_test(string inputdir,const char* argv[]) {
 
 int setup_test(int argc, const char* argv[]) {
   Dataset dataset;
-  string mcdir,datadir;
-  string signaldir = "None";
+  TString mcdir,datadir;
+  TString signaldir = "None";
   if ( monoJetClass::REGION == SR ) {
     mcdir = dataset.getDirlist("zjets","400to600")[0];
     datadir = dataset.getDirlist("met",monoJetClass::SRDATA)[0];

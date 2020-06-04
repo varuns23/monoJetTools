@@ -29,7 +29,7 @@
 #include <TSystemDirectory.h>
 #include <TLorentzVector.h>
 #include "TIterator.h"
-#include "string"
+#include "TString.h"
 // Header file for the classes stored in the TTree if any.
 #include "vector"
 #include "vector"
@@ -37,6 +37,7 @@
 #include "vector"
 
 #include "Dataset.h"
+#include "Utilities.h"
 #include "ScaleUncCollection.h"
 #include "ShapeUncCollection.h"
 #include "monoJetCutConfig.h"
@@ -58,11 +59,9 @@ public:
 
   static const bool debug = false;
   static const bool apply_correction = true;
-
-  // Dataset sample;
   
-  struct TH1FCollection : public std::map<std::string,TH1F*> {
-    int getBinN(std::string name,float x) {
+  struct TH1FCollection : public std::map<TString,TH1F*> {
+    int getBinN(TString name,float x) {
       TH1F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin;
@@ -72,13 +71,13 @@ public:
       else                  xbin = histo->GetXaxis()->FindBin(x);
       return xbin;
     }
-    float getBin(std::string name,float x) {
+    float getBin(TString name,float x) {
       TH1F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin = getBinN(name,x);
       return histo->GetBinContent( xbin );
     }
-    float getBinError(std::string name,float x) {
+    float getBinError(TString name,float x) {
       TH1F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin = getBinN(name,x);
@@ -86,8 +85,8 @@ public:
     }
   } th1fmap;
   
-  struct TH2FCollection : public std::map<std::string,TH2F*> {
-    int getBinX(std::string name,float x) {
+  struct TH2FCollection : public std::map<TString,TH2F*> {
+    int getBinX(TString name,float x) {
       TH2F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin;
@@ -97,7 +96,7 @@ public:
       else                  xbin = histo->GetXaxis()->FindBin(x);
       return xbin;
     }
-    int getBinY(std::string name,float y) {
+    int getBinY(TString name,float y) {
       TH2F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int ybin;
@@ -107,60 +106,61 @@ public:
       else                  ybin = histo->GetYaxis()->FindBin(y);
       return ybin;
     }
-    float getBin(std::string name,float x,float y) {
+    float getBin(TString name,float x,float y) {
       TH2F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin = getBinX(name,x);
       int ybin = getBinY(name,y);
       return histo->GetBinContent( xbin,ybin );
     }
-    float getBinError(std::string name,float x,float y) {
+    float getBinError(TString name,float x,float y) {
       TH2F* histo = (*this)[name];
       if ( histo == NULL ) cout << name << " is null" << endl;
       int xbin = getBinX(name,x);
       int ybin = getBinY(name,y);
       return histo->GetBinError( xbin,ybin );
     }
-    bool contains(std::string key) { return this->find(key) != this->end(); }
+    bool contains(TString key) { return this->find(key) != this->end(); }
   } th2fmap;
   ScaleUncCollection scaleUncs;
   ShapeUncCollection shapeUncs;
-
+  BTagCSV* btag_csv;
 
   /* Event Weight Variables */
   // made static so that the Cutflow class can access weights here
   float weight,weight_nogen,weight_nopileup,weight_nok;
-  float kfactor,nlo_ewk,nlo_qcd,nlo_qcd_binned,nnlo_qcd;
+  float kfactor,nlo_ewk,nlo_qcd,nnlo_qcd;
   float sf;
   float pileup;
   float trigger_sf;
+  float btag_sf,btag_sfUp,btag_sfDown;
   
   struct Cutflow {
     monoJetAnalysis* analysis;
     TH1F *h_cutflow;
     TH1F *h_cutflowNoWt;
     TH1F *h_cutflowNoK;
-    std::map<std::string,int> labels;
-    std::vector<std::string> _labels;
-    Cutflow(monoJetAnalysis* analysis, std::vector<std::string> labels,string tag="") {
+    std::map<TString,int> labels;
+    std::vector<TString> _labels;
+    Cutflow(monoJetAnalysis* analysis, std::vector<TString> labels,TString tag="") {
       this->analysis = analysis;
       this->_labels = labels;
       if (tag != "") tag = "_"+tag;
-      h_cutflow = new TH1F( ("h_cutflow"+tag).c_str(),"h_cutflow",labels.size(),0,labels.size());
-      h_cutflowNoWt = new TH1F( ("h_cutflowNoWt"+tag).c_str(),"h_cutflowNoWt",labels.size(),0,labels.size());
-      h_cutflowNoK = new TH1F( ("h_cutflowNoK"+tag).c_str(),"h_cutflowNoK",labels.size(),0,labels.size());
+      h_cutflow = new TH1F( ("h_cutflow"+tag),"h_cutflow",labels.size(),0,labels.size());
+      h_cutflowNoWt = new TH1F( ("h_cutflowNoWt"+tag),"h_cutflowNoWt",labels.size(),0,labels.size());
+      h_cutflowNoK = new TH1F( ("h_cutflowNoK"+tag),"h_cutflowNoK",labels.size(),0,labels.size());
     
       for (int i = 0; i < labels.size(); i++) {
-	h_cutflow->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
-	h_cutflowNoWt->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
-	h_cutflowNoK->GetXaxis()->SetBinLabel(i+1,labels[i].c_str());
+	h_cutflow->GetXaxis()->SetBinLabel(i+1,labels[i]);
+	h_cutflowNoWt->GetXaxis()->SetBinLabel(i+1,labels[i]);
+	h_cutflowNoK->GetXaxis()->SetBinLabel(i+1,labels[i]);
 	this->labels[labels[i]] = i;
       }
       h_cutflow->Sumw2();
       h_cutflowNoWt->Sumw2();
       h_cutflowNoK->Sumw2();
     }
-    void Fill(std::string label,float weight=1) {
+    void Fill(TString label,float weight=1) {
       this->Fill( labels[label],weight );
     }
     void Fill(std::size_t idx,float weight=1) {
@@ -168,11 +168,11 @@ public:
       h_cutflowNoWt->Fill(idx,1.0);
       h_cutflowNoK->Fill(idx,analysis->weight_nok);
     }
-    string getLabel(std::size_t idx) {
+    TString getLabel(std::size_t idx) {
       if (idx < _labels.size()) return _labels[idx];
       return "None";
     }
-    int getCut(std::string cut) { return labels[cut]; }
+    int getCut(TString cut) { return labels[cut]; }
   };
   Cutflow *cutflow;
 
@@ -219,7 +219,8 @@ public:
   // MC Info          
   TH1F *h_puTrueNoW[maxHisto],*h_puTrueReW[maxHisto],*h_genHT[maxHisto],*h_bosonPt[maxHisto],*h_bosonPtwK[maxHisto];      
   // MET Info         
-  TH1F *h_pfMETall[maxHisto],*h_pfMET[maxHisto],*h_pfMETPhi[maxHisto],*h_recoil[maxHisto],*h_recoilall[maxHisto],*h_recoilPhi[maxHisto];      
+  TH1F *h_pfMETall[maxHisto],*h_pfMET[maxHisto],*h_pfMETPhi[maxHisto],*h_recoil[maxHisto],*h_recoilall[maxHisto],*h_recoilPhi[maxHisto];
+  TH1F *h_caloMET[maxHisto],*h_caloMETPhi[maxHisto];
   // Jet Info         
   TH1F *h_nJets[maxHisto],*h_j1pT[maxHisto],*h_j1pTall[maxHisto],*h_j1Eta[maxHisto],*h_j1Phi[maxHisto],*h_j1etaWidth[maxHisto],*h_j1phiWidth[maxHisto],*h_j1CHF[maxHisto],*h_j1NHF[maxHisto],*h_j1ChMult[maxHisto],*h_j1NhMult[maxHisto],*h_j1Mt[maxHisto];
   TH1F *h_nJetsSkim[maxHisto];
@@ -236,7 +237,11 @@ public:
   // Misc Info        
   TH1F *h_MiscPFCands[maxHisto],*h_MiscPercCons[maxHisto],*h_MiscPFPt[maxHisto],*h_MiscPercPFPt[maxHisto]; 
 
-  TH2F *h_j1EtaPhi[maxHisto];
+  TH2F *h_j1EtaPhi[maxHisto],*h_pfMETvPhi[maxHisto];
+
+  // Split Jet Phi histograms
+  TH1F *h_pfMETPosj1Phi[maxHisto],*h_pfMETPhiPosj1Phi[maxHisto],*h_j1pTPosj1Phi[maxHisto],*h_j1EtaPosj1Phi[maxHisto],*h_j1PhiPosj1Phi[maxHisto];
+  TH1F *h_pfMETNegj1Phi[maxHisto],*h_pfMETPhiNegj1Phi[maxHisto],*h_j1pTNegj1Phi[maxHisto],*h_j1EtaNegj1Phi[maxHisto],*h_j1PhiNegj1Phi[maxHisto];
 
   // Fixed size dimensions of array or collections stored in the TTree if any.
 
@@ -940,13 +945,14 @@ public:
   virtual void initVars();
 
   /* Histograms Methods */
-  virtual void BookHistos(int nhist,string histname);
+  virtual void BookHistos(int nhist,TString histname);
   virtual void fillHistos(int nhisto,float event_weight);
   virtual void fillEvent(int nhisto,float event_weight);
-  virtual void fillEvent(string cut,float event_weight);
+  virtual void fillEvent(TString cut,float event_weight);
 
   /* Event Weight Methods */
   virtual void SetBoson(int PID);
+  virtual void GenDilepton();
   virtual float getKFactor(float bosonPt);
   virtual void SetKFactors(float bosonPt);
   virtual void ApplyKFactor(float &event_weight);
@@ -969,7 +975,11 @@ public:
   virtual bool getPhotonTrigger();
   virtual float dPhiJetMETmin(vector<int> jetlist,float metPhi);
   virtual float dPFCaloMET(float met);
+  bool getPhiHEMVeto();
+  bool getMetHEMVeto();
   bool getJetHEMVeto(float jetPtCut=jetHEMVetoPtCut);
+  bool getJetHEMVetoV2(float jetPtCut=jetHEMVetoPtCut);
+  bool getJetHEMVetoV3(float jetPtCut=jetHEMVetoPtCut);
   bool getEleHEMVeto(float elePtCut=eleHEMVetoPtCut);
   
   /* Object Selction Methods */
@@ -981,14 +991,16 @@ public:
   virtual vector<int> getLooseJet(float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual vector<int> jet_veto_looseID(int jetindex,float jetPtCut=jetVetoPtCut,float jetEtaCut=jetVetoEtaCut);
   virtual bool getJetID(int ijet);
-  
-  virtual bool bjet_veto(float bjetCutValue,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
+
+  virtual vector<int> getLooseBJets(float bjetCutValue,float jetPtCut=bjetVetoPtCut,float jetEtaCut=bjetVetoEtaCut);
+  virtual bool bjet_veto(float bjetCutValue);
+  virtual bool bjet_weights(float bjetCutValue,float &event_weight);
   
   virtual vector<int> getLooseEle(float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
   virtual vector<int> electron_veto_looseID(int jetindex,float elePtCut=eleLoosePtCut,float eleEtaCut=eleLooseEtaCut);
   virtual vector<int> getTightEle(float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
   virtual vector<int> getTightEle(vector<int> looselist,float elePtCut=eleTightPtCut,float eleEtaCut=eleTightEtaCut);
-  virtual float getLooseEleSF(int lepindex,string variation="nominal");
+  virtual float getLooseEleSF(int lepindex,TString variation="nominal");
   virtual float getTightEleSF(int lepindex);
   
   virtual vector<int> getLoosePho(float phoPtCut=phoLoosePtCut,float phoEtaCut=phoLooseEtaCut);
@@ -1001,12 +1013,12 @@ public:
   virtual vector<int> muon_veto_looseID(int jetindex,float muPtCut=muLoosePtCut,float muEtaCut=muLooseEtaCut);
   virtual vector<int> getTightMu(float muPtCut=muTightPtCut,float muEtaCut=muTightEtaCut);
   virtual vector<int> getTightMu(vector<int> looselist,float muPtCut=muTightPtCut,float muEtaCut=muTightEtaCut);
-  virtual float getLooseMuSF(int lepindex,string variation="nominal");
+  virtual float getLooseMuSF(int lepindex,TString variation="nominal");
   virtual float getTightMuSF(int lepindex);
   
   virtual vector<int> getLooseTau(float tauPtCut=tauLoosePtCut,float tauEtaCut=tauLooseEtaCut);
   virtual vector<int> tau_veto_looseID(int jetindex,float tauPtCut=tauLoosePtCut,float tauEtaCut=tauLooseEtaCut);
-  virtual float getLooseTauSF(int lepindex,string variation="nominal");
+  virtual float getLooseTauSF(int lepindex,TString variation="nominal");
   
   /* Systematic Uncertainty Methods */
   virtual void QCDVariations(float event_weight);

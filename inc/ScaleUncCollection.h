@@ -9,11 +9,11 @@ class ScaleUncCollection {
  private:
   TTree* tree;
   struct ScaleUnc {
-    std::string name;
+    TString name;
     TH1F* histo;
     float up;
     float dn;
-    ScaleUnc(std::string name,TH1F* histo) {
+    ScaleUnc(TString name,TH1F* histo) {
       this->name = name;
       this->histo = histo;
       up = dn = 0;
@@ -24,14 +24,14 @@ class ScaleUncCollection {
     }
     float getBin(float x) { return histo->GetBinContent( histo->GetXaxis()->FindBin(x) ); }
   };
-  std::map<std::string,ScaleUnc*> uncmap;
+  std::map<TString,ScaleUnc*> uncmap;
  public:
   void setTree(TTree* tree);
-  void addUnc(std::string name,TH1F* histo);
-  TH1F* getHisto(std::string name);
-  float getBin(std::string name, float x);
-  void setUnc(std::string name,float up,float dn);
-  bool contains(std::string name);
+  void addUnc(TString name,TH1F* histo);
+  TH1F* getHisto(TString name);
+  float getBin(TString name, float x);
+  void setUnc(TString name,float up,float dn);
+  bool contains(TString name);
 };
 
 #endif

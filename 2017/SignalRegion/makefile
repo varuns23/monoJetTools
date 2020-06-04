@@ -1,4 +1,4 @@
-RFLAGS:=-I$ROOTSYS/include -L$ROOTSYS/lib `root-config --cflags` `root-config --libs` -lFoam -lMathMore -Wno-deprecated
+RFLAGS:=-g -I$ROOTSYS/include -L$ROOTSYS/lib `root-config --cflags` `root-config --libs` -lFoam -lMathMore -Wno-deprecated
 PROFILER:=-Wall -g -pg -O0 -fno-inline 
 
 ROOT:=../../

@@ -93,7 +93,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (!tau_veto(lepindex)) continue;
     fillEvent(8,event_weight);
 
-    if (!bjet_veto( bjetDeepCSVCut_2017)) continue;
+    if (!bjet_weights(bjetDeepCSVCut_2017,event_weight)) continue;
     vector<int> jetlist = getLooseJet();
     mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
     fillEvent(9,event_weight);
@@ -131,8 +131,8 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   for(int i = 0; i<nHisto; i++) {
     char ptbins[100];
     sprintf(ptbins, "_%d", i);
-    string histname(ptbins);
-    auto dir = output->mkdir( ("monoJet"+histname).c_str() );
+    TString histname(ptbins);
+    auto dir = output->mkdir( ("monoJet"+histname) );
     dir->cd();
     if (i == bHisto) {
       auto treedir = dir->mkdir("trees");
@@ -165,7 +165,7 @@ bool monoJetClass::UncLoop(float &event_weight) {
 
   if (!tau_veto(lepindex)) return false;
 
-  if (!bjet_veto( bjetDeepCSVCut_2017)) return false;
+  if (!bjet_weights(bjetDeepCSVCut_2017,event_weight)) return false;
 
   vector<int> jetlist = getLooseJet();
   mindPhiJetMET = dPhiJetMETmin(jetlist,recoilPhi);
@@ -182,7 +182,7 @@ bool monoJetClass::UncLoop(float &event_weight) {
   return true;
 }
 void monoJetClass::JetEnergyScale(float start_weight) {
-  string uncname = "JES";
+  TString uncname = "JES";
   if ( !shapeUncs.contains(uncname) ) {
     shapeUncs.addUnc(uncname);
     initTree(shapeUncs.getTreeUp(uncname));
@@ -239,7 +239,7 @@ void monoJetClass::JetEnergyScale(float start_weight) {
   setRecoil();
 }
 void monoJetClass::JetEnergyResolution(float start_weight) {
-  string uncname = "JER";
+  TString uncname = "JER";
   if ( !shapeUncs.contains(uncname) ) {
     shapeUncs.addUnc(uncname);
     initTree(shapeUncs.getTreeUp(uncname));

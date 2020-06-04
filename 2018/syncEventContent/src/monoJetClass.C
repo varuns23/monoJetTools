@@ -185,8 +185,8 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   for(int i = 0; i<nHisto; i++) {
     char ptbins[100];
     sprintf(ptbins, "_%d", i);
-    string histname(ptbins);
-    auto dir = output->mkdir( ("monoJet"+histname).c_str() );
+    TString histname(ptbins);
+    auto dir = output->mkdir( ("monoJet"+histname) );
     dir->cd();
     if (i == bHisto) {
       auto treedir = dir->mkdir("trees");

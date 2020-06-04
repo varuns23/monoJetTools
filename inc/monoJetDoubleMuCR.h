@@ -18,7 +18,7 @@ public:
 
   TH2F *h_leadingLeptonEtaPhi[maxHisto],*h_subleadingLeptonEtaPhi[maxHisto];
   
-  virtual void BookHistos(int i,std::string histname);
+  virtual void BookHistos(int i,TString histname);
   virtual void fillHistos(int nhist,float event_weight);
   virtual void initVars();
   virtual void initTree(TTree* tree);

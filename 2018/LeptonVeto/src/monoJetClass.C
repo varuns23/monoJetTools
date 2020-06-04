@@ -94,7 +94,7 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     }
     fillEvent(6,event_weight);
  
-    if (!bjet_veto(bjetDeepCSVCut_2017)) continue;
+    if (!bjet_weights(bjetDeepCSVCut_2017)) continue;
     vector<int> jetlist = getLooseJet();
     mindPhiJetMET = dPhiJetMETmin(jetlist,pfMETPhi);
     fillEvent(7,event_weight);
@@ -129,8 +129,8 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   for(int i = 0; i<nHisto; i++) {
     char ptbins[100];
     sprintf(ptbins, "_%d", i);
-    string histname(ptbins);
-    auto dir = output->mkdir( ("monoJet"+histname).c_str() );
+    TString histname(ptbins);
+    auto dir = output->mkdir( ("monoJet"+histname) );
     dir->cd();
     if (i == bHisto) {
       auto treedir = dir->mkdir("trees");

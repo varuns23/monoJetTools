@@ -5,9 +5,9 @@
 
 class monoJetYear : public virtual monoJetAnalysis {
 public:
-  static const std::string SRDATA;
+  static const TString SRDATA;
   
-  virtual void BookHistos(int i,string histname);
+  virtual void BookHistos(int i,TString histname);
   virtual void fillHistos(int nhist,float event_weight);
   virtual void initVars();
   virtual void SetScalingHistos();

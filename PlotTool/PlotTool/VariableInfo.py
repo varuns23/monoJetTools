@@ -8,9 +8,11 @@ from Parser import parser
 from samplenames import samplenames
 
 parser.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
+parser.add_argument("--rebin",help="Specify number of bins to merge using TH1::Rebin()",type=int)
 parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
 parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
 parser.add_argument("--no-width",help="Disable bin width scaling",action="store_true",default=False)
+parser.add_argument("--add-overflow",help="Add overflow bin to last bin",action="store_true",default=False)
 
 def IsGlobal(variable,tfile):
     return tfile.GetListOfKeys().Contains(variable)
@@ -39,21 +41,26 @@ def linspace(xmin,xmax,nx): return list(np.linspace(xmin,xmax,nx+1))
 def AddOverflow(hs):
     nbins = hs.GetNbinsX()
     overflow = hs.GetBinContent(nbins) + hs.GetBinContent(nbins+1)
+    sqr_error = hs.GetBinError(nbins)**2 + hs.GetBinError(nbins+1)**2
     hs.SetBinContent(nbins,overflow)
+    hs.SetBinError(nbins,TMath.Sqrt(sqr_error))
+
+    hs.SetBinContent(nbins+1,0)
+    hs.SetBinError(nbins+1,0)
+    
     return
 def PtFractionBinning(self,arg):
     arg = arg.replace('res','')
     bins = array('d',[0,0.3,0.5,0.7,0.8,0.9,1.0])
     if arg == "2": bins = array('d',[0,0.25,0.4,0.55,0.7,0.85,1.0])
-    
+    self.overflow = True
     nbins= len(bins)-1
     template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,bins)
-    template.post = AddOverflow
     return template
 def inclusiveBinning(self,arg):
     nbins = int(arg.replace('incl',''))
     template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,0,1)
-    template.post = AddOverflow
+    self.overflow = True
     return template
 
 def inclusiveCutBinning(self,arg):
@@ -63,18 +70,11 @@ def inclusiveCutBinning(self,arg):
         lim = float(cut.split('>')[-1])
         bmin = lim; bmax = 1
     template = TH1F(self.base,'{title}:{xaxis_title}:{yaxis_title}'.format(**vars(self)),nbins,bmin,bmax)
-    template.post = AddOverflow
+    self.overflow = True
     return template
-def rebin(self,arg):
-    # bins = array('d',[250.,280.,310.,340.,370.,400.,430.,470.,510.,550.,590.,640.,690.,740.,790.,840.,900.,960.,1020.,1090.,1160.,1250.,1400.])
-    nbins = int(arg.replace('rebin',''))
-    histo = self.file_template
-    histo.Rebin(nbins)
-    return histo
     
 class VariableInfo:
     binningMap = {
-        'rebin':rebin,
         'incl':inclusiveBinning,
         'incu':inclusiveCutBinning,
         'res':PtFractionBinning
@@ -86,10 +86,15 @@ class VariableInfo:
         if type(tfile) == str: tfile = TFile(tfile)
         finaldir = None
         finalnhs = None
+        self.dirlist = []
         for key in tfile.GetListOfKeys():
             if tfile.GetDirectory(key.GetName()):
-                finaldir = key.GetName()
-                finalnhs = finaldir.split('_')[1]
+                dirname = key.GetName()
+                ndir = dirname.split('_')[1]
+                self.dirlist.append(ndir)
+                if tfile.GetDirectory("%s/trees"%dirname):
+                    finaldir = dirname
+                    finalnhs = ndir
         self.nuisances = {'Stat':True}
         if tfile.GetDirectory('%s/trees'%finaldir ): self.nuisances = GetNuisanceList(tfile,'%s/trees'%finaldir)
         self.finaldir = finaldir
@@ -105,11 +110,14 @@ class VariableInfo:
         self.isGlobal = False
         self.isNhisto = False
         self.isBranch = False
-    def setVariable(self,variable,weight="weight",cut=None,autovar=False,tfile=None):
+    def setVariable(self,variable,weight="weight",cut=None,autovar=None,tfile=None):
         if tfile is not None: self.initFile(tfile)
         tfile = self.tfile
         self.initVariable()
-        if autovar: variable += '_'+self.finalnhs
+        if autovar is not None:
+            nh = str(int(self.finalnhs)+autovar)
+            if nh not in self.dirlist: nh = self.finalnhs
+            variable += '_'+nh
         self.variable = variable
 
         self.weight = weight
@@ -123,16 +131,23 @@ class VariableInfo:
             else: self.cutfix = self.cut.replace('<','-').replace('>','+')
         
         if IsGlobal(variable,tfile): self.initGlobal(tfile,variable)
-        elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
+        #elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
         elif IsNhisto(variable,tfile): self.initNhisto(tfile,variable)
 
         self.title = self.template.GetTitle()
         self.xaxis_title = self.template.GetXaxis().GetTitle()
         self.yaxis_title = self.template.GetYaxis().GetTitle()
 
-        self.scaleWidth = False
-        if not parser.args.no_width and self.template.ClassName() == "TH1":
-            self.scaleWidth = any( "%.3f" % self.template.GetBinWidth(ibin) != "%.3f" % self.template.GetBinWidth(ibin+1) for ibin in range(1,self.template.GetNbinsX()) )
+        self.rebin = parser.args.rebin
+        self.overflow = parser.args.add_overflow
+
+        if "recoil" in variable:
+            self.overflow = True
+
+        self.scaleWidth = True
+        if parser.args.no_width: self.scaleWidth = False
+        # if not parser.args.no_width and self.template.ClassName() == "TH1":
+            # self.scaleWidth = any( "%.3f" % self.template.GetBinWidth(ibin) != "%.3f" % self.template.GetBinWidth(ibin+1) for ibin in range(1,self.template.GetNbinsX()) )
         
     def initGlobal(self,tfile,variable):
         self.isGlobal = True

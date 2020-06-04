@@ -9,13 +9,13 @@
 #define monoJetClass_h
 
 #include "monoJetYear.h"
-#include "monoJetGammaCR.h"
+#include "monoJetGammaPurity.h"
 
 using namespace std;
-class monoJetClass : public monoJetYear, public monoJetGammaCR {
+class monoJetClass : public monoJetYear, public monoJetGammaPurity {
 public :
-  static const int nHisto = 6;
-  static const int bHisto = 5;
+  static const int nHisto = 15;
+  static const int bHisto = 14;
   
   monoJetClass(const char* file1,const char* file2,int nfiles) : monoJetAnalysis(file1,file2,nfiles) {
     BookHistos(file2); };
@@ -27,9 +27,9 @@ public :
   }
   void     Loop(Long64_t maxEvents, int reportEvery);
   void BookHistos(const char* file2);
-  void BookHistos(int i,string histname) {
-    // monoJetYear::BookHistos(i,histname);
-    // monoJetGammaCR::BookHistos(i,histname);
+  void BookHistos(int i,TString histname) {
+    monoJetYear::BookHistos(i,histname);
+    monoJetGammaCR::BookHistos(i,histname);
   }
   void fillHistos(int nhist,float event_weight=1.0);
   void initVars() {
@@ -37,14 +37,13 @@ public :
     monoJetGammaCR::initVars();
   }
   void initTree(TTree* tree) {
-    // monoJetYear::initTree(tree);
+    monoJetYear::initTree(tree);
     monoJetGammaCR::initTree(tree);
   }
-
-  int getPhoIndex();
-  int getJetIndex(int phoindex);
   
+  bool UncLoop(float &event_weight);
   void JetEnergyScale(float start_weight);
+  void JetEnergyResolution(float start_weight);
 };
 
 #endif

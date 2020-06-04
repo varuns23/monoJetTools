@@ -54,16 +54,17 @@ parser.add_argument("--nhists",help="Plot all 1D plots at nhists level",type=int
 parser.add_argument("--mc-solid",help="Make MC solid color",action="store_true",default=False)
 parser.add_argument("-d","--directory",help="Specify directory to get post files from",type=valid_directory)
 parser.add_argument("-e","--era",help="Specify the eras to use",type=lambda arg:sorted(arg.upper()),default=None)
-parser.add_argument("-a","--autovar",help="Specify to use the automatic basic nhist",action="store_true",default=False)
+parser.add_argument("-a","--autovar",help="Specify to use the automatic basic nhist",nargs="?",const=0,type=int)
 parser.add_argument("--auto-order",help="Order MC Stack based on Integral",action="store_true",default=False)
 parser.add_argument("--normalize",help="Specify to normalize plots to unity",action="store_true",default=False)
 parser.add_argument("--nlo",help="Use all available NLO samples",action="store_true",default=False)
 parser.add_argument("--postpath",help="Force path to come from postpath.txt",action="store_true",default=False)
 parser.add_argument("--verbose",help="Specify verbose level",type=int,default=0)
 parser.add_argument("--blinded",help="Disable Data from being plotted",action="store_true",default=False)
+parser.add_argument("--use-ga-qcd",help="Use QCD from GammaCR instead of QCD Fake Template",action="store_true",default=False)
 
 class Region(object):
-    def __init__(self,year=None,region=None,lumi=None,path=None,config=None,autovar=False,useMaxLumi=False,show=True,blinded=None):
+    def __init__(self,year=None,region=None,lumi=None,path=None,config=None,autovar=None,useMaxLumi=False,show=True,blinded=None):
         parser.parse_args()
         self.year = year; self.region = region; self.show = show
         self.setPath(path)
@@ -72,7 +73,8 @@ class Region(object):
         self.setLumi(lumi,useMaxLumi)
         
         self.autovar = autovar
-        if parser.args.autovar: self.autovar = True
+        if parser.args.autovar is not None: self.autovar = parser.args.autovar
+        if self.autovar is True: self.autovar = 0
 
         self.isBlinded = blinded
         if self.isBlinded is None:
@@ -94,8 +96,14 @@ class Region(object):
         else:
             datalist = [ '%s_%s' % (datafile,era) for era in sorted(self.lumimap.keys()) ]
         self.processes["Data"] =    Process("Data",datalist,None,'data',year=self.year,region=self.region)
-        for mc in self.MCList: self.processes[mc] = Process(mc,self.config.filemap[mc],GetMCxsec(self.config.filemap[mc],self.config.xsec),'bkg',
-                                                            leg=self.config.legmap[mc],color=self.config.colmap[mc],year=self.year,region=self.region)
+        for mc in self.MCList:
+            if self.region == "GammaCR" and mc == "QCD" and not parser.args.use_ga_qcd:
+                fakefiles = [ datafile.replace("Gamma","QCDFake") for datafile in datalist ]
+                self.processes[mc] = Process("QCDFake",fakefiles,None,'bkg',
+                                         leg=self.config.legmap[mc],color=self.config.colmap[mc],year=self.year,region=self.region)
+                continue
+            self.processes[mc] = Process(mc,self.config.filemap[mc],GetMCxsec(self.config.filemap[mc],self.config.xsec),'bkg',
+                                         leg=self.config.legmap[mc],color=self.config.colmap[mc],year=self.year,region=self.region)
         if self.region == "SignalRegion" and any(parser.args.signal):
             self.setSignalInfo()
         self.haddFiles()
@@ -223,7 +231,7 @@ class Region(object):
         self.variable.setVariable(variable,weight,cut,autovar=self.autovar)
         self.scaleWidth = self.variable.scaleWidth
         self.varname = self.variable.variable
-        if self.autovar: self.varname = self.variable.base
+        if self.autovar is not None: self.varname = self.variable.base
         if hasattr(self.variable,'cutfix'): self.varname += self.variable.cutfix
         if hasattr(self.variable,'binfix'): self.varname += '_'+self.variable.binfix
     def initiate(self,variable,weight='weight',cut=None):
