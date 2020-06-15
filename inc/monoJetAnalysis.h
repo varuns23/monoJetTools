@@ -226,7 +226,8 @@ public:
   TH1F *h_nJetsSkim[maxHisto];
   TH1F *h_j1CHFrounded[maxHisto],*h_j1NHFrounded[maxHisto];
   // PF Jet Info      
-  TH1F *h_Pt123[maxHisto],*h_Pt123Fraction[maxHisto],*h_ChNemPt[maxHisto],*h_ChNemPt123[maxHisto],*h_ChNemPtFrac[maxHisto],*h_TotPFCands[maxHisto];
+  TH1F *h_Pt123[maxHisto],*h_Pt123Fraction[maxHisto],*h_ChNemPt[maxHisto],*h_ChNemPt123[maxHisto],*h_TotPFCands[maxHisto];
+  TH1F *h_ChNemPtFrac[maxHisto],*h_ChNemPtFracV2[maxHisto];
   TH1F *h_OpsChPtFrac[maxHisto],*h_OpsChPt[maxHisto],*h_OpsChGPtFrac[maxHisto],*h_OpsChGPt[maxHisto];
   // Charged Info     
   TH1F *h_ChPFCands[maxHisto],*h_ChPercCons[maxHisto],*h_ChargedPFPt[maxHisto],*h_ChPercPFPt[maxHisto];
