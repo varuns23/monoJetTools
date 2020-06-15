@@ -8,6 +8,7 @@ from Parser import parser
 from samplenames import samplenames
 
 parser.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
+parser.add_argument("--branch",help="Use TTree if available",action="store_true",default=False)
 parser.add_argument("--rebin",help="Specify number of bins to merge using TH1::Rebin()",type=int)
 parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
 parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
@@ -134,7 +135,7 @@ class VariableInfo:
             else: self.cutfix = self.cut.replace('<','-').replace('>','+')
         
         if IsGlobal(variable,tfile): self.initGlobal(tfile,variable)
-        # elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
+        elif parser.args.branch and IsBranch(variable,tfile): self.initBranch(tfile,variable)
         elif IsNhisto(variable,tfile): self.initNhisto(tfile,variable)
 
         self.title = self.template.GetTitle()
