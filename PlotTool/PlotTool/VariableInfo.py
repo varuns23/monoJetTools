@@ -14,6 +14,8 @@ parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTre
 parser.add_argument("--no-width",help="Disable bin width scaling",action="store_true",default=False)
 parser.add_argument("--add-overflow",help="Add overflow bin to last bin",action="store_true",default=False)
 
+extraction_variables = ("recoil","ChNemPtFrac")
+
 def IsGlobal(variable,tfile):
     return tfile.GetListOfKeys().Contains(variable)
 def IsNhisto(variable,tfile):
@@ -24,6 +26,7 @@ def IsNhisto(variable,tfile):
     # tdir.Close()
     return isNhisto
 def IsBranch(variable,tfile):
+    if not any( extraction in variable for extraction in extraction_variables ): return False
     dirname,ndir = GetDirname(variable,sub='trees')
     tdir = tfile.GetDirectory(dirname)
     if tdir == None: return False
@@ -131,7 +134,7 @@ class VariableInfo:
             else: self.cutfix = self.cut.replace('<','-').replace('>','+')
         
         if IsGlobal(variable,tfile): self.initGlobal(tfile,variable)
-        #elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
+        # elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
         elif IsNhisto(variable,tfile): self.initNhisto(tfile,variable)
 
         self.title = self.template.GetTitle()
@@ -141,8 +144,8 @@ class VariableInfo:
         self.rebin = parser.args.rebin
         self.overflow = parser.args.add_overflow
 
-        if "recoil" in variable:
-            self.overflow = True
+        use_overflow = ("recoil","ChNemPtFrac")
+        if any( var in variable for var in use_overflow ): self.overflow = True
 
         self.scaleWidth = True
         if parser.args.no_width: self.scaleWidth = False

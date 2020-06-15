@@ -6,8 +6,8 @@ lumi = {"SingleEleCR":59699,
         "SingleMuCR":59699,
         "DoubleMuCR":59699,
         "GammaCR":59699,
-        "SignalRegion":59699/5.
-        # "SignalRegion":3506
+        # "SignalRegion":59699/5.
+        "SignalRegion":14024/5.
 }
 
 lumi_by_era = {"SingleEleCR":{"A":14024,"B":7061,"C":6895,"D":31720},
@@ -47,10 +47,10 @@ colmap = {
     "WJets-NLO" :kRed-10,
     "DYJets"    :kTeal-9,
     "DYJets-NLO":kTeal-9,
-    "GJets"     :kGray+2,  
+    "GJets"     :kGray,  
     "TTJets"    :kOrange-2,
     "DiBoson"   :kCyan-10, 
-    "QCD"       :kGray
+    "QCD"       :kGray+2
 }
 
 # 2018 xsec

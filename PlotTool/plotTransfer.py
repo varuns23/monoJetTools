@@ -78,7 +78,7 @@ rangemap = {
 varmap = {}
 
 def tfmc_style(tf_proc,color=kRed,xname=None):
-    tf_proc.histo.SetLineWidth(2)
+    tf_proc.histo.SetLineWidth(3)
     tf_proc.histo.SetLineColor(color);
     tf_proc.histo.SetTitle("")
     tf_proc.histo.GetYaxis().SetTitle(tf_proc.name)
@@ -280,7 +280,7 @@ def plotTF_datamc(num_sample,den_sample):
     datamc = GetRatio(tf_data.histo,tf_proc.histo)
     # rymin = 0.65; rymax = 1.35
     rymin = 0.35; rymax = 1.75
-    RatioStyle(datamc,rymin,rymax,color=12,xname=num_sample.name)
+    RatioStyle(datamc,rymin,rymax,xname=num_sample.name) #,color=12
     datamc.SetMarkerSize(1.5)
     datamc.SetTitle("")
     datamc.Draw("hist p")

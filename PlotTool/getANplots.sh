@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-nvariables='recoil pfMET recoilall pfMETall nJetsSkim j1etaWidth j1pT j1Eta j1Phi j1CHF j1NHF nVtxNoW nVtxReW dphimin metcut'
+nvariables='ChNemPtFrac ChNemPtFracV2 recoil pfMET recoilall pfMETall nJetsSkim j1etaWidth j1pT j1Eta j1Phi j1CHF j1NHF nVtxNoW nVtxReW dphimin metcut'
 singleleps='LeptonPt LeptonEta LeptonPhi lepMET_MT'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta leadingLeptonPhi subleadingLeptonEta subleadingLeptonPt subleadingLeptonPhi'
 gamma='photonPt photonEta photonPhi'
@@ -26,7 +26,6 @@ run() {
     pushd $1
     shift 1
     array="$nvariables $@"
-    plot $run_options -a  --sub $subdirChNemPtFrac -b res
     # plot $run_options -a --sub $subdir $cat1
     # plot $run_options -a --sub $subdir $cat2
     # plot $run_options -a --sub $subdir $cat3
