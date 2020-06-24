@@ -2,6 +2,7 @@
 #define monoJetAnalysis_C
 
 #include <stdexcept>
+#include <algorithm>
 
 #include "monoJetAnalysis.h"
 #include "monoJetEnums.h"
@@ -78,13 +79,13 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("btag_sfUp",&btag_sfUp);
   tree->Branch("btag_sfDown",&btag_sfDown);
   tree->Branch("recoil",&recoil);
+  tree->Branch("pfMET",&pfMET);
+  tree->Branch("j1pT",&j1pT);
   tree->Branch("bosonPt",&bosonPt);
 
   if ( REGION != SR || isMC ) return;
 
-  tree->Branch("pfMET",&pfMET);
   tree->Branch("pfMETPhi",&pfMETPhi);
-  tree->Branch("j1pT",&j1pT);
   tree->Branch("j1Eta",&j1Eta);
   tree->Branch("j1Phi",&j1Phi);
   tree->Branch("nJets",&nJet);
@@ -203,7 +204,7 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
   // Jet Info         ;
   h_nJets[nhist]        ->Fill(nJet,event_weight);
   h_nJetsSkim[nhist]    ->Fill(nJetSkim,event_weight);
-  int jetCand = jetindex != -1 ? jetindex : 0;
+  int jetCand = jetindex != -1 ? jetindex : jetCandList[0];
   if ( nJet > 0 ) {
     h_j1pT[nhist]         ->Fill(jetPt->at(jetCand),event_weight);
     h_j1pTall[nhist]      ->Fill(jetPt->at(jetCand),event_weight);
@@ -327,6 +328,7 @@ void monoJetAnalysis::setJetCandList() {
       jetCandList.push_back(ijet);
     }
   }
+  sort(jetCandList.begin(),jetCandList.end(),[this](const int& a,const int&b){ return this->jetPt->at(a) > this->jetPt->at(b); });
 }
 
 int monoJetAnalysis::getJetCand(float jetPtCut,float jetEtaCut,float jetNHFCut,float jetCHFCut) {
