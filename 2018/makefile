@@ -1,4 +1,4 @@
-REGIONS=SignalRegion SingleEleCR SingleMuCR DoubleEleCR DoubleMuCR GammaCR
+REGIONS=SignalRegion SingleEleCR SingleMuCR DoubleEleCR DoubleMuCR GammaCR GammaPurity/QCDTemplate
 
 .PHONY: $(REGIONS) all
 
