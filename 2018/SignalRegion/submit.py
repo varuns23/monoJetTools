@@ -12,7 +12,7 @@ options['parallel'] = False
 options['batchsize'] = 100
 # options['submit'] = False
 #----Submit---#
-submit('met',sub='A',filelist=True)
+submit('met',filelist=True)
 for signal in signalist: submit(signal,split=1)
 for mc in mclist: submit(mc)
 
