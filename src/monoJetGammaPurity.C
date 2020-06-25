@@ -30,7 +30,7 @@ float monoJetGammaPurity::getImpurityWeight(float photon_pt) {
 
 void monoJetGammaPurity::initTree(TTree* tree) {
   monoJetGammaCR::initTree(tree);
-  tree->Branch("photonPt",&photon_pt);
+  // tree->Branch("photonPt",&photon_pt);
   tree->Branch("photonSieie",&photon_sieie);
   tree->Branch("phoPFIso",&photon_phoiso);
 }

@@ -926,6 +926,7 @@ public:
   /* Event Weight Methods */
   virtual void SetBoson(int PID);
   virtual void GenDilepton();
+  virtual void GenNeutrinos();
   virtual float getKFactor(float bosonPt);
   virtual void SetKFactors(float bosonPt);
   virtual void ApplyKFactor(float &event_weight);

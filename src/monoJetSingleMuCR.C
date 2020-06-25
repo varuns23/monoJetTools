@@ -16,9 +16,9 @@ void monoJetSingleMuCR::initVars() {
 }
 
 void monoJetSingleMuCR::initTree(TTree* tree) {
-  // tree->Branch("LeptonPt",&lepton_pt,"Lepton P_{T} (GeV)");
-  // tree->Branch("LeptonEta",&lepton_eta,"Lepton Eta");
-  // tree->Branch("LeptonPhi",&lepton_phi,"LeptonPhi");
+  tree->Branch("LeptonPt",&lepton_pt,"Lepton P_{T} (GeV)");
+  tree->Branch("LeptonEta",&lepton_eta,"Lepton Eta");
+  tree->Branch("LeptonPhi",&lepton_phi,"LeptonPhi");
   tree->Branch("tightID_sf",&tightID_sf);
   tree->Branch("tightISO_sf",&tightISO_sf);
 }

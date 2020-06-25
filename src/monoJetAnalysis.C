@@ -80,16 +80,13 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("btag_sfDown",&btag_sfDown);
   tree->Branch("recoil",&recoil);
   tree->Branch("pfMET",&pfMET);
-  tree->Branch("j1pT",&j1pT);
-  tree->Branch("bosonPt",&bosonPt);
-
-  if ( REGION != SR || isMC ) return;
-
   tree->Branch("pfMETPhi",&pfMETPhi);
+  tree->Branch("j1pT",&j1pT);
   tree->Branch("j1Eta",&j1Eta);
   tree->Branch("j1Phi",&j1Phi);
   tree->Branch("nJets",&nJet);
   tree->Branch("nVtx",&nVtx);
+  tree->Branch("bosonPt",&bosonPt);
 }
 
 void monoJetAnalysis::BookHistos(int i,TString histname) {
@@ -204,7 +201,7 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
   // Jet Info         ;
   h_nJets[nhist]        ->Fill(nJet,event_weight);
   h_nJetsSkim[nhist]    ->Fill(nJetSkim,event_weight);
-  int jetCand = jetindex != -1 ? jetindex : jetCandList[0];
+  int jetCand = jetindex != -1 ? jetindex : (jetCandList.size() > 0 ? jetCandList[0] : 0);
   if ( nJet > 0 ) {
     h_j1pT[nhist]         ->Fill(jetPt->at(jetCand),event_weight);
     h_j1pTall[nhist]      ->Fill(jetPt->at(jetCand),event_weight);
@@ -764,6 +761,7 @@ void monoJetAnalysis::SetBoson(int PID) {
   }
   // Sometimes a boson isn't found for z->ll. Try finding gen dilepton instead
   if (bosonPt == 0 && type == DYJets) GenDilepton();
+  if (bosonPt == 0 && type == ZJets) GenNeutrinos();
 }
 
 void monoJetAnalysis::GenDilepton() {
@@ -800,6 +798,34 @@ void monoJetAnalysis::GenDilepton() {
     }
   }
  found_dilepton: ;
+}
+
+void monoJetAnalysis::GenNeutrinos() {
+  // printf("Could not find Z boson, trying for neutrinos\n");
+  for (int i = 0; i < nMC; i++) {
+    if ( (mcStatusFlag->at(i)>>1&1)!= 1 ) continue;
+    int pid1 = mcPID->at(i);
+
+    if ( abs(pid1) == 12 || abs(pid1) == 14 || abs(pid1) == 16 ) {
+      for (int j = i; i < nMC; j++) {
+	int pid2 = mcPID->at(j);
+	
+	if ( abs(pid1) == abs(pid2) && pid1*pid2 < 0 ) {
+	  TLorentzVector n1,n2;
+	  n1.SetPtEtaPhiE(mcPt->at(i),mcEta->at(i),mcPhi->at(i),mcE->at(i));
+	  n2.SetPtEtaPhiE(mcPt->at(j),mcEta->at(j),mcPhi->at(j),mcE->at(j));
+	  TLorentzVector nn = n1 + n2;
+	  bosonPt = nn.Pt();
+	  SetKFactors(bosonPt);
+	  // printf("PID 1: %i PID 2: %i\n",pid1,pid2);
+	  // printf("Boson Pt: %f\n",bosonPt);
+	  // Exit all loops once neutrinos are found
+	  goto found_neutrinos;
+	}
+      }
+    }
+  }
+ found_neutrinos: ;
 }
 
 float monoJetAnalysis::getKFactor(float bosonPt) {

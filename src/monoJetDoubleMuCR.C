@@ -20,14 +20,14 @@ void monoJetDoubleMuCR::initVars() {
 }
 
 void monoJetDoubleMuCR::initTree(TTree* tree) {
-  // tree->Branch("dileptonM",&dilepton_mass,"Z Mass (GeV)");
-  // tree->Branch("dileptonPt",&dilepton_pt,"Z P_{T} (GeV)");
-  // tree->Branch("leadingLeptonPt",&leadingLepton_pt,"Leading Lepton P_{T} (GeV)");
-  // tree->Branch("leadingLeptonEta",&leadingLepton_eta,"Leading Lepton Eta");
-  // tree->Branch("leadingLeptonPhi",&leadingLepton_phi,"Leading Lepton Phi");
-  // tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
-  // tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
-  // tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
+  tree->Branch("dileptonM",&dilepton_mass,"Z Mass (GeV)");
+  tree->Branch("dileptonPt",&dilepton_pt,"Z P_{T} (GeV)");
+  tree->Branch("leadingLeptonPt",&leadingLepton_pt,"Leading Lepton P_{T} (GeV)");
+  tree->Branch("leadingLeptonEta",&leadingLepton_eta,"Leading Lepton Eta");
+  tree->Branch("leadingLeptonPhi",&leadingLepton_phi,"Leading Lepton Phi");
+  tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
+  tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
+  tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
   tree->Branch("tightID_sf",&tightID_sf);
   tree->Branch("tightISO_sf",&tightISO_sf);
   tree->Branch("looseID_sf",&looseID_sf);
