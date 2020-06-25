@@ -12,7 +12,7 @@ def DataStyle(hs_data):
     # hs_data.GetYaxis().SetLabelOffset(999);
     hs_data.SetLineColor(kBlack);
     hs_data.SetMarkerStyle(20);
-    hs_data.SetMarkerSize(1);
+    hs_data.SetMarkerSize(1.35);
 ###################################################################
     
 def MCStyle(hs_mc,color):
@@ -31,6 +31,11 @@ def UncBandStyle(uncband,color=33):
     # uncband.SetFillStyle(3144)
     uncband.SetFillStyle(2001)
     uncband.SetFillColor(color)
+
+    uncband.SetMarkerStyle(1)
+    uncband.SetMarkerSize(0)
+    uncband.SetLineColor(0)
+    uncband.SetLineWidth(0)
 ###################################################################
 
 def fillStack(samples,hs_datamc,threshold=0.001):
@@ -74,13 +79,23 @@ def getCMSText(lumi_label,year,scale=1):
     return texS,texS1
 ###################################################################
 
+def SoverBText(x=0.55,y=0.45,soverb=0,error=0,scale=1):
+    label = "%.3f" % soverb
+    if error > 0: label += " #pm %f" % error
+    btext = TLatex(x,y,"S/#sqrt{B} = %s"%label)
+    btext.SetNDC()
+    btext.SetTextFont(42)
+    btext.SetTextSize(0.05*scale)
+    btext.Draw()
+    return btext
+
 def RatioStyle(ratio,rymin=0.3,rymax=1.7,color=kBlack,xname=None,yname='Data/Bkg'):
     if ratio.ClassName() == "TH1": ratio.SetStats(0);
     ratio.SetMarkerColor(color)
     ratio.SetLineColor(color)
     ratio.SetLineWidth(1)
     ratio.SetMarkerStyle(20);
-    ratio.SetMarkerSize(1.1);
+    ratio.SetMarkerSize(1.35);
 
     ratio.GetYaxis().CenterTitle();
     ratio.GetYaxis().SetTitle(yname)

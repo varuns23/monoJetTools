@@ -19,14 +19,15 @@ lepveto = Region(show=False,autovar=True)
 
 variable = parser.args.argv[0]
 
-nominal.initiate(variable,weight="weight",cut="eleveto_sf==1 && muveto_sf==1 && tauveto_sf==1")
+nominal.initiate(variable,weight="1",cut="eleveto_sf==1 && muveto_sf==1 && tauveto_sf==1 && btag_sf==1")
 
 output = TFile("veto_sys.root","recreate")
 
 lepmap = {
     "Electron":"ele",
     "Muon":"mu",
-    "Tau":"tau"
+    "Tau":"tau",
+    "BJet":"btag"
 }
 
 def hs_style(hs,color):
@@ -177,12 +178,16 @@ def plotLeptonVeto(nominal,lepveto,weight,cut):
     for process in config.mclist: ProcessVeto(process)
 #-- Electron Veto --#
 lepveto.lep="Electron"
-plotLeptonVeto(nominal,lepveto,"weight*eleveto_sf{var}","eleveto_sf{var} <= 1 && muveto_sf==1 && tauveto_sf==1")
+plotLeptonVeto(nominal,lepveto,"eleveto_sf{var}","eleveto_sf{var} <= 1 && muveto_sf==1 && tauveto_sf==1 && btag_sf == 1")
 
 #-- Muon Veto --#
 lepveto.lep="Muon"
-plotLeptonVeto(nominal,lepveto,"weight*muveto_sf{var}","eleveto_sf==1 && muveto_sf{var} <= 1 && tauveto_sf==1")
+plotLeptonVeto(nominal,lepveto,"muveto_sf{var}","eleveto_sf==1 && muveto_sf{var} <= 1 && tauveto_sf==1 && btag_sf == 1")
 
 #-- Tau --#
 lepveto.lep="Tau"
-plotLeptonVeto(nominal,lepveto,"weight*tauveto_sf{var}","muveto_sf==1 && eleveto_sf==1 && tauveto_sf{var} <= 1")
+plotLeptonVeto(nominal,lepveto,"tauveto_sf{var}","muveto_sf==1 && eleveto_sf==1 && tauveto_sf{var} <= 1 && btag_sf == 1")
+
+#-- Bjet --#
+lepveto.lep="BJet"
+plotLeptonVeto(nominal,lepveto,"btag_sf{var}","muveto_sf==1 && eleveto_sf==1 && tauveto_sf==1 && btag_sf{var} <= 1")

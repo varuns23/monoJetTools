@@ -36,6 +36,10 @@ processMap = {
     }
 }
 
+regionmap = {
+    "SignalRegion":"sr","SingleEleCR":"we","SingleMuCR":"wm","DoubleEleCR":"ze","DoubleMuCR":"zm","GammaCR":"ga","SingleLepCR":"wl","DoubleLepCR":"zl"
+}
+
 rangemap = {
     "recoil" : {
         "SignalRegion" : {
@@ -78,7 +82,7 @@ rangemap = {
 varmap = {}
 
 def tfmc_style(tf_proc,color=kRed,xname=None):
-    tf_proc.histo.SetLineWidth(2)
+    tf_proc.histo.SetLineWidth(3)
     tf_proc.histo.SetLineColor(color);
     tf_proc.histo.SetTitle("")
     tf_proc.histo.GetYaxis().SetTitle(tf_proc.name)
@@ -110,7 +114,7 @@ def tf_style(tf,color=kBlack,xname=None):
 def SetBounds(tflist,num_sample,den_sample):
     binlist = []
     for tf in tflist: binlist += list(tf.histo)[1:-1]
-    expand=0.5
+    expand=1.5
     ymin = min(binlist)*(1-expand)
     ymax = max(binlist)*(1+expand)
 
@@ -161,7 +165,9 @@ def plotTF(num_sample,den_sample):
     UncBandStyle(statband)
     bandlist.append(statband)
     if num_sample.num_boson != den_sample.den_boson:
-        unclist = unclist + ["NNLO_EWK","NNLO_Sud","NNLO_Miss"] + ["QCD_Scale","QCD_Proc","QCD_Shape","QCD_EWK_Mix"]
+        theorylist = ["NNLO_EWK","NNLO_Sud","NNLO_Miss"] + ["QCD_Scale","QCD_Proc","QCD_Shape","QCD_EWK_Mix"]
+        theorylist = ["THEORY_"+theory for theory in theorylist ]
+        unclist = unclist + theorylist
         theoryband = tf.fullUnc(unclist).GetBand()
         theoryband.label = bandlist[-1].label + " #otimes theory"
         UncBandStyle(theoryband,37)
@@ -174,7 +180,7 @@ def plotTF(num_sample,den_sample):
     for band in reversed(bandlist): band.Draw("e2 same")
         
     tf_style(tf,xname=num_sample.name)
-    tf.histo.Draw("hist p same")
+    tf.histo.Draw("pex0 same")
     pad1.RedrawAxis()
     
     texCMS,texLumi = getCMSText(lumi_label,year,scale=0.8)
@@ -190,7 +196,7 @@ def plotTF(num_sample,den_sample):
         variable = varname
         binning = ''
 
-    tfproc = "%s%s%s%s" % (num_sample.num_boson,num_info['text'],den_sample.den_boson,den_info['text'])
+    tfproc = "%s%s_%s%s%s%s" % (regionmap[num_sample.region],regionmap[den_sample.region],num_sample.num_boson,num_info['text'],den_sample.den_boson,den_info['text'])
     outname = "%s_%s" % (tfproc,num_sample.variable.base)
     SaveAs(c,outname,year=year,sub="TransferFactors/%s"%num_sample.variable.base)
 def plotTF_datamc(num_sample,den_sample):
@@ -238,7 +244,9 @@ def plotTF_datamc(num_sample,den_sample):
     UncBandStyle(statband)
     bandlist.append(statband)
     if num_sample.num_boson != den_sample.den_boson:
-        unclist = unclist + ["NNLO_EWK","NNLO_Sud","NNLO_Miss"] + ["QCD_Scale","QCD_Proc","QCD_Shape","QCD_EWK_Mix"]
+        theorylist = ["NNLO_EWK","NNLO_Sud","NNLO_Miss"] + ["QCD_Scale","QCD_Proc","QCD_Shape","QCD_EWK_Mix"]
+        theorylist = ["THEORY_"+theory for theory in theorylist ]
+        unclist = unclist + theorylist
         theoryband = tf_proc.fullUnc(unclist).GetBand()
         theoryband.label = bandlist[-1].label + " #otimes theory"
         UncBandStyle(theoryband,37)
@@ -251,7 +259,7 @@ def plotTF_datamc(num_sample,den_sample):
     for band in reversed(bandlist): band.Draw("e2 same")
         
     tf_proc.histo.Draw("histsame")
-    tf_data.histo.Draw("hist p same")
+    tf_data.histo.Draw("pex0 same")
     pad1.RedrawAxis()
 
     tfmc_style(tf_proc,xname=num_sample.name)
@@ -279,11 +287,19 @@ def plotTF_datamc(num_sample,den_sample):
         
     datamc = GetRatio(tf_data.histo,tf_proc.histo)
     # rymin = 0.65; rymax = 1.35
-    rymin = 0.35; rymax = 1.75
-    RatioStyle(datamc,rymin,rymax,color=12,xname=num_sample.name)
+    rymin = 0.5; rymax = 1.5
+    RatioStyle(datamc,rymin,rymax,xname=num_sample.name) #,color=12
     datamc.SetMarkerSize(1.5)
     datamc.SetTitle("")
-    datamc.Draw("hist p")
+    datamc.Draw("pex0")
+
+    ratio_band = tf_data.histo.Clone("ratio_band")
+    ratio_band.Divide(bandlist[-1])
+    for ibin in range(1,ratio_band.GetNbinsX()+1): ratio_band[ibin] = 1
+    UncBandStyle(ratio_band,37)
+    ratio_band.Draw("e2 same")
+    datamc.Draw("pex0 same")
+    
     line = getRatioLine(datamc.GetXaxis().GetXmin(),datamc.GetXaxis().GetXmax())
     line.Draw("same");
     c.Update()
@@ -295,7 +311,7 @@ def plotTF_datamc(num_sample,den_sample):
         variable = varname
         binning = ''
 
-    tfproc = "%s%s%s%s" % (num_sample.num_boson,num_info['text'],den_sample.den_boson,den_info['text'])
+    tfproc = "%s%s_%s%s%s%s" % (regionmap[num_sample.region],regionmap[den_sample.region],num_sample.num_boson,num_info['text'],den_sample.den_boson,den_info['text'])
     outname = "%s_%s" % (tfproc,num_sample.variable.base)
     SaveAs(c,outname,year=year,sub="TransferFactors/%s"%num_sample.variable.base)
 def plotTransfer(variable,samplemap):

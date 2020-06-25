@@ -11,13 +11,21 @@ correlation = {
     "NNLO_Miss":False,
     "NNLO_EWK":True,
     "QCD_EWK_Mix":True,
+    "THEORY_QCD_Scale":True,
+    "THEORY_QCD_Shape":True,
+    "THEORY_QCD_Proc":True,
+    "THEORY_NNLO_Sud":False,
+    "THEORY_NNLO_Miss":False,
+    "THEORY_NNLO_EWK":True,
+    "THEORY_QCD_EWK_Mix":True,
     "PDF":True,
     "JES":True,
     "JER":True,
     "Stat":False,
     "PSW_isrCon":True,
     "PSW_fsrCon":True,
-    "PFU_ecal":True
+    "PFU_ecal":True,
+    "theory_sys":True,
 }
 
 class Transfer:

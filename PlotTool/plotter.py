@@ -4,6 +4,7 @@ from PlotTool import *
 from PlotTool import parser
 import os
 import sys
+import re
 
 gROOT.SetBatch(1)
 
@@ -14,6 +15,7 @@ parser.add_argument("--no-plot",help="Dont plot variables",action="store_true",d
 parser.add_argument("-u","--uncertainty",help="Specify the uncertainty to apply on variable if available",default=[],nargs="*",type=str)
 parser.add_argument("--ignore-mc",help="Ignore MC with less than a threshold percent of total MC (default = 0.001, use 0 to keep all MC)",default=0.001,type=float)
 parser.add_argument("--dimension",help="Specify the pixel dimensions to draw the canvas",default=[800,800],type=int,nargs=2)
+parser.add_argument("--soverb",help="Write S/Root(B) on plot if signal is there",default=False,action="store_true")
 
 def HigherDimension(samples,variable):
     axis = variable[-1]
@@ -82,11 +84,15 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
             signal.histo.Draw("HIST SAME")
 
     #################################################
-
-    leg = getLegend(xmin=0.5,xmax=0.7); #0.62,0.60,0.86,0.887173
+    ncol = 1
+    nleg = 1 + len([ mc for mc in MCLegOrder if samples[mc].scaled_total > 0 ])
+    if nleg > 5: ncol = 2
+    
+    leg = getLegend(xmin=0.48,xmax=0.9,scale=0.8); #0.62,0.60,0.86,0.887173
+    leg.SetNColumns(ncol)
     if not blinded: leg.AddEntry(data.histo,"Data","lp");
     if (hasattr(samples,'SignalList')):
-        for signal in signals: leg.AddEntry(signal.histo, signal.process,'l')
+        for signal in signals: leg.AddEntry(signal.histo, signal.leg,'l')
 
     if parser.args.mc_solid:
         leg.AddEntry(hs_bkg,"Background","f")
@@ -94,11 +100,6 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
         for mc in MCLegOrder:
             if samples[mc].scaled_total == 0: continue
             leg.AddEntry(samples[mc].histo,samples[mc].leg,'f')
-
-    uncband = samples.getUncBand(parser.args.uncertainty)
-    UncBandStyle(uncband)
-    uncband_leg = 'syst #otimes stat' if len(parser.args.uncertainty) > 1 else 'stat'
-    leg.AddEntry(uncband,uncband_leg,'f')
         
     leg.Draw();
 
@@ -106,6 +107,10 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
     if (parser.args.normalize): lumi_label="Normalized"
     texLumi,texCMS = getCMSText(lumi_label,samples.year,scale=0.8 if blinded else 1)
 
+    if hasattr(samples,'SignalList') and parser.args.soverb:
+        soverb = signals[0].scaled_total/TMath.Sqrt(samples.total_bkg)
+        soverbtext = SoverBText(soverb=soverb)
+        
     
     if parser.args.mc_solid:
         StackStyle(hs_bkg,scaleWidth=samples.scaleWidth)
@@ -128,10 +133,36 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
         
         RatioStyle(Ratio,xname=samples.name)
         Ratio.Draw("pex0");
-        uncband.Draw('2same')
+
+        ratio_leg = getLegend(0.12,0.85,0.7,0.98,scale=2)
+
+        bandlist = []
+        unclist = ["Stat"]
+        statband = samples.getUncBand(unclist)
+        statband.label = "stat"
+        UncBandStyle(statband)
+        bandlist.append(statband)
+
+        if "ChNemPtFrac_" in samples.variable.variable:
+            unclist = unclist + ["theory_sys"] #["NNLO_EWK","NNLO_Sud","NNLO_Miss"] + ["QCD_Scale","QCD_Proc","QCD_Shape","QCD_EWK_Mix"]
+            theoryband = samples.getUncBand(unclist)
+            theoryband.label = bandlist[-1].label + " #otimes theory"
+            UncBandStyle(theoryband,9)
+            bandlist.append(theoryband)
+
+            unclist = unclist + ["PSW_isrCon","PSW_fsrCon"]
+            pswband = samples.getUncBand(unclist)
+            pswband.label = bandlist[-1].label + " #otimes psw"
+            UncBandStyle(pswband,37)
+            bandlist.append(pswband)
+        ratio_leg.SetNColumns(len(bandlist))
+        for band in bandlist: ratio_leg.AddEntry(band,band.label,"f")
+        for band in reversed(bandlist): band.Draw("2same")
+            
         Ratio.Draw('pex0same')
         line = getRatioLine(data.histo.GetXaxis().GetXmin(),data.histo.GetXaxis().GetXmax())
         line.Draw("same");
+        ratio_leg.Draw()
         pad2.RedrawAxis()
         
         c.Update();

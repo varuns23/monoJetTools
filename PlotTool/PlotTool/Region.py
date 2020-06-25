@@ -180,19 +180,21 @@ class Region(object):
                     if "-1" in args: signalmap.update(self.signalinfo.XsecMap[signal])
                     elif len(args) == 2:
                         fname = self.signalinfo.GetFileMap[signal](args[0],args[1])
-                        signalmap[fname] = self.signalinfo.XsecMap[signal][fname]
+                        xsec = self.signalinfo.XsecMap[signal][fname]
+                        signalmap[fname] = (xsec,signal)
                         signal_to_plot = fname
                     else:
                         fname = self.signalinfo.DefaultMap[signal]
-                        signalmap[fname] = self.signalinfo.XsecMap[signal][fname]
+                        xsec = self.signalinfo.XsecMap[signal][fname]
+                        signalmap[fname] = (xsec,signal)
                     if signal_to_plot is None: signal_to_plot = self.signalinfo.DefaultMap[signal]
                     self.SignalToPlot.append(signal_to_plot)
-        for fname,xsec in signalmap.iteritems():
+        for fname,(xsec,sigtype) in signalmap.iteritems():
             signal = fname.strip('post')
             if fname in self.SignalToPlot: self.SignalToPlot[self.SignalToPlot.index(fname)] = signal
             self.SignalList.append(signal)
             xsecmap = {fname:xsec}
-            self.processes[signal] = Process(signal,[fname],xsecmap,'signal',year=self.year,region=self.region)
+            self.processes[signal] = Process(signal,[fname],xsecmap,'signal',year=self.year,region=self.region,leg=self.signalinfo.LegMap[sigtype])
             self.SampleList.insert(1,signal)
     def open(self):
         if hasattr(self,'isOpen'): return
@@ -268,7 +270,7 @@ class Region(object):
         verbose = parser.args.verbose == 1
         self['Data'].output(verbose=verbose)
         if hasattr(self,'SignalList'):
-            for signal in self.SignalList: self[signal].output(verbose=verbose)
+            for signal in self.SignalList: self[signal].output(verbose=verbose,total_bkg=self.total_bkg)
         print prompt % ( ntemp.format('SumOfBkg'),itemp.format( '%.6g' % self.total_bkg ) )
         for sample in self.MCOrder:
             if sample in self:
@@ -276,6 +278,7 @@ class Region(object):
         ratio = ('%.6g' % (self.processes['Data'].scaled_total/self.total_bkg)) if self.total_bkg != 0 else 'Nan'
         print '            %s: %s' % (ntemp.format('data/mc'),itemp.format(ratio))
     def setSumOfBkg(self):
+        if "SumOfBkg" in self.processes: return
         sumofbkg = Process('SumOfBkg',[],{},'sumofbkg',year=self.year,region=self.region)
         for process in self:
             if process.proctype == 'bkg':
@@ -287,13 +290,15 @@ class Region(object):
     def addUnc(self,nuisance,show=False):
         for process in self: process.addUnc(nuisance,show)
     def fullUnc(self,unclist,show=False):
-        for process in self: process.fullUnc(unclist,show)
         self.setSumOfBkg()
-        for nuisance in ['Total']:
-            up = self['SumOfBkg'].histo.Clone('%s_%s_TotalUp' % (self['SumOfBkg'].name,self.variable.base));  up.Reset()
-            dn = self['SumOfBkg'].histo.Clone('%s_%s_TotalDown' % (self['SumOfBkg'].name,self.variable.base)); dn.Reset()
-            AddLikeNuisances([process.nuisances[nuisance] for process in self if process.proctype == 'bkg' and nuisance in process.nuisances],up,dn,self['SumOfBkg'].histo)
-            self['SumOfBkg'].nuisances[nuisance] = Nuisance('SumOfBkg',nuisance,up,dn,self['SumOfBkg'].histo)
+        
+        for process in self: process.fullUnc(unclist,show)
+        
+        up = self['SumOfBkg'].histo.Clone('%s_%s_TotalUp' % (self['SumOfBkg'].name,self.variable.base));  up.Reset()
+        dn = self['SumOfBkg'].histo.Clone('%s_%s_TotalDown' % (self['SumOfBkg'].name,self.variable.base)); dn.Reset()
+
+        AddLikeNuisances([process.nuisances["Total"] for process in self if process.proctype == 'bkg'],up,dn,self['SumOfBkg'].histo)
+        self['SumOfBkg'].nuisances["Total"] = Nuisance('SumOfBkg',"Total",up,dn,self['SumOfBkg'].histo)
         if show: print self['SumOfBkg'].nuisances['Total']
     def getUncBand(self,unclist):
         self.fullUnc(unclist)

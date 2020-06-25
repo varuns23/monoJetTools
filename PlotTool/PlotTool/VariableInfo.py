@@ -8,11 +8,14 @@ from Parser import parser
 from samplenames import samplenames
 
 parser.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
+parser.add_argument("--branch",help="Use TTree if available",action="store_true",default=False)
 parser.add_argument("--rebin",help="Specify number of bins to merge using TH1::Rebin()",type=int)
 parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
 parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
 parser.add_argument("--no-width",help="Disable bin width scaling",action="store_true",default=False)
 parser.add_argument("--add-overflow",help="Add overflow bin to last bin",action="store_true",default=False)
+
+extraction_variables = ("recoil","ChNemPtFrac")
 
 def IsGlobal(variable,tfile):
     return tfile.GetListOfKeys().Contains(variable)
@@ -24,6 +27,7 @@ def IsNhisto(variable,tfile):
     # tdir.Close()
     return isNhisto
 def IsBranch(variable,tfile):
+    if not any( extraction in variable for extraction in extraction_variables ): return False
     dirname,ndir = GetDirname(variable,sub='trees')
     tdir = tfile.GetDirectory(dirname)
     if tdir == None: return False
@@ -128,10 +132,10 @@ class VariableInfo:
         if self.cut is not None:
             cutvar = self.cut.replace('>','?').replace('<','?').split('?')[0]
             if cutvar in variable: self.cutfix = self.cut.replace(cutvar,'').replace('<','-').replace('>','+')
-            else: self.cutfix = self.cut.replace('<','-').replace('>','+')
+            else: self.cutfix = "_"+self.cut.replace('<','-').replace('>','+')
         
         if IsGlobal(variable,tfile): self.initGlobal(tfile,variable)
-        #elif IsBranch(variable,tfile): self.initBranch(tfile,variable)
+        elif parser.args.branch and IsBranch(variable,tfile): self.initBranch(tfile,variable)
         elif IsNhisto(variable,tfile): self.initNhisto(tfile,variable)
 
         self.title = self.template.GetTitle()
@@ -141,8 +145,8 @@ class VariableInfo:
         self.rebin = parser.args.rebin
         self.overflow = parser.args.add_overflow
 
-        if "recoil" in variable:
-            self.overflow = True
+        use_overflow = ("recoil","ChNemPtFrac")
+        if any( var in variable for var in use_overflow ): self.overflow = True
 
         self.scaleWidth = True
         if parser.args.no_width: self.scaleWidth = False
