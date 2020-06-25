@@ -26,11 +26,15 @@ run() {
     pushd $1
     shift 1
     array="$nvariables $@"
-    # plot $run_options -a --sub $subdir $cat1
-    # plot $run_options -a --sub $subdir $cat2
-    # plot $run_options -a --sub $subdir $cat3
-    plot $run_options -a --sub $subdir $array $uncertainty
-    plot $run_options --sub $subdir $n_cut
+
+    plot $run_options -a --sub PtFracCut recoil --soverb
+    for cut in $(echo 0.7 0.8 0.85 0.9); do
+	plot $run_options --branch -a --sub PtFracCut recoil -c "ChNemPtFrac>${cut}" --soverb &
+    done
+    plot $run_options -a --sub $subdir $array $uncertainty &
+    plot $run_options --sub $subdir $n_cut &
+
+    wait
     popd
 }
 
@@ -44,11 +48,11 @@ run2() {
 
 region() {
     run SignalRegion
-    run SingleEleCR $singleleps
-    run SingleMuCR $singleleps
-    run DoubleEleCR $doubleleps
-    run DoubleMuCR $doubleleps
-    run GammaCR $gamma
+    # run SingleEleCR $singleleps
+    # run SingleMuCR $singleleps
+    # run DoubleEleCR $doubleleps
+    # run DoubleMuCR $doubleleps
+    # run GammaCR $gamma
 }
 
 region2() {

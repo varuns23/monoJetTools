@@ -3,9 +3,12 @@ from ROOT import *
 import sys
 sys.path.append('PlotTool')
 from PlotTool import *
+from PlotTool import parser
 import config
 
 gROOT.SetBatch(1)
+
+if "--batch" not in sys.argv: sys.argv.append("--branch")
 
 config.mclist = ["ZJets","WJets","GJets","DYJets"]
 
@@ -37,15 +40,16 @@ def MakeSF(process,psw):
 def GenerateSF():
     sample = Region(autovar=True)
     sample.SampleList = list(config.mclist)
+    variable = parser.args.argv[0]
 
-    sample.initiate("ChNemPtFrac",weight="1")
+    sample.initiate(variable,weight="1")
     for process in sample:
         process.nominal = process.histo.Clone()
         process.outputdir = output.mkdir(process.process)
     for psw in pswlist:
-        sample.initiate("ChNemPtFrac",weight="PSW_%sUp"%psw)
+        sample.initiate(variable,weight="PSW_%sUp"%psw)
         for process in sample: process.up = process.histo.Clone()
-        sample.initiate("ChNemPtFrac",weight="PSW_%sDown"%psw)
+        sample.initiate(variable,weight="PSW_%sDown"%psw)
         for process in sample: process.dn = process.histo.Clone()
         for process in sample: MakeSF(process,psw)
  

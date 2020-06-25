@@ -3,6 +3,11 @@ DefaultMap = {
     "zprime":"postZprime_Mx1_Mv1000"
 }
 
+LegMap = {
+    "axial":"Axial-Vector",
+    "zprime":"Mono-Z'"
+}
+
 GetFileMap = {
     "axial":lambda mchi,mphi:"postAxial_Mchi%s_Mphi%s" % (mchi,mphi),
     "zprime":lambda mx,mv:"postZprime_Mx%s_Mv%s" % (mx,mv)

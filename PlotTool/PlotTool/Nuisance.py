@@ -6,14 +6,19 @@ parser.add_argument("--psw-file",help="suffix for psw file to use when calculati
 
 nuisfiles = {}
 
-def GetPSWFile():
-    if "psw" in nuisfiles: return
-    rootdir = GetRootFiles()
-    nuisfiles["psw"] = TFile("%s/psw/PSW_SF_%s.root"%(rootdir,parser.args.psw_file))
 def GetProcessPSW(self,nuisance):
-    GetPSWFile()
+    if "recoil" in self.variable.variable:
+        var = "recoil"
+        psw_file = self.variable.cutfix
+    if "ChNemPtFrac" in self.variable.variable:
+        var = "chnemptfrac"
+        psw_file = "_res"
+    
+    if "psw_"+var not in nuisfiles:
+        rootdir = GetRootFiles()
+        nuisfiles["psw_"+var] = TFile("%s/psw/%s/PSW_SF%s.root"%(rootdir,var,psw_file))
     def getPSW():
-        tfile = nuisfiles["psw"]
+        tfile = nuisfiles["psw_"+var]
         name = "%s_%s_%s"%(self.name,self.variable.base,nuisance)
         up = self.histo.Clone("%sUp"%name)
         dn = self.histo.Clone("%sDown"%name)
@@ -28,6 +33,58 @@ def GetProcessPSW(self,nuisance):
         dn.Multiply(dnsf)
         return up,dn
     up,dn = getPSW()
+    self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo,type="abs")
+    return self.nuisances[nuisance]
+def GetlnNShape(self,nuisance):
+    if "recoil" in self.variable.variable:
+        var = "recoil"
+    if "ChNemPtFrac" in self.variable.variable:
+        var = "chnemptfrac"
+        
+    if "lnn" not in nuisfiles:
+        rootdir = GetRootFiles()
+        nuisfiles["lnn"] = TFile("%s/sys_shape/%s/shape_lnn_sys.root"%(rootdir,var))
+    dirmap = {"SignalRegion":"sr","DoubleEleCR":"ze","DoubleMuCR":"zm","SingleEleCR":"we","SingleMuCR":"wm","GammaCR":"ga"}
+    def getlnN():
+        tfile = nuisfiles["lnn"]
+        tdir = tfile.GetDirectory(dirmap[self.region])
+        name = "%s_%s_sys"%(self.name,self.variable.base)
+        up = self.histo.Clone("%sUp"%name)
+        dn = self.histo.Clone("%sDown"%name)
+        if not any(self.process in procs.GetName() for procs in tdir.GetListOfKeys() ):
+            return up,dn
+        upsf = tdir.Get("%s_sysUp"%self.process)
+        dnsf = tdir.Get("%s_sysDown"%self.process)
+        up.Multiply(upsf)
+        dn.Multiply(dnsf)
+        return up,dn
+    up,dn = getlnN()
+    self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo,type="abs")
+    return self.nuisances[nuisance]
+def GetTheoryShape(self,nuisance):
+    if "recoil" in self.variable.variable:
+        var = "recoil"
+    if "ChNemPtFrac" in self.variable.variable:
+        var = "chnemptfrac"
+        
+    if "theory" not in nuisfiles:
+        rootdir = GetRootFiles()
+        nuisfiles["theory"] = TFile("%s/sys_shape/%s/shape_theory_sys.root"%(rootdir,var))
+    dirmap = {"SignalRegion":"sr","DoubleEleCR":"ze","DoubleMuCR":"zm","SingleEleCR":"we","SingleMuCR":"wm","GammaCR":"ga"}
+    def getTheory():
+        tfile = nuisfiles["theory"]
+        tdir = tfile.GetDirectory(dirmap[self.region])
+        name = "%s_%s_%s"%(self.name,self.variable.base,nuisance)
+        up = self.histo.Clone("%sUp"%name)
+        dn = self.histo.Clone("%sDown"%name)
+        if not any(self.process in procs.GetName() for procs in tdir.GetListOfKeys() ):
+            return up,dn
+        upsf = tdir.Get("%s_%sUp"%(self.process,nuisance.replace("THEORY_","")))
+        dnsf = tdir.Get("%s_%sDown"%(self.process,nuisance.replace("THEORY_","")))
+        up.Multiply(upsf)
+        dn.Multiply(dnsf)
+        return up,dn
+    up,dn = getTheory()
     self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo,type="abs")
     return self.nuisances[nuisance]
 def MakeDiff(self):
@@ -51,6 +108,14 @@ def MakeSym(self,select=max):
             signdn = -signup
         self.up[ibin] = signup*val+1
         self.dn[ibin] = signdn*val+1
+def ConstantNuisance(self,nuisance,constant):
+    nbins = self.histo.GetNbinsX()
+    up = self.histo.Clone("%s_%s_%sUp" % (self.name,self.variable.base,nuisance)); up.Reset()
+    dn = self.histo.Clone("%s_%s_%sDown" % (self.name,self.variable.base,nuisance)); dn.Reset()
+    for ibin in range(1,nbins+1):
+        up[ibin] = (1 + constant)*self.histo[ibin]
+        dn[ibin] = (1 - constant)*self.histo[ibin]
+    self.nuisances[nuisance] = Nuisance(self.process,nuisance,up,dn,self.histo,type="abs")
 def AddLikeNuisances(nuisances,up,dn,norm=None):
     # nbins = up.GetNbinsX()
     # for ibin in range(1,nbins+1):
@@ -174,8 +239,11 @@ class Nuisance(object):
             band.SetBinError(ibin,val)
         return band
     def __str__(self):
-        varup,vardn = self.VarDiff()
-        return '{0:<20}'.format('%s %s' % (self.name,self.process))+'%+.1e/%+.1e' % (varup,vardn)
+        if self.norm:
+            varup,vardn = self.VarDiff()
+            end = '%+.1e/%+.1e' % (varup,vardn)
+        else: end = "None"
+        return '{0:<20}'.format('%s %s' % (self.name,self.process))+end
     def printByBin(self):
         string = str(self)
         for ibin in range(1,self.norm.GetNbinsX()+1):

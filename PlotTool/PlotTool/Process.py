@@ -79,6 +79,7 @@ class SubProcess(object):
         if histo == self.histo: self.scaled_total = histo.Integral()
     def hasUnc(self,nuisance):
         if nuisance not in self.variable.nuisances: return False
+        if not self.variable.isBranch: return False
         isScale = self.variable.nuisances[nuisance] == 'scale'
         if isScale: return hasattr(self.treemap['tree'],nuisance+'Up')
         try:
@@ -151,7 +152,10 @@ class Process:
         for i in range(len(self)): yield self[i]
     def output(self,prompt="integral of %s: %s",ntemp="{0:<15}",itemp="{0:<8}",total_bkg=0,verbose=False):
         if total_bkg > 0:
-            percent = ("%.4g%%" % (100*self.scaled_total/total_bkg))
+            if self.proctype == "signal":
+                percent = ("%.4g" % (self.scaled_total/TMath.Sqrt(total_bkg)))
+            else:
+                percent = ("%.4g%%" % (100*self.scaled_total/total_bkg))
             print prompt % ( ntemp.format(self.process),itemp.format( '%.6g' % self.scaled_total ) ),'| %s' % (percent)
         else:
             print prompt % ( ntemp.format(self.process),itemp.format( '%.6g' % self.scaled_total ) )
@@ -193,6 +197,12 @@ class Process:
         if "PSW" in nuisance:
             GetProcessPSW(self,nuisance)
             return
+        if "lnn_sys" in nuisance:
+            GetlnNShape(self,nuisance)
+            return
+        if "THEORY" in nuisance:
+            GetTheoryShape(self,nuisance)
+            return
         if nuisance in self.nuisances: return
         for subprocess in self:
             subprocess.addUnc(nuisance)
@@ -211,9 +221,7 @@ class Process:
         self.nuisances['Total'] = Nuisance(self.process,'Total',up,dn,self.histo)
 
         if not show: return
-        for nuisance in self.nuisances.values():
-            print nuisance
-        print
+        print self.nuisances["Total"]
     def add(self,other):
         if self.histo is not None: self.histo.Add(other.histo)
         else: self.histo = other.histo.Clone(self.name)

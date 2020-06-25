@@ -6,8 +6,8 @@ lumi = {"SingleEleCR":59699,
         "SingleMuCR":59699,
         "DoubleMuCR":59699,
         "GammaCR":59699,
-        # "SignalRegion":59699/5.
-        "SignalRegion":14024/5.
+        "SignalRegion":59699/5.
+        # "SignalRegion":14024/5.
 }
 
 lumi_by_era = {"SingleEleCR":{"A":14024,"B":7061,"C":6895,"D":31720},
