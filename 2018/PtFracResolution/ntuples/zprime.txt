@@ -1,3 +1,2 @@
 >>Mx1_Mv1000
-# /hdfs/store/user/ekoenig/MC2018_Autumn18_Apr2020_GenJetConst/MonoZprime_V_Mx1_Mv10000_TuneCP5_13TeV_madgraph/crab_job_Zprime_Mx1_Mv1000/200416_215143/0000/
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Apr2020_GenJetConst/MonoZprime_V_Mx1_Mv10000_TuneCP5_13TeV_madgraph/crab_job_Zprime_Mx1_Mv1000/200419_173706/0000/
+/hdfs/store/user/ekoenig/MC2018_Autumn18_Jun2020_GenJetConst/MonoZprime_V_Mx1_Mv1000_TuneCP5_13TeV_madgraph/crab_job_Zprime_Mx1_Mv1000/200615_170400/0000/

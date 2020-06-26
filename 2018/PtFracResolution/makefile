@@ -46,7 +46,9 @@ bin:
 	mkdir -p $(ROOT)$(BIN)
 
 test: analyze
-	./analyze
+	./analyze \
+	/hdfs/store/user/ekoenig/MC2018_Autumn18_Jun2020_GenJetConst/MonoZprime_V_Mx1_Mv1000_TuneCP5_13TeV_madgraph/crab_job_Zprime_Mx1_Mv1000/200615_170400/0000/ \
+	test_signal.root -1 1000 -1	
 
 clean:
 	rm post*.root

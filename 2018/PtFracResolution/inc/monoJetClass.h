@@ -19,7 +19,6 @@ public :
 
   float j1GenpT,j1GenEta,j1GenPhi,j1GenetaWidth;
   float GenPt123Fraction,GenChNemPtFrac;
-
   
   vector<float>   *jetGenPt;
   vector<float>   *jetGenE;
@@ -87,6 +86,10 @@ public :
   virtual void setGenJetCand();
   void Init(TTree* tree);
   void initTree(TTree* tree);
+  void initVars() {
+    monoJetYear::initVars();
+    monoJetSignalRegion::initVars();
+  }
 };
 
 #endif
