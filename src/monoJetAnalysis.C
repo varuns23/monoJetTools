@@ -803,11 +803,12 @@ void monoJetAnalysis::GenDilepton() {
 void monoJetAnalysis::GenNeutrinos() {
   // printf("Could not find Z boson, trying for neutrinos\n");
   for (int i = 0; i < nMC; i++) {
-    if ( (mcStatusFlag->at(i)>>1&1)!= 1 ) continue;
+    if ( (mcStatusFlag->at(i)>>2&1)!= 1 ) continue;
     int pid1 = mcPID->at(i);
 
     if ( abs(pid1) == 12 || abs(pid1) == 14 || abs(pid1) == 16 ) {
-      for (int j = i; i < nMC; j++) {
+      for (int j = i; j < nMC; j++) {
+	if ( (mcStatusFlag->at(j)>>2&1)!= 1 ) continue;
 	int pid2 = mcPID->at(j);
 	
 	if ( abs(pid1) == abs(pid2) && pid1*pid2 < 0 ) {
