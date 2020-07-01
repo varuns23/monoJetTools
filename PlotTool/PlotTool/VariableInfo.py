@@ -55,7 +55,8 @@ def AddOverflow(hs):
     return
 def PtFractionBinning(self,arg):
     arg = arg.replace('res','')
-    bins = array('d',[0,0.3,0.5,0.7,0.8,0.9,1.0])
+    # bins = array('d',[0,0.3,0.5,0.7,0.8,0.9,1.0])
+    bins = array('d',[0,0.15,0.3,0.4,0.5,0.6,0.7,0.75,0.8,0.85,0.9,0.95,1.0])
     if arg == "2": bins = array('d',[0,0.25,0.4,0.55,0.7,0.85,1.0])
     self.overflow = True
     nbins= len(bins)-1
