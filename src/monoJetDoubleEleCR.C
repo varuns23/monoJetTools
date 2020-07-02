@@ -15,7 +15,7 @@ void monoJetDoubleEleCR::initVars() {
   dilepton_mass = dilepton_pt = -1;
   leadingLepton_pt = leadingLepton_eta = leadingLepton_phi = -99;
   subleadingLepton_pt = subleadingLepton_eta = subleadingLepton_phi = -99;
-  e1reco_sf = e2reco_sf = tightID_sf = looseID_sf = 1;
+  e1reco_sf = e2reco_sf = e1tightID_sf = e1looseID_sf = e2tightID_sf = e2looseID_sf = 1;
 }
 
 void monoJetDoubleEleCR::initTree(TTree* tree) {
@@ -28,9 +28,11 @@ void monoJetDoubleEleCR::initTree(TTree* tree) {
   tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
   tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
   tree->Branch("e1reco_sf",&e1reco_sf);
-  tree->Branch("tightID_sf",&tightID_sf);
+  tree->Branch("e1tightID_sf",&e1tightID_sf);
+  tree->Branch("e1looseID_sf",&e1looseID_sf);
   tree->Branch("e2reco_sf",&e2reco_sf);
-  tree->Branch("looseID_sf",&looseID_sf);
+  tree->Branch("e2e1tightID_sf",&e2tightID_sf);
+  tree->Branch("e2e1looseID_sf",&e2looseID_sf);
 }
 
 void monoJetDoubleEleCR::BookHistos(int i,TString histname) {
@@ -114,16 +116,18 @@ float monoJetDoubleEleCR::getSF(int leading, int subleading) {
   float subleading_eta = eleSCEta->at(subleading); float subleading_pt = eleCalibEt->at(subleading);
 
   e1reco_sf = th2fmap.getBin("ele_reco",leading_eta,leading_pt);
-  tightID_sf = th2fmap.getBin("ele_id_tight",leading_eta,leading_pt);
+  e1tightID_sf = th2fmap.getBin("ele_id_tight",leading_eta,leading_pt);
+  e1looseID_sf = th2fmap.getBin("ele_id_loose",leading_eta,leading_pt);
   if ( YEAR == 2017 && leading_pt < 20 )
     e1reco_sf = th2fmap.getBin("ele_reco_pt_lt_20",leading_eta,leading_pt);
 
   e2reco_sf = th2fmap.getBin("ele_reco",subleading_eta,subleading_pt);
-  looseID_sf = th2fmap.getBin("ele_id_loose",subleading_eta,subleading_pt);
+  e2tightID_sf = th2fmap.getBin("ele_id_tight",subleading_eta,subleading_pt);
+  e2looseID_sf = th2fmap.getBin("ele_id_loose",subleading_eta,subleading_pt);
   if ( YEAR == 2017 && subleading_pt < 20 )
     e2reco_sf = th2fmap.getBin("ele_reco_pt_lt_20",subleading_eta,subleading_pt);
-  
-  return e1reco_sf * tightID_sf * e2reco_sf * looseID_sf;
+  float id_sf = 0.5 * (e1tightID_sf*e2looseID_sf + e1looseID_sf*e2tightID_sf);
+  return e1reco_sf * e2reco_sf * id_sf;
 }
 
 //Veto failed if a muon is found that passes Loose Muon ID, Loose Muon Isolation, and muPtcut, and does not overlap the candidate electrons and jet within dR of 0.5
