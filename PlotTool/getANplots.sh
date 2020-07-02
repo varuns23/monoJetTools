@@ -26,8 +26,8 @@ run() {
     pushd $1
     shift 1
     array="$nvariables $@"
-    plot $run_options -a --sub $subdir $array $uncertainty &
-    plot $run_options --sub $subdir $n_cut &
+    plot $run_options -a --sub $subdir $array $uncertainty 
+    plot $run_options --sub $subdir $n_cut 
     wait
     popd
 }
