@@ -12,11 +12,6 @@
 using namespace std;
 
 void monoJetAnalysis::SetScalingHistos() {
-  //This is the PU histogram obtained from Nick's recipe
-  TFile *weights = TFile::Open("RootFiles/pileup/PU_Central.root");
-  TH1F* PU = (TH1F*)weights->Get("pileup");
-  th1fmap["PU"] = PU;
-  
   if (isWZG()) {
     //This is the root file with EWK Corrections
     TH1F *NLO_QCD_EWK,*NLO_EWK,*NLO_QCD,*NNLO_QCD;

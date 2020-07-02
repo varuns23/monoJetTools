@@ -30,6 +30,11 @@ void monoJetYear::fillHistos(int nhist,float event_weight) {
 void monoJetYear::SetScalingHistos() {
   monoJetAnalysis::SetScalingHistos();
 
+  //This is the PU histogram obtained from Nick's recipe
+  TFile *weights = TFile::Open("RootFiles/pileup/PU_Central_2017.root");
+  TH1F* PU = (TH1F*)weights->Get("pileup");
+  th1fmap["PU"] = PU;
+  
   // Load trigger sf for electron trigger
   TFile* f_ele_trigger_sf = TFile::Open("RootFiles/trigger/electron_trigger_sf_2017.root");
   th2fmap["electron_trigger_data_eff"] = (TH2F*)f_ele_trigger_sf->Get("EGamma_EffData2D");
