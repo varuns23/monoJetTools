@@ -146,7 +146,7 @@ class VariableInfo:
         self.rebin = parser.args.rebin
         self.overflow = parser.args.add_overflow
 
-        use_overflow = ("recoil","ChNemPtFrac")
+        use_overflow = ("recoil","Frac","Perc")
         if any( var in variable for var in use_overflow ): self.overflow = True
 
         self.scaleWidth = True

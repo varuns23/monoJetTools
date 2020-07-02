@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 nvariables='ChNemPtFrac ChNemPtFracV2 recoil pfMET recoilall pfMETall nJetsSkim j1etaWidth j1pT j1Eta j1Phi j1CHF j1NHF nVtxNoW nVtxReW dphimin metcut'
+
+pfcand=$(echo {Ch,Nh,Gamma,Misc}{PercPFPt,PFCands,PercCons})
+substrucutre='j1ChMult j1NhMult j1etaWidth j1phiWidth j1CHF j1NHF Pt123Fraction ChNemPtFrac ${pfcand}'
 singleleps='LeptonPt LeptonEta LeptonPhi lepMET_MT'
 doubleleps='dileptonM dileptonPt leadingLeptonPt leadingLeptonEta leadingLeptonPhi subleadingLeptonEta subleadingLeptonPt subleadingLeptonPhi'
 gamma='photonPt photonEta photonPhi'
@@ -33,7 +36,7 @@ run() {
     # done
     # plot $run_options -a --sub $subdir $array $uncertainty &
     # plot $run_options --sub $subdir $n_cut &
-    plot $run_options -a --sub $subdir j1ChMult j1NhMult
+    plot $run_options -a --sub JetSubstructure $pfcand
     wait
     popd
 }
