@@ -18,7 +18,7 @@ SOURCES:=$(subst $(BIN),$(SRC),$(OBJECTS:.o=.C))
 .PHONY:test clean condor_clean hadd bin
 
 analyze: $(ROOT)$(SCRIPTS)analyze.C $(OBJECTS)
-	@if [ ! -d RootFiles ]; then ln -s $(YEAR)RootFiles/; fi
+	@if [ ! -d RootFiles ]; then ln -s $(ROOT)RootFiles/; fi
 	@if [ ! -d PlotTool ]; then ln -s $(ROOT)PlotTool/; fi
 	g++ -I$(ROOT)$(INC) -I$(YEAR)$(INC) -I$(INC) $(RFLAGS) $< $(OBJECTS) -o $@
 
