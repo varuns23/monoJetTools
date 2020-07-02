@@ -82,6 +82,10 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("j1pT",&j1pT);
   tree->Branch("j1Eta",&j1Eta);
   tree->Branch("j1Phi",&j1Phi);
+  tree->Branch("j1etaWidth",&j1etaWidth);
+  tree->Branch("j1ChMult",&j1ChMult);
+  tree->Branch("j1NhMult",&j1NhMult);
+  tree->Branch("j1GammaMult",&j1GammaMult);
   tree->Branch("nJets",&nJet);
   tree->Branch("nVtx",&nVtx);
   tree->Branch("bosonPt",&bosonPt);
@@ -135,6 +139,7 @@ void monoJetAnalysis::BookHistos(int i,TString histname) {
   h_j1NHFrounded[i]   = MakeTH1F(new TH1F(Name("j1NHFrounded") ,"j1NHF;Rounded Neutral Hadron Energy Fraction in Leading Jet"    ,50,0,1.1)); 
   h_j1ChMult[i]       = MakeTH1F(new TH1F(Name("j1ChMult")     ,"j1ChMult;Charged Multiplicity of Leading Jet"           ,25,0,50));
   h_j1NhMult[i]       = MakeTH1F(new TH1F(Name("j1NhMult")     ,"j1NhMult;Neutral Multiplicity of Leading Jet"           ,25,0,50)); 
+  h_j1GammaMult[i]    = MakeTH1F(new TH1F(Name("j1GammaMult")  ,"j1GammaMult;Neutral Multiplicity of Leading Jet"        ,25,0,50)); 
   h_j1Mt[i]           = MakeTH1F(new TH1F(Name("j1Mt")         ,"j1Mt;M_{T} of Leading Jet [GeV]"                        ,nMtBins,MtBins));
 
   // PF Jet Info
@@ -246,6 +251,7 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
     h_j1NHFrounded[nhist] ->Fill(getRounded(getRounded(jetNHF->at(jetCand))),event_weight);
     h_j1ChMult[nhist]     ->Fill(jetNChargedHad->at(jetCand),event_weight);
     h_j1NhMult[nhist]     ->Fill(jetNNeutralHad->at(jetCand),event_weight);
+    h_j1GammaMult[nhist]     ->Fill(jetNPhoton->at(jetCand),event_weight);
     h_j1Mt[nhist]         ->Fill(jetMt->at(jetCand),event_weight);
     
     // PF Jet Info      ;
@@ -486,6 +492,9 @@ void monoJetAnalysis::setJetCand(int jetCand) {
   j1Eta = jetEta->at(jetindex);
   j1Phi = jetPhi->at(jetindex);
   j1etaWidth = jetetaWidth->at(jetindex);
+  j1ChMult = jetNChargedHad->at(jetindex);
+  j1NhMult = jetNNeutralHad->at(jetindex);
+  j1GammaMult=jetNPhoton->at(jetindex);
   
   j1PFConsEt = jetConstEt->at(jetindex);
   j1PFConsPt = jetConstPt->at(jetindex);
@@ -1208,7 +1217,7 @@ void monoJetAnalysis::initVars() {
 
   btag_sf = btag_sfUp = btag_sfDown = 1;
 
-  bosonPt = j1pT = j1Eta = j1Phi = -99;
+  bosonPt = j1pT = j1Eta = j1Phi = j1etaWidth = j1ChMult = j1NhMult = j1GammaMult = -99;
   recoil = pfMET;
   recoilPhi = pfMETPhi;
   setJetCandList();

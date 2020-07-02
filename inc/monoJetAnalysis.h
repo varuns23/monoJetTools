@@ -193,7 +193,7 @@ public:
   vector<int>j1PFConsPID;
   vector<int> jetCandList;
 
-  float j1pT,j1Eta,j1Phi,j1etaWidth;
+  float j1pT,j1Eta,j1Phi,j1etaWidth,j1ChMult,j1NhMult,j1GammaMult;
   float Pt123Fraction,Pt123;
   float ChNemPtFrac,ChNemPt,ChNemPt123;
   int OpsChCat;
@@ -222,7 +222,7 @@ public:
   TH1F *h_pfMETall[maxHisto],*h_pfMET[maxHisto],*h_pfMETPhi[maxHisto],*h_recoil[maxHisto],*h_recoilall[maxHisto],*h_recoilPhi[maxHisto];
   TH1F *h_caloMET[maxHisto],*h_caloMETPhi[maxHisto];
   // Jet Info         
-  TH1F *h_nJets[maxHisto],*h_j1pT[maxHisto],*h_j1pTall[maxHisto],*h_j1Eta[maxHisto],*h_j1Phi[maxHisto],*h_j1etaWidth[maxHisto],*h_j1phiWidth[maxHisto],*h_j1CHF[maxHisto],*h_j1NHF[maxHisto],*h_j1ChMult[maxHisto],*h_j1NhMult[maxHisto],*h_j1Mt[maxHisto];
+  TH1F *h_nJets[maxHisto],*h_j1pT[maxHisto],*h_j1pTall[maxHisto],*h_j1Eta[maxHisto],*h_j1Phi[maxHisto],*h_j1etaWidth[maxHisto],*h_j1phiWidth[maxHisto],*h_j1CHF[maxHisto],*h_j1NHF[maxHisto],*h_j1ChMult[maxHisto],*h_j1NhMult[maxHisto],*h_j1GammaMult[maxHisto],*h_j1Mt[maxHisto];
   TH1F *h_nJetsSkim[maxHisto];
   TH1F *h_j1CHFrounded[maxHisto],*h_j1NHFrounded[maxHisto];
   // PF Jet Info      
