@@ -27,7 +27,7 @@ def IsNhisto(variable,tfile):
     # tdir.Close()
     return isNhisto
 def IsBranch(variable,tfile):
-    if not any( extraction in variable for extraction in extraction_variables ): return False
+    # if not any( extraction in variable for extraction in extraction_variables ): return False
     dirname,ndir = GetDirname(variable,sub='trees')
     tdir = tfile.GetDirectory(dirname)
     if tdir == None: return False
@@ -186,10 +186,11 @@ class VariableInfo:
         self.title = self.file_template.GetTitle()
         self.xaxis_title = self.file_template.GetXaxis().GetTitle()
         self.yaxis_title = self.file_template.GetYaxis().GetTitle()
+        if "ChNemPtFrac" in variable: parser.args.binning = "res"
         if parser.args.binning is None: return self.file_template
         for label,binning in self.binningMap.iteritems():
             if label in parser.args.binning:
-                if label is not 'fix': self.binfix = parser.args.binning
+                if label is not 'fix' and label is not 'res': self.binfix = parser.args.binning
                 return binning(self,parser.args.binning)
     def setXaxisTitle(self):
         self.name = None

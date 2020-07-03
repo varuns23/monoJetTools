@@ -143,18 +143,18 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
         UncBandStyle(statband)
         bandlist.append(statband)
 
-        if "ChNemPtFrac_" in samples.variable.variable:
-            unclist = unclist + ["theory_sys"] #["NNLO_EWK","NNLO_Sud","NNLO_Miss"] + ["QCD_Scale","QCD_Proc","QCD_Shape","QCD_EWK_Mix"]
-            theoryband = samples.getUncBand(unclist)
-            theoryband.label = bandlist[-1].label + " #otimes theory"
-            UncBandStyle(theoryband,9)
-            bandlist.append(theoryband)
+        # if "ChNemPtFrac_" in samples.variable.variable:
+        #     unclist = unclist + ["theory_sys"] #["NNLO_EWK","NNLO_Sud","NNLO_Miss"] + ["QCD_Scale","QCD_Proc","QCD_Shape","QCD_EWK_Mix"]
+        #     theoryband = samples.getUncBand(unclist)
+        #     theoryband.label = bandlist[-1].label + " #otimes theory"
+        #     UncBandStyle(theoryband,9)
+        #     bandlist.append(theoryband)
 
-            unclist = unclist + ["PSW_isrCon","PSW_fsrCon"]
-            pswband = samples.getUncBand(unclist)
-            pswband.label = bandlist[-1].label + " #otimes psw"
-            UncBandStyle(pswband,37)
-            bandlist.append(pswband)
+        #     unclist = unclist + ["PSW_isrCon","PSW_fsrCon"]
+        #     pswband = samples.getUncBand(unclist)
+        #     pswband.label = bandlist[-1].label + " #otimes psw"
+        #     UncBandStyle(pswband,37)
+        #     bandlist.append(pswband)
         ratio_leg.SetNColumns(len(bandlist))
         for band in bandlist: ratio_leg.AddEntry(band,band.label,"f")
         for band in reversed(bandlist): band.Draw("2same")
