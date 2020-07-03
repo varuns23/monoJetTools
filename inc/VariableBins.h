@@ -1,8 +1,8 @@
 #ifndef VariableBins_h
 #define VariableBins_h
 
-const int nPtFracBins = 6;
-const float PtFracBins[nPtFracBins+1] = {0.0,0.3,0.5,0.7,0.8,0.9,1.0};
+const int nPtFracBins = 12;
+const float PtFracBins[nPtFracBins+1] = {0,0.15,0.3,0.4,0.5,0.6,0.7,0.75,0.8,0.85,0.9,0.95,1.0};
 
 const int nMtBins = 50;
 const float MtBins[nMtBins+1]={180.,200.,220.,240.,260.,280.,300.,320.,340.,360.,380.,400.,420.,440.,460.,480.,500.,520.,540.,560.,580.,600.,620.,640.,660.,680.,
