@@ -31,8 +31,8 @@ void monoJetDoubleEleCR::initTree(TTree* tree) {
   tree->Branch("e1tightID_sf",&e1tightID_sf);
   tree->Branch("e1looseID_sf",&e1looseID_sf);
   tree->Branch("e2reco_sf",&e2reco_sf);
-  tree->Branch("e2e1tightID_sf",&e2tightID_sf);
-  tree->Branch("e2e1looseID_sf",&e2looseID_sf);
+  tree->Branch("e2tightID_sf",&e2tightID_sf);
+  tree->Branch("e2looseID_sf",&e2looseID_sf);
 }
 
 void monoJetDoubleEleCR::BookHistos(int i,TString histname) {
