@@ -49,11 +49,10 @@ test: analyze
 	./analyze
 
 clean:
-	rm post*.root
+	rm -f post*.root
 
 condor_clean:
-	rm -r .output/
-	rm -r .status/
+	rm -rf .output/ .status/
 
 condor_submit: analyze
 	./submit.py $(options)

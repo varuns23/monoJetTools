@@ -53,11 +53,10 @@ test: analyze
 	./analyze /hdfs/store/user/varuns/NTuples/Data/Run2017_31Mar2018_JECv32/SinglePho/SinglePho2017B/0000/ test_output.root -1 1000 10
 
 clean:
-	rm post*.root
+	rm -f post*.root
 
 condor_clean:
-	rm -r .output/
-	rm -r .status/
+	rm -rf .output/ .status/
 
 condor_submit: analyze
 	./submit.py $(options)
