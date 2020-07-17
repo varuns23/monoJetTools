@@ -354,6 +354,10 @@ bool monoJetAnalysis::getPhotonTrigger() {
   return (HLTPho>>11&1) == 1;
 }
 
+bool monoJetAnalysis::getMuTauTrigger() {
+  return (HLTEleMuX>>20&1) == 1 || (HLTEleMuX>>21&1) == 1 || (HLTTau>>0&1) == 1;
+}
+
 float monoJetAnalysis::dPFCaloMET(float met) {
   return fabs(pfMET-caloMET)/met;
 }

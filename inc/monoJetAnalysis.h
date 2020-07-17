@@ -975,6 +975,7 @@ public:
   virtual bool getMetTrigger();
   virtual bool getElectronTrigger();
   virtual bool getPhotonTrigger();
+  virtual bool getMuTauTrigger();
   virtual float dPhiJetMETmin(vector<int> jetlist,float metPhi);
   virtual float dPFCaloMET(float met);
   bool getPhiHEMVeto();

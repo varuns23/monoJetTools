@@ -1,0 +1,14 @@
+>>100to200
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT100-200/200715_170000/0000/
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT100-200/200715_170000/0001/
+
+>>200to400
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT200-400/200715_170023/0000/
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT200-400/200715_170023/0001/
+
+>>40to100
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT40-100/200715_165940/0000/
+
+>>600toInf
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_GJets_HT600-Inf/200715_170043/0000/
+

@@ -1,0 +1,14 @@
+>>DiLept
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_TTJets_DiLept/200715_170103/0000/
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_TTJets_DiLept/200715_170103/0001/
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_TTJets_DiLept/200715_170103/0002/
+
+>>SingleLeptFromT
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_TTJets_SingleLeptFromT/200715_170124/0000/
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_TTJets_SingleLeptFromT/200715_170124/0001/
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_TTJets_SingleLeptFromT/200715_170124/0002/
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_TTJets_SingleLeptFromT/200715_170124/0003/
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_TTJets_SingleLeptFromT/200715_170124/0004/
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_TTJets_SingleLeptFromT/200715_170124/0005/
+/hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/TTJets_SingleLeptFromT_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_TTJets_SingleLeptFromT/200715_170124/0006/
+

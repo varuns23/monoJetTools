@@ -95,6 +95,9 @@ const float phoLooseEtaCut = 2.5;
 const float tauLoosePtCut  = 18.;
 const float tauLooseEtaCut = 2.3;
 
+const float tauMediumPtCut  = 40.;
+const float tauMediumEtaCut = 2.1;
+
 /* Signal Region Floating Cuts */
 const float recoilCut     = 250.;
 const float metRatioCut   = 0.5;
