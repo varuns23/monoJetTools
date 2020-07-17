@@ -38,11 +38,12 @@ def UncBandStyle(uncband,color=33):
     uncband.SetLineWidth(0)
 ###################################################################
 
-def fillStack(samples,hs_datamc,threshold=0.001):
+def fillStack(samples,hs_datamc,threshold=0.001,nhs=-1):
     if samples.name == 'Cutflow': threshold=0
     MCLegOrder = []
-    for process in reversed(samples.MCOrder):
-        percent=samples[process].scaled_total/samples.total_bkg
+    MCOrder = reversed([ mc for i,mc in enumerate(samples.MCOrder) if nhs == -1 or i < nhs ])
+    for process in MCOrder:
+        percent=samples[process].scaled_total/samples.total_bkg if samples.total_bkg > 0 else -1
         if percent > threshold:
             hs_datamc.Add(samples[process].histo)
             MCLegOrder.append(process)

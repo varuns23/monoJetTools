@@ -3,6 +3,7 @@
 from ROOT import *
 from sys import argv, path
 from PlotTool import *
+from PlotTool import parser
 import config
 import os
                 
@@ -88,7 +89,10 @@ if __name__ == "__main__":
         if name == 'Signal': process = process[0]
         hslist.append( (name,process.histo) )
     samples.setSumOfBkg()
-    hslist.insert(1, ('SumOfBkg',samples.processes['SumOfBkg'].histo) )
+    if not any( 'Data' in proc[0] for proc in hslist ):
+        hslist.insert(0, ('SumOfBkg',samples.processes['SumOfBkg'].histo) )
+    else:
+        hslist.insert(1, ('SumOfBkg',samples.processes['SumOfBkg'].histo) )
 
     if not any(parser.args.argv): parser.args.argv = range(int(config.regions[samples.region])+1)
     binlist = [ int(ibin) for ibin in parser.args.argv ]

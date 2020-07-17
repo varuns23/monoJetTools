@@ -37,6 +37,9 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
             HigherDimension(samples,variable)
         else:
             samples.initiate(variable)
+            if "TH2" in samples.variable.template.ClassName():
+                print "Skipping TH2."
+                return
             if samples.isBlinded: blinded = True
             if 'Stat' not in parser.args.uncertainty: parser.args.uncertainty.append('Stat')
     if parser.args.no_plot: return
@@ -71,6 +74,9 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
 
     hs_datamc = THStack("hs_datamc","Data/MC comparison"); samples.stack = hs_datamc
     MCLegOrder = fillStack(samples,hs_datamc,parser.args.ignore_mc)
+    if not any(MCLegOrder):
+        print "Skipping empty plot."
+        return
     hs_bkg = hs_datamc.GetStack().Last()
     if parser.args.mc_solid:hs_bkg.Draw("hist")
     else:                    hs_datamc.Draw("hist")
