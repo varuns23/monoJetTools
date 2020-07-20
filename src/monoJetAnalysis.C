@@ -903,7 +903,7 @@ void monoJetAnalysis::ApplyElectron_TriggerSF(float &event_weight) {
   float data_eff = 1;
   float mc_eff = 1;
   for (int i = 0; i < nEle; i++) {
-    float eta = eleEta->at(i);
+    float eta = eleSCEta->at(i);
     float pt = elePt->at(i);
     data_eff *= (1 - th2fmap.getBin("electron_trigger_data_eff",eta,pt));
     mc_eff *= (1 - th2fmap.getBin("electron_trigger_mc_eff",eta,pt));
