@@ -74,35 +74,37 @@ void monoJetDoubleMuCR::fillHistos(int nhist,float event_weight) {
     h_dileptonMall[nhist]       ->Fill(dilepton_mass,event_weight);
     
     h_leadingLeptonEtaPhi[nhist]   ->Fill(leadingLepton_eta,leadingLepton_phi,event_weight);
-    h_subleadingLeptonEtaPhi[nhist]   ->Fill(subleadingLepton_eta,subleadingLepton_phi,event_weight);
+    h_subleadingLeptonEtaPhi[nhist]->Fill(subleadingLepton_eta,subleadingLepton_phi,event_weight);
   }
 }
 
 bool monoJetDoubleMuCR::CRSelection(vector<int> tightlist,vector<int> looselist) {
   if (tightlist.size() == 0) return false;
-  for(int j=0; j<looselist.size(); ++j){
-    //Event must have exactly two muons with opposite charge
-    if(muCharge->at(tightlist[0]) * muCharge->at(looselist[j]) == -1){
+  if (looselist.size() <  2) return false;
+  int i1 = looselist[0];
+  int i2 = looselist[1];
+  
+  if(muCharge->at(i1) * muCharge->at(i2) == -1){
 
-      lep1.SetPtEtaPhiE(muPt->at(tightlist[0]), muEta->at(tightlist[0]), muPhi->at(tightlist[0]), muE->at(tightlist[0]));
-      lep2.SetPtEtaPhiE(muPt->at(looselist[j]), muEta->at(looselist[j]), muPhi->at(looselist[j]), muE->at(looselist[j]));
-      leadLepIndx    = tightlist[0];
-      subleadLepIndx = looselist[j];
-      
-      TLorentzVector ll = lep1 + lep2;
-      dilepton_mass = ll.M();
-      dilepton_pt = ll.Pt();
-      
-      leadingLepton_pt = lep1.Pt();
-      leadingLepton_eta = lep1.Eta();
-      leadingLepton_phi = lep1.Phi();
-      
-      subleadingLepton_pt = lep2.Pt();
-      subleadingLepton_eta = lep2.Eta();
-      subleadingLepton_phi = lep2.Phi();
-      setRecoil();
-      return true;
-    }
+    lep1.SetPtEtaPhiE(muPt->at(i1), muEta->at(i1), muPhi->at(i1), muE->at(i1));
+    lep2.SetPtEtaPhiE(muPt->at(i2), muEta->at(i2), muPhi->at(i2), muE->at(i2));
+    leadLepIndx    = i1;
+    subleadLepIndx = i2;
+    
+    TLorentzVector ll = lep1 + lep2;
+    dilepton_mass = ll.M();
+    dilepton_pt = ll.Pt();
+    
+    leadingLepton_pt = lep1.Pt();
+    leadingLepton_eta = lep1.Eta();
+    leadingLepton_phi = lep1.Phi();
+    
+    subleadingLepton_pt = lep2.Pt();
+    subleadingLepton_eta = lep2.Eta();
+    subleadingLepton_phi = lep2.Phi();
+    
+    setRecoil();
+    return true;
   }
   return false;
 }
