@@ -7,8 +7,8 @@ import sys
 from argparse import ArgumentParser,RawDescriptionHelpFormatter
 
 import textwrap as _textwrap
-
 class LineWrapRawTextHelpFormatter(RawDescriptionHelpFormatter):
+    # https://stackoverflow.com/questions/35917547/python-argparse-rawtexthelpformatter-with-line-wrap
     def _split_lines(self, text, width):
         text = self._whitespace_matcher.sub(' ', text).strip()
         return _textwrap.wrap(text, width)
