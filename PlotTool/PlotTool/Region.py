@@ -150,8 +150,8 @@ class Region(object):
         self.signalinfo = config.signalinfo
     def setLumi(self,lumi=None,useMaxLumi=False):
         self.lumi = lumi
-        self.lumimap = self.config.lumi_by_era[self.region]
-        if self.lumi is None: self.lumi = self.config.lumi[self.region]
+        self.lumimap = self.config.lumi_by_era[self.region] if self.region in self.config.lumi_by_era else self.config.lumi_by_era["SingleMuCR"]
+        if self.lumi is None: self.lumi = self.config.lumi[self.region] if self.region in self.config.lumi else self.config.lumi["SingleMuCR"]
         if parser.args.lumi is not None: self.lumi = parser.args.lumi
         if parser.args.era is not None:
             self.lumimap = { era:self.lumimap[era] for era in parser.args.era }

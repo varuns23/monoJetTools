@@ -27,7 +27,7 @@ def IsNhisto(variable,tfile):
     # tdir.Close()
     return isNhisto
 def IsBranch(variable,tfile):
-    if not any( extraction in variable for extraction in extraction_variables ): return False
+    # if not any( extraction in variable for extraction in extraction_variables ): return False
     dirname,ndir = GetDirname(variable,sub='trees')
     tdir = tfile.GetDirectory(dirname)
     if tdir == None: return False
@@ -55,7 +55,8 @@ def AddOverflow(hs):
     return
 def PtFractionBinning(self,arg):
     arg = arg.replace('res','')
-    bins = array('d',[0,0.3,0.5,0.7,0.8,0.9,1.0])
+    # bins = array('d',[0,0.3,0.5,0.7,0.8,0.9,1.0])
+    bins = array('d',[0,0.15,0.3,0.4,0.5,0.6,0.7,0.75,0.8,0.85,0.9,0.95,1.0])
     if arg == "2": bins = array('d',[0,0.25,0.4,0.55,0.7,0.85,1.0])
     self.overflow = True
     nbins= len(bins)-1
@@ -145,7 +146,7 @@ class VariableInfo:
         self.rebin = parser.args.rebin
         self.overflow = parser.args.add_overflow
 
-        use_overflow = ("recoil","ChNemPtFrac")
+        use_overflow = ("recoil","Frac","Perc")
         if any( var in variable for var in use_overflow ): self.overflow = True
 
         self.scaleWidth = True
@@ -185,10 +186,11 @@ class VariableInfo:
         self.title = self.file_template.GetTitle()
         self.xaxis_title = self.file_template.GetXaxis().GetTitle()
         self.yaxis_title = self.file_template.GetYaxis().GetTitle()
+        if "ChNemPtFrac" in variable: parser.args.binning = "res"
         if parser.args.binning is None: return self.file_template
         for label,binning in self.binningMap.iteritems():
             if label in parser.args.binning:
-                if label is not 'fix': self.binfix = parser.args.binning
+                if label is not 'fix' and label is not 'res': self.binfix = parser.args.binning
                 return binning(self,parser.args.binning)
     def setXaxisTitle(self):
         self.name = None

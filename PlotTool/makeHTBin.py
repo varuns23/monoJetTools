@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 from ROOT import *
 from PlotTool import *
+from PlotTool import parser
 import os
 import sys
 
 gROOT.SetBatch(1)
 
 def plotVariable(samples,variable,initiate=True,blinded=False):
-    del store[:] # Clear storage list 
     samples.initiate(variable)
     print "Plotting",variable
 
@@ -30,9 +30,10 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
         for process in htbin_order: stack.Add(process.histo)
 
         stack.Draw("HIST PFC")
+        StackStyle(stack)
 
         leg = getLegend(xmin=0.5,xmax=0.7)
-        for process in sample: leg.AddEntry(process.histo,process.process,"f")
+        for process in sample: leg.AddEntry(process.histo,process.subprocess,"f")
         leg.Draw()
         
         texLumi,texCMS = getCMSText(samples.lumi_label,samples.year,scale=0.8)
