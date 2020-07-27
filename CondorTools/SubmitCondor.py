@@ -3,7 +3,7 @@ import sys
 import os
 import stat
 import math
-from subprocess import Popen,STDOUT,PIPE
+from subprocess import Popen,STDOUT,PIPE,check_output
 from CondorConfig import CondorConfig
 from argparse import ArgumentParser
 
@@ -13,7 +13,8 @@ script_path = os.path.dirname(os.path.realpath(__file__))
 repo_path = os.path.realpath( updirectory(script_path) )
 cmssw_base = os.getenv("CMSSW_BASE")
 # USERPROXY = "x509up_u4549" #varuns
-USERPROXY = "x509up_u23216" #evans
+# USERPROXY = "x509up_u23216" #evans
+USERPROXY = check_output(["voms-proxy-info","-path"]).split("/")[-1] # Finds User Proxy from command line
 NFILE_PER_BATCH = 30
 DoSubmit = True
 ResubmitError = False
