@@ -1,4 +1,3 @@
-# from ROOT import *
 import mergeFiles as merge
 import re
 import os
@@ -167,7 +166,7 @@ class Region(object):
         self.SignalToPlot = []
         signal_parser = ArgumentParser()
         signal_parser.add_argument("extra",nargs="*",default=None)
-        signal_parser.add_argument("-"+signal,nargs="*")
+        for signal in self.signalinfo.XsecMap: signal_parser.add_argument("-"+signal,nargs="*")
         signal_args = [ '-'+arg if arg in self.signalinfo.XsecMap else arg for arg in parser.args.signal ]
         signal_args = signal_parser.parse_args(signal_args)
         signalmap = {}
