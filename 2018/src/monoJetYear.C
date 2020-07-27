@@ -7,6 +7,7 @@ using namespace std;
 
 int monoJetAnalysis::YEAR = 2018;
 const TString monoJetYear::SRDATA = "A";
+bool monoJetAnalysis::nlo_gjets = true;
 
 void monoJetYear::initVars() {
   monoJetAnalysis::initVars();
