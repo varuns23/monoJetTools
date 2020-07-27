@@ -1,7 +1,8 @@
 import sys
 sys.path.append("PlotTool")
-from ROOT import *
+
 from PlotTool import *
+from ROOT import *
 import config
 
 parser.parse_args()

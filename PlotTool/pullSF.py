@@ -1,5 +1,6 @@
-from ROOT import *
+
 from PlotTool import *
+from ROOT import *
 import config
 
 sf2017 = {

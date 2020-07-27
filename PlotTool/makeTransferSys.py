@@ -1,9 +1,10 @@
-from ROOT import *
+
 gROOT.SetBatch(1)
 
 import os
 import sys
 from PlotTool import *
+from ROOT import *
 
 nuisancemap = {
     "QCD_Scale"  :"QCDScale",
@@ -75,7 +76,7 @@ def MakeSys(num,den,tfname):
     # for nuisance in explist: AddNuisance(tf,nuisance,output)
 
 if __name__ == "__main__":
-    from PlotTool import parser
+    
     sr = Region(path="SignalRegion",autovar=True,show=False)
     sr.SampleList = ["ZJets","WJets"]
     sr.initiate(parser.args.argv[0])

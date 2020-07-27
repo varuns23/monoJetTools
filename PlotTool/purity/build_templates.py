@@ -3,13 +3,15 @@ import os
 import sys
 sys.path.append("PlotTool")
 from PlotTool import *
+from ROOT import *
 import config
 import re
 config.mclist = ["GJets"]
 
-parser.add_argument("--plot",action="store_true")
-parser.add_argument("--save",action="store_true")
-parser.add_argument("--label")
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument("--plot",action="store_true")
+group.add_argument("--save",action="store_true")
+group.add_argument("--label")
     
 from ROOT import TCanvas,gStyle,kRed,kGreen,kBlue,TLatex,TPad
 

@@ -1,6 +1,7 @@
-from ROOT import *
+
 from sys import argv, path
 from PlotTool import *
+from ROOT import *
 import os
 import re
 

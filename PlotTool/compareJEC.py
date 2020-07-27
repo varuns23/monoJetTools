@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-from ROOT import *
+
 from PlotTool import *
+from ROOT import *
 import os
 import sys
 

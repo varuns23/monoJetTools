@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-from ROOT import *
+
 from sys import argv,path
 from PlotTool import *
+from ROOT import *
 from mcinfo import lumi_by_era
 from collections import OrderedDict
 import os

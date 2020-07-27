@@ -1,4 +1,4 @@
-from ROOT import *
+
 from mcinfo import xsec as mcxsecs
 from array import array
 import sys

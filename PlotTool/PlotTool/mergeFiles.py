@@ -5,8 +5,11 @@ from time import sleep
 from Parser import parser
 import re
 
-parser.add_argument("--single",help="hadd files using a single thread, instead of multiple",action="store_true",default=False)
-parser.add_argument("--nohadd",help="does not try to hadd files together",action="store_true",default=False)
+# Not Implemented Anymore
+group = parser.add_group(__file__,__doc__,"Script")
+# group.add_argument("--reset",help="removes all post files from currently directory and rehadds them from the .output directory",action="store_true", default=False)
+# group.add_argument("--single",help="hadd files using a single thread, instead of multiple",action="store_true",default=False)
+# group.add_argument("--nohadd",help="does not try to hadd files together",action="store_true",default=False)
 
 def progress(current,total,prompt):
     percent = 100 * (total - current)/float(total)

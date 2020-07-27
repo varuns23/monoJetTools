@@ -5,14 +5,16 @@ import os
 sys.path.append("PlotTool")
 from PlotTool import *
 from ROOT import *
+
 import config
 from array import array
 
-parser.add_argument("-f","--fit",help="Post fit directory",default="fits/")
-parser.add_argument("-v","--variable",help="Variable used for fits",default="photonPFIso")
-parser.add_argument("--sys",nargs="+",default=["met","sb"])
-parser.add_argument("--plot",action="store_true")
-parser.add_argument("--save",action="store_true")
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument("-f","--fit",help="Post fit directory",default="fits/")
+group.add_argument("-v","--variable",help="Variable used for fits",default="photonPFIso")
+group.add_argument("--sys",nargs="+",default=["met","sb"])
+group.add_argument("--plot",action="store_true")
+group.add_argument("--save",action="store_true")
 
 def purity_style(ratio,color=kBlue+2):
     ratio.SetMarkerStyle(20)

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-from ROOT import *
+
 from sys import argv,path
 from PlotTool import *
+from ROOT import *
 import config
 import os
 
@@ -28,8 +29,9 @@ trigmap = {
     "6":"Photon200"
 }
 
-parser.add_argument('-num',help='Specify the numerator of trigger efficiency',nargs='+',required=True)
-parser.add_argument('-den',help='Specify the denomenator of trigger efficiency',required=True)
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument('-num',help='Specify the numerator of trigger efficiency',nargs='+',required=True)
+group.add_argument('-den',help='Specify the denomenator of trigger efficiency',required=True)
 
 samples = Region(show=False)
 

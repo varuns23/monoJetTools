@@ -1,6 +1,7 @@
-from ROOT import *
+
 from array import array
 from PlotTool import *
+from ROOT import *
 import config
 from sys import argv
 

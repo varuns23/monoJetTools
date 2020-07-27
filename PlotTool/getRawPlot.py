@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-from ROOT import *
+
 import sys
 import os
 from PlotTool import *
+from ROOT import *
 
 gROOT.SetBatch(1)
 

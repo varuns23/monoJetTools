@@ -1,9 +1,10 @@
-from ROOT import *
+
 import os
 from sys import argv
 from PlotTool import *
+from ROOT import *
 import config
-from PlotTool import parser
+
 
 gROOT.SetBatch(1)
 gStyle.SetOptStat(0)

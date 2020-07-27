@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-from ROOT import *
+
 from sys import argv,path
 from PlotTool import *
+from ROOT import *
 import config
 import os
 

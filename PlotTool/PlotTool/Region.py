@@ -43,25 +43,26 @@ MCOrderMap = {
         "DYJets","DiBoson","TTJets","WJets","QCD","GJets","ZJets"
     ],
     "GammaCR":[
-        "GJets","QCD","WJets","DiBoson","TTJets","DYJets","ZJets"
+        "G-NLO","GJets","QCD","WJets","DiBoson","TTJets","DYJets","ZJets"
     ]
 }
 
-parser.add_argument("-r","--reset",help="removes all post files from currently directory and rehadds them from the .output directory",action="store_true", default=False)
-parser.add_argument("-l","--lumi",help="set the luminosity for scaling",action="store",type=float)
-parser.add_argument("-s","--signal",help="specify the signal file to use",action="store",nargs="+",default=[])
-parser.add_argument("--nhists",help="Plot all 1D plots at nhists level",type=int,nargs='?',const=-1)
-parser.add_argument("--mc-solid",help="Make MC solid color",action="store_true",default=False)
-parser.add_argument("-d","--directory",help="Specify directory to get post files from",type=valid_directory)
-parser.add_argument("-e","--era",help="Specify the eras to use",type=lambda arg:sorted(arg.upper()),default=None)
-parser.add_argument("-a","--autovar",help="Specify to use the automatic basic nhist",nargs="?",const=0,type=int)
-parser.add_argument("--auto-order",help="Order MC Stack based on Integral",action="store_true",default=False)
-parser.add_argument("--normalize",help="Specify to normalize plots to unity",action="store_true",default=False)
-parser.add_argument("--nlo",help="Use all available NLO samples",action="store_true",default=False)
-parser.add_argument("--postpath",help="Force path to come from postpath.txt",action="store_true",default=False)
-parser.add_argument("--verbose",help="Specify verbose level",type=int,default=0)
-parser.add_argument("--blinded",help="Disable Data from being plotted",action="store_true",default=False)
-parser.add_argument("--use-ga-qcd",help="Use QCD from GammaCR instead of QCD Fake Template",action="store_true",default=False)
+group = parser.add_group(__file__,__doc__,"Class")
+
+group.add_argument("-l","--lumi",help="set the luminosity for scaling",action="store",type=float)
+group.add_argument("-s","--signal",help="specify the signal file to use",action="store",nargs="+",default=[])
+group.add_argument("--nhists",help="Plot all 1D plots at nhists level",type=int,nargs='?',const=-1)
+group.add_argument("--mc-solid",help="Make MC solid color",action="store_true",default=False)
+group.add_argument("-d","--directory",help="Specify directory to get post files from",type=valid_directory)
+group.add_argument("-e","--era",help="Specify the eras to use",type=lambda arg:sorted(arg.upper()),default=None)
+group.add_argument("-a","--autovar",help="Specify to use the automatic basic nhist",nargs="?",const=0,type=int)
+group.add_argument("--auto-order",help="Order MC Stack based on Integral",action="store_true",default=False)
+group.add_argument("--normalize",help="Specify to normalize plots to unity",action="store_true",default=False)
+group.add_argument("--no-nlo",help="Do not use NLO samples",action="store_true",default=False)
+group.add_argument("--postpath",help="Force path to come from postpath.txt",action="store_true",default=False)
+group.add_argument("--verbose",help="Specify verbose level",type=int,default=0)
+group.add_argument("--blinded",help="Disable Data from being plotted",action="store_true",default=False)
+group.add_argument("--use-ga-qcd",help="Use QCD from GammaCR instead of QCD Fake Template",action="store_true",default=False)
 
 class Region(object):
     def __init__(self,year=None,region=None,lumi=None,path=None,config=None,autovar=None,useMaxLumi=False,show=True,blinded=None):
@@ -81,10 +82,7 @@ class Region(object):
             self.isBlinded = parser.args.blinded
 
         self.MCList = []
-        for mc in self.config.mclist:
-            if parser.args.nlo and mc in self.config.nlomap:
-                self.MCList.append(self.config.nlomap[mc])
-            else: self.MCList.append(mc)
+        for mc in self.config.mclist: self.MCList.append(mc)
         self.SampleList = ["Data"] + self.MCList
         self.processes = {}
         datafile = DataFileMap[self.region]
@@ -102,7 +100,10 @@ class Region(object):
                 self.processes[mc] = Process("QCDFake",fakefiles,None,'bkg',
                                          leg=self.config.legmap[mc],color=self.config.colmap[mc],year=self.year,region=self.region)
                 continue
-            self.processes[mc] = Process(mc,self.config.filemap[mc],GetMCxsec(self.config.filemap[mc],self.config.xsec),'bkg',
+            filelist = list(self.config.filemap[mc])
+            if mc in self.config.nlomap and not parser.args.no_nlo:
+                filelist += list(self.config.nlomap[mc])
+            self.processes[mc] = Process(mc,filelist,GetMCxsec(filelist,self.config.xsec),'bkg',
                                          leg=self.config.legmap[mc],color=self.config.colmap[mc],year=self.year,region=self.region)
         if self.region == "SignalRegion" and any(parser.args.signal):
             self.setSignalInfo()
@@ -166,7 +167,7 @@ class Region(object):
         self.SignalToPlot = []
         signal_parser = ArgumentParser()
         signal_parser.add_argument("extra",nargs="*",default=None)
-        for signal in self.signalinfo.XsecMap: signal_parser.add_argument("-"+signal,nargs="*")
+        signal_parser.add_argument("-"+signal,nargs="*")
         signal_args = [ '-'+arg if arg in self.signalinfo.XsecMap else arg for arg in parser.args.signal ]
         signal_args = signal_parser.parse_args(signal_args)
         signalmap = {}

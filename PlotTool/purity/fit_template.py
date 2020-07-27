@@ -5,6 +5,7 @@ import os
 sys.path.append("PlotTool")
 from PlotTool import *
 from ROOT import *
+
 import config
 
 # ptbins = [230, 250, 280, 320, 375, 425, 475, 550, "Inf"]
@@ -17,10 +18,11 @@ for arg in list(sys.argv):
             sys.argv.insert(iarg,arg.replace("ptbins","%sto%s"%(ptbins[i],ptbins[i+1])))
             iarg += 1
     iarg += 1
-    
-parser.add_argument("-t","--template",help="Template file to fit",nargs="+",type=TFile,required=True)
-parser.add_argument("--plot",action="store_true")
-parser.add_argument("--save",action="store_true")
+
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument("-t","--template",help="Template file to fit",nargs="+",type=TFile,required=True)
+group.add_argument("--plot",action="store_true")
+group.add_argument("--save",action="store_true")
 
 varmap = {
     "photonPFIso":{

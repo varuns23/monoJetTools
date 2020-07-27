@@ -1,4 +1,4 @@
-from ROOT import *
+
 from argparse import ArgumentParser
 import sys
 import re

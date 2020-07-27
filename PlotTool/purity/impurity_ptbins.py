@@ -5,14 +5,16 @@ import os
 sys.path.append("PlotTool")
 from PlotTool import *
 from ROOT import *
+
 import config
 from array import array
 
-parser.add_argument("-f","--fit",help="Post fit directory",default="fits/")
-parser.add_argument("-v","--variable",help="Variable used for fits",default="photonSieie")
-parser.add_argument("--sys",nargs="+",default=["met"])
-parser.add_argument("--plot",action="store_true")
-parser.add_argument("--save",action="store_true")
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument("-f","--fit",help="Post fit directory",default="fits/")
+group.add_argument("-v","--variable",help="Variable used for fits",default="photonSieie")
+group.add_argument("--sys",nargs="+",default=["met"])
+group.add_argument("--plot",action="store_true")
+group.add_argument("--save",action="store_true")
 
 bufunc = {
     "2017":TF1("bu_2017","6.35*exp(-4.61e-03*x)+1.05",200.,1000.),

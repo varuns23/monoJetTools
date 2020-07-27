@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-from ROOT import *
+
 from sys import argv,path
 from PlotTool import *
+from ROOT import *
 from os import system,getcwd,path,mkdir
 import config
 
@@ -69,7 +70,7 @@ def SavePlot(variable):
     regionmap = { dirmap[region]:SaveRegion(region,save) for region in dirlist }
 ################################################################################
 if __name__ == "__main__":
-    from PlotTool import parser
+    
     import sys
     if "--no-width" not in sys.argv: sys.argv.append("--no-width")
     parser.parse_args()

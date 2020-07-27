@@ -1,7 +1,8 @@
-from ROOT import *
+
 import os
 from sys import argv
 from PlotTool import *
+from ROOT import *
 import config
 import re
 
@@ -137,7 +138,7 @@ def plotUnc(name,num,den,sample):
         SaveAs(c,outname,year=sample.year,sub="TransferFactors/%s/Uncertainty/%s"%(sample.variable.base,tf.name))
     for nuisance in nuisances: plotTFUnc(tf,sample,nuisance)
 if __name__ == "__main__":
-    from PlotTool import parser
+    
     sr = Region(path="SignalRegion",autovar=True,show=False)
     sr.SampleList = ["ZJets","WJets"]
     ga = Region(path="GammaCR",autovar=True,show=False)

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-from ROOT import *
+
 from PlotTool import *
-from PlotTool import parser
+from ROOT import *
+
 import os
 import sys
 

@@ -7,13 +7,14 @@ from Nuisance import *
 from Parser import parser
 from samplenames import samplenames
 
-parser.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
-parser.add_argument("--branch",help="Use TTree if available",action="store_true",default=False)
-parser.add_argument("--rebin",help="Specify number of bins to merge using TH1::Rebin()",type=int)
-parser.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
-parser.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
-parser.add_argument("--no-width",help="Disable bin width scaling",action="store_true",default=False)
-parser.add_argument("--add-overflow",help="Add overflow bin to last bin",action="store_true",default=False)
+group = parser.add_group(__file__,__doc__,"Class")
+group.add_argument("-b","--binning",help="specify function for rebinning histogram",action="store",type=str,default=None)
+group.add_argument("--branch",help="Use TTree if available",action="store_true",default=False)
+group.add_argument("--rebin",help="Specify number of bins to merge using TH1::Rebin()",type=int)
+group.add_argument("-w","--weight",help="Specify the weight to use for branch variables",type=str,default="weight")
+group.add_argument("-c","--cut",help="Specify cut on branch variable using TTree string",type=lambda arg:str(arg).replace('"','').replace("'",""),default=None)
+group.add_argument("--no-width",help="Disable bin width scaling",action="store_true",default=False)
+group.add_argument("--add-overflow",help="Add overflow bin to last bin",action="store_true",default=False)
 
 extraction_variables = ("recoil","ChNemPtFrac")
 

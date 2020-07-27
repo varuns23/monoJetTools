@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-from ROOT import *
+
 from sys import argv, path
 from PlotTool import *
-from PlotTool import parser
+from ROOT import *
+
 import config
 import os
                 
@@ -71,10 +72,11 @@ def getCutEff(hslist,binlist):
         table.addRow(row)
     return table
 
-parser.add_argument('--yields',help='print yield table of current region',action='store_true',default=False)
-parser.add_argument('--percent',help='print percentage of background table of current region',action='store_true',default=False)
-parser.add_argument('--efficiency',help='print cut efficiecies table of current region',action='store_true',default=False)
-parser.add_argument('--no-weight',help='use the none weighted cutflow',action='store_true',default=False)
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument('--yields',help='print yield table of current region',action='store_true',default=False)
+group.add_argument('--percent',help='print percentage of background table of current region',action='store_true',default=False)
+group.add_argument('--efficiency',help='print cut efficiecies table of current region',action='store_true',default=False)
+group.add_argument('--no-weight',help='use the none weighted cutflow',action='store_true',default=False)
 if __name__ == "__main__":
     parser.parse_args()
     

@@ -3,14 +3,16 @@ import os
 import sys
 sys.path.append("PlotTool")
 from PlotTool import *
+from ROOT import *
 from ROOT import Double
 import config
 import re
 config.mclist = []
 
-parser.add_argument("-v","--variable",help="Variable used for fits",default="photonPFIso")
-parser.add_argument("--plot",action="store_true")
-parser.add_argument("--save",action="store_true")
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument("-v","--variable",help="Variable used for fits",default="photonPFIso")
+group.add_argument("--plot",action="store_true")
+group.add_argument("--save",action="store_true")
 
 if not os.path.isdir("fakeratio"):
     # Create directory to store templates and make git ignore it
