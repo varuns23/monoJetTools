@@ -4,8 +4,16 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 import sys
 
-from argparse import ArgumentParser
-parser = ArgumentParser()
+from argparse import ArgumentParser,RawDescriptionHelpFormatter
+
+import textwrap as _textwrap
+
+class LineWrapRawTextHelpFormatter(RawDescriptionHelpFormatter):
+    def _split_lines(self, text, width):
+        text = self._whitespace_matcher.sub(' ', text).strip()
+        return _textwrap.wrap(text, width)
+    
+parser = ArgumentParser(formatter_class=LineWrapRawTextHelpFormatter)
 parser.add_argument('argv',nargs='*',help='accumlate undefined arguments',default=[])
 parser.add_argument('--debug',help='enable debug option',action='store_true',default=False)
 
