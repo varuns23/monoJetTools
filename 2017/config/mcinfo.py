@@ -23,9 +23,6 @@ lumi_by_era = {"SingleEleCR":{"B":4793,"C":9631,"D":4248,"E":9314,"F":13498},
 region_masks = {}
 
 mclist = ["ZJets","WJets","DYJets","GJets","TTJets","DiBoson","QCD"]
-nlomap = {"ZJets":"ZJets-NLO",
-          "WJets":"WJets-NLO",
-          "DYJets":"DYJets-NLO"}
 filemap = {
     "ZJets":     ["postZ100to200","postZ200to400","postZ400to600","postZ600to800","postZ800to1200","postZ1200to2500","postZ2500toInf"],
     "ZJets-NLO": ["postZNLO1j50to150","postZNLO1j150to250","postZNLO1j250to400","postZNLO1j400toInf",
@@ -41,13 +38,15 @@ filemap = {
     "DiBoson":   ["postWW","postWWTo4Q","postWWToLNuQQ","postWZ","postZZ","postWWTo2L2Nu"],
     "QCD":       ["postQCD100to200","postQCD200to300","postQCD300to500","postQCD500to700","postQCD700to1000","postQCD1000to1500","postQCD1500to2000","postQCD2000toInf"]
 }
+
+nlomap = {
+    
+}
+
 legmap = {
     "ZJets"     :"Z#rightarrow#nu#nu",
-    "ZJets-NLO" :"Z#rightarrow#nu#nu (NLO)",
     "WJets"     :"W#rightarrowl#nu",
-    "WJets-NLO" :"W#rightarrowl#nu (NLO)",
     "DYJets"    :"Z#rightarrow ll",
-    "DYJets-NLO":"Z#rightarrow ll (NLO)",
     "GJets"     :"#gamma+jets",  
     "TTJets"    :"Top Quark",         
     "DiBoson"   :"WW/WZ/ZZ",          
@@ -55,11 +54,8 @@ legmap = {
 }
 colmap = {
     "ZJets"     :9,
-    "ZJets-NLO" :9,
     "WJets"     :kOrange-2,
-    "WJets-NLO" :kOrange-2,
     "DYJets"    :7,
-    "DYJets-NLO":7,
     "GJets"     :46,  
     "TTJets"    :kSpring-9,
     "DiBoson"   :kMagenta-7, 
@@ -67,15 +63,15 @@ colmap = {
 }
 
 xsec = {
-"postDYNLO1j50to150":3.138e+02,
-"postDYNLO1j150to250":9.528e+00,
-"postDYNLO1j250to400":1.091e+00,
-"postDYNLO1j400toInf":1.209e-01,
+"postDY-NLO1j50to150":3.138e+02,
+"postDY-NLO1j150to250":9.528e+00,
+"postDY-NLO1j250to400":1.091e+00,
+"postDY-NLO1j400toInf":1.209e-01,
 
-"postDYNLO2j50to150":1.703e+02,
-"postDYNLO2j150to250":1.548e+01,
-"postDYNLO2j250to400":2.724e+00,
-"postDYNLO2j400toInf":4.487e-01,
+"postDY-NLO2j50to150":1.703e+02,
+"postDY-NLO2j150to250":1.548e+01,
+"postDY-NLO2j250to400":2.724e+00,
+"postDY-NLO2j400toInf":4.487e-01,
     
 "postDY70to100":1.470e+02,
 "postDY100to200":1.610e+02,
@@ -110,19 +106,19 @@ xsec = {
 "postTTJetsFXFX":7.268e+02,
 "postTTJetsMLM":4.949e+02,
     
-"postWNLO1j0to50":0.000e+00,
-"postWNLO1j50to150":2.661e+03,
-"postWNLO1j100to150":2.861e+02,
-"postWNLO1j150to250":7.19e+01,
-"postWNLO1j250to400":8.05e+00,
-"postWNLO1j400toInf":8.85e-01,
+"postW-NLO1j0to50":0.000e+00,
+"postW-NLO1j50to150":2.661e+03,
+"postW-NLO1j100to150":2.861e+02,
+"postW-NLO1j150to250":7.19e+01,
+"postW-NLO1j250to400":8.05e+00,
+"postW-NLO1j400toInf":8.85e-01,
     
-"postWNLO2j0to50":0.000e+00,
-"postWNLO2j50to150":2.661e+03,
-"postWNLO2j100to150":2.777e+03,
-"postWNLO2j150to250":1.509e+03,
-"postWNLO2j250to400":1.867e+01,
-"postWNLO2j400toInf":3.037e+00,
+"postW-NLO2j0to50":0.000e+00,
+"postW-NLO2j50to150":2.661e+03,
+"postW-NLO2j100to150":2.777e+03,
+"postW-NLO2j150to250":1.509e+03,
+"postW-NLO2j250to400":1.867e+01,
+"postW-NLO2j400toInf":3.037e+00,
     
 "postW70to100":1.294e+03,
 "postW100to200":1.395e+03,
@@ -135,15 +131,15 @@ xsec = {
 "postWIncl":5.280e+04,
     
 
-"postZNLO1j50to150":5.964e+02,
-"postZNLO1j150to250":1.798e+01,
-"postZNLO1j250to400":2.057e+00,
-"postZNLO1j400toInf":2.240e-01,
+"postZ-NLO1j50to150":5.964e+02,
+"postZ-NLO1j150to250":1.798e+01,
+"postZ-NLO1j250to400":2.057e+00,
+"postZ-NLO1j400toInf":2.240e-01,
 
-"postZNLO2j50to150":3.258e+02,
-"postZNLO2j150to250":2.976e+01,
-"postZNLO2j250to400":5.164e+00,
-"postZNLO2j400toInf":8.457e-01,
+"postZ-NLO2j50to150":3.258e+02,
+"postZ-NLO2j150to250":2.976e+01,
+"postZ-NLO2j250to400":5.164e+00,
+"postZ-NLO2j400toInf":8.457e-01,
     
 "postZ100to200":3.045e+02,
 "postZ200to400":9.185e+01,
@@ -170,15 +166,15 @@ old_xsec = {
 "postZ1200to2500":3.430e-01,
 "postZ2500toInf":5.146e-03,
 
-"postZNLO1j50to150":5.964e+02,
-"postZNLO1j150to250":1.798e+01,
-"postZNLO1j250to400":2.057e+00,
-"postZNLO1j400toInf":2.240e-01,
+"postZ-NLO1j50to150":5.964e+02,
+"postZ-NLO1j150to250":1.798e+01,
+"postZ-NLO1j250to400":2.057e+00,
+"postZ-NLO1j400toInf":2.240e-01,
 
-"postZNLO2j50to150":3.258e+02,
-"postZNLO2j150to250":2.976e+01,
-"postZNLO2j250to400":5.164e+00,
-"postZNLO2j400toInf":8.457e-01,
+"postZ-NLO2j50to150":3.258e+02,
+"postZ-NLO2j150to250":2.976e+01,
+"postZ-NLO2j250to400":5.164e+00,
+"postZ-NLO2j400toInf":8.457e-01,
     
 "postWIncl":5.279e+04,
 "postW70to100":0, #TODO: Calculate XSEC
@@ -190,19 +186,19 @@ old_xsec = {
 "postW1200to2500":1.080e+00,
 "postW2500toInf":8.053e-03,
 
-"postWNLO1j0to50":0.000e+00,
-"postWNLO1j50to150":2.661e+03,
-"postWNLO1j100to150":2.861e+02,
-"postWNLO1j150to250":7.19e+01,
-"postWNLO1j250to400":8.05e+00,
-"postWNLO1j400toInf":8.85e-01,
+"postW-NLO1j0to50":0.000e+00,
+"postW-NLO1j50to150":2.661e+03,
+"postW-NLO1j100to150":2.861e+02,
+"postW-NLO1j150to250":7.19e+01,
+"postW-NLO1j250to400":8.05e+00,
+"postW-NLO1j400toInf":8.85e-01,
     
-"postWNLO2j0to50":0.000e+00,
-"postWNLO2j50to150":2.661e+03,
-"postWNLO2j100to150":2.777e+03,
-"postWNLO2j150to250":1.509e+03,
-"postWNLO2j250to400":1.867e+01,
-"postWNLO2j400toInf":3.037e+00,
+"postW-NLO2j0to50":0.000e+00,
+"postW-NLO2j50to150":2.661e+03,
+"postW-NLO2j100to150":2.777e+03,
+"postW-NLO2j150to250":1.509e+03,
+"postW-NLO2j250to400":1.867e+01,
+"postW-NLO2j400toInf":3.037e+00,
     
 "postDY70to100":1.471e+02,
 "postDY100to200":1.610e+02,
@@ -213,15 +209,15 @@ old_xsec = {
 "postDY1200to2500":1.927e-01,
 "postDY2500toInf":3.478e-03,
 
-"postDYNLO1j50to150":3.138e+02,
-"postDYNLO1j150to250":9.528e+00,
-"postDYNLO1j250to400":1.091e+00,
-"postDYNLO1j400toInf":1.209e-01,
+"postDY-NLO1j50to150":3.138e+02,
+"postDY-NLO1j150to250":9.528e+00,
+"postDY-NLO1j250to400":1.091e+00,
+"postDY-NLO1j400toInf":1.209e-01,
 
-"postDYNLO2j50to150":1.703e+02,
-"postDYNLO2j150to250":1.548e+01,
-"postDYNLO2j250to400":2.724e+00,
-"postDYNLO2j400toInf":4.487e-01,
+"postDY-NLO2j50to150":1.703e+02,
+"postDY-NLO2j150to250":1.548e+01,
+"postDY-NLO2j250to400":2.724e+00,
+"postDY-NLO2j400toInf":4.487e-01,
     
 "postGJets40to100":1.862e+04,
 "postGJets100to200":8.622e+03,
