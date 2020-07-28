@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+
+"""
+Exports all postfiles in directory to hdfs storage
+Usage: ./PlotTool/hdfs_store.py -l label
+If in a valid file structure (i.e. year/region) and not specified differently
+/hdfs/store/user/$USER/MonoJet/PostFiles/$YEAR/$REGION/${DATE}_$label/
+"""
+
 import os
 import sys
 import datetime
@@ -82,7 +90,7 @@ def autorecursive(args,repo=repo_path):
     directory = '/'.join(directory)
     args.directory = valid_hdfs(directory)
 def getargs():
-    parser = ArgumentParser()
+    parser = ArgumentParser("PlotTool/hdfs_store.py Script",__doc__)
     parser.add_argument("-d","--directory",help="Specify directory in %s to save files" % hdfs_base,type=valid_hdfs)
     parser.add_argument("-y","--year",help="Specify the year of the files",type=valid_year)
     parser.add_argument("-r","--region",help="Specify the region of the files",type=valid_region)

@@ -35,6 +35,6 @@ The --sub option allows to put files in a subdirectory within that directory str
 
 Overriding Directory Structure
 ```
-./PlotTool/plotter.py --outpath /path/to/new/place/ hsname -a
+./PlotTool/plotter.py --basepath /path/to/new/place/ hsname -a
 ```
-The outpath option will override the directory structure in SaveAs and place plots exactly where you specify
+The basepath option will override the default basepath directory in SaveAs and place plots exactly where you specify

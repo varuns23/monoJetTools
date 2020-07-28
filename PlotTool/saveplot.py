@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+"""
+Exports variable from single years regions (sr & cr) into input file for monoJetLimits
+Usage: ./PlotTool/saveplot.py variable -s signal
+Refer to PlotTool/README,md for advance uses
+"""
 
 from sys import argv,path
 from PlotTool import *
@@ -8,6 +13,8 @@ from os import system,getcwd,path,mkdir
 import config
 
 gROOT.SetBatch(1)
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 dirlist = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR","GammaCR"]
 dirmap = {"SignalRegion":"signal","DoubleEleCR":"Zee","DoubleMuCR":"Zmm","SingleEleCR":"Wen","SingleMuCR":"Wmn","GammaCR":"gjets"}

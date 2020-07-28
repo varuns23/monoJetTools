@@ -2,9 +2,7 @@
 
 """
 Script for plotting TH1 from monoJetTools
-```
-./PlotTool/plotter.py hsname_1 hsname_2 hsname_3
-```
+Usage: ./PlotTool/plotter.py hsname_1 hsname_2 hsname_3
 Refer to PlotTool/README.md for advance uses
 """
 

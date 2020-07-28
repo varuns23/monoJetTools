@@ -1,3 +1,9 @@
+"""
+Collection of postfile samples that represent a single region
+Reads from config folder in each region to determine lumi, mc, and xsec to use
+Refer to PlotTool/PlotTool/README.md for advance uses
+"""
+
 import mergeFiles as merge
 import re
 import os
@@ -18,6 +24,29 @@ DataFileMap = {
     "DoubleMuCR":"postDoubleMu",
     "GammaCR":"postGamma"
 }
+
+def GetRegion():
+    region_pattern = ["postMETdata","postSingleEle","postSingleMu","postDoubleEle","postDoubleMu","postGamma","postQCDFake"]
+    RegionName = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR","GammaCR","GammaCR"]
+
+    def checkdir(dirname):
+        for region,pattern in zip(RegionName,region_pattern):
+            if region in dirname: return region
+            if any( pattern in fname for fname in os.listdir('.') ): return region
+            if os.path.isdir('.output/') and any( pattern in fname for fname in os.listdir('.output/') ): return region
+
+    dirname = os.getcwd()
+    region = checkdir(dirname)
+    if region != None: return region
+    
+    if not os.path.isfile('postpath.txt'): return "SignalRegion"
+    
+    with open('postpath.txt') as f: postpath = f.read().strip()
+    cwd = os.getcwd(); os.chdir(postpath)
+    dirname = os.path.realpath( os.getcwd() + '/../' )
+    region = checkdir(dirname)
+    if region != None: return region
+    return "SignalRegion"
 
 MCOrderMap = {
     "SignalRegion":[
