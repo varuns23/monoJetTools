@@ -18,7 +18,7 @@ cd CMSSW_10_2_18/src
 cmsenv
 voms-proxy-init --voms=cms --valid=192:00
 git clone https://github.com/varuns23/monoJetTools.git
-cd monoJetTools/PostAnalyzer/
+cd monoJetTools/
 
 make bin && make
 ```
@@ -97,3 +97,5 @@ To plot the signal distribution over the dataMC use
 ```bash
 python PlotTool/plotter.py -s Mx10_Mv1000 j1pT_8
 ```
+
+Refer to [Plotting README](https://github.com/varuns23/monoJetTools/blob/master/PlotTool/README.md) and [PlotTool README](https://github.com/varuns23/monoJetTools/blob/master/PlotTool/PlotTool/README.md) for more advance uses.
