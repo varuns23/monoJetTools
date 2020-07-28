@@ -18,7 +18,7 @@ cd CMSSW_10_2_18/src
 cmsenv
 voms-proxy-init --voms=cms --valid=192:00
 git clone https://github.com/varuns23/monoJetTools.git
-cd monoJetTools/PostAnalyzer/
+cd monoJetTools/
 
 make bin && make
 ```
@@ -85,6 +85,19 @@ The script option can be set to specifiy the script that should be used (analyze
 
 Refer to any submit.py script to get an idea of how it should work
 
+## Adding New Samples
+To add a new datsaset to the analysis follow these steps
+### Step 1: Add to ntuples/
+Add a new dataset text file to the dataset/ntuples/ directory in the format shown [here](https://github.com/varuns23/monoJetTools/blob/master/2017/datasets/ntuples/dyjets.txt).
+### Step 2: Add new dataset to Dataset.C
+Add the name of the dataset to [Dataset.C](https://github.com/varuns23/monoJetTools/blob/master/src/Dataset.C#L34-L40) and set the enumeration type to correspond to what the dataset is. If there isn't a corresponding enumeration type, it can be added to [monoJetEnums.h](https://github.com/varuns23/monoJetTools/blob/5b14d23d62fff63f9205a9cbdbfea90930e23684/inc/monoJetEnums.h#L4-L5).
+### Step 3: Add new dataset to SubmitDataset.py
+Add the dataset name to [SubmitDataset.py](https://github.com/varuns23/monoJetTools/blob/5b14d23d62fff63f9205a9cbdbfea90930e23684/CondorTools/SubmitDataset.py#L7-L16) so that it is available in the submit scripts. The value of the labelmap for the new dataset corresponds to how the postfiles will be named, post${label}{subset}.root.
+### Step 4: Add new dataset to PlotTool
+If the dataset is MC, the postfile needs to be added to the mclist in [mcinfo.py](https://github.com/varuns23/monoJetTools/blob/5b14d23d62fff63f9205a9cbdbfea90930e23684/2017/config/mcinfo.py#L25-L63) and to the xsec map in [mcinfo.py](https://github.com/varuns23/monoJetTools/blob/5b14d23d62fff63f9205a9cbdbfea90930e23684/2017/config/mcinfo.py#L65)
+
+If the dataset is Data, the file pattern needs to be added to the [DataFileMap in Region.py](https://github.com/varuns23/monoJetTools/blob/5b14d23d62fff63f9205a9cbdbfea90930e23684/PlotTool/PlotTool/Region.py#L19) and [GetRegion method](https://github.com/varuns23/monoJetTools/blob/5b14d23d62fff63f9205a9cbdbfea90930e23684/PlotTool/PlotTool/Region.py#L29-L30) with the corresponding region in RegionName.
+
 ## Plotting
 The PlotTool python package is setup to work with the file structure created by using this setup
 After the condor jobs are finished use the PlotTool/plotter.py file to merge all the correct files together and plot them for a given variable
@@ -95,5 +108,7 @@ python PlotTool/plotter.py j1pT_8
 
 To plot the signal distribution over the dataMC use 
 ```bash
-python PlotTool/plotter.py -s Mx10_Mv1000 j1pT_8
+python PlotTool/plotter.py j1pT_8 -s axial
 ```
+
+Refer to [Plotting README](https://github.com/varuns23/monoJetTools/blob/master/PlotTool/README.md) and [PlotTool README](https://github.com/varuns23/monoJetTools/blob/master/PlotTool/PlotTool/README.md) for more detailed usages.
