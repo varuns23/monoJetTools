@@ -25,14 +25,8 @@ region_masks = {}
 mclist = ["ZJets","WJets","DYJets","GJets","TTJets","DiBoson","QCD"]
 filemap = {
     "ZJets":     ["postZ100to200","postZ200to400","postZ400to600","postZ600to800","postZ800to1200","postZ1200to2500","postZ2500toInf"],
-    "ZJets-NLO": ["postZNLO1j50to150","postZNLO1j150to250","postZNLO1j250to400","postZNLO1j400toInf",
-                  "postZNLO2j50to150","postZNLO2j150to250","postZNLO2j250to400","postZNLO2j400toInf"],
     "WJets":     ["postW100to200","postW200to400","postW400to600","postW600to800","postW800to1200","postW1200to2500","postW2500toInf","postWIncl"],
-    "WJets-NLO": ["postWNLO1j0to50","postWNLO1j50to150","postWNLO1j100to150","postWNLO1j150to250","postWNLO1j250to400","postWNLO1j400toInf",
-                  "postWNLO2j0to50","postWNLO2j50to150","postWNLO2j100to150","postWNLO2j150to250","postWNLO2j250to400","postWNLO2j400toInf"],
     "DYJets":    ["postDY70to100","postDY100to200","postDY200to400","postDY400to600","postDY600to800","postDY800to1200","postDY1200to2500","postDY2500toInf"],
-    "DYJets-NLO":["postDYNLO1j50to150","postDYNLO1j150to250","postDYNLO1j250to400","postDYNLO1j400toInf",
-                  "postDYNLO2j50to150","postDYNLO2j150to250","postDYNLO2j250to400","postDYNLO2j400toInf"],
     "GJets":     ["postGJets40to100","postGJets100to200","postGJets200to400","postGJets400to600","postGJets600toInf"],
     "TTJets":    ["postTTJetsFXFX","postST_s_4f","postST_t_antitop_4f","postST_t_top_4f","postST_tW_antitop_5f","postST_tW_top_5f"],
     "DiBoson":   ["postWW","postWWTo4Q","postWWToLNuQQ","postWZ","postZZ","postWWTo2L2Nu"],
@@ -40,7 +34,12 @@ filemap = {
 }
 
 nlomap = {
-    
+    # "ZJets": ["postZ-NLO1j50to150","postZ-NLO1j150to250","postZ-NLO1j250to400","postZ-NLO1j400toInf",
+    #               "postZ-NLO2j50to150","postZ-NLO2j150to250","postZ-NLO2j250to400","postZ-NLO2j400toInf"],
+    # "WJets": ["postW-NLO1j0to50","postW-NLO1j50to150","postW-NLO1j100to150","postW-NLO1j150to250","postW-NLO1j250to400","postW-NLO1j400toInf",
+    #               "postW-NLO2j0to50","postW-NLO2j50to150","postW-NLO2j100to150","postW-NLO2j150to250","postW-NLO2j250to400","postW-NLO2j400toInf"],
+    # "DYJets":["postDY-NLO1j50to150","postDY-NLO1j150to250","postDY-NLO1j250to400","postDY-NLO1j400toInf",
+    #               "postDY-NLO2j50to150","postDY-NLO2j150to250","postDY-NLO2j250to400","postDY-NLO2j400toInf"],
 }
 
 legmap = {
