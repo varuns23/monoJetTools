@@ -95,7 +95,7 @@ python PlotTool/plotter.py j1pT_8
 
 To plot the signal distribution over the dataMC use 
 ```bash
-python PlotTool/plotter.py -s Mx10_Mv1000 j1pT_8
+python PlotTool/plotter.py j1pT_8 -s axial
 ```
 
 Refer to [Plotting README](https://github.com/varuns23/monoJetTools/blob/master/PlotTool/README.md) and [PlotTool README](https://github.com/varuns23/monoJetTools/blob/master/PlotTool/PlotTool/README.md) for more advance uses.
