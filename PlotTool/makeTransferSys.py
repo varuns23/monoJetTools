@@ -1,3 +1,7 @@
+"""
+Build transfer systematic files for use in limit code
+Usage: python PlotTool/makeTransferSys.root variable
+"""
 
 gROOT.SetBatch(1)
 
@@ -5,6 +9,8 @@ import os
 import sys
 from PlotTool import *
 from ROOT import *
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 nuisancemap = {
     "QCD_Scale"  :"QCDScale",

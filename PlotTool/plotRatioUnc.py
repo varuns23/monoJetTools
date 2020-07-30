@@ -1,3 +1,7 @@
+"""
+Draw uncertainty bands for transfer factor ratios
+Usage: python PlotTool/plotRatioUnc.py variable1 variabl2 
+"""
 
 import os
 from sys import argv

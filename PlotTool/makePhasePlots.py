@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+"""
+Creates phase plots for 2D histograms
+example https://www.hep.wisc.edu/~ekoenig4/MonoJet/Plots2018/SingleEleCRPlots_EWK/phase/data_h_LeptonEtaPhi_10.png
+Directions: In region directior with valid root files
+Usage: python PlotTool/makePhasePlots.py variable_1 variable_2 variable_3 ...
+"""
 
 from sys import argv
 from sys import path
@@ -8,12 +14,7 @@ from ROOT import *
 
 import os
 
-"""
-Creates phase plots for 2D histograms
-example https://www.hep.wisc.edu/~ekoenig4/MonoJet/Plots2018/SingleEleCRPlots_EWK/phase/data_h_LeptonEtaPhi_10.png
-Directions: In region directior with valid root files
-Usage: python ../PlotTool/makePhasePlots.py variable_1 variable_2 variable_3 ...
-"""
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 samples=Region()

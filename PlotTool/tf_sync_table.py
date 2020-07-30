@@ -1,3 +1,7 @@
+"""
+Print out transfer factor table
+Usage: python PlotTool/tf_sync_table.py variable1 variable2
+"""
 
 import os
 from sys import argv
@@ -5,6 +9,8 @@ from PlotTool import *
 from ROOT import *
 import config
 import re
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 # gROOT.SetBatch(1)
 # gROOT.SetBatch(0)

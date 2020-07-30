@@ -1,3 +1,7 @@
+"""
+Draw uncertainty bands for major processes of each region
+Usage: python PlotTool/plotShapeUnc.py variable
+"""
 
 import os
 from sys import argv
@@ -5,6 +9,7 @@ from PlotTool import *
 from ROOT import *
 import config
 
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 gStyle.SetOptStat(0)

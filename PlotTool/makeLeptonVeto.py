@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+Make SR WJets object veto scale factor file and plot
+Usage: python PlotTool/makeLeptonVeto.py variable
+"""
 
 from sys import argv,path
 from PlotTool import *

@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+Draw histograms without any scaling
+Usage: ./PlotTool/getRawPlot.py -f postfile1,postfile2,postfile3
+"""
 
 import sys
 import os

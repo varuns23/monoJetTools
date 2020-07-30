@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+"""
+Generate Trigger Efficiency plots
+Usage: python PlotTool/makeTriggEff.py -num variable_num1 variable_num2 -den variable_den
+"""
 
 from sys import argv,path
 from PlotTool import *
@@ -8,9 +12,6 @@ import config
 import os
 
 gROOT.SetBatch(1)
-"""
-Generate Trigger Efficiency plots
-"""
 
 config.mclist = [] #remove mc from being considered
 

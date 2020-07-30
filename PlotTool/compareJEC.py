@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 
+"""
+Compare JEC shapes from two hdfs paths
+Usage: python PlotTool/compareJEC.py 
+"""
+
 from PlotTool import *
 from ROOT import *
 import os
 import sys
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 

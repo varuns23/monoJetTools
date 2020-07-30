@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 
 
+"""
+Generates kfactor comparison plots 
+example https://www.hep.wisc.edu/~ekoenig4/MonoJet/Plots2017/SingleEleCRPlots_EWK/kfactorComparison.png
+Usage: python PlotTool/makeBosonPt.py 
+"""
+
 from sys import argv,path
 from PlotTool import *
 from ROOT import *
 import config
 import os
 
-"""
-Generates pileup comparison plots 
-example https://www.hep.wisc.edu/~ekoenig4/MonoJet/Plots2017/SingleEleCRPlots_EWK/pileupComparison.png
-Directions: In region directory with all proper files present, and the correct year dataPileup.root file contained in the PlotTool Directory
-Usage: python ../PlotTool/makePileup.py
-"""
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 

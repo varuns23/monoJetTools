@@ -1,10 +1,17 @@
 
+"""
+Make transfer factor ratio plots
+Usage: python PlotTool/plotTransfer.py variable
+"""
+
 import os
 from sys import argv
 from PlotTool import *
 from ROOT import *
 import config
 import re
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 # gROOT.SetBatch(0)

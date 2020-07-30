@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+"""
+Fit templates for Photon Purity
+Usage: python PlotTool/purity/fit_template.py -t template_file.root 
+"""
+
 import sys
 import re
 import os

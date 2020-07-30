@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+"""
+Build Photon Purity Templates
+Usage: python PlotTool/purity/build_templates.py variable
+"""
+
 import os
 import sys
 sys.path.append("PlotTool")

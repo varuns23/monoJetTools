@@ -14,7 +14,7 @@ group.add_argument("--sub",help="Specify subdirectory from basepath directory to
 
 def GetOutDir(path,year,region,sub):
     parser.parse_args()
-    if path is None: path = parser.args.outpath
+    if path is None: path = parser.args.basepath
     if year is not None: path = os.path.join(path,'Plots'+year)
     if region is not None: path = os.path.join(path,region+'Plots_EWK')
     if sub is not None: path = os.path.join(path,sub)

@@ -1,3 +1,7 @@
+"""
+Dump purity/impurity values for Photon Purity
+Usage: python PlotTool/purity/dump_values.py fitfile1 fitfile2
+"""
 
 from argparse import ArgumentParser
 import sys
@@ -14,7 +18,7 @@ for arg in list(sys.argv):
             iarg += 1
     iarg += 1
 
-parser = ArgumentParser()
+parser = ArgumentParser("dump_values.py",__doc__)
 parser.add_argument("-v","--value",default="postfit/purity")
 parser.add_argument("-f","--format",default="%.3f")
 parser.add_argument("files",nargs="*",type=TFile,default=[])

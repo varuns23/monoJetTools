@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+"""
+Draw/Save impurity ptbin plot
+Usage: python PlotTool/purity/impurity_ptbins.py 
+"""
+
 import sys
 
 import os

@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+"""
+Compute fake ratio from Photon Purity fits
+Usage: python PlotTool/compute_fakeratio.py -v variable
+"""
+
 import os
 import sys
 sys.path.append("PlotTool")
