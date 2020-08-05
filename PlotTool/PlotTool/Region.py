@@ -18,7 +18,7 @@ DataFileMap = {
     "DoubleEleCR":"postDoubleEle",
     "DoubleMuCR":"postDoubleMu",
     "GammaCR":"postGamma",
-    "TauFakeRate":"postTAUdata"
+    "TauFakeRate":"postMTdata"
 }
 
 MCOrderMap = {

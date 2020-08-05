@@ -14,8 +14,8 @@
 using namespace std;
 class monoJetClass : public monoJetYear, public monoJetTauFakeRate {
 public :
-  static const int nHisto = 11;
-  static const int bHisto = 8;
+  static const int nHisto = 12;
+  static const int bHisto = 9;
   
   monoJetClass(const char* file1,const char* file2,int nfiles) : monoJetAnalysis(file1,file2,nfiles) {
     monoJetTauFakeRate::Init(fChain);

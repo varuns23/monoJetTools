@@ -37,7 +37,8 @@ filemap = {
     "DYJets-NLO":["postDYNLO1j50to150","postDYNLO1j150to250","postDYNLO1j250to400","postDYNLO1j400toInf",
                   "postDYNLO2j50to150","postDYNLO2j150to250","postDYNLO2j250to400","postDYNLO2j400toInf"],
     "GJets":     ["postGJets40to100","postGJets100to200","postGJets200to400","postGJets400to600","postGJets600toInf"],
-    "TTJets":    ["postTTJetsFXFX","postST_s_4f","postST_t_antitop_4f","postST_t_top_4f","postST_tW_antitop_5f","postST_tW_top_5f"],
+    # "TTJets":    ["postTTJetsFXFX","postST_s_4f","postST_t_antitop_4f","postST_t_top_4f","postST_tW_antitop_5f","postST_tW_top_5f"],
+    "TTJets":    ["postTTJetsDiLept","postTTJetsSingleLeptFromT"],
     "DiBoson":   ["postWW","postWWTo4Q","postWWToLNuQQ","postWZ","postZZ","postWWTo2L2Nu"],
     "QCD":       ["postQCD100to200","postQCD200to300","postQCD300to500","postQCD500to700","postQCD700to1000","postQCD1000to1500","postQCD1500to2000","postQCD2000toInf"]
 }
@@ -109,6 +110,8 @@ xsec = {
     
 "postTTJetsFXFX":7.268e+02,
 "postTTJetsMLM":4.949e+02,
+"postTTJetsDiLept":54.23    ,
+"postTTJetsSingleLeptFromT":109.6,
     
 "postWNLO1j0to50":0.000e+00,
 "postWNLO1j50to150":2.661e+03,

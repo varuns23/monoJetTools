@@ -61,7 +61,7 @@ def valid_directory(directory):
     return directory
 
 def GetRegion():
-    region_pattern = ["postMETdata","postSingleEle","postSingleMu","postDoubleEle","postDoubleMu","postGamma","postQCDFake","postTAUdata"]
+    region_pattern = ["postMETdata","postSingleEle","postSingleMu","postDoubleEle","postDoubleMu","postGamma","postQCDFake","postMTdata"]
     RegionName = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR","GammaCR","GammaCR","TauFakeRate"]
 
     def checkdir(dirname):

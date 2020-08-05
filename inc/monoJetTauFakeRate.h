@@ -44,6 +44,8 @@ public:
   TH1F *h_tauSigChNemPtFrac[maxHisto],*h_tauSigChNemPtFracV2[maxHisto],*h_tauSigChNemPt[maxHisto],*h_tauSigChNemPt123[maxHisto];
 
   TH1F *h_tauIsoEtaWidth[maxHisto],*h_tauIsoPhiWidth[maxHisto],*h_tauSigEtaWidth[maxHisto],*h_tauSigPhiWidth[maxHisto];
+
+  TH1F *h_pfMETlow[maxHisto];
   
   TH2F *h_tauEtaPhi[maxHisto],*h_muonEtaPhi[maxHisto];
   

@@ -1,0 +1,15 @@
+>>B
+/hdfs/store/user/ekoenig/NTuples/Data/Run2017/EmbeddedMuTau2017/EmbeddedMuTau2017B-run_102X_embedded-data2017-farmout/
+
+>>C
+/hdfs/store/user/ekoenig/NTuples/Data/Run2017/EmbeddedMuTau2017/EmbeddedMuTau2017C-run_102X_embedded-data2017-farmout/
+
+>>D
+/hdfs/store/user/ekoenig/NTuples/Data/Run2017/EmbeddedMuTau2017/EmbeddedMuTau2017D-run_102X_embedded-data2017-farmout/
+
+>>E
+/hdfs/store/user/ekoenig/NTuples/Data/Run2017/EmbeddedMuTau2017/EmbeddedMuTau2017E-run_102X_embedded-data2017-farmout/
+
+>>F
+/hdfs/store/user/ekoenig/NTuples/Data/Run2017/EmbeddedMuTau2017/EmbeddedMuTau2017F-run_102X_embedded-data2017-farmout/
+

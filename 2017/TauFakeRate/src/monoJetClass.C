@@ -36,8 +36,6 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-    if (isData && event%5 != 0) continue;
-
     if (jentry%reportEvery == 0){
       cout<<"Analyzing entry "<<jentry<<"/"<<(nentriesToCheck)<<endl;
     }
@@ -54,17 +52,17 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
       }
     }
 
-    cutflow->Fill(0,genWeight);
+    fillEvent(0,genWeight);
 
     if (!getMuTauTrigger()) continue;
     if (!inclusiveCut()) continue;
-    cutflow->Fill(1,event_weight);
+    fillEvent(1,event_weight);
 
     if (!getMetFilter()) continue;
-    cutflow->Fill(2,event_weight);
+    fillEvent(2,event_weight);
 
     if (pfMET >= 60) continue;
-    cutflow->Fill(3,event_weight);
+    fillEvent(3,event_weight);
     
     vector<int> taulist = getLooseTau();
     vector<int> mulist = getLooseMu();
@@ -72,22 +70,25 @@ void monoJetClass::Loop(Long64_t maxEvents, int reportEvery) {
     if (taulist.size() != 1 || mulist.size() != 1) continue;
     if (!CRSelection(taulist,mulist)) continue;
     iso_category = isMedium(tauindex);
-    cutflow->Fill(4,event_weight);
+    fillEvent(4,event_weight);
 
     if (tau_pt <= 30) continue;
-    cutflow->Fill(5,event_weight);
+    fillEvent(5,event_weight);
 
     if (muon_pt <= 50) continue;
-    cutflow->Fill(6,event_weight);
+    fillEvent(6,event_weight);
     
     if (!electron_veto()) continue;
-    cutflow->Fill(7,event_weight);
+    fillEvent(7,event_weight);
 
     if (!photon_veto(tauindex,muindex)) continue;
     fillEvent(8,event_weight);
 
-    if (iso_category) fillEvent(9,event_weight);
-    else              fillEvent(10,event_weight);
+    if (!bjet_veto(bjetDeepCSVCut_2017)) continue;
+    fillEvent(9,event_weight);
+
+    if (iso_category) fillEvent(10,event_weight);
+    else              fillEvent(11,event_weight);
   }
 
 }//Closing the Loop function
@@ -97,10 +98,10 @@ void monoJetClass::BookHistos(const char* outputFilename) {
   output = new TFile(outputFilename, "RECREATE");
   output->cd();
 
-  cutflow = new Cutflow(this,{s_TotalEvents,s_Triggers,s_METFilters,"MET60","Exactly 1 Tau and Muon","tauPt30","muonPt50",s_ElectronVeto,s_PhotonVeto,"IsoCategory","Non-IsoCategory"});
+  cutflow = new Cutflow(this,{s_TotalEvents,s_Triggers,s_METFilters,"MET60","Exactly 1 Tau and Muon","tauPt30","muonPt50",s_ElectronVeto,s_PhotonVeto,s_BJetVeto,"IsoCategory","Non-IsoCategory"});
 
   monoJetYear::BookHistos(-1,"");
-  for(int i = bHisto; i<nHisto; i++) {
+  for(int i = 0; i<nHisto; i++) {
     char ptbins[100];
     sprintf(ptbins, "_%d", i);
     TString histname(ptbins);

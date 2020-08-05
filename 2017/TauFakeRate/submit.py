@@ -12,5 +12,5 @@ options['parallel'] = False
 options['batchsize'] = 50
 # options['submit'] = False
 #----Submit---#
-# submit('met',filelist=True)
-for mc in mclist: submit(mc)
+submit('mutau',filelist=True)
+for mc in ("dyjets","ttjets","ewk","wjets"): submit(mc)

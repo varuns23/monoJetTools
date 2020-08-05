@@ -46,7 +46,7 @@ bin:
 	mkdir -p $(ROOT)$(BIN)
 
 test: analyze
-	./analyze /hdfs/store/user/ekoenig/MC2017_12Apr2018_Jul2020/DYJetsToLL_M-50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/crab_job_DYJetsToLL_HT400-600/200715_165758/0000/ test_mc.root -1 1000 1-10
+	./analyze
 
 clean:
 	rm -f post*.root

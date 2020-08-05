@@ -46,8 +46,11 @@ void monoJetTauFakeRate::BookHistos(int i,TString histname) {
     
   } else {
     auto Name = [histname](TString name) { return (name + histname); };
-    
-    h_tauPt[i]     = MakeTH1F(new TH1F(Name("tauPt")    ,"tauPt;Tau P_{T} (GeV)"       ,50,0.0,1000.0));   
+    h_recoilall[i]->SetBins(50,0.0,800.0); // redefine binning
+    h_pfMETall[i]->SetBins(50,0.0,800.0);
+    h_caloMET[i]->SetBins(50,0.0,800.0);
+    h_pfMETlow[i]  = MakeTH1F(new TH1F(Name("pfMETlow") ,"pfMET;E_{T}^{miss} [GeV]"    ,50,0.0,80.0));
+    h_tauPt[i]     = MakeTH1F(new TH1F(Name("tauPt")    ,"tauPt;Tau P_{T} [GeV]"       ,50,0.0,1000.0));   
     h_tauEta[i]    = MakeTH1F(new TH1F(Name("tauEta")   ,"tauEta;Tau #eta"             ,nEtaBins,lEta,uEta));              
     h_tauPhi[i]    = MakeTH1F(new TH1F(Name("tauPhi")   ,"tauPhi;Tau #phi"             ,nPhiBins,lPhi,uPhi));
     h_tauIsoChMult[i] = MakeTH1F(new TH1F(Name("tauIsoChMult"),"tauIsoChMult;Tau Isolated Charged Hadron Multiplicity",20,0,20));
@@ -72,12 +75,12 @@ void monoJetTauFakeRate::BookHistos(int i,TString histname) {
     h_tauSigEtaWidth[i]     = MakeTH1F(new TH1F(Name("tauSigEtaWidth")   ,"tauSigEtaWidth; Signal #eta width of Leading Tau"                  ,50,0,0.25));
     h_tauSigPhiWidth[i]     = MakeTH1F(new TH1F(Name("tauSigPhiWidth")   ,"tauSigPhiWidth; Signal #phi width of Leading Tau"                  ,50, 0,0.5));
     
-    h_muonPt[i]  = MakeTH1F(new TH1F(Name("muonPt") ,"muonPt;Muon P_{T} (GeV)" ,50,0.0,1000.0));
+    h_muonPt[i]  = MakeTH1F(new TH1F(Name("muonPt") ,"muonPt;Muon P_{T} [GeV]" ,50,0.0,1000.0));
     h_muonEta[i] = MakeTH1F(new TH1F(Name("muonEta"),"muonEta;Muon #eta"       ,nEtaBins,lEta,uEta));              
     h_muonPhi[i] = MakeTH1F(new TH1F(Name("muonPhi"),"muonPhi;Muon #phi"       ,nPhiBins,lPhi,uPhi));        
-    h_dileptonPt[i]          = MakeTH1F(new TH1F(Name("dileptonPt")         ,"dileptonPt;Z P_{T} (GeV)"                         ,30,0.,1500.));              
-    h_dileptonM[i]           = MakeTH1F(new TH1F(Name("dileptonM")          ,"dileptonM;Z Mass (GeV)"                           ,24,60.,120.));
-    h_dileptonMall[i]        = MakeTH1F(new TH1F(Name("dileptonMall")       ,"dileptonM;Z Mass (GeV)"                           ,50,30.,200.));
+    h_dileptonPt[i]          = MakeTH1F(new TH1F(Name("dileptonPt")         ,"dileptonPt;Z P_{T} [GeV]"                         ,30,0.,1500.));              
+    h_dileptonM[i]           = MakeTH1F(new TH1F(Name("dileptonM")          ,"dileptonM;Z Mass [GeV]"                           ,24,60.,120.));
+    h_dileptonMall[i]        = MakeTH1F(new TH1F(Name("dileptonMall")       ,"dileptonM;Z Mass [GeV]"                           ,50,30.,200.));
     h_isoCategory[i]      = MakeTH1F(new TH1F(Name("isoCategory")     ,"isoCategory;isoCategory"                               ,2,0,2));
     
     h_tauEtaPhi[i] = new TH2F(Name("tauEtaPhi")   ,"tauEtaPhi;Leading Tau #eta;Leading Tau #phi"             ,nEtaBins,lEta,uEta,nPhiBins,lPhi,uPhi);  
@@ -86,6 +89,7 @@ void monoJetTauFakeRate::BookHistos(int i,TString histname) {
 }
 
 void monoJetTauFakeRate::fillHistos(int nhist,float event_weight) {
+  h_pfMETlow[nhist]   ->Fill(pfMET,event_weight);
   if(tauindex >= 0 && muindex >= 0){ 
     h_tauPt[nhist]    ->Fill(tau_pt,event_weight);
     h_tauEta[nhist]   ->Fill(tau_eta,event_weight);
