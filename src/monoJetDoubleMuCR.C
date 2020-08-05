@@ -15,7 +15,8 @@ void monoJetDoubleMuCR::initVars() {
   dilepton_mass = dilepton_pt = -1;
   leadingLepton_pt = leadingLepton_eta = leadingLepton_phi = -99;
   subleadingLepton_pt = subleadingLepton_eta = subleadingLepton_phi = -99;
-  tightID_sf = tightISO_sf = looseID_sf = looseISO_sf = 1;
+  m1tightID_sf = m1tightISO_sf = m1looseID_sf = m1looseISO_sf = 1;
+  m2tightID_sf = m2tightISO_sf = m2looseID_sf = m2looseISO_sf = 1;
   
 }
 
@@ -28,10 +29,14 @@ void monoJetDoubleMuCR::initTree(TTree* tree) {
   tree->Branch("subleadingLeptonPt",&subleadingLepton_pt,"Subleading Lepton P_{T} (GeV)");
   tree->Branch("subleadingLeptonEta",&subleadingLepton_eta,"Subleading Lepton Eta");
   tree->Branch("subleadingLeptonPhi",&subleadingLepton_phi,"Subleading Lepton Phi");
-  tree->Branch("tightID_sf",&tightID_sf);
-  tree->Branch("tightISO_sf",&tightISO_sf);
-  tree->Branch("looseID_sf",&looseID_sf);
-  tree->Branch("looseISO_sf",&looseISO_sf);
+  tree->Branch("m1tightID_sf",&m1tightID_sf);
+  tree->Branch("m1tightISO_sf",&m1tightISO_sf);
+  tree->Branch("m1looseID_sf",&m1looseID_sf);
+  tree->Branch("m1looseISO_sf",&m1looseISO_sf);
+  tree->Branch("m2tightID_sf",&m2tightID_sf);
+  tree->Branch("m2tightISO_sf",&m2tightISO_sf);
+  tree->Branch("m2looseID_sf",&m2looseID_sf);
+  tree->Branch("m2looseISO_sf",&m2looseISO_sf);
 }
 
 void monoJetDoubleMuCR::BookHistos(int i,TString histname) {
@@ -69,35 +74,37 @@ void monoJetDoubleMuCR::fillHistos(int nhist,float event_weight) {
     h_dileptonMall[nhist]       ->Fill(dilepton_mass,event_weight);
     
     h_leadingLeptonEtaPhi[nhist]   ->Fill(leadingLepton_eta,leadingLepton_phi,event_weight);
-    h_subleadingLeptonEtaPhi[nhist]   ->Fill(subleadingLepton_eta,subleadingLepton_phi,event_weight);
+    h_subleadingLeptonEtaPhi[nhist]->Fill(subleadingLepton_eta,subleadingLepton_phi,event_weight);
   }
 }
 
 bool monoJetDoubleMuCR::CRSelection(vector<int> tightlist,vector<int> looselist) {
   if (tightlist.size() == 0) return false;
-  for(int j=0; j<looselist.size(); ++j){
-    //Event must have exactly two muons with opposite charge
-    if(muCharge->at(tightlist[0]) * muCharge->at(looselist[j]) == -1){
+  if (looselist.size() <  2) return false;
+  int i1 = looselist[0];
+  int i2 = looselist[1];
+  
+  if(muCharge->at(i1) * muCharge->at(i2) == -1){
 
-      lep1.SetPtEtaPhiE(muPt->at(tightlist[0]), muEta->at(tightlist[0]), muPhi->at(tightlist[0]), muE->at(tightlist[0]));
-      lep2.SetPtEtaPhiE(muPt->at(looselist[j]), muEta->at(looselist[j]), muPhi->at(looselist[j]), muE->at(looselist[j]));
-      leadLepIndx    = tightlist[0];
-      subleadLepIndx = looselist[j];
-      
-      TLorentzVector ll = lep1 + lep2;
-      dilepton_mass = ll.M();
-      dilepton_pt = ll.Pt();
-      
-      leadingLepton_pt = lep1.Pt();
-      leadingLepton_eta = lep1.Eta();
-      leadingLepton_phi = lep1.Phi();
-      
-      subleadingLepton_pt = lep2.Pt();
-      subleadingLepton_eta = lep2.Eta();
-      subleadingLepton_phi = lep2.Phi();
-      setRecoil();
-      return true;
-    }
+    lep1.SetPtEtaPhiE(muPt->at(i1), muEta->at(i1), muPhi->at(i1), muE->at(i1));
+    lep2.SetPtEtaPhiE(muPt->at(i2), muEta->at(i2), muPhi->at(i2), muE->at(i2));
+    leadLepIndx    = i1;
+    subleadLepIndx = i2;
+    
+    TLorentzVector ll = lep1 + lep2;
+    dilepton_mass = ll.M();
+    dilepton_pt = ll.Pt();
+    
+    leadingLepton_pt = lep1.Pt();
+    leadingLepton_eta = lep1.Eta();
+    leadingLepton_phi = lep1.Phi();
+    
+    subleadingLepton_pt = lep2.Pt();
+    subleadingLepton_eta = lep2.Eta();
+    subleadingLepton_phi = lep2.Phi();
+    
+    setRecoil();
+    return true;
   }
   return false;
 }
@@ -117,12 +124,17 @@ float monoJetDoubleMuCR::getSF(int leading,int subleading) {
   float leading_pt = muPt->at(leading); float leading_abseta = fabs(muEta->at(leading)); 
   float subleading_pt = muPt->at(subleading); float subleading_abseta = fabs(muEta->at(subleading));
 
-  tightID_sf = th2fmap.getBin("muon_id_tight",leading_pt,leading_abseta);
-  tightISO_sf = th2fmap.getBin("muon_iso_tight",leading_pt,leading_abseta);
-  looseID_sf = th2fmap.getBin("muon_id_loose",subleading_pt,subleading_abseta);
-  looseISO_sf = th2fmap.getBin("muon_iso_loose",subleading_pt,subleading_abseta);
+  m1tightID_sf = th2fmap.getBin("muon_id_tight",leading_pt,leading_abseta);
+  m1tightISO_sf = th2fmap.getBin("muon_iso_tight",leading_pt,leading_abseta);
+  m1looseID_sf = th2fmap.getBin("muon_id_loose",leading_pt,leading_abseta);
+  m1looseISO_sf = th2fmap.getBin("muon_iso_loose",leading_pt,leading_abseta);
+  
+  m2tightID_sf = th2fmap.getBin("muon_id_tight",subleading_pt,subleading_abseta);
+  m2tightISO_sf = th2fmap.getBin("muon_iso_tight",subleading_pt,subleading_abseta);
+  m2looseID_sf = th2fmap.getBin("muon_id_loose",subleading_pt,subleading_abseta);
+  m2looseISO_sf = th2fmap.getBin("muon_iso_loose",subleading_pt,subleading_abseta);
 
-  return tightID_sf * tightISO_sf * looseID_sf * looseISO_sf;
+  return 0.5*(m1tightID_sf * m1tightISO_sf * m2looseID_sf * m2looseISO_sf + m2tightID_sf * m2tightISO_sf * m1looseID_sf * m1looseISO_sf);
 }
 
 bool monoJetDoubleMuCR::electron_veto() {

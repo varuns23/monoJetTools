@@ -1,7 +1,14 @@
-from ROOT import *
+"""
+Variation of plotter.py script for public slides 
+python PlotTool/public.py variable1 variable2
+"""
+
 from sys import argv, path
 from PlotTool import *
+from ROOT import *
 import os
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 

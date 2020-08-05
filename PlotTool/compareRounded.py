@@ -1,10 +1,17 @@
 #!/usr/bin/env python
 
-from ROOT import *
+"""
+Comparison between rounded variable and non-rounded variable
+Usage: python PlotTool/compareRounded.py variable1 variable2
+"""
+
 from sys import argv,path
 from PlotTool import *
+from ROOT import *
 import config
 import os
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 

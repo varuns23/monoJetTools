@@ -1,21 +1,28 @@
 #!/usr/bin/env python
-from ROOT import *
+
+"""
+Script for plotting TH1 from monoJetTools
+Usage: ./PlotTool/plotter.py hsname_1 hsname_2 hsname_3
+Refer to PlotTool/README.md for advance uses
+"""
+
 from PlotTool import *
-from PlotTool import parser
+from ROOT import *
+
 import os
 import sys
 import re
 
 gROOT.SetBatch(1)
 
-# Storage list to be used to keep references around for ROOT before TCanvas is saved
-parser.add_argument("--thn",help="specifies that all following plots are TH2 or TH3 plots",action="store_true", default=False)
-parser.add_argument("--run2",help="Specify the region to run an entire run2 plot",action="store",type=str,default=None)
-parser.add_argument("--no-plot",help="Dont plot variables",action="store_true",default=False)
-parser.add_argument("-u","--uncertainty",help="Specify the uncertainty to apply on variable if available",default=[],nargs="*",type=str)
-parser.add_argument("--ignore-mc",help="Ignore MC with less than a threshold percent of total MC (default = 0.001, use 0 to keep all MC)",default=0.001,type=float)
-parser.add_argument("--dimension",help="Specify the pixel dimensions to draw the canvas",default=[800,800],type=int,nargs=2)
-parser.add_argument("--soverb",help="Write S/Root(B) on plot if signal is there",default=False,action="store_true")
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument("--thn",help="specifies that all following plots are TH2 or TH3 plots",action="store_true", default=False)
+group.add_argument("--run2",help="Specify the region to run an entire run2 plot",action="store",type=str,default=None)
+group.add_argument("--no-plot",help="Dont plot variables",action="store_true",default=False)
+group.add_argument("-u","--uncertainty",help="Specify the uncertainty to apply on variable if available",default=[],nargs="*",type=str)
+group.add_argument("--ignore-mc",help="Ignore MC with less than a threshold percent of total MC (default = 0.001, use 0 to keep all MC)",default=0.001,type=float)
+group.add_argument("--dimension",help="Specify the pixel dimensions to draw the canvas",default=[800,800],type=int,nargs=2)
+group.add_argument("--soverb",help="Write S/Root(B) on plot if signal is there",default=False,action="store_true")
 
 def HigherDimension(samples,variable):
     axis = variable[-1]
@@ -209,7 +216,7 @@ def run2plotter(region):
   
 
 if __name__ == "__main__":
-    from PlotTool import parser
+    
     parser.parse_args()
     if parser.args.run2 is None: plotter()
     else: run2plotter(args.run2)

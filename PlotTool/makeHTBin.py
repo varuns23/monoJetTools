@@ -1,9 +1,17 @@
 #!/usr/bin/env python
-from ROOT import *
+
+"""
+Plot each process split across htbins
+Usage: python PlotTool/makeHTBin.py variable1 variable2
+"""
+
 from PlotTool import *
-from PlotTool import parser
+from ROOT import *
+
 import os
 import sys
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 

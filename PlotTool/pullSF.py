@@ -1,5 +1,10 @@
-from ROOT import *
+"""
+Draw scale factor plots
+Usage: python PlotTool/pullSF.py
+"""
+
 from PlotTool import *
+from ROOT import *
 import config
 
 sf2017 = {

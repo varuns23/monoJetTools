@@ -1,8 +1,16 @@
+"""
+Plot Signal Xsecs
+Usage: python PlotTool/plotSignalXsec.py
+"""
+
 from PlotTool import monoJet_XS as sx
 from PlotTool import *
 from ROOT import *
+
 from array import array
 import re
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 

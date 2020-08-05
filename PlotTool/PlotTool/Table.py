@@ -1,6 +1,7 @@
 from Parser import parser
 
-parser.add_argument('--raw-output',help='print tables without fancy separators (perhaps better for importing to excel)',action='store_true',default=False)
+group = parser.add_group(__file__,__doc__,"Class")
+group.add_argument('--raw-output',help='print tables without fancy separators (perhaps better for importing to excel)',action='store_true',default=False)
 
 class Table:
     def __init__(self,header):

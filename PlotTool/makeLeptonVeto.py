@@ -1,13 +1,20 @@
 #!/usr/bin/env python
 
-from ROOT import *
+"""
+Make SR WJets object veto scale factor file and plot
+Usage: python PlotTool/makeLeptonVeto.py variable
+"""
+
 from sys import argv,path
 from PlotTool import *
+from ROOT import *
 import config
 import os
 
-from PlotTool import parser
-parser.add_argument("--plot",help="Produce systematic uncertainty plots",action="store_true")
+
+
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument("--plot",help="Produce systematic uncertainty plots",action="store_true")
 parser.parse_args()
 
 config.mclist = ["WJets"]

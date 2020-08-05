@@ -1,7 +1,13 @@
 #!/usr/bin/env python
-from ROOT import *
+
+"""
+Export systematics shape for quick systematics bands in data/mc plots
+Usage: python PlotTool/export_systematics.py variable output_file.root
+"""
+
 from PlotTool import *
-from PlotTool import parser
+from ROOT import *
+
 from PlotTool import ConstantNuisance
 import os
 import sys
@@ -9,6 +15,7 @@ import sys
 # make sure to use TTree when exporting systematics
 if "--branch" not in sys.argv: sys.argv.append("--branch")
 
+group = parser.add_group(__file__,__doc__,"Script")
 parser.parse_args()
 
 variable = parser.args.argv[0]

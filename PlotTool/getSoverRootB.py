@@ -1,6 +1,12 @@
-from ROOT import *
+
+"""
+Prints out S/root(B) for signals
+Usage: python PlotTool/getSoverRootB.py variable1 variabl2 -s signal -1
+"""
+
 from sys import argv, path
 from PlotTool import *
+from ROOT import *
 import os
 import re
 

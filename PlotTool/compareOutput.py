@@ -1,9 +1,16 @@
+"""
+Compare BU input files and UW input files
+Usage: python PlotTool/compareOutput.py bu_input_file.root uw_input_file.root
+"""
+
 import sys
 sys.path.append("PlotTool")
-from ROOT import *
+
 from PlotTool import *
+from ROOT import *
 import config
 
+group = add_group(__file__,__doc__,"Script")
 parser.parse_args()
 
 gROOT.SetBatch(1)

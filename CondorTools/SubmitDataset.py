@@ -9,7 +9,7 @@ labelmap = {
     'mutau':'MTdata_',
     'zprime':'Zprime_','axial':'Axial_',
     'zjets':'Z','wjets':'W','dyjets':'DY','gjets':'GJets',
-    'zjets_nlo':'ZNLO','wjets_nlo':'WNLO','dyjets_nlo':'DYNLO',
+    'zjets_nlo':'Z-NLO','wjets_nlo':'W-NLO','dyjets_nlo':'DY-NLO','gjets_nlo':'G-NLO',
     'ewk':'','qcd':'QCD','st':'ST_','ttjets':'TTJets',
 }
 mclist = ['dyjets_nlo','dyjets','ewk','gjets','qcd','st','ttjets','wjets_nlo','wjets','zjets_nlo','zjets']

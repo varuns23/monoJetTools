@@ -1,8 +1,15 @@
-from ROOT import *
+"""
+Compare uncorrected MET distributions
+Usage: python PlotTool/compareCorrected.py variable1 variable2
+"""
+
 from array import array
 from PlotTool import *
+from ROOT import *
 import config
 from sys import argv
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 

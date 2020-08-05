@@ -1,12 +1,23 @@
 #!/usr/bin/env python
 
-from ROOT import *
+"""
+Print table of events from cutflow for each process
+Usage: python PlotTool/getYields.py histnumbers #(i.e. 0 1 2 3 4 5 ...etc)
+"""
+
 from sys import argv, path
 from PlotTool import *
-from PlotTool import parser
+from ROOT import *
+
 import config
 import os
-                
+           
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument('--yields',help='print yield table of current region',action='store_true',default=False)
+group.add_argument('--percent',help='print percentage of background table of current region',action='store_true',default=False)
+group.add_argument('--efficiency',help='print cut efficiecies table of current region',action='store_true',default=False)
+group.add_argument('--no-weight',help='use the none weighted cutflow',action='store_true',default=False)
+
 def getCutflowHeader(histo,binlist):
     return [ histo.GetXaxis().GetBinLabel(ibin+1) for ibin in binlist ]
     
@@ -71,10 +82,6 @@ def getCutEff(hslist,binlist):
         table.addRow(row)
     return table
 
-parser.add_argument('--yields',help='print yield table of current region',action='store_true',default=False)
-parser.add_argument('--percent',help='print percentage of background table of current region',action='store_true',default=False)
-parser.add_argument('--efficiency',help='print cut efficiecies table of current region',action='store_true',default=False)
-parser.add_argument('--no-weight',help='use the none weighted cutflow',action='store_true',default=False)
 if __name__ == "__main__":
     parser.parse_args()
     

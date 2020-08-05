@@ -36,7 +36,7 @@ class SubProcess(object):
         self.tfile = TFile.Open(self.fname+'.root')
         cutflow = GetTObject('h_cutflow',self.tfile)
         self.cutflow = cutflow.GetBinContent(1)
-        return True
+        return self.cutflow > 0
     def output(self,prompt="-- integral of %s: %s",ntemp="{0:<15}",itemp="{0:<8}",total_bkg=0):
         if total_bkg > 0:
             percent = ("%.4g%%" % (100*self.scaled_total/total_bkg))

@@ -1,4 +1,9 @@
-from ROOT import *
+
+"""
+Export scale factor histograms
+Usage: python PlotTool/getSFPlots.py sf_file1.root sf_file2.root
+"""
+
 from sys import argv
 import os
 

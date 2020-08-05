@@ -1,11 +1,19 @@
 #!/usr/bin/env python
 
-from ROOT import *
+"""
+Make data/mc plots for each era of data
+Usage: ./PlotTool/getDataEraPlots.py variable1_nhist variable2_nhist
+"""
+
 from sys import argv,path
 from PlotTool import *
+from ROOT import *
 from mcinfo import lumi_by_era
 from collections import OrderedDict
 import os
+
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 
@@ -62,10 +70,11 @@ def compareEra(variable,samples,eraLumi):
     ###############################################
     SaveAs(c,variable,year=samples.year,region=samples.region,sub="DataEra",exts=".png")
 #################################################
-        
+parser.parse_args()
+
 samples = Region(argv)
 eraLumi = OrderedDict(sorted(lumi_by_era[samples.region].items(),key=lambda t:t[0]))
-for variable in argv[1:]:
+for variable in parser.args.argv:
     samples.initiate(variable)
     compareEra(variable,samples,eraLumi)   
     for era,lumi in eraLumi.items():

@@ -76,27 +76,28 @@ void monoJetDoubleEleCR::fillHistos(int nhist,float event_weight) {
 
 bool monoJetDoubleEleCR::CRSelection(vector<int> tightlist,vector<int> looselist) {
   if (tightlist.size() == 0) return false;
-  int leading = tightlist[0];
-  for (int subleading : looselist) {
-    //Event must have exactly two loose electrons with opposite charge
-    if (eleCharge->at(leading)*eleCharge->at(subleading) == -1) {
-      lep1.SetPtEtaPhiE(eleCalibEt->at(leading),eleEta->at(leading),elePhi->at(leading),eleCalibE->at(leading));
-      lep2.SetPtEtaPhiE(eleCalibEt->at(subleading),eleEta->at(subleading),elePhi->at(subleading),eleCalibE->at(subleading));
-      leadLepIndx = leading;
-      subleadLepIndx = subleading;
-      TLorentzVector ll = lep1 + lep2;
-      dilepton_mass = ll.M();
-      dilepton_pt = ll.Pt();
-
-      leadingLepton_pt = lep1.Pt();
-      leadingLepton_eta = lep1.Eta();
-      leadingLepton_phi = lep1.Phi();
-	
-      subleadingLepton_pt = lep2.Pt();
-      subleadingLepton_eta = lep2.Eta();
-      subleadingLepton_phi = lep2.Phi();
-      return true;
-    }
+  if (looselist.size() <  2) return false;
+  int i1 = looselist[0];
+  int i2 = looselist[1];
+  
+  //Event must have exactly two loose electrons with opposite charge
+  if (eleCharge->at(i1)*eleCharge->at(i2) == -1) {
+    lep1.SetPtEtaPhiE(eleCalibEt->at(i1),eleEta->at(i1),elePhi->at(i1),eleCalibE->at(i1));
+    lep2.SetPtEtaPhiE(eleCalibEt->at(i2),eleEta->at(i2),elePhi->at(i2),eleCalibE->at(i2));
+    leadLepIndx = i1;
+    subleadLepIndx = i2;
+    TLorentzVector ll = lep1 + lep2;
+    dilepton_mass = ll.M();
+    dilepton_pt = ll.Pt();
+    
+    leadingLepton_pt = lep1.Pt();
+    leadingLepton_eta = lep1.Eta();
+    leadingLepton_phi = lep1.Phi();
+    
+    subleadingLepton_pt = lep2.Pt();
+    subleadingLepton_eta = lep2.Eta();
+    subleadingLepton_phi = lep2.Phi();
+    return true;
   }
   return false;
 }

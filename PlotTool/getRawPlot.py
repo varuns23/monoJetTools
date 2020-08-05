@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 
-from ROOT import *
+"""
+Draw histograms without any scaling
+Usage: ./PlotTool/getRawPlot.py -f postfile1,postfile2,postfile3
+"""
+
 import sys
 import os
 from PlotTool import *
+from ROOT import *
 
 gROOT.SetBatch(1)
 

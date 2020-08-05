@@ -13,7 +13,8 @@ public:
   TLorentzVector lep1,lep2;
   float leadingLepton_pt,leadingLepton_eta,leadingLepton_phi;
   float subleadingLepton_pt,subleadingLepton_eta,subleadingLepton_phi;
-  float tightID_sf,tightISO_sf,looseID_sf,looseISO_sf;
+  float m1tightID_sf,m1tightISO_sf,m1looseID_sf,m1looseISO_sf;
+  float m2tightID_sf,m2tightISO_sf,m2looseID_sf,m2looseISO_sf;
   TH1F *h_leadingLeptonPt[maxHisto], *h_leadingLeptonEta[maxHisto],*h_leadingLeptonPhi[maxHisto],*h_subleadingLeptonPt[maxHisto],*h_subleadingLeptonEta[maxHisto], *h_subleadingLeptonPhi[maxHisto],*h_dileptonPt[maxHisto],*h_dileptonM[maxHisto],*h_dileptonMall[maxHisto];
 
   TH2F *h_leadingLeptonEtaPhi[maxHisto],*h_subleadingLeptonEtaPhi[maxHisto];

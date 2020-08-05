@@ -2,8 +2,6 @@ from ROOT import TMath,gDirectory,TFile,gROOT,TCanvas,gPad
 from utilities import GetRootFiles,debug_hslist
 from Parser import parser
 
-parser.add_argument("--psw-file",help="suffix for psw file to use when calculating psw uncertainty",default="res")
-
 nuisfiles = {}
 
 def GetProcessPSW(self,nuisance):

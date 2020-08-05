@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 
-from ROOT import *
+"""
+Generate Trigger Efficiency plots
+Usage: python PlotTool/makeTriggEff.py -num variable_num1 variable_num2 -den variable_den
+"""
+
 from sys import argv,path
 from PlotTool import *
+from ROOT import *
 import config
 import os
 
 gROOT.SetBatch(1)
-"""
-Generate Trigger Efficiency plots
-"""
 
 config.mclist = [] #remove mc from being considered
 
@@ -28,8 +30,9 @@ trigmap = {
     "6":"Photon200"
 }
 
-parser.add_argument('-num',help='Specify the numerator of trigger efficiency',nargs='+',required=True)
-parser.add_argument('-den',help='Specify the denomenator of trigger efficiency',required=True)
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument('-num',help='Specify the numerator of trigger efficiency',nargs='+',required=True)
+group.add_argument('-den',help='Specify the denomenator of trigger efficiency',required=True)
 
 samples = Region(show=False)
 

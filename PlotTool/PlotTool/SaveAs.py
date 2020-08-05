@@ -1,14 +1,20 @@
+"""
+Script for determining output directory for plots
+Change basepath for all output directories in this script
+"""
+
 from Parser import parser
 import os
 
 basepath = "/afs/hep.wisc.edu/home/ekoenig4/public_html/MonoZprimeJet/"
 
-parser.add_argument("--path",help="Specify directory to save file in",default=basepath)
-parser.add_argument("--sub",help="Specify subdirectory from path directory to save file in")
+group = parser.add_group(__file__,__doc__,"Script")
+group.add_argument("--basepath",help="Specify basepath directory to save file in (default: %s)"%basepath,default=basepath)
+group.add_argument("--sub",help="Specify subdirectory from basepath directory to save file in")
 
 def GetOutDir(path,year,region,sub):
     parser.parse_args()
-    if path is None: path = parser.args.path
+    if path is None: path = parser.args.basepath
     if year is not None: path = os.path.join(path,'Plots'+year)
     if region is not None: path = os.path.join(path,region+'Plots_EWK')
     if sub is not None: path = os.path.join(path,sub)

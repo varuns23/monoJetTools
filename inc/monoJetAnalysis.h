@@ -59,6 +59,8 @@ public:
 
   static const bool debug = false;
   static const bool apply_correction = true;
+
+  static bool nlo_gjets;
   
   struct TH1FCollection : public std::map<TString,TH1F*> {
     int getBinN(TString name,float x) {

@@ -21,7 +21,7 @@ lumi_by_era = {"SingleEleCR":{"A":14024,"B":7061,"C":6895,"D":31720},
 
 region_masks = {}
 
-mclist = ["ZJets","WJets","DYJets","GJets","TTJets","DiBoson","QCD"]
+mclist = ["ZJets","WJets","DYJets","GJets","TTJets","DiBoson","QCD","G-NLO"]
 filemap = {
     "ZJets":  ["postZ100to200","postZ200to400","postZ400to600","postZ600to800","postZ800to1200","postZ1200to2500","postZ2500toInf"],
     "WJets":  ["postW70to100","postW100to200","postW200to400","postW400to600","postW600to800","postW800to1200","postW1200to2500","postW2500toInf"],
@@ -29,8 +29,14 @@ filemap = {
     "GJets":  ["postGJets40to100","postGJets100to200","postGJets200to400","postGJets400to600","postGJets600toInf"],
     "TTJets": ["postTTJetsFXFX","postST_s_4f","postST_t_antitop_4f","postST_tW_top_5f","postST_tW_antitop_5f","postST_t_top_4f"],
     "DiBoson":["postWW","postWWTo2L2Nu","postWWTo4Q","postWWToLNuQQ","postWZ","postZZ"],
-    "QCD":    ["postQCD100to200","postQCD200to300","postQCD300to500","postQCD500to700","postQCD700to1000","postQCD1000to1500","postQCD1500to2000","postQCD2000toInf"]
+    "QCD":    ["postQCD100to200","postQCD200to300","postQCD300to500","postQCD500to700","postQCD700to1000","postQCD1000to1500","postQCD1500to2000","postQCD2000toInf"],
+    "G-NLO": ["postG-NLO100to250","postG-NLO250to400","postG-NLO400to650","postG-NLO650toInf"]
 }
+
+nlomap = {
+    # "GJets": ["postG-NLO100to250","postG-NLO250to400","postG-NLO400to650","postG-NLO650toInf"]
+}
+
 legmap = {
     "ZJets"  :"Z#rightarrow#nu#nu",  
     "WJets"  :"W#rightarrowl#nu",     
@@ -38,19 +44,18 @@ legmap = {
     "GJets"  :"#gamma+jets",  
     "TTJets" :"Top Quark",         
     "DiBoson":"WW/WZ/ZZ",          
-    "QCD"    :"QCD"
+    "QCD"    :"QCD",
+    "G-NLO"  :"G-NLO"
 }
 colmap = {
-    "ZJets"     :kAzure+10,
-    "ZJets-NLO" :kAzure+10,
-    "WJets"     :kRed-10,
-    "WJets-NLO" :kRed-10,
-    "DYJets"    :kTeal-9,
-    "DYJets-NLO":kTeal-9,
-    "GJets"     :kGray,  
-    "TTJets"    :kOrange-2,
-    "DiBoson"   :kCyan-10, 
-    "QCD"       :kGray+2
+    "ZJets"     :9,
+    "WJets"     :kOrange-2,
+    "DYJets"    :7,
+    "GJets"     :46,  
+    "TTJets"    :kSpring-9,
+    "DiBoson"   :kMagenta-7, 
+    "QCD"       :41,
+    "G-NLO"     :2,
 }
 
 # 2018 xsec
@@ -86,6 +91,11 @@ xsec = {
 "postGJets200to400":2.194e+03,
 "postGJets400to600":2.578e+02,
 "postGJets600toInf":8.492e+01,
+
+"postG-NLO100to250":1.183e+03,
+"postG-NLO250to400":2.583e+01,
+"postG-NLO400to650":3.149e+00,
+"postG-NLO650toInf":2.887e-01,
     
 "postTTJetsFXFX":7.503e+02,
 

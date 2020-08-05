@@ -1,7 +1,14 @@
-from ROOT import *
+"""
+Create alternate export file 
+Usage: python PlotTool/store_variable.py variable1 variable2
+"""
+
 from PlotTool import *
+from ROOT import *
 import config
 import os
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 if not os.path.isdir('Output/'): os.mkdir('Output/')
 def store(variable):

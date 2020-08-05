@@ -1,9 +1,17 @@
-from ROOT import *
+
+"""
+Make transfer factor ratio plots
+Usage: python PlotTool/plotTransfer.py variable
+"""
+
 import os
 from sys import argv
 from PlotTool import *
+from ROOT import *
 import config
 import re
+
+group = parser.add_group(__file__,__doc__,"Script")
 
 gROOT.SetBatch(1)
 # gROOT.SetBatch(0)
@@ -387,7 +395,7 @@ def runAll(args):
     for variable in args.argv: plotTransfer(variable,samplemap)
 
 if __name__ == "__main__":
-    from PlotTool import parser
+    
     parser.parse_args()
     if not any(parser.args.argv): parser.args.argv.append('recoil')
     runAll(parser.args)

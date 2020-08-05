@@ -35,7 +35,7 @@ const std::map<TString,Type> Dataset::datamap = {
   {"egamma",Data},{"singleele",Data},{"singlepho",Data},{"met",Data},{"mutau",Data},
   {"zprime",Signal},{"axial",Signal},
   {"zjets",ZJets},{"wjets",WJets},{"dyjets",DYJets},{"gjets",GJets},
-  {"zjets_nlo",ZJets},{"wjets_nlo",WJets},{"dyjets_nlo",DYJets},
+  {"zjets_nlo",ZJets},{"wjets_nlo",WJets},{"dyjets_nlo",DYJets},{"gjets_nlo",GJets},
   {"qcd",QCD},{"ttjets",TTJets},{"st",ST},{"ewk",EWK}
 };
 

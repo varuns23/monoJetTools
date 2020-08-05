@@ -60,28 +60,6 @@ def valid_directory(directory):
     if not os.path.isdir(directory): raise ValueError("%s is not a valid directory" % directory)
     return directory
 
-def GetRegion():
-    region_pattern = ["postMETdata","postSingleEle","postSingleMu","postDoubleEle","postDoubleMu","postGamma","postQCDFake","postMTdata"]
-    RegionName = ["SignalRegion","SingleEleCR","SingleMuCR","DoubleEleCR","DoubleMuCR","GammaCR","GammaCR","TauFakeRate"]
-
-    def checkdir(dirname):
-        for region,pattern in zip(RegionName,region_pattern):
-            if region in dirname: return region
-            if any( pattern in fname for fname in os.listdir('.') ): return region
-            if os.path.isdir('.output/') and any( pattern in fname for fname in os.listdir('.output/') ): return region
-
-    dirname = os.getcwd()
-    region = checkdir(dirname)
-    if region != None: return region
-    
-    if not os.path.isfile('postpath.txt'): return "SignalRegion"
-    
-    with open('postpath.txt') as f: postpath = f.read().strip()
-    cwd = os.getcwd(); os.chdir(postpath)
-    dirname = os.path.realpath( os.getcwd() + '/../' )
-    region = checkdir(dirname)
-    if region != None: return region
-    return "SignalRegion"
 def GetMCxsec(filenames,xsecMap):
     return { fname:xsecMap[fname] for fname in filenames }
 

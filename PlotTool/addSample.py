@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+"""
+Add sample xaxis title to overwrite what is already in histogram
+Usage: ./PlotTool/addSample.py histoName x-axisTitle
+"""
+
 import os
 from sys import argv
 if len(argv) < 3 or len(argv) > 5:
