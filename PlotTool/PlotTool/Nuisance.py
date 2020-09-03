@@ -144,7 +144,8 @@ def AddDiffNuisances(nuisances,up,dn,norm):
 def GetNuisanceList(tfile,dirname):
     tfile.cd(dirname)
     shapelist = [ key.GetName().replace('Up','') for key in gDirectory.GetListOfKeys() if 'Up' in key.GetName() ]
-    tree = gDirectory.Get('tree')
+    from config import version
+    tree = gDirectory.Get('tree' if version != "2016" else "norm")
     scalelist = [ key.GetName().replace('Up','') for key in tree.GetListOfBranches() if 'Up' in key.GetName() if ('PSW' in key.GetName() and 'Con' in key.GetName()) or 'PSW' not in key.GetName() ]
     nuisances = {}
     for shape in shapelist:

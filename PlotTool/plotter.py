@@ -43,7 +43,9 @@ def plotVariable(samples,variable,initiate=True,blinded=False):
         if (parser.args.thn):
             HigherDimension(samples,variable)
         else:
-            samples.initiate(variable)
+            try:
+                samples.initiate(variable)
+            except ValueError as error: print(error); return
             if "TH2" in samples.variable.template.ClassName():
                 print "Skipping TH2."
                 return

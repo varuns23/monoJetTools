@@ -5,7 +5,7 @@
 path=/hdfs/store/user/ekoenig/MonoZprimeJet/PostFiles
 
 YEARS="2016 2017 2018"
-YEARS="2017 2018"
+# YEARS="2017 2018"
 REGIONS="SignalRegion SingleEleCR SingleMuCR DoubleEleCR DoubleMuCR GammaCR"
 PURITY="$(echo GammaPurity/{Sig,Bkg}Template/{sieie,iso}_purity)"
 

@@ -92,7 +92,12 @@ def GetRootFiles():
 def GetDirname(variable,sub=None):
     ndir = variable.split('_')[-1]
     if not ndir.isdigit(): return None,None
-    dirname = 'monoJet_%s' % ndir
+    
+    tag = "monoJet"
+    from config import version
+    if version == "2016": tag = "ZprimeJet"
+    dirname = '%s_%s' % (tag,ndir)
+    
     if sub != None: dirname += '/%s' % sub
     return dirname,ndir
 def CheckHisto(histo):

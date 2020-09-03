@@ -140,6 +140,8 @@ class VariableInfo:
         elif parser.args.branch and IsBranch(variable,tfile): self.initBranch(tfile,variable)
         elif IsNhisto(variable,tfile): self.initNhisto(tfile,variable)
 
+        if self.template == None:
+            raise ValueError("Unidentified variable %s"%self.variable)
         self.title = self.template.GetTitle()
         self.xaxis_title = self.template.GetXaxis().GetTitle()
         self.yaxis_title = self.template.GetYaxis().GetTitle()

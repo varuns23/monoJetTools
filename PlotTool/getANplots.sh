@@ -42,11 +42,11 @@ run() {
     # for cut in $(echo 0.7 0.8 0.85 0.9); do
     # 	plot $run_options --branch -a --sub PtFracCut recoil -c "ChNemPtFrac>${cut}" --soverb &
     # done
-    # plot $run_options -a --sub $subdir $array $uncertainty &
-    # plot $run_options --sub $subdir $n_cut &
+    plot $run_options -a --sub $subdir $array $uncertainty &
+    plot $run_options --sub $subdir $n_cut &
     # plot $run_options -a --sub JetSubstructure $pfcand &
     # plot $run_options -a --branch --sub CutStudy/ChNemPtFrac+0.8 -c "ChNemPtFrac>0.8" $branch_var &
-    plot $run_options -a --branch --sub CutStudy/j1ChMult-5 -c "j1ChMult<5" $branch_var &
+    # plot $run_options -a --branch --sub CutStudy/j1ChMult-5 -c "j1ChMult<5" $branch_var &
     wait
     popd
 }
