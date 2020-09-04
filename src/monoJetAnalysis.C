@@ -162,11 +162,16 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
   }
 
   if (cutflow->getLabel(nhist+1) == s_minDPhiJetMET) {
-    if (recoil > recoilCut)
+    int jetCand = getJetCand();
+    if (dpfcalo < metRatioCut &&
+	recoil > recoilCut    &&
+	jetCand != -1)
       h_dphiminBefore->Fill(mindPhiJetMET,event_weight);
   }
   if (cutflow->getLabel(nhist+1) == s_dPFCaloMET) {
-    if (recoil > recoilCut)
+    int jetCand = getJetCand();
+    if (recoil > recoilCut    &&
+	jetCand != -1)
       h_metcutBefore->Fill(dpfcalo,event_weight);
   }
   
