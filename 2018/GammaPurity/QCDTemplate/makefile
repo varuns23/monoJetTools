@@ -64,3 +64,4 @@ condor_submit: analyze
 
 hadd:
 	./PlotTool/plotter.py
+	mv postQCD* ../../GammaCR/
