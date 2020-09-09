@@ -40,8 +40,27 @@ void monoJetSingleMuCR::BookHistos(int i,TString histname) {
 void monoJetSingleMuCR::fillHistos(int nhist,float event_weight) {
   if (cutflow->getLabel(nhist+1) == s_MuMET_MT) {
     bool cleaning = recoil > recoilCut;
-    if ( YEAR == 2018 ) cleaning = cleaning && getJetHEMVeto();
-    if (cleaning) h_lepMET_MTBefore->Fill(lepMET_mt,event_weight);
+    float bjetCut = bjetDeepCSVCut_2017;
+    if ( YEAR == 2018 ) {
+      bjetCut = bjetDeepCSVCut_2018;
+      cleaning = cleaning && getJetHEMVeto();
+    }
+    if (cleaning) {
+    vector<int> jetlist = getLooseJet();
+    float dphi = dPhiJetMETmin(jetlist,recoilPhi);
+    int jetCand = getJetCand();
+    float temp_weight = event_weight;
+    if (getMetFilter() &&
+	electron_veto()   &&
+	photon_veto(lepindex) &&
+	tau_veto(lepindex) &&
+	bjet_weights(bjetCut,temp_weight) &&
+	dphi > dPhiJetMETCut &&
+	dpfcalo < metRatioCut &&
+	jetCand != -1
+	)
+      h_lepMET_MTBefore->Fill(lepMET_mt,temp_weight); 
+    }
   }
   //CR Histograms
   if(lepindex >= 0){ 
