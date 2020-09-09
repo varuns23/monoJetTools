@@ -41,7 +41,7 @@ def GetlnNShape(self,nuisance):
         
     if "lnn" not in nuisfiles:
         rootdir = GetRootFiles()
-        nuisfiles["lnn"] = TFile("%s/sys_shape/%s/shape_lnn_sys.root"%(rootdir,var))
+        nuisfiles["lnn"] = TFile("%s/sys_shape/%s/shape_lnn_sys_%s.root"%(rootdir,var,self.year))
     dirmap = {"SignalRegion":"sr","DoubleEleCR":"ze","DoubleMuCR":"zm","SingleEleCR":"we","SingleMuCR":"wm","GammaCR":"ga"}
     def getlnN():
         tfile = nuisfiles["lnn"]
@@ -67,7 +67,7 @@ def GetTheoryShape(self,nuisance):
         
     if "theory" not in nuisfiles:
         rootdir = GetRootFiles()
-        nuisfiles["theory"] = TFile("%s/sys_shape/%s/shape_theory_sys.root"%(rootdir,var))
+        nuisfiles["theory"] = TFile("%s/sys_shape/%s/shape_theory_sys_%s.root"%(rootdir,var,self.year))
     dirmap = {"SignalRegion":"sr","DoubleEleCR":"ze","DoubleMuCR":"zm","SingleEleCR":"we","SingleMuCR":"wm","GammaCR":"ga"}
     def getTheory():
         tfile = nuisfiles["theory"]
@@ -75,7 +75,7 @@ def GetTheoryShape(self,nuisance):
         name = "%s_%s_%s"%(self.name,self.variable.base,nuisance)
         up = self.histo.Clone("%sUp"%name)
         dn = self.histo.Clone("%sDown"%name)
-        if not any(self.process in procs.GetName() for procs in tdir.GetListOfKeys() ):
+        if not any(self.process == procs.GetName().split("_")[0] for procs in tdir.GetListOfKeys() ):
             return up,dn
         upsf = tdir.Get("%s_%sUp"%(self.process,nuisance.replace("THEORY_","")))
         dnsf = tdir.Get("%s_%sDown"%(self.process,nuisance.replace("THEORY_","")))
