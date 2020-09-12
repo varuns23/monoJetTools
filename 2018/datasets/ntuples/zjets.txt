@@ -1,25 +1,25 @@
 >>100to200
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT100-200/200327_142032/0000/
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT100-200/200327_142032/0001/
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT100-200/200327_142032/0002/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT100-200/200327_142032/0000/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT100-200/200327_142032/0001/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-100To200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT100-200/200327_142032/0002/
 
 >>200to400
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/crab_job_ZJetsToNuNu_HT200-400/200327_142049/0000/
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/crab_job_ZJetsToNuNu_HT200-400/200327_142049/0001/
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/crab_job_ZJetsToNuNu_HT200-400/200327_142049/0002/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/crab_job_ZJetsToNuNu_HT200-400/200327_142049/0000/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/crab_job_ZJetsToNuNu_HT200-400/200327_142049/0001/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-200To400_13TeV-madgraph/crab_job_ZJetsToNuNu_HT200-400/200327_142049/0002/
 
 >>400to600
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-400To600_13TeV-madgraph/crab_job_ZJetsToNuNu_HT400-600/200330_151154/0000/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-400To600_13TeV-madgraph/crab_job_ZJetsToNuNu_HT400-600/200330_151154/0000/
 
 >>600to800
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-600To800_13TeV-madgraph/crab_job_ZJetsToNuNu_HT600-800/200327_142124/0000/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-600To800_13TeV-madgraph/crab_job_ZJetsToNuNu_HT600-800/200327_142124/0000/
 
 >>800to1200
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT800-1200/200327_142142/0000/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-800To1200_13TeV-madgraph/crab_job_ZJetsToNuNu_HT800-1200/200327_142142/0000/
 
 >>1200to2500
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-1200To2500_13TeV-madgraph/crab_job_ZJetsToNuNu_HT1200-2500/200327_142159/0000/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-1200To2500_13TeV-madgraph/crab_job_ZJetsToNuNu_HT1200-2500/200327_142159/0000/
 
 >>2500toInf
-/hdfs/store/user/ekoenig/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/crab_job_ZJetsToNuNu_HT2500-Inf/200327_142217/0000/
+/hdfs/store/user/ekoenig/NTuples/MC/MC2018_Autumn18_Mar2020_PSWeight/ZJets/ZJetsToNuNu_HT-2500ToInf_13TeV-madgraph/crab_job_ZJetsToNuNu_HT2500-Inf/200327_142217/0000/
 
