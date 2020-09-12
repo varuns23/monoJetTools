@@ -43,18 +43,21 @@ def findInputDirectories():
                 break
     return directories
     
-def init():
+def init(path='./'):
     #Create Directories to put condor files in
+    print path
+    if not os.path.isdir(path): os.mkdir(path)
     #Where executable and output files go
-    if not os.path.isdir(".output/"): os.mkdir(".output/")
+    if not os.path.isdir("%s/.output/"%path): os.mkdir("%s/.output/"%path)
     #Where all condor output, log, and error files go
-    if not os.path.isdir(".status/"): os.mkdir(".status/")
+    if not os.path.isdir("%s/.status/"%path): os.mkdir("%s/.status/"%path)
 def getargs(argv):
     parser = ArgumentParser()
     parser.add_argument('runargs',help='Specify arguments for run',type=str,nargs='+')
     parser.add_argument('-y','--year',help='Specify year of run',type=str,default='')
     parser.add_argument('-r','--region',help='Specify region of run',type=str,default='')
     parser.add_argument('-f','--filelist',help='Use direct filenames as input',action='store_true',default=False)
+    parser.add_argument('-path',help='Specify path to put condor files',default='./')
     args = parser.parse_args(argv)
     args.error = False
     def checkScript(arg):
@@ -178,14 +181,14 @@ def condor_submit(command,config):
 
 def submit(argv=sys.argv,redirect=False):
     args = getargs(argv)
-    if not os.path.isdir(".status/"+args.label): os.mkdir(".status/"+args.label)
+    if not os.path.isdir("%s/.status/"%args.path+args.label): os.mkdir("%s/.status/"%args.path+args.label)
     if redirect:
-        redirect = open('.status/%s/submit.txt' % args.label,'w')
+        redirect = open('%s/.status/%s/submit.txt' % (args.path,args.label),'w')
         print  "Processesing %s" % args.outputfile
     output("Processesing %s" % args.outputfile,redirect)
     #Assure executable file is in .output/
-    if not os.path.isfile('.output/runAnalyzer.sh'): os.system('cp %s/runAnalyzer.sh .output/' % script_path)
-    os.system('cp -p %s .output' % args.script)
+    if not os.path.isfile('%s/.output/runAnalyzer.sh'%args.path): os.system('cp %s/runAnalyzer.sh %s/.output/' % (script_path,args.path))
+    os.system('cp -p %s %s/.output' % (args.script,args.path))
     
     #Beginning to write condor_submit file
     config = CondorConfig()
@@ -217,16 +220,20 @@ def submit(argv=sys.argv,redirect=False):
         splitArgument(args.nbatches,args.rfiles,config,redirect)
     else:
         inputFilelist(args.nbatches,args.rfiles,config,redirect)
-    config.write('.output/condor_%s' % args.label)
+    config.write('%s/.output/condor_%s' % (args.path,args.label))
     #Move into .output/ and run newly made condor_submit file
-    os.chdir(".output/")
+    cwd = os.getcwd()
+    os.chdir("%s/.output/"%args.path)
     command = "condor_submit condor_%s" % args.label
     if redirect is not False:
         redirect.close()
         condor_submit(command + ' >> ../.status/%s/submit.txt' % args.label,config)
     else:
         condor_submit(command,config)
-    os.chdir("../")
-    
-init()
+    os.chdir(cwd)
+   
+parser = ArgumentParser() 
+parser.add_argument('-path',help='Specify path to put condor files',default='./')
+args,unknown = parser.parse_known_args()
+init(args.path)
 if __name__ == "__main__": submit()

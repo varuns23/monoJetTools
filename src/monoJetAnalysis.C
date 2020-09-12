@@ -79,6 +79,7 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("recoil",&recoil);
   tree->Branch("pfMET",&pfMET);
   tree->Branch("pfMETPhi",&pfMETPhi);
+  tree->Branch("caloMET",&caloMET);
   tree->Branch("j1pT",&j1pT);
   tree->Branch("j1Eta",&j1Eta);
   tree->Branch("j1Phi",&j1Phi);
@@ -89,12 +90,14 @@ void monoJetAnalysis::initTree(TTree* tree) {
   tree->Branch("nJets",&nJet);
   tree->Branch("nVtx",&nVtx);
   tree->Branch("bosonPt",&bosonPt);
+  tree->Branch("metcut",&dpfcalo);
+  tree->Branch("dphimin",&mindPhiJetMET);
 }
 
 void monoJetAnalysis::BookHistos(int i,TString histname) {
   if (i == -1) {
     h_metfilters = new TH1F("h_metfilters","metFilters",8,0.5,8.5); h_metfilters->Sumw2();
-    h_metcutBefore  = MakeTH1F(new TH1F("h_metcut","h_metcut; |pfMET-caloMET|/pfMET", 50,0,1.2));
+    h_metcutBefore  = MakeTH1F(new TH1F("h_metcut","h_metcut; |pfMET-caloMET|/recoil", 50,0,1.2));
     h_dphiminBefore = MakeTH1F(new TH1F("h_dphimin","h_dphimin; Minimum dPhiJetMET",50,0,3.2));
     return;
   }
@@ -203,11 +206,16 @@ void monoJetAnalysis::fillHistos(int nhist,float event_weight) {
   }
 
   if (cutflow->getLabel(nhist+1) == s_minDPhiJetMET) {
-    if (recoil > recoilCut)
+    int jetCand = getJetCand();
+    if (dpfcalo < metRatioCut &&
+	recoil > recoilCut    &&
+	jetCand != -1)
       h_dphiminBefore->Fill(mindPhiJetMET,event_weight);
   }
   if (cutflow->getLabel(nhist+1) == s_dPFCaloMET) {
-    if (recoil > recoilCut)
+    int jetCand = getJetCand();
+    if (recoil > recoilCut    &&
+	jetCand != -1)
       h_metcutBefore->Fill(dpfcalo,event_weight);
   }
   
@@ -1014,7 +1022,7 @@ float monoJetAnalysis::getKFactor(float bosonPt) {
   float kfactor = 1;
   // if (isNLO) kfactor = nlo_ewk * nnlo_qcd;
   // else kfactor = nlo_ewk * nlo_qcd * nnlo_qcd;
-  if (type == GJets && nlo_ewk)
+  if (type == GJets && nlo_gjets)
     kfactor = nlo_ewk;
   else
     kfactor = nlo_ewk * nlo_qcd;

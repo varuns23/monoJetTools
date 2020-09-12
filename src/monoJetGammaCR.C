@@ -10,8 +10,6 @@ using namespace std;
 Region monoJetAnalysis::REGION = GA;
 CRobject monoJetAnalysis::CROBJECT = Photon;
 
-bool monoJetAnalysis::nlo_gjets = true; // Do not apply NLO_QCD to GJets sample in GammaCR
-
 void monoJetGammaCR::initVars() {
   phoindex = photon_pt = photon_eta = photon_phi = -99;
   tightID_sf = csev_sf = 1;

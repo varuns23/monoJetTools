@@ -21,7 +21,7 @@ lumi_by_era = {"SingleEleCR":{"A":14024,"B":7061,"C":6895,"D":31720},
 
 region_masks = {}
 
-mclist = ["ZJets","WJets","DYJets","GJets","TTJets","DiBoson","QCD","G-NLO"]
+mclist = ["ZJets","WJets","DYJets","GJets","TTJets","DiBoson","QCD"]
 filemap = {
     "ZJets":  ["postZ100to200","postZ200to400","postZ400to600","postZ600to800","postZ800to1200","postZ1200to2500","postZ2500toInf"],
     "WJets":  ["postW70to100","postW100to200","postW200to400","postW400to600","postW600to800","postW800to1200","postW1200to2500","postW2500toInf"],

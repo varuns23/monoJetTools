@@ -90,7 +90,7 @@ def SoverBText(x=0.55,y=0.45,soverb=0,error=0,scale=1):
     btext.Draw()
     return btext
 
-def RatioStyle(ratio,rymin=0.3,rymax=1.7,color=kBlack,xname=None,yname='Data/Bkg'):
+def RatioStyle(ratio,rymin=0.55,rymax=1.45,color=kBlack,xname=None,yname='Data/Bkg'):
     if ratio.ClassName() == "TH1": ratio.SetStats(0);
     ratio.SetMarkerColor(color)
     ratio.SetLineColor(color)

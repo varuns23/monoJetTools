@@ -18,6 +18,7 @@ signalist = ['zprime']
 full_list = mclist + datalist + signalist
 
 options = {
+    'path':"",
     'year':"",
     'region':"",
     'parallel':False,
@@ -89,6 +90,7 @@ def submit(data,sub=None,label=None,split=-1,filelist=True,script='analyze'):
             if filelist: command = ['-f'] + command
             if any(options['region']): command = ['-r',options['region']] + command
             if any(options['year']): command = ['-y',options['year']] + command
+            if any(options['path']): command = ['-p',options['path']] + command
             
             if options['parallel']:
                 proc = Process(target=SubmitCondor.submit,args=(command,True))
