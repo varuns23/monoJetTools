@@ -851,7 +851,7 @@ float monoJetAnalysis::getKFactor(float bosonPt) {
   float kfactor = 1;
   // if (isNLO) kfactor = nlo_ewk * nnlo_qcd;
   // else kfactor = nlo_ewk * nlo_qcd * nnlo_qcd;
-  if (type == GJets && nlo_ewk)
+  if (type == GJets && nlo_gjets)
     kfactor = nlo_ewk;
   else
     kfactor = nlo_ewk * nlo_qcd;
