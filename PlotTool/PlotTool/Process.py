@@ -45,8 +45,10 @@ class SubProcess(object):
             print prompt % ( ntemp.format(self.subprocess),itemp.format( '%.6g' % self.scaled_total ) )
     def setTree(self,dirname,treename):
         tree = None
+        if treename == 'norm' and 'tree' in self.treemap: return tree is None
         if treename not in self.treemap:
             tree = GetTObject('%s/%s' % (dirname,treename),self.tfile)
+        if treename == 'norm': treename = 'tree'
         if tree is not None: self.treemap[treename] = tree
         return tree is None
     def setVariable(self,variable,weight="weight",cut=None):
@@ -59,7 +61,7 @@ class SubProcess(object):
         self.scaleWidth = variable.scaleWidth
         if variable.isGlobal: self.histo = GetTObject(variable.variable,self.tfile)
         elif variable.isBranch:
-            self.setTree(variable.dirname,'tree')
+            self.setTree(variable.dirname,'tree' if 'monoJet' in variable.dirname else 'norm')
             self.histo = GetBranch('%s_%s' % (self.name,variable.base),variable,self.treemap['tree'])
         elif variable.isNhisto: self.histo = GetTObject("%s/%s"%(variable.dirname,variable.variable),self.tfile)
         

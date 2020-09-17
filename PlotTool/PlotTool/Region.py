@@ -210,7 +210,7 @@ class Region(object):
                 if hasattr(signal_args,signal) and getattr(signal_args,signal) is not None:
                     signal_to_plot = None
                     args = getattr(signal_args,signal)
-                    if "-1" in args: signalmap.update(self.signalinfo.XsecMap[signal])
+                    if "-1" in args: signalmap.update({ key:(value,signal) for key,value in self.signalinfo.XsecMap[signal].iteritems() })
                     elif len(args) == 2:
                         fname = self.signalinfo.GetFileMap[signal](args[0],args[1])
                         xsec = self.signalinfo.XsecMap[signal][fname]

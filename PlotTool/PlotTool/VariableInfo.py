@@ -33,7 +33,7 @@ def IsBranch(variable,tfile):
     tdir = tfile.GetDirectory(dirname)
     if tdir == None: return False
     b_variable = variable.replace('_%s' % ndir,'')
-    tree = tdir.Get('tree')
+    tree = tdir.Get('tree' if "monoJet" in dirname else "norm")
     isBranch = tree.GetListOfBranches().Contains(b_variable)
     # tdir.Close()
     return isBranch
